@@ -1,0 +1,201 @@
+{
+  "generatedAt": "2026-06-21T22:46:37.002Z",
+  "owner": {
+    "login": "bdelanghe",
+    "name": "Robert DeLanghe"
+  },
+  "stats": {
+    "repos": 114,
+    "public": 59,
+    "private": 55,
+    "sources": 105,
+    "forks": 9,
+    "tagged": 1,
+    "languages": [
+      {
+        "name": "TypeScript",
+        "count": 26
+      },
+      {
+        "name": "Python",
+        "count": 20
+      },
+      {
+        "name": "other",
+        "count": 13
+      },
+      {
+        "name": "Jupyter Notebook",
+        "count": 9
+      },
+      {
+        "name": "Rust",
+        "count": 9
+      },
+      {
+        "name": "Shell",
+        "count": 8
+      },
+      {
+        "name": "HTML",
+        "count": 8
+      },
+      {
+        "name": "Nix",
+        "count": 4
+      },
+      {
+        "name": "JavaScript",
+        "count": 3
+      },
+      {
+        "name": "Go Template",
+        "count": 1
+      },
+      {
+        "name": "Go",
+        "count": 1
+      },
+      {
+        "name": "C++",
+        "count": 1
+      },
+      {
+        "name": "Rich Text Format",
+        "count": 1
+      },
+      {
+        "name": "Scheme",
+        "count": 1
+      }
+    ],
+    "topics": [
+      {
+        "name": "profile-readme",
+        "count": 1
+      }
+    ]
+  },
+  "highlights": [
+    {
+      "name": "prx",
+      "fullName": "bounded-systems/prx",
+      "url": "https://github.com/bounded-systems/prx",
+      "description": "The agent-run work-unit CLI: capability-scoped agents whose every privileged effect is verified against its signed owner, driving a work unit through one signed pipeline to a merged PR.",
+      "language": "TypeScript",
+      "stars": 1,
+      "pinned": true,
+      "topics": []
+    },
+    {
+      "name": "guest-room",
+      "fullName": "bounded-systems/guest-room",
+      "url": "https://github.com/bounded-systems/guest-room",
+      "description": "Guest-agnostic room+door capability runtime — the core library claude-box is built on.",
+      "language": "TypeScript",
+      "stars": 0,
+      "pinned": true,
+      "topics": []
+    },
+    {
+      "name": "synoptic-github",
+      "fullName": "bdelanghe/synoptic-github",
+      "url": "https://github.com/bdelanghe/synoptic-github",
+      "description": " A dynamic template that auto-updates your README to showcase all your GitHub projects, offering a concise overview of your coding journey 🌟✨",
+      "language": "Shell",
+      "stars": 0,
+      "pinned": true,
+      "topics": []
+    },
+    {
+      "name": "first-pass",
+      "fullName": "bdelanghe/first-pass",
+      "url": "https://github.com/bdelanghe/first-pass",
+      "description": "A CLI tool that enhances your resume creation, aligns skills with job descriptions, and guides in building evidence-backed points 🚀📝",
+      "language": "TypeScript",
+      "stars": 0,
+      "pinned": true,
+      "topics": []
+    },
+    {
+      "name": "ssh-doctor",
+      "fullName": "bdelanghe/ssh-doctor",
+      "url": "https://github.com/bdelanghe/ssh-doctor",
+      "description": "A Bash script that diagnoses SSH setup issues and provides streamlined troubleshooting 🩺🔧",
+      "language": "Shell",
+      "stars": 1,
+      "pinned": false,
+      "topics": []
+    },
+    {
+      "name": "site",
+      "fullName": "bounded-systems/site",
+      "url": "https://github.com/bounded-systems/site",
+      "description": "The bounded.tools website — static, built on @bounded-systems/brand",
+      "language": "HTML",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    },
+    {
+      "name": ".github",
+      "fullName": "bounded-systems/.github",
+      "url": "https://github.com/bounded-systems/.github",
+      "description": "Org-level defaults and the public profile README for bounded-systems.",
+      "language": "Shell",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    },
+    {
+      "name": "gh-project-room",
+      "fullName": "bounded-systems/gh-project-room",
+      "url": "https://github.com/bounded-systems/gh-project-room",
+      "description": "Front Desk projection + sync room for bounded-systems (org project #2)",
+      "language": "TypeScript",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    },
+    {
+      "name": "claude-token-tools",
+      "fullName": "bounded-systems/claude-token-tools",
+      "url": "https://github.com/bounded-systems/claude-token-tools",
+      "description": "Claude Code token-saving toolkit — model-usage auditor + home-manager module",
+      "language": "JavaScript",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    },
+    {
+      "name": "door-peercred",
+      "fullName": "bounded-systems/door-peercred",
+      "url": "https://github.com/bounded-systems/door-peercred",
+      "description": "SO_PEERCRED helper for launcherd (Rust) — extracted from claude-box; a launcherd helper, not a door",
+      "language": "Rust",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    },
+    {
+      "name": "door-net",
+      "fullName": "bounded-systems/door-net",
+      "url": "https://github.com/bounded-systems/door-net",
+      "description": "netd — the allowlist-egress capability door, as a pinned OCI image (extracted from claude-box)",
+      "language": "TypeScript",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    },
+    {
+      "name": "door-scout",
+      "fullName": "bounded-systems/door-scout",
+      "url": "https://github.com/bounded-systems/door-scout",
+      "description": "scoutd — the external-read capability door, as a pinned OCI image (extracted from claude-box)",
+      "language": "TypeScript",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    }
+  ]
+}

@@ -1,84 +1,75 @@
-/* robertdelanghe.dev — minimal software-engineering portfolio.
-   Visual system (fonts, color, type) comes from the brand submodule
-   (brand/tokens/tokens.css, brand/css/*); only layout lives here. */
-:root { --maxw: 720px; }
+/* robertdelanghe.dev — synoptic v2. Visual system (fonts, color, type) comes from
+   the brand submodule; only layout lives here. Rendered from data/site.json. */
+:root { --maxw: 760px; }
 
-.wrap {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: clamp(48px, 10vw, 120px) 28px 64px;
-}
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: clamp(48px, 10vw, 112px) 28px 64px; }
 
-.eyebrow {
-  color: var(--bs-color-ink-mono);
-  margin: 0 0 22px;
-}
+.eyebrow { color: var(--bs-color-ink-mono); margin: 0 0 20px; }
 
+/* intro */
 .intro h1 {
   font-family: var(--bs-font-display);
   font-size: clamp(30px, 5vw, 44px);
-  line-height: 1.06;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  color: var(--bs-color-ink);
-  margin: 0 0 22px;
+  line-height: 1.06; font-weight: 600; letter-spacing: -0.025em;
+  color: var(--bs-color-ink); margin: 0 0 22px;
 }
-
-.lead {
-  font-size: 18px;
-  line-height: 1.6;
-  color: var(--bs-color-ink-soft);
-  margin: 0 0 28px;
-  max-width: 56ch;
-}
+.lead { font-size: 18px; line-height: 1.6; color: var(--bs-color-ink-soft); margin: 0 0 26px; max-width: 58ch; }
 .lead strong { color: var(--bs-color-forest); font-weight: 600; }
-
 .links { display: flex; flex-wrap: wrap; gap: 22px; }
 .links a {
-  font-family: var(--bs-font-mono);
-  font-size: 13px;
-  color: var(--bs-color-forest);
-  text-decoration: none;
-  border-bottom: 1px solid var(--bs-color-line);
-  padding-bottom: 2px;
+  font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-forest);
+  text-decoration: none; border-bottom: 1px solid var(--bs-color-line); padding-bottom: 2px;
 }
 .links a:hover { border-color: var(--bs-color-forest); }
 
-.work { margin-top: clamp(56px, 10vw, 96px); }
-.work .eyebrow { margin-bottom: 20px; }
+/* section rhythm */
+.corpus, .work { margin-top: clamp(56px, 9vw, 88px); }
 
-.projects { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--bs-color-line); }
-.projects li { border-bottom: 1px solid var(--bs-color-line); }
-.projects a {
-  display: grid;
-  grid-template-columns: 160px 1fr;
-  gap: 24px;
-  padding: 22px 0;
-  text-decoration: none;
-  color: inherit;
+/* corpus: meta-analysis */
+.figures { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 0 28px; }
+.fig {
+  background: var(--bs-color-card); border: 1px solid var(--bs-color-line);
+  border-radius: var(--bs-radius-md); padding: 16px 18px;
 }
-.proj__name {
-  font-family: var(--bs-font-mono);
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--bs-color-forest);
+.fig__n { display: block; font-family: var(--bs-font-display); font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--bs-color-ink); }
+.fig__k { font-family: var(--bs-font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bs-color-ink-mono); }
+
+.bars { display: grid; gap: 8px; margin: 0 0 24px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 36px; align-items: center; gap: 12px; }
+.bar__k { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-soft); }
+.bar__track { height: 8px; background: var(--bs-color-line); border-radius: 999px; overflow: hidden; }
+.bar__fill { display: block; height: 100%; background: var(--bs-color-forest); }
+.bar__n { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); text-align: right; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest);
+  background: var(--bs-color-card-alt); border: 1px solid var(--bs-color-line);
+  border-radius: 999px; padding: 4px 10px;
 }
-.proj__desc { font-size: 15px; line-height: 1.55; color: var(--bs-color-ink-soft); }
-.projects a:hover .proj__desc { color: var(--bs-color-ink); }
+.chip em { color: var(--bs-color-ink-mono); font-style: normal; }
+.chip--muted { color: var(--bs-color-ink-mono); }
+
+/* selected work */
+.projects { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border: 1px solid var(--bs-color-line); border-radius: var(--bs-radius-md); overflow: hidden; }
+.proj { background: var(--bs-color-card); }
+.proj a { display: block; padding: 18px 20px; text-decoration: none; color: inherit; }
+.proj a:hover { background: var(--bs-color-card-alt); }
+.proj__top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.proj__name { font-family: var(--bs-font-mono); font-weight: 600; font-size: 15px; color: var(--bs-color-forest); }
+.proj__pin { font-family: var(--bs-font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bs-color-ink-mono); }
+.proj__desc { font-size: 15px; line-height: 1.5; color: var(--bs-color-ink-soft); margin: 0 0 8px; }
+.proj__meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.proj__lang { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
+.tag { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-forest); background: var(--bs-color-card-alt); border: 1px solid var(--bs-color-line); border-radius: 999px; padding: 2px 8px; }
 
 .foot {
-  margin-top: clamp(56px, 10vw, 96px);
-  padding-top: 24px;
-  border-top: 1px solid var(--bs-color-line);
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-family: var(--bs-font-mono);
-  font-size: 12px;
-  color: var(--bs-color-ink-mono);
+  margin-top: clamp(56px, 9vw, 88px); padding-top: 24px; border-top: 1px solid var(--bs-color-line);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono);
 }
 
 @media (max-width: 560px) {
-  .projects a { grid-template-columns: 1fr; gap: 6px; }
+  .figures { grid-template-columns: repeat(2, 1fr); }
+  .bar { grid-template-columns: 92px 1fr 30px; }
 }
