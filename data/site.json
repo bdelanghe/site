@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-06-21T22:46:37.002Z",
+  "generatedAt": "2026-06-21T22:58:50.565Z",
   "owner": {
     "login": "bdelanghe",
     "name": "Robert DeLanghe"
   },
   "stats": {
-    "repos": 114,
-    "public": 59,
+    "repos": 115,
+    "public": 60,
     "private": 55,
-    "sources": 105,
+    "sources": 106,
     "forks": 9,
-    "tagged": 1,
+    "tagged": 48,
     "languages": [
       {
         "name": "TypeScript",
@@ -41,12 +41,12 @@
         "count": 8
       },
       {
-        "name": "Nix",
+        "name": "JavaScript",
         "count": 4
       },
       {
-        "name": "JavaScript",
-        "count": 3
+        "name": "Nix",
+        "count": 4
       },
       {
         "name": "Go Template",
@@ -71,7 +71,75 @@
     ],
     "topics": [
       {
+        "name": "developer-tools",
+        "count": 11
+      },
+      {
+        "name": "experiment",
+        "count": 10
+      },
+      {
+        "name": "capability-security",
+        "count": 10
+      },
+      {
+        "name": "web",
+        "count": 9
+      },
+      {
+        "name": "ai",
+        "count": 8
+      },
+      {
+        "name": "learning",
+        "count": 7
+      },
+      {
+        "name": "game",
+        "count": 7
+      },
+      {
+        "name": "algorithms",
+        "count": 6
+      },
+      {
+        "name": "library",
+        "count": 6
+      },
+      {
+        "name": "cli",
+        "count": 5
+      },
+      {
+        "name": "infrastructure",
+        "count": 5
+      },
+      {
+        "name": "agent-infra",
+        "count": 4
+      },
+      {
+        "name": "design-tokens",
+        "count": 3
+      },
+      {
+        "name": "data-viz",
+        "count": 2
+      },
+      {
+        "name": "nix",
+        "count": 2
+      },
+      {
         "name": "profile-readme",
+        "count": 1
+      },
+      {
+        "name": "state-machines",
+        "count": 1
+      },
+      {
+        "name": "github-actions",
         "count": 1
       }
     ]
@@ -85,7 +153,11 @@
       "language": "TypeScript",
       "stars": 1,
       "pinned": true,
-      "topics": []
+      "topics": [
+        "agent-infra",
+        "capability-security",
+        "cli"
+      ]
     },
     {
       "name": "guest-room",
@@ -95,7 +167,11 @@
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
-      "topics": []
+      "topics": [
+        "agent-infra",
+        "capability-security",
+        "library"
+      ]
     },
     {
       "name": "synoptic-github",
@@ -105,7 +181,10 @@
       "language": "Shell",
       "stars": 0,
       "pinned": true,
-      "topics": []
+      "topics": [
+        "developer-tools",
+        "github-actions"
+      ]
     },
     {
       "name": "first-pass",
@@ -115,7 +194,11 @@
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
-      "topics": []
+      "topics": [
+        "ai",
+        "cli",
+        "developer-tools"
+      ]
     },
     {
       "name": "ssh-doctor",
@@ -125,17 +208,36 @@
       "language": "Shell",
       "stars": 1,
       "pinned": false,
-      "topics": []
+      "topics": [
+        "cli",
+        "developer-tools"
+      ]
     },
     {
       "name": "site",
-      "fullName": "bounded-systems/site",
-      "url": "https://github.com/bounded-systems/site",
-      "description": "The bounded.tools website — static, built on @bounded-systems/brand",
-      "language": "HTML",
+      "fullName": "bdelanghe/site",
+      "url": "https://github.com/bdelanghe/site",
+      "description": "robertdelanghe.dev — software-engineering portfolio (synoptic v2)",
+      "language": "JavaScript",
       "stars": 0,
       "pinned": false,
-      "topics": []
+      "topics": [
+        "design-tokens",
+        "web"
+      ]
+    },
+    {
+      "name": "gh-project-room",
+      "fullName": "bounded-systems/gh-project-room",
+      "url": "https://github.com/bounded-systems/gh-project-room",
+      "description": "Front Desk projection + sync room for bounded-systems (org project #2)",
+      "language": "TypeScript",
+      "stars": 0,
+      "pinned": false,
+      "topics": [
+        "agent-infra",
+        "developer-tools"
+      ]
     },
     {
       "name": ".github",
@@ -148,14 +250,17 @@
       "topics": []
     },
     {
-      "name": "gh-project-room",
-      "fullName": "bounded-systems/gh-project-room",
-      "url": "https://github.com/bounded-systems/gh-project-room",
-      "description": "Front Desk projection + sync room for bounded-systems (org project #2)",
-      "language": "TypeScript",
+      "name": "site",
+      "fullName": "bounded-systems/site",
+      "url": "https://github.com/bounded-systems/site",
+      "description": "The bounded.tools website — static, built on @bounded-systems/brand",
+      "language": "HTML",
       "stars": 0,
       "pinned": false,
-      "topics": []
+      "topics": [
+        "design-tokens",
+        "web"
+      ]
     },
     {
       "name": "claude-token-tools",
@@ -165,7 +270,11 @@
       "language": "JavaScript",
       "stars": 0,
       "pinned": false,
-      "topics": []
+      "topics": [
+        "ai",
+        "developer-tools",
+        "nix"
+      ]
     },
     {
       "name": "door-peercred",
@@ -175,7 +284,10 @@
       "language": "Rust",
       "stars": 0,
       "pinned": false,
-      "topics": []
+      "topics": [
+        "capability-security",
+        "library"
+      ]
     },
     {
       "name": "door-net",
@@ -185,17 +297,10 @@
       "language": "TypeScript",
       "stars": 0,
       "pinned": false,
-      "topics": []
-    },
-    {
-      "name": "door-scout",
-      "fullName": "bounded-systems/door-scout",
-      "url": "https://github.com/bounded-systems/door-scout",
-      "description": "scoutd — the external-read capability door, as a pinned OCI image (extracted from claude-box)",
-      "language": "TypeScript",
-      "stars": 0,
-      "pinned": false,
-      "topics": []
+      "topics": [
+        "capability-security",
+        "infrastructure"
+      ]
     }
   ]
 }
