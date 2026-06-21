@@ -1,0 +1,13 @@
+{
+  "_source": "Curated from a saved LinkedIn webarchive (2026-06). NOT live-fetched — this file is the contract (content tokens / slugs for copy). Edit here; the site renders from these slugs.",
+  "name": "Robert DeLanghe",
+  "role": "Software Engineer",
+  "place": "Brooklyn · Aura · Recurse Center · Bennington",
+  "headline": "I build the security layer for agentic systems.",
+  "summary": "The machinery that lets software be delivered by agents but governed like infrastructure — capability-based security where every privileged effect is verified against a signed owner. The harder problem, keeping many agent-authored components honest as they evolve, is prx and the bounded-systems libraries.",
+  "links": [
+    { "label": "GitHub", "href": "https://github.com/bdelanghe" },
+    { "label": "bounded.tools", "href": "https://bounded.tools" },
+    { "label": "cv@robertdelanghe.com", "href": "mailto:cv@robertdelanghe.com" }
+  ]
+}

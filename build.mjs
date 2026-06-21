@@ -19,6 +19,13 @@ const site = JSON.parse(await readFile(join(root, "data", "site.json"), "utf8"))
 for (const k of ["generatedAt", "owner", "stats", "highlights"]) {
   if (!(k in site)) { console.error(`✗ site.json violates contract: missing ${k}`); process.exit(1); }
 }
+const profile = JSON.parse(await readFile(join(root, "data", "profile.json"), "utf8"));
+for (const k of ["name", "role", "headline", "summary", "links"]) {
+  if (!(k in profile)) { console.error(`✗ profile.json violates contract: missing ${k}`); process.exit(1); }
+}
+const linksHtml = profile.links
+  .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
+  .join("\n        ");
 
 const { stats, highlights } = site;
 const langTotal = stats.languages.reduce((n, l) => n + l.count, 0) || 1;
@@ -65,15 +72,12 @@ const html = `<!doctype html>
 <body>
   <main class="wrap">
     <header class="intro">
-      <p class="bs-text-label eyebrow">Robert&nbsp;DeLanghe&nbsp;&nbsp;&middot;&nbsp;&nbsp;Software&nbsp;Engineer</p>
-      <h1>I build agent infrastructure and capability-security systems.</h1>
-      <p class="lead">Durable agents with <strong>bounded authority</strong>, privileged effects that are
-        <strong>signed and attributable</strong>, and contracts enforced as <strong>build failures</strong> —
-        plus a long tail of smaller experiments. Brooklyn · Aura&nbsp;Frames · Recurse&nbsp;Center.</p>
+      <p class="bs-text-label eyebrow">${esc(profile.name)}&nbsp;&nbsp;&middot;&nbsp;&nbsp;${esc(profile.role)}</p>
+      <h1>${esc(profile.headline)}</h1>
+      <p class="lead">${esc(profile.summary)}</p>
+      ${profile.place ? `<p class="place">${esc(profile.place)}</p>` : ""}
       <nav class="links">
-        <a href="https://github.com/bdelanghe">GitHub&nbsp;&#8599;</a>
-        <a href="https://bounded.tools">bounded.tools&nbsp;&#8599;</a>
-        <a href="mailto:hello@robertdelanghe.dev">Email</a>
+        ${linksHtml}
       </nav>
     </header>
 
