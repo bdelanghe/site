@@ -26,17 +26,17 @@ nix build .#site # hermetic build → ./result (nodejs + brand pinned by flake.l
 
 ## Deploy
 
-Hosted on **Cloudflare Workers** (static assets). Deploy is a hermetic Nix build
-run from GitHub Actions (`.github/workflows/deploy.yml`): `nix build .#site` on every
-push/PR, `wrangler deploy` on `main`. `wrangler` comes from nixpkgs (pinned by
-`flake.lock`), so the deployed bytes are reproducible.
+Hosted on **Cloudflare Workers** (static assets), deployed by **Cloudflare Workers
+Builds** connected to this repo: on every push to `main` it runs `npm run build`
+(which runs the brand token-drift check first) then `npx wrangler deploy`. No secret
+to manage — Builds uses its own token. The worker is named **`site`**; `wrangler.jsonc`
+must match it (a Worker can't be renamed — delete + recreate if you ever want a
+different name). Add the custom domain `robertdelanghe.dev` in the Worker's
+Settings → Domains & Routes; DNS is already in Cloudflare.
 
-Requires repo secret **`CLOUDFLARE_API_TOKEN`** (an "Edit Cloudflare Workers"
-token). After the first deploy, add the custom domain `robertdelanghe.dev` to the
-Worker (Settings → Domains & Routes); DNS is already in Cloudflare.
-
-> This is a **personal-account** repo, so it uses its **own** repo secret — the
-> `bounded-systems` org secret does not apply here.
+`.github/workflows/refresh.yml` refreshes `data/site.json` weekly (commit → Builds
+redeploys), so the corpus stays current. `flake.nix` still gives a hermetic local
+build (`nix build .#site`) for reproducible verification.
 
 When bumping the brand, update both the submodule and `nix flake update brand`.
 
