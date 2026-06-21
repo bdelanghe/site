@@ -17,9 +17,9 @@ const PINS = [
   "bounded-systems/prx",
   "bounded-systems/guest-room",
   "bounded-systems/claude-box",
-  "bdelanghe/synoptic-github",
-  "bdelanghe/present-me",
-  "bdelanghe/first-pass",
+  "bounded-systems/door-kit",
+  "bdelanghe/dev-contracts-spec",
+  "bdelanghe/bdelanghe-claude-skills",
 ];
 const MAX_HIGHLIGHTS = 12;
 

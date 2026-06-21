@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-21T22:58:50.565Z",
+  "generatedAt": "2026-06-21T23:10:39.695Z",
   "owner": {
     "login": "bdelanghe",
     "name": "Robert DeLanghe"
@@ -174,29 +174,41 @@
       ]
     },
     {
-      "name": "synoptic-github",
-      "fullName": "bdelanghe/synoptic-github",
-      "url": "https://github.com/bdelanghe/synoptic-github",
-      "description": " A dynamic template that auto-updates your README to showcase all your GitHub projects, offering a concise overview of your coding journey 🌟✨",
-      "language": "Shell",
-      "stars": 0,
-      "pinned": true,
-      "topics": [
-        "developer-tools",
-        "github-actions"
-      ]
-    },
-    {
-      "name": "first-pass",
-      "fullName": "bdelanghe/first-pass",
-      "url": "https://github.com/bdelanghe/first-pass",
-      "description": "A CLI tool that enhances your resume creation, aligns skills with job descriptions, and guides in building evidence-backed points 🚀📝",
+      "name": "door-kit",
+      "fullName": "bounded-systems/door-kit",
+      "url": "https://github.com/bounded-systems/door-kit",
+      "description": "In-box door-client SDK for claude-box's capability doors (keeper/scout/concierge/spawn), over the guest-room protocol",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
       "topics": [
+        "capability-security",
+        "library"
+      ]
+    },
+    {
+      "name": "dev-contracts-spec",
+      "fullName": "bdelanghe/dev-contracts-spec",
+      "url": "https://github.com/bdelanghe/dev-contracts-spec",
+      "description": "Zod schemas and types for dev-contracts",
+      "language": "TypeScript",
+      "stars": 0,
+      "pinned": true,
+      "topics": [
+        "developer-tools",
+        "library"
+      ]
+    },
+    {
+      "name": "bdelanghe-claude-skills",
+      "fullName": "bdelanghe/bdelanghe-claude-skills",
+      "url": "https://github.com/bdelanghe/bdelanghe-claude-skills",
+      "description": "Claude Code skills and plugins for AI-assisted engineering workflows",
+      "language": null,
+      "stars": 0,
+      "pinned": true,
+      "topics": [
         "ai",
-        "cli",
         "developer-tools"
       ]
     },
@@ -214,11 +226,34 @@
       ]
     },
     {
+      "name": ".github",
+      "fullName": "bounded-systems/.github",
+      "url": "https://github.com/bounded-systems/.github",
+      "description": "Org-level defaults and the public profile README for bounded-systems.",
+      "language": "Shell",
+      "stars": 0,
+      "pinned": false,
+      "topics": []
+    },
+    {
       "name": "site",
       "fullName": "bdelanghe/site",
       "url": "https://github.com/bdelanghe/site",
       "description": "robertdelanghe.dev — software-engineering portfolio (synoptic v2)",
       "language": "JavaScript",
+      "stars": 0,
+      "pinned": false,
+      "topics": [
+        "design-tokens",
+        "web"
+      ]
+    },
+    {
+      "name": "site",
+      "fullName": "bounded-systems/site",
+      "url": "https://github.com/bounded-systems/site",
+      "description": "The bounded.tools website — static, built on @bounded-systems/brand",
+      "language": "HTML",
       "stars": 0,
       "pinned": false,
       "topics": [
@@ -237,29 +272,6 @@
       "topics": [
         "agent-infra",
         "developer-tools"
-      ]
-    },
-    {
-      "name": ".github",
-      "fullName": "bounded-systems/.github",
-      "url": "https://github.com/bounded-systems/.github",
-      "description": "Org-level defaults and the public profile README for bounded-systems.",
-      "language": "Shell",
-      "stars": 0,
-      "pinned": false,
-      "topics": []
-    },
-    {
-      "name": "site",
-      "fullName": "bounded-systems/site",
-      "url": "https://github.com/bounded-systems/site",
-      "description": "The bounded.tools website — static, built on @bounded-systems/brand",
-      "language": "HTML",
-      "stars": 0,
-      "pinned": false,
-      "topics": [
-        "design-tokens",
-        "web"
       ]
     },
     {
@@ -287,19 +299,6 @@
       "topics": [
         "capability-security",
         "library"
-      ]
-    },
-    {
-      "name": "door-net",
-      "fullName": "bounded-systems/door-net",
-      "url": "https://github.com/bounded-systems/door-net",
-      "description": "netd — the allowlist-egress capability door, as a pinned OCI image (extracted from claude-box)",
-      "language": "TypeScript",
-      "stars": 0,
-      "pinned": false,
-      "topics": [
-        "capability-security",
-        "infrastructure"
       ]
     }
   ]
