@@ -12,6 +12,34 @@
     "place": { "type": "string" },
     "headline": { "type": "string", "description": "hero h1 — one line" },
     "summary": { "type": "string", "description": "hero lead paragraph" },
+    "experience": {
+      "type": "array",
+      "description": "Roles, newest first. Curated from a saved source, not live.",
+      "items": {
+        "type": "object",
+        "required": ["org", "when", "what"],
+        "additionalProperties": false,
+        "properties": {
+          "org": { "type": "string" },
+          "role": { "type": "string" },
+          "when": { "type": "string" },
+          "what": { "type": "string" }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["org", "when", "what"],
+        "additionalProperties": false,
+        "properties": {
+          "org": { "type": "string" },
+          "when": { "type": "string" },
+          "what": { "type": "string" }
+        }
+      }
+    },
     "links": {
       "type": "array",
       "minItems": 1,

@@ -16,6 +16,17 @@
 .lead { font-size: 18px; line-height: 1.6; color: var(--bs-color-ink-soft); margin: 0 0 26px; max-width: 58ch; }
 .lead strong { color: var(--bs-color-forest); font-weight: 600; }
 .place { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: -10px 0 24px; }
+
+/* background: experience + education */
+.bg { margin-top: clamp(56px, 9vw, 88px); }
+.bg__sub { margin: 26px 0 14px; color: var(--bs-color-ink-mono); }
+.entries { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.entry { display: grid; grid-template-columns: 130px 1fr; gap: 20px; }
+.entry__when { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); padding-top: 2px; }
+.entry__org { font-weight: 600; color: var(--bs-color-ink); }
+.entry__role { font-weight: 400; color: var(--bs-color-ink-soft); }
+.entry__what { display: block; font-size: 15px; line-height: 1.55; color: var(--bs-color-ink-soft); margin-top: 4px; }
+@media (max-width: 560px) { .entry { grid-template-columns: 1fr; gap: 4px; } }
 .links { display: flex; flex-wrap: wrap; gap: 22px; }
 .links a {
   font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-forest);

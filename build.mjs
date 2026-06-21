@@ -27,6 +27,21 @@ const linksHtml = profile.links
   .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
   .join("\n        ");
 
+const entry = (e) =>
+  `<li class="entry"><span class="entry__when">${esc(e.when)}</span><span class="entry__body">` +
+  `<span class="entry__org">${esc(e.org)}${e.role ? ` · <span class="entry__role">${esc(e.role)}</span>` : ""}</span>` +
+  `<span class="entry__what">${esc(e.what)}</span></span></li>`;
+const exp = profile.experience ?? [];
+const edu = profile.education ?? [];
+const backgroundHtml =
+  exp.length || edu.length
+    ? `<section class="bg">
+      <h2 class="bs-text-label eyebrow">Background</h2>
+      ${exp.length ? `<ul class="entries">\n        ${exp.map(entry).join("\n        ")}\n      </ul>` : ""}
+      ${edu.length ? `<p class="bg__sub bs-text-label">Education</p>\n      <ul class="entries">\n        ${edu.map(entry).join("\n        ")}\n      </ul>` : ""}
+    </section>`
+    : "";
+
 const { stats, highlights } = site;
 const langTotal = stats.languages.reduce((n, l) => n + l.count, 0) || 1;
 const date = new Date(site.generatedAt).toISOString().slice(0, 10);
@@ -80,6 +95,8 @@ const html = `<!doctype html>
         ${linksHtml}
       </nav>
     </header>
+
+    ${backgroundHtml}
 
     <section class="corpus">
       <h2 class="bs-text-label eyebrow">The corpus</h2>
