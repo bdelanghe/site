@@ -67,8 +67,9 @@ const stats = {
   topics,
 };
 
-// Curate: public, non-fork, non-archived, with a description.
-const eligible = repos.filter((r) => !r.private && !r.fork && !r.archived && r.description);
+// Curate: public, non-fork, non-archived, non-meta, with a description.
+const isMeta = (r) => r.name === ".github" || r.full_name === "bdelanghe/bdelanghe";
+const eligible = repos.filter((r) => !r.private && !r.fork && !r.archived && !isMeta(r) && r.description);
 const pinRank = new Map(PINS.map((n, i) => [n, i]));
 const curated = eligible
   .sort((a, b) => {
@@ -104,3 +105,11 @@ if (!site.highlights.length) throw new Error("contract: no highlights");
 await mkdir(join(here, "data"), { recursive: true });
 await writeFile(join(here, "data", "site.json"), JSON.stringify(site, null, 2) + "\n");
 console.log(`✓ data/site.json — ${stats.repos} repos (${stats.public} public), ${curated.length} highlights, ${languages.length} languages`);
+
+// Maintenance signal: public, non-fork, non-archived, non-meta repos still missing
+// topics or a description. Drift made visible so it can be fixed, not silently rot.
+const hygiene = publicSources.filter((r) => !r.archived && !isMeta(r));
+const noTopics = hygiene.filter((r) => topicsOf(r).length === 0).map((r) => r.full_name);
+const noDesc = hygiene.filter((r) => !r.description).map((r) => r.full_name);
+if (noTopics.length) console.warn(`⚠ untagged (${noTopics.length}): ${noTopics.join(", ")}`);
+if (noDesc.length) console.warn(`⚠ no description (${noDesc.length}): ${noDesc.join(", ")}`);
