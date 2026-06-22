@@ -4,7 +4,7 @@
   "role": "Senior Software Engineer",
   "place": "Brooklyn · Aura · Recurse Center · Bennington",
   "headline": "I build the security layer for agentic systems.",
-  "summary": "The machinery that lets software be delivered by agents but governed like infrastructure — capability-based security where every privileged effect is verified against a signed owner. The harder problem, keeping many agent-authored components honest as they evolve, is prx and the bounded-systems libraries.",
+  "summary": "At Aura I shipped it: a contract-and-validation layer where every privileged effect is verified against a signed owner-role enforced in CI, not against individuals — agent-authored changes delivered like software, governed like infrastructure. The harder problem, keeping many agent-authored components honest as they evolve, I'm working in the open in prx and the bounded-systems libraries.",
   "proof": [
     { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
     { "label": "guest-room", "href": "https://github.com/bounded-systems/guest-room" },
