@@ -335,6 +335,8 @@ await writeFile(join(dist, "blog.html"), blogHtml);
 await mkdir(join(dist, "blog"), { recursive: true });
 for (const p of posts) {
   const url = SITE + postUrl(p);
+  // Per-article social card (og:image) if one's been generated; else the brand default.
+  const ogImage = (await exists(join(root, "assets", "cards", `${p.slug}.png`))) ? `/assets/cards/${p.slug}.png` : OG_IMAGE;
   const ld = {
     "@context": "https://schema.org", "@type": "BlogPosting",
     headline: p.meta.title, datePublished: p.meta.date, description: p.meta.description,
@@ -349,7 +351,7 @@ for (const p of posts) {
   const ph = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${p.meta.title} — ${profile.name}`, ogTitle: p.meta.title, ogType: "article", description: p.meta.description, path: postUrl(p) })}
+${head({ title: `${p.meta.title} — ${profile.name}`, ogTitle: p.meta.title, ogType: "article", description: p.meta.description, path: postUrl(p), ogImage })}
   <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>
 </head>
 <body>
@@ -411,6 +413,7 @@ await writeFile(join(dist, "feed.json"), JSON.stringify(jsonFeed, null, 2) + "\n
 await cp(join(root, "styles.css"), join(dist, "styles.css"));
 await cp(join(root, "assets/logo.svg"), join(dist, "assets/logo.svg"));
 await cp(join(root, "assets/og.png"), join(dist, "assets/og.png"));
+if (await exists(join(root, "assets", "cards"))) await cp(join(root, "assets", "cards"), join(dist, "assets", "cards"), { recursive: true });
 await mkdir(join(dist, "brand"), { recursive: true });
 for (const p of ["tokens/tokens.css", "css", "lockup", "mark", "favicon-32.png"]) {
   await cp(join(brand, p), join(dist, "brand", p), { recursive: true });
