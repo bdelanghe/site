@@ -27,6 +27,10 @@ const linksHtml = profile.links
   .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
   .join("\n        ");
 
+const proofHtml = profile.proof?.length
+  ? `<p class="proof">Proof — ${profile.proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
+  : "";
+
 const entry = (e) =>
   `<li class="entry"><span class="entry__when">${esc(e.when)}</span><span class="entry__body">` +
   `<span class="entry__org">${esc(e.org)}${e.role ? ` · <span class="entry__role">${esc(e.role)}</span>` : ""}</span>` +
@@ -100,6 +104,7 @@ const html = `<!doctype html>
       <p class="bs-text-label eyebrow">${esc(profile.name)}&nbsp;&nbsp;&middot;&nbsp;&nbsp;${esc(profile.role)}</p>
       <h1>${esc(profile.headline)}</h1>
       <p class="lead">${esc(profile.summary)}</p>
+      ${proofHtml}
       ${profile.place ? `<p class="place">${esc(profile.place)}</p>` : ""}
       <nav class="links">
         ${linksHtml}

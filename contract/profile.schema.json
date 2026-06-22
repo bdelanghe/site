@@ -30,6 +30,16 @@
       }
     },
     "skills": { "type": "array", "items": { "type": "string" }, "description": "Skill keywords for the résumé." },
+    "proof": {
+      "type": "array",
+      "description": "Claim → evidence: repos/links that back the hero claims.",
+      "items": {
+        "type": "object",
+        "required": ["label", "href"],
+        "additionalProperties": false,
+        "properties": { "label": { "type": "string" }, "href": { "type": "string" } }
+      }
+    },
     "education": {
       "type": "array",
       "items": {
