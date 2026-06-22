@@ -10,6 +10,15 @@
     "name": { "type": "string" },
     "role": { "type": "string" },
     "place": { "type": "string" },
+    "banner": {
+      "type": "object",
+      "description": "Profile banner content tokens — the strings the generated header SVG renders (banner.mjs). Colors come from brand design tokens, not here.",
+      "additionalProperties": false,
+      "properties": {
+        "tagline": { "type": "string", "description": "banner subtitle — one line under the name" },
+        "stack": { "type": "array", "items": { "type": "string" }, "description": "small-caps tech list rendered under the tagline" }
+      }
+    },
     "headline": { "type": "string", "description": "hero h1 — one line" },
     "intro": { "type": "string", "description": "hero — short first-person bio line, sits between headline and summary" },
     "summary": { "type": "string", "description": "hero lead paragraph" },
