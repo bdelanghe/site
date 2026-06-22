@@ -11,7 +11,7 @@
 // point at the field to edit. Four axes: claim integrity, thesis coherence,
 // voice, clarity. Returns structured findings by severity (blocker/suggestion/nit).
 //
-// Usage:  node copy-review.mjs            report-only (exit 0)
+// Usage:  node copy-review.mjs            report-only (exit 0)  [npm run check:copy]
 //         node copy-review.mjs --strict   exit 1 on any blocker-severity finding
 //
 // Auth: reads ANTHROPIC_API_KEY from the environment. If it's unset (e.g. a fork
