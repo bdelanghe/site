@@ -18,6 +18,10 @@
 // PR with no access to secrets), the review is SKIPPED cleanly (exit 0) — it
 // never blocks a contributor who can't run it.
 //
+// In CI the key must live in the repo's *Actions* secret store
+// (Settings → Secrets and variables → Actions) — the Codespaces, Dependabot,
+// and Copilot-agent stores are separate and Actions workflows cannot read them.
+//
 // Dependency-free: Node builtins + global fetch (same as fetch.mjs). One call to
 // the Anthropic Messages API; nothing is written.
 import { readFile } from "node:fs/promises";
