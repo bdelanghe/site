@@ -40,6 +40,19 @@
         }
       }
     },
+    "seeking": {
+      "type": "object",
+      "description": "Job-search callout: what roles you're open to.",
+      "required": ["focus"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "focus": { "type": "string" },
+        "detail": { "type": "string" },
+        "cta": { "type": "string" },
+        "href": { "type": "string" }
+      }
+    },
     "links": {
       "type": "array",
       "minItems": 1,

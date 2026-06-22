@@ -42,6 +42,16 @@ const backgroundHtml =
     </section>`
     : "";
 
+const s = profile.seeking;
+const seekingHtml = s
+  ? `<section class="seeking">
+      ${s.label ? `<p class="bs-text-label seeking__label">${esc(s.label)}</p>` : ""}
+      <p class="seeking__focus">${esc(s.focus)}</p>
+      ${s.detail ? `<p class="seeking__detail">${esc(s.detail)}</p>` : ""}
+      ${s.href ? `<a class="seeking__cta" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>` : ""}
+    </section>`
+  : "";
+
 const { stats, highlights } = site;
 const langTotal = stats.languages.reduce((n, l) => n + l.count, 0) || 1;
 const date = new Date(site.generatedAt).toISOString().slice(0, 10);
@@ -95,6 +105,8 @@ const html = `<!doctype html>
         ${linksHtml}
       </nav>
     </header>
+
+    ${seekingHtml}
 
     ${backgroundHtml}
 

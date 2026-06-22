@@ -13,6 +13,13 @@
   "education": [
     { "org": "Bennington College", "when": "2009 — 2012", "what": "Computational & parametric design — algorithmic design for digital fabrication." }
   ],
+  "seeking": {
+    "label": "Open to new roles",
+    "focus": "Capability security · agent infrastructure · platform engineering",
+    "detail": "Senior / staff engineering where correctness, security, and provenance matter. Brooklyn · NYC · remote.",
+    "cta": "Get in touch",
+    "href": "mailto:cv@robertdelanghe.com"
+  },
   "links": [
     { "label": "GitHub", "href": "https://github.com/bdelanghe" },
     { "label": "bounded.tools", "href": "https://bounded.tools" },

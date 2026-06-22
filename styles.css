@@ -27,6 +27,14 @@
 .entry__role { font-weight: 400; color: var(--bs-color-ink-soft); }
 .entry__what { display: block; font-size: 15px; line-height: 1.55; color: var(--bs-color-ink-soft); margin-top: 4px; }
 @media (max-width: 560px) { .entry { grid-template-columns: 1fr; gap: 4px; } }
+
+/* seeking callout */
+.seeking { margin-top: clamp(40px, 7vw, 64px); background: var(--bs-color-forest); border-radius: var(--bs-radius-lg); padding: 28px 32px; }
+.seeking__label { color: rgba(255, 255, 255, 0.6); margin: 0 0 10px; }
+.seeking__focus { font-family: var(--bs-font-display); font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: #fff; margin: 0 0 8px; }
+.seeking__detail { font-size: 15px; line-height: 1.55; color: rgba(255, 255, 255, 0.82); margin: 0 0 16px; max-width: 60ch; }
+.seeking__cta { font-family: var(--bs-font-mono); font-size: 13px; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, 0.4); padding-bottom: 2px; }
+.seeking__cta:hover { border-color: #fff; }
 .links { display: flex; flex-wrap: wrap; gap: 22px; }
 .links a {
   font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-forest);
