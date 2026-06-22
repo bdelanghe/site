@@ -14,7 +14,7 @@
   "experience": [
     {
       "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 — present", "where": "New York · Hybrid",
-      "what": "On the Commerce team — which builds the website, commerce-routing, and business-operations systems — I architected the contract-and-validation layer behind inventory-purchasing: one source of truth, CI drift-gated across 130+ components, delivered as agent-authored PRs.",
+      "what": "I architected the contract-and-validation layer behind inventory-purchasing — one source of truth, CI drift-gated across 130+ components, delivered as agent-authored PRs — on Commerce, the team behind Aura's website, commerce-routing, and business-operations systems.",
       "bullets": [
         "Architected the contract-and-validation layer replacing Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing): a compile-and-publish model where one source of truth generates every downstream surface — schemas, docs, tests, agent context — CI drift-gated so nothing falls out of sync.",
         "Made the pipeline auditable by construction across 130+ components — provenance and contract checks gating every output, sign-off bound to an owner-role enforced in CI rather than to individuals.",
@@ -23,28 +23,24 @@
     },
     {
       "org": "L2L", "role": "Software Engineer", "when": "Apr 2021 — Sep 2023", "where": "New York · Remote",
-      "what": "Front-end & developer experience: a design system (−30% task lead time), static-analysis PR gating (−20% critical bugs), and perf work (−95% page loads).",
+      "what": "Built the quality gates and developer experience for a 20-engineer team — static-analysis PR gating that blocked defects before merge, on top of design-system and performance work.",
       "bullets": [
         "Built static-analysis gating into the PR pipeline — blocking defects before merge, cutting critical bugs ~20% and high-priority issues ~25% across a 20-engineer team.",
-        "Led a Design System rollout with Design & Product — reducing task lead time ~30% (Vue, Figma, Sass, design tokens).",
-        "Re-engineered pagination/infinite-scroll in a key component library — page loads from ~30s to near-instant (~95% faster).",
-        "Built a flexible dashboard framework — shortening widget development from a week to a day (~70% faster)."
+        "Shipped the frontend platform behind it — a design system (−30% task lead time), a dashboard framework (widget builds a week → a day), and pagination/perf work (page loads ~30s → near-instant)."
       ]
     },
     {
       "org": "Pioneer Works · Kaleida Studio · The Prepared", "role": "Software Engineer (Contract)", "when": "2018 — 2021", "where": "Brooklyn / Remote",
       "what": "Built CRMs, ETL pipelines, and production-automation systems for arts & media orgs — APIs, data, and workflow tooling.",
       "bullets": [
-        "Designed and shipped a unified CRM + Square-API ETL — cut payment-tracking ~80% and enabled profit-loss reporting across 200+ events (Pioneer Works).",
-        "Automated just-in-time production and notifications — eliminated edition-numbering errors and cut shipping lead times from 7 days to 2 (Kaleida Studio).",
-        "Built a content pipeline + Airtable schema that cut curation time ~70% across 1000+ articles (The Prepared)."
+        "Shipped end-to-end across three orgs — a CRM + Square-API ETL (−80% payment-tracking, P&L across 200+ events), just-in-time production automation (shipping 7 days → 2), and a content pipeline (−70% curation across 1000+ articles)."
       ]
     },
     {
       "org": "Recurse Center", "role": "Participant", "when": "Fall 2019", "where": "Brooklyn",
-      "what": "Studied type theory in Haskell — making invalid states unrepresentable; the foundation for the contract/capability work now.",
+      "what": "Type theory in Haskell — using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
       "bullets": [
-        "Studied type theory in Haskell — algebraic data types, typeclasses, and using the type system to make invalid states unrepresentable."
+        "Algebraic data types, typeclasses, and type-driven design — the same instinct now applied to security seams: invalid states unrepresentable, sign-off un-forgeable."
       ]
     }
   ],
