@@ -94,9 +94,9 @@ const html = `<!doctype html>
   <meta property="og:url" content="https://robertdelanghe.dev/">
   <meta property="og:title" content="Robert DeLanghe — Software Engineer">
   <meta property="og:description" content="Building agent infrastructure and capability-security systems — mostly in the open.">
-  <meta property="og:image" content="https://robertdelanghe.dev/brand/avatar/avatar-forest-1024.png">
+  <meta property="og:image" content="https://robertdelanghe.dev/assets/og.png">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:image" content="https://robertdelanghe.dev/brand/avatar/avatar-forest-1024.png">
+  <meta name="twitter:image" content="https://robertdelanghe.dev/assets/og.png">
   <link rel="stylesheet" href="brand/css/fonts.css">
   <link rel="stylesheet" href="brand/tokens/tokens.css">
   <link rel="stylesheet" href="brand/css/base.css">
@@ -250,8 +250,9 @@ await writeFile(join(dist, "blog.html"), blogHtml);
 
 await cp(join(root, "styles.css"), join(dist, "styles.css"));
 await cp(join(root, "assets/logo.svg"), join(dist, "assets/logo.svg"));
+await cp(join(root, "assets/og.png"), join(dist, "assets/og.png"));
 await mkdir(join(dist, "brand"), { recursive: true });
-for (const p of ["tokens/tokens.css", "css", "avatar/avatar-forest-1024.png"]) {
+for (const p of ["tokens/tokens.css", "css"]) {
   await cp(join(brand, p), join(dist, "brand", p), { recursive: true });
 }
 console.log(`✓ built dist/  — ${highlights.length} highlights, ${stats.languages.length} languages`);
