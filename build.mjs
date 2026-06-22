@@ -208,6 +208,7 @@ const resumeHtml = `<!doctype html>
 </html>
 `;
 await writeFile(join(dist, "resume.html"), resumeHtml);
+await cp(join(root, "404.html"), join(dist, "404.html"));
 
 // ---- /blog (placeholder until posts land; subdomain later) --------------------
 const blogHtml = `<!doctype html>
