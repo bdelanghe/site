@@ -145,6 +145,62 @@ const html = `<!doctype html>
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 await writeFile(join(dist, "index.html"), html);
+
+// ---- résumé: print-optimized static artifact from the same contract ----------
+const rLinks = profile.links.filter((l) => l.href !== "/resume").map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" · ");
+const rExp = (profile.experience ?? []).map((e) => `
+      <div class="r-job">
+        <div class="r-job__head"><span class="r-job__org">${esc(e.org)}</span><span class="r-job__when">${esc(e.when)}</span></div>
+        <div class="r-job__role">${esc([e.role, e.where].filter(Boolean).join(" · "))}</div>
+        <ul>${(e.bullets ?? (e.what ? [e.what] : [])).map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
+      </div>`).join("");
+const rEdu = (profile.education ?? []).map((e) => `
+      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${esc(e.org)}</span><span class="r-job__when">${esc(e.when)}</span></div><div class="r-edu">${esc(e.what)}</div></div>`).join("");
+const rSkills = (profile.skills ?? []).map(esc).join(" · ");
+const resumeHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(profile.name)} — Résumé</title>
+<link rel="stylesheet" href="/brand/css/fonts.css">
+<link rel="stylesheet" href="/brand/tokens/tokens.css">
+<style>
+  @page { margin: 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: var(--bs-font-display); color: #1a1a1a; max-width: 760px; margin: 28px auto; padding: 0 24px; font-size: 13px; line-height: 1.5; }
+  a { color: var(--bs-color-forest); text-decoration: none; }
+  h1 { font-size: 26px; letter-spacing: -0.02em; margin: 0; }
+  .r-title { font-size: 14px; color: var(--bs-color-forest); font-weight: 600; margin: 4px 0 6px; }
+  .r-contact { font-family: var(--bs-font-mono); font-size: 11px; color: #555; margin: 0 0 14px; }
+  .r-summary { margin: 0 0 16px; }
+  h2 { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bs-color-forest); border-bottom: 1px solid #e2e2e2; padding-bottom: 4px; margin: 18px 0 10px; }
+  .r-skills { font-size: 12px; color: #333; }
+  .r-job { margin: 0 0 12px; break-inside: avoid; }
+  .r-job__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .r-job__org { font-weight: 600; font-size: 14px; }
+  .r-job__when { font-family: var(--bs-font-mono); font-size: 11px; color: #666; white-space: nowrap; }
+  .r-job__role { font-size: 12px; color: var(--bs-color-forest); margin-bottom: 4px; }
+  .r-job ul { margin: 4px 0 0; padding-left: 16px; }
+  .r-job li { margin: 0 0 3px; }
+  .r-edu { font-size: 12px; color: #333; }
+  @media print { body { margin: 0; } a { color: #1a1a1a; } }
+</style>
+</head>
+<body>
+  <header>
+    <h1>${esc(profile.name)}</h1>
+    <p class="r-title">${esc(profile.role)}${profile.headline ? ` — ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
+    <p class="r-contact">${profile.place ? esc(profile.place) + " · " : ""}${rLinks}</p>
+  </header>
+  <p class="r-summary">${esc(profile.summary)}</p>
+  ${rSkills ? `<h2>Skills</h2><p class="r-skills">${rSkills}</p>` : ""}
+  <h2>Experience</h2>${rExp}
+  <h2>Education</h2>${rEdu}
+</body>
+</html>
+`;
+await writeFile(join(dist, "resume.html"), resumeHtml);
+
 await cp(join(root, "styles.css"), join(dist, "styles.css"));
 await mkdir(join(dist, "brand"), { recursive: true });
 for (const p of ["tokens/tokens.css", "css"]) {

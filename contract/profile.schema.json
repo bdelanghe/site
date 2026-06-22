@@ -23,10 +23,13 @@
           "org": { "type": "string" },
           "role": { "type": "string" },
           "when": { "type": "string" },
-          "what": { "type": "string" }
+          "where": { "type": "string" },
+          "what": { "type": "string" },
+          "bullets": { "type": "array", "items": { "type": "string" }, "description": "Detailed achievements — used by the résumé." }
         }
       }
     },
+    "skills": { "type": "array", "items": { "type": "string" }, "description": "Skill keywords for the résumé." },
     "education": {
       "type": "array",
       "items": {
