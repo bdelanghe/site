@@ -290,7 +290,10 @@ await writeFile(join(dist, "resume.html"), resumeHtml);
 await cp(join(root, "404.html"), join(dist, "404.html"));
 
 // ---- /blog: index (h-feed) + per-post pages (h-entry) from posts/*.md ---------
-const postUrl = (p) => `/blog/${p.slug}.html`;
+// Public URL is extensionless (Cloudflare serves /blog/<slug> and 307s the .html
+// form to it) — so canonical/links/feeds match the URL that actually 200s. The
+// file on disk keeps its .html name.
+const postUrl = (p) => `/blog/${p.slug}`;
 const blogIndex = posts.length
   ? `<ul class="post-list h-feed">
         ${posts.map((p) => `<li class="h-entry"><a class="u-url" href="${postUrl(p)}">
