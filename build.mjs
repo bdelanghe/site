@@ -5,6 +5,7 @@ import { rm, mkdir, cp, access, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateSchema } from "./schema-validate.mjs";
+import { loadPosts } from "./posts.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const dist = join(root, "dist");
@@ -33,6 +34,30 @@ const validateContract = async (name) => {
 };
 const site = await validateContract("site");
 const profile = await validateContract("profile");
+
+// Canonical token bag: brand content strings + profile slugs. Posts transclude
+// facts from this ({{thesis}}, {{proof.prx}}, {{email}}) instead of re-typing them;
+// an unknown token fails the build, so a claim can't cite a fact that isn't here.
+const sval = (x) => (x && typeof x === "object" && "$value" in x ? x.$value : x);
+const strings = (await exists(join(brand, "content", "strings.json"))) ? await loadJson(join(brand, "content", "strings.json")) : {};
+const tokens = {
+  org: sval(strings.name), tagline: sval(strings.tagline), thesis: sval(strings.thesis), brandDesc: sval(strings.description),
+  name: profile.name, role: profile.role, place: profile.place, headline: profile.headline,
+  email: (profile.links.find((l) => /^mailto:/i.test(l.href))?.href || "").replace(/^mailto:/i, ""),
+  proof: Object.fromEntries((profile.proof || []).map((p) => [p.label, p.href])),
+  repo: Object.fromEntries((site.highlights || []).map((h) => [h.name, h.url])),
+};
+const postSchema = await loadJson(join(root, "contract", "posts.schema.json"));
+const posts = await loadPosts(join(root, "posts"), tokens);
+for (const p of posts) {
+  const errs = validateSchema(postSchema, p.meta);
+  if (errs.length) {
+    console.error(`✗ posts/${p.slug}.md frontmatter violates contract/posts.schema.json:`);
+    for (const e of errs) console.error(`    ${e}`);
+    process.exit(1);
+  }
+}
+
 const linksHtml = profile.links
   .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
   .join("\n        ");
@@ -63,6 +88,8 @@ const head = ({ title, description, path = "/", appCss = true }) => {
   <meta name="twitter:title" content="${t}">
   <meta name="twitter:description" content="${d}">
   <meta name="twitter:image" content="${OG_IMAGE}">
+  <link rel="alternate" type="application/atom+xml" title="Robert DeLanghe — Writing" href="/feed.xml">
+  <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">
   <link rel="stylesheet" href="/brand/css/fonts.css">
   <link rel="stylesheet" href="/brand/tokens/tokens.css">${appCss ? `
   <link rel="stylesheet" href="/brand/css/base.css">
@@ -73,6 +100,10 @@ const liHref = profile.links.find((l) => /linkedin/i.test(l.href))?.href;
 const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org", "@type": "Person",
   name: profile.name, url: SITE, jobTitle: profile.role, description: profile.headline,
+  knowsAbout: profile.skills?.length ? profile.skills : undefined,
+  alumniOf: (profile.education ?? []).map((e) => ({ "@type": "Organization", name: e.org })),
+  // claim → evidence: each hero claim points at the repo that backs it.
+  subjectOf: (profile.proof ?? []).map((p) => ({ "@type": "CreativeWork", name: p.label, url: p.href })),
   sameAs: [ghHref, liHref].filter(Boolean),
 }).replace(/</g, "\\u003c")}</script>`;
 
@@ -258,7 +289,18 @@ ${head({ title: `${profile.name} — Résumé`, description: `Résumé — ${pro
 await writeFile(join(dist, "resume.html"), resumeHtml);
 await cp(join(root, "404.html"), join(dist, "404.html"));
 
-// ---- /blog (placeholder until posts land; subdomain later) --------------------
+// ---- /blog: index (h-feed) + per-post pages (h-entry) from posts/*.md ---------
+const postUrl = (p) => `/blog/${p.slug}.html`;
+const blogIndex = posts.length
+  ? `<ul class="post-list h-feed">
+        ${posts.map((p) => `<li class="h-entry"><a class="u-url" href="${postUrl(p)}">
+          <span class="post-list__date dt-published">${esc(p.meta.date)}</span>
+          <span class="post-list__title p-name">${esc(p.meta.title)}</span>
+          <span class="post-list__desc p-summary">${esc(p.meta.description)}</span>
+        </a></li>`).join("\n        ")}
+      </ul>`
+  : `<p class="lead">Notes are landing soon.</p>`;
+
 const blogHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -269,20 +311,96 @@ ${head({ title: `Writing — ${profile.name}`, description: `Writing by ${profil
     <header class="intro">
       <p class="bs-text-label eyebrow">${esc(profile.name)} &nbsp;&middot;&nbsp; Writing</p>
       <h1>Writing</h1>
-      <p class="lead">Long-form thinking on capability security for agentic systems lives at
-        <strong><a href="https://bounded.tools" style="color:var(--bs-color-forest)">bounded.tools</a></strong> —
-        the thesis, graded against the running code. More notes will land here.</p>
+      <p class="lead">On capability security for agentic systems — the thesis, graded against the running code.</p>
       <nav class="links">
         <a href="/">&larr;&nbsp;Home</a>
-        <a href="https://bounded.tools">bounded.tools&nbsp;&#8599;</a>
+        <a href="/feed.xml">RSS&nbsp;feed</a>
         <a href="https://github.com/bounded-systems">GitHub&nbsp;&#8599;</a>
       </nav>
     </header>
+    <section class="posts">
+      ${blogIndex}
+    </section>
   </main>
 </body>
 </html>
 `;
 await writeFile(join(dist, "blog.html"), blogHtml);
+
+await mkdir(join(dist, "blog"), { recursive: true });
+for (const p of posts) {
+  const url = SITE + postUrl(p);
+  const ld = {
+    "@context": "https://schema.org", "@type": "BlogPosting",
+    headline: p.meta.title, datePublished: p.meta.date, description: p.meta.description,
+    url, mainEntityOfPage: url, inLanguage: "en",
+    author: { "@type": "Person", name: profile.name, url: SITE },
+    publisher: { "@type": "Organization", name: tokens.org || profile.name },
+    keywords: (p.meta.tags || []).length ? (p.meta.tags || []).join(", ") : undefined,
+    // claim → evidence, same as the homepage Person.subjectOf.
+    citation: (profile.proof || []).map((pr) => ({ "@type": "CreativeWork", name: pr.label, url: pr.href })),
+  };
+  const tagsHtml = (p.meta.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+  const ph = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `${p.meta.title} — ${profile.name}`, description: p.meta.description, path: postUrl(p) })}
+  <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>
+</head>
+<body>
+  <main class="wrap">
+    <article class="post h-entry">
+      <header class="post__head">
+        <p class="bs-text-label eyebrow"><a href="/blog">&larr;&nbsp;Writing</a></p>
+        <h1 class="p-name">${esc(p.meta.title)}</h1>
+        <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> &nbsp;&middot;&nbsp; <a class="p-author h-card" href="${SITE}">${esc(profile.name)}</a>${tagsHtml ? ` &nbsp;&middot;&nbsp; ${tagsHtml}` : ""}</p>
+      </header>
+      <div class="post__body e-content">
+      ${p.html}
+      </div>
+    </article>
+    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span><span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a></span></footer>
+  </main>
+</body>
+</html>
+`;
+  await writeFile(join(dist, "blog", `${p.slug}.html`), ph);
+}
+
+// ---- feeds: Atom + JSON Feed, WebSub hub declared (rel=hub) for push -----------
+const HUB = "https://pubsubhubbub.appspot.com/";
+const iso = (d) => new Date(d).toISOString();
+const feedUpdated = posts[0]?.meta.date ? iso(posts[0].meta.date) : iso(site.generatedAt);
+const atom = `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>${esc(profile.name)} — Writing</title>
+  <subtitle>${esc(tokens.brandDesc || profile.headline)}</subtitle>
+  <link href="${SITE}/feed.xml" rel="self"/>
+  <link href="${HUB}" rel="hub"/>
+  <link href="${SITE}/blog"/>
+  <id>${SITE}/blog</id>
+  <updated>${feedUpdated}</updated>
+  <author><name>${esc(profile.name)}</name></author>
+${posts.map((p) => `  <entry>
+    <title>${esc(p.meta.title)}</title>
+    <link href="${SITE}${postUrl(p)}"/>
+    <id>${SITE}${postUrl(p)}</id>
+    <updated>${iso(p.meta.date)}</updated>
+    <summary>${esc(p.meta.description)}</summary>
+  </entry>`).join("\n")}
+</feed>
+`;
+await writeFile(join(dist, "feed.xml"), atom);
+const jsonFeed = {
+  version: "https://jsonfeed.org/version/1.1",
+  title: `${profile.name} — Writing`,
+  home_page_url: `${SITE}/blog`, feed_url: `${SITE}/feed.json`,
+  description: tokens.brandDesc || profile.headline,
+  hubs: [{ type: "WebSub", url: HUB }],
+  authors: [{ name: profile.name, url: SITE }],
+  items: posts.map((p) => ({ id: SITE + postUrl(p), url: SITE + postUrl(p), title: p.meta.title, summary: p.meta.description, date_published: iso(p.meta.date), tags: p.meta.tags || [] })),
+};
+await writeFile(join(dist, "feed.json"), JSON.stringify(jsonFeed, null, 2) + "\n");
 
 await cp(join(root, "styles.css"), join(dist, "styles.css"));
 await cp(join(root, "assets/logo.svg"), join(dist, "assets/logo.svg"));
@@ -305,12 +423,12 @@ ${profile.links.map((l) => `- [${l.label}](${l.href.startsWith("http") ? l.href 
 
 ## Selected work
 ${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
-`;
+${posts.length ? `\n## Writing\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}`;
 await writeFile(join(dist, "llms.txt"), llms);
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  ["/", "/resume", "/blog"].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
+  ["/", "/resume", "/blog", ...posts.map(postUrl)].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
   `\n</urlset>\n`);
 
 console.log(`✓ built dist/  — ${highlights.length} highlights, ${stats.languages.length} languages, +meta/llms.txt/sitemap`);

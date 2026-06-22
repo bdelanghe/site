@@ -101,3 +101,32 @@
   .figures { grid-template-columns: repeat(2, 1fr); }
   .bar { grid-template-columns: 92px 1fr 30px; }
 }
+
+/* ---- /blog index + posts ---------------------------------------------------- */
+.post-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+.post-list a {
+  display: grid; grid-template-columns: 110px 1fr; gap: 4px 18px; align-items: baseline;
+  padding: 14px 0; border-top: 1px solid var(--bs-color-line); text-decoration: none; color: inherit;
+}
+.post-list li:last-child a { border-bottom: 1px solid var(--bs-color-line); }
+.post-list__date { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); }
+.post-list__title { font-weight: 600; color: var(--bs-color-ink); }
+.post-list__desc { grid-column: 2; color: var(--bs-color-ink-soft); font-size: 14px; }
+.post-list a:hover .post-list__title { color: var(--bs-color-forest); }
+
+.post { max-width: 680px; }
+.post__head { margin-bottom: clamp(24px, 5vw, 40px); }
+.post__head h1 { font-size: clamp(28px, 5vw, 40px); letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 0; }
+.post__meta { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin-top: 12px; }
+.post__meta a { color: var(--bs-color-forest); text-decoration: none; }
+.post__body { font-size: 17px; line-height: 1.65; color: var(--bs-color-ink); }
+.post__body h2 { font-size: 22px; letter-spacing: -0.01em; margin: 36px 0 12px; }
+.post__body h3 { font-size: 18px; margin: 28px 0 8px; }
+.post__body p { margin: 0 0 18px; }
+.post__body a { color: var(--bs-color-forest); }
+.post__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-forest-tint); padding: 1px 5px; border-radius: 4px; }
+.post__body blockquote { margin: 0 0 18px; padding-left: 16px; border-left: 3px solid var(--bs-color-forest-soft); color: var(--bs-color-ink-soft); }
+.post__body ul { margin: 0 0 18px; padding-left: 20px; }
+.post__body li { margin: 0 0 6px; }
+.post__body hr { border: 0; border-top: 1px solid var(--bs-color-line); margin: 28px 0; }
+.post .tag { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
