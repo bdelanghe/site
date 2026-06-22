@@ -57,12 +57,12 @@
     "focus": "Capability security · agent infrastructure · platform engineering",
     "detail": "Senior / staff engineering where correctness, security, and provenance matter. Brooklyn · NYC · remote.",
     "cta": "Get in touch",
-    "href": "mailto:cv@robertdelanghe.com"
+    "href": "mailto:cv@robertdelanghe.dev"
   },
   "links": [
     { "label": "GitHub", "href": "https://github.com/bdelanghe" },
     { "label": "Résumé", "href": "/resume" },
     { "label": "bounded.tools", "href": "https://bounded.tools" },
-    { "label": "cv@robertdelanghe.com", "href": "mailto:cv@robertdelanghe.com" }
+    { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
   ]
 }
