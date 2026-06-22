@@ -11,6 +11,7 @@
     "role": { "type": "string" },
     "place": { "type": "string" },
     "headline": { "type": "string", "description": "hero h1 — one line" },
+    "intro": { "type": "string", "description": "hero — short first-person bio line, sits between headline and summary" },
     "summary": { "type": "string", "description": "hero lead paragraph" },
     "experience": {
       "type": "array",

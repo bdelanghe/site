@@ -107,6 +107,7 @@ const html = `<!doctype html>
     <header class="intro">
       <p class="bs-text-label eyebrow">${esc(profile.name)}&nbsp;&nbsp;&middot;&nbsp;&nbsp;${esc(profile.role)}</p>
       <h1>${esc(profile.headline)}</h1>
+      ${profile.intro ? `<p class="lead lead--intro">${esc(profile.intro)}</p>` : ""}
       <p class="lead">${esc(profile.summary)}</p>
       ${proofHtml}
       ${profile.place ? `<p class="place">${esc(profile.place)}</p>` : ""}
