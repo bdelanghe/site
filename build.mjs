@@ -188,7 +188,9 @@ const resumeHtml = `<!doctype html>
   .r-job ul { margin: 4px 0 0; padding-left: 16px; }
   .r-job li { margin: 0 0 3px; }
   .r-edu { font-size: 12px; color: #333; }
-  @media print { body { margin: 0; } a { color: #1a1a1a; } }
+  .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
+  .r-print:hover { border-color: var(--bs-color-forest); }
+  @media print { body { margin: 0; } a { color: #1a1a1a; } .r-print { display: none !important; } }
 </style>
 </head>
 <body>
@@ -196,6 +198,7 @@ const resumeHtml = `<!doctype html>
     <h1>${esc(profile.name)}</h1>
     <p class="r-title">${esc(profile.role)}${profile.headline ? ` — ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
     <p class="r-contact">${profile.place ? esc(profile.place) + " · " : ""}${rLinks}</p>
+    <a class="r-print" href="#" onclick="window.print();return false;">Download PDF&nbsp;&darr;</a>
   </header>
   <p class="r-summary">${esc(profile.summary)}</p>
   ${rSkills ? `<h2>Skills</h2><p class="r-skills">${rSkills}</p>` : ""}
