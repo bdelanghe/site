@@ -42,8 +42,9 @@ and deploys `site` automatically (serves robertdelanghe.dev + www).
   (hermetic Nix → `wrangler deploy`, independent of Cloudflare's Git App).
 - **Corpus refresh** — `.github/workflows/refresh.yml` weekly: re-runs `fetch.mjs`, commits
   `data/site.json` → triggers a redeploy.
-- **GitHub profile** — `bdelanghe/bdelanghe` runs [`synoptic-github@v2`](https://github.com/bdelanghe/synoptic-github)
-  daily to regenerate its README from the corpus (`render` mode; `validate`/`suggest` keep repo topics honest).
+- **GitHub profile** — `bdelanghe/bdelanghe` is a **handcrafted** README (the synoptic
+  daily auto-gen was intentionally retired). Update it by hand. `synoptic-github` remains a
+  standalone tool — `validate`/`suggest` still keep repo topics honest.
 
 ## Determinism / provenance
 
