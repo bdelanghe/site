@@ -188,7 +188,7 @@ const html = `<!doctype html>
     </section>
 
     <footer class="foot">
-      <span>Robert DeLanghe</span>
+      <span>Robert DeLanghe &middot; Bounded Systems</span>
       <span class="foot__meta">github.com/bdelanghe &middot; generated ${date}</span>
     </footer>
   </main>
