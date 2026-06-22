@@ -22,6 +22,9 @@ const PINS = [
   "bdelanghe/bdelanghe-claude-skills",
 ];
 const MAX_HIGHLIGHTS = 12;
+// Selected work is curated tight to the thesis: a repo is shown only if it's
+// pinned or carries one of these tags. Breadth still lives in the corpus stats.
+const THESIS_TAGS = ["capability-security", "agent-infra"];
 
 async function ghAll(path) {
   const out = [];
@@ -71,7 +74,9 @@ const stats = {
 const isMeta = (r) => r.name === ".github" || r.full_name === "bdelanghe/bdelanghe";
 const eligible = repos.filter((r) => !r.private && !r.fork && !r.archived && !isMeta(r) && r.description);
 const pinRank = new Map(PINS.map((n, i) => [n, i]));
+const isThesis = (r) => topicsOf(r).some((t) => THESIS_TAGS.includes(t));
 const curated = eligible
+  .filter((r) => pinRank.has(r.full_name) || isThesis(r))
   .sort((a, b) => {
     const pa = pinRank.has(a.full_name), pb = pinRank.has(b.full_name);
     if (pa && pb) return pinRank.get(a.full_name) - pinRank.get(b.full_name);

@@ -227,45 +227,6 @@
       ]
     },
     {
-      "name": "ssh-doctor",
-      "fullName": "bdelanghe/ssh-doctor",
-      "url": "https://github.com/bdelanghe/ssh-doctor",
-      "description": "A Bash script that diagnoses SSH setup issues and provides streamlined troubleshooting 🩺🔧",
-      "language": "Shell",
-      "stars": 1,
-      "pinned": false,
-      "topics": [
-        "cli",
-        "developer-tools"
-      ]
-    },
-    {
-      "name": "site",
-      "fullName": "bdelanghe/site",
-      "url": "https://github.com/bdelanghe/site",
-      "description": "robertdelanghe.dev — software-engineering portfolio (synoptic v2)",
-      "language": "JavaScript",
-      "stars": 0,
-      "pinned": false,
-      "topics": [
-        "design-tokens",
-        "web"
-      ]
-    },
-    {
-      "name": "site",
-      "fullName": "bounded-systems/site",
-      "url": "https://github.com/bounded-systems/site",
-      "description": "The bounded.tools website — static, built on @bounded-systems/brand",
-      "language": "HTML",
-      "stars": 0,
-      "pinned": false,
-      "topics": [
-        "design-tokens",
-        "web"
-      ]
-    },
-    {
       "name": "gh-project-room",
       "fullName": "bounded-systems/gh-project-room",
       "url": "https://github.com/bounded-systems/gh-project-room",
@@ -276,33 +237,6 @@
       "topics": [
         "agent-infra",
         "developer-tools"
-      ]
-    },
-    {
-      "name": "brand",
-      "fullName": "bounded-systems/brand",
-      "url": "https://github.com/bounded-systems/brand",
-      "description": "Bounded Systems brand — W3C design tokens, self-hosted fonts, the mark, and ready-to-link CSS.",
-      "language": "HTML",
-      "stars": 0,
-      "pinned": false,
-      "topics": [
-        "design-tokens",
-        "library"
-      ]
-    },
-    {
-      "name": "claude-token-tools",
-      "fullName": "bounded-systems/claude-token-tools",
-      "url": "https://github.com/bounded-systems/claude-token-tools",
-      "description": "Claude Code token-saving toolkit — model-usage auditor + home-manager module",
-      "language": "JavaScript",
-      "stars": 0,
-      "pinned": false,
-      "topics": [
-        "ai",
-        "developer-tools",
-        "nix"
       ]
     }
   ]
