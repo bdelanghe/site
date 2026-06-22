@@ -83,6 +83,7 @@ const cards = highlights.map((h) => {
 const html = `<!doctype html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Robert DeLanghe — Software Engineer</title>
@@ -168,6 +169,7 @@ const rSkills = (profile.skills ?? []).map(esc).join(" · ");
 const resumeHtml = `<!doctype html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(profile.name)} — Résumé</title>
 <link rel="stylesheet" href="/brand/css/fonts.css">
@@ -217,6 +219,7 @@ await cp(join(root, "404.html"), join(dist, "404.html"));
 const blogHtml = `<!doctype html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Writing — ${esc(profile.name)}</title>
 <meta name="description" content="Writing by ${esc(profile.name)} on capability security for agentic systems.">
@@ -246,6 +249,7 @@ const blogHtml = `<!doctype html>
 await writeFile(join(dist, "blog.html"), blogHtml);
 
 await cp(join(root, "styles.css"), join(dist, "styles.css"));
+await cp(join(root, "assets/logo.svg"), join(dist, "assets/logo.svg"));
 await mkdir(join(dist, "brand"), { recursive: true });
 for (const p of ["tokens/tokens.css", "css", "avatar/avatar-forest-1024.png"]) {
   await cp(join(brand, p), join(dist, "brand", p), { recursive: true });
