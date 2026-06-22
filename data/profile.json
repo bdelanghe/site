@@ -14,7 +14,7 @@
   "experience": [
     {
       "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 — present", "where": "New York · Hybrid",
-      "what": "Architected the contract-and-validation layer behind inventory-purchasing: one source of truth, CI drift-gated across 130+ components, delivered as agent-authored PRs.",
+      "what": "On the Commerce team — which builds the website, commerce-routing, and business-operations systems — I architected the contract-and-validation layer behind inventory-purchasing: one source of truth, CI drift-gated across 130+ components, delivered as agent-authored PRs.",
       "bullets": [
         "Architected the contract-and-validation layer replacing Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing): a compile-and-publish model where one source of truth generates every downstream surface — schemas, docs, tests, agent context — CI drift-gated so nothing falls out of sync.",
         "Made the pipeline auditable by construction across 130+ components — provenance and contract checks gating every output, sign-off bound to an owner-role enforced in CI rather than to individuals.",
