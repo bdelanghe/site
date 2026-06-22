@@ -89,14 +89,15 @@ const head = ({ title, description, path = "/", appCss = true }) => {
   <meta name="twitter:description" content="${d}">
   <meta name="twitter:image" content="${OG_IMAGE}">
   <link rel="alternate" type="application/atom+xml" title="Robert DeLanghe — Writing" href="/feed.xml">
-  <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">
+  <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${(profile.social ?? []).map((s) => `
+  <link rel="me" href="${esc(s.href)}">`).join("")}
   <link rel="stylesheet" href="/brand/css/fonts.css">
   <link rel="stylesheet" href="/brand/tokens/tokens.css">${appCss ? `
   <link rel="stylesheet" href="/brand/css/base.css">
   <link rel="stylesheet" href="/styles.css">` : ""}`;
 };
-const ghHref = profile.links.find((l) => /github\.com/i.test(l.href))?.href;
-const liHref = profile.links.find((l) => /linkedin/i.test(l.href))?.href;
+// One source for identity: profile.social → sameAs (JSON-LD), rel=me (head), footer.
+const socialHtml = (profile.social ?? []).map((s) => `<a rel="me" href="${esc(s.href)}">${esc(s.label)}</a>`).join(" &middot; ");
 const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org", "@type": "Person",
   name: profile.name, url: SITE, jobTitle: profile.role, description: profile.headline,
@@ -104,7 +105,7 @@ const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   alumniOf: (profile.education ?? []).map((e) => ({ "@type": "Organization", name: e.org })),
   // claim → evidence: each hero claim points at the repo that backs it.
   subjectOf: (profile.proof ?? []).map((p) => ({ "@type": "CreativeWork", name: p.label, url: p.href })),
-  sameAs: [ghHref, liHref].filter(Boolean),
+  sameAs: (profile.social ?? []).map((s) => s.href),
 }).replace(/</g, "\\u003c")}</script>`;
 
 const entry = (e) =>
@@ -220,6 +221,7 @@ const html = `<!doctype html>
 
     <footer class="foot">
       <span>Robert DeLanghe &middot; Bounded Systems</span>
+      ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
       <span class="foot__meta">github.com/bdelanghe &middot; generated ${date}</span>
     </footer>
   </main>
@@ -361,8 +363,9 @@ ${head({ title: `${p.meta.title} — ${profile.name}`, description: p.meta.descr
       <div class="post__body e-content">
       ${p.html}
       </div>
+      ${(p.meta.syndication && p.meta.syndication.length) ? `<p class="post__synd">Also on: ${p.meta.syndication.map((u) => `<a class="u-syndication" href="${esc(u)}">${esc(new URL(u).hostname.replace(/^www\./, ""))}</a>`).join(" &middot; ")}</p>` : ""}
     </article>
-    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span><span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a></span></footer>
+    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a></span></footer>
   </main>
 </body>
 </html>
