@@ -5,45 +5,24 @@
 // edited there and fall out of sync. This compares the two and reports what to fix
 // *on LinkedIn*, so the repo stays authoritative without manual eyeballing.
 //
-// Artifact: LinkedIn → Settings → "Get a copy of your data" → Positions.csv,
-// dropped at data/linkedin/positions.csv. (Optionally Skills.csv → skills.csv.)
+// Artifact: data/linkedin/resume.json in JSON Resume format (jsonresume.org) —
+// an existing open standard with a published JSON Schema (vendored at
+// contract/jsonresume.schema.json). Export your LinkedIn profile to JSON Resume
+// (e.g. the JSON Resume exporter), drop it here, commit.
 //
 // Usage:  node linkedin-check.mjs           report-only (exit 0)
-//         node linkedin-check.mjs --strict   exit 1 if unaccepted factual drift exists
+//         node linkedin-check.mjs --strict   exit 1 on schema-invalid or unaccepted drift
 //
-// Pure: reads files only, no network. Node builtins only.
+// Pure: reads files only, no network. Node builtins + the local validator.
 import { readFile, access } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { validateSchema } from "./schema-validate.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const lkDir = join(root, "data", "linkedin");
 const strict = process.argv.includes("--strict");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
-
-// ---- tiny CSV parser (handles quotes, embedded commas, escaped "") -------------
-function parseCsv(text) {
-  const rows = [];
-  let row = [], field = "", inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQ) {
-      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
-      else field += c;
-    } else if (c === '"') inQ = true;
-    else if (c === ",") { row.push(field); field = ""; }
-    else if (c === "\n" || c === "\r") {
-      if (c === "\r" && text[i + 1] === "\n") i++;
-      row.push(field); field = "";
-      if (row.some((f) => f !== "")) rows.push(row);
-      row = [];
-    } else field += c;
-  }
-  if (field !== "" || row.length) { row.push(field); if (row.some((f) => f !== "")) rows.push(row); }
-  if (!rows.length) return [];
-  const head = rows[0].map((h) => h.trim());
-  return rows.slice(1).map((r) => Object.fromEntries(head.map((h, i) => [h, (r[i] ?? "").trim()])));
-}
 
 // ---- normalization -------------------------------------------------------------
 const squish = (s) => String(s).toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -58,11 +37,14 @@ const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8,
 const SEASONS = { spring: 3, summer: 6, fall: 9, autumn: 9, winter: 12 };
 const PRESENT = Symbol("present");
 
-// "Oct 2023" | "2018" | "Fall 2019" | "" | "present" -> {year, month|null} | PRESENT | null
+// Accepts ISO8601 ("2023-10", "2025", "2014-06-29") and profile text
+// ("Oct 2023", "2018", "Fall 2019", "present"). -> {year, month|null} | PRESENT | null
 function parsePoint(s) {
   const t = String(s ?? "").trim().toLowerCase();
   if (!t) return null;
   if (t === "present") return PRESENT;
+  const iso = t.match(/^(\d{4})-(\d{2})(?:-\d{2})?$/);
+  if (iso) return { year: +iso[1], month: +iso[2] };
   const year = t.match(/\d{4}/);
   if (!year) return null;
   const word = t.match(/[a-z]+/);
@@ -94,14 +76,21 @@ const fmtPoint = (p) => p === PRESENT ? "present" : p === null ? "—" : p.month
 
 // ---- load ----------------------------------------------------------------------
 const profile = JSON.parse(await readFile(join(root, "data", "profile.json"), "utf8"));
-const posPath = join(lkDir, "positions.csv");
-if (!(await exists(posPath))) {
-  console.error(`✗ no LinkedIn export at ${posPath}\n  Export it: LinkedIn → Settings → Get a copy of your data → Positions.csv`);
+
+const resumePath = join(lkDir, "resume.json");
+if (!(await exists(resumePath))) {
+  console.error(`✗ no LinkedIn export at ${resumePath}\n  Export your profile to JSON Resume format and drop it here (see data/linkedin/README.md).`);
   process.exit(strict ? 1 : 0);
 }
-const positions = parseCsv(await readFile(posPath, "utf8")).map((r) => ({
-  org: r["Company Name"] || "", title: r["Title"] || "",
-  start: parsePoint(r["Started On"]), end: parsePoint(r["Finished On"]), raw: r,
+const resume = JSON.parse(await readFile(resumePath, "utf8"));
+
+// validate the artifact against the vendored JSON Resume schema
+const schema = JSON.parse(await readFile(join(root, "contract", "jsonresume.schema.json"), "utf8"));
+const schemaErrors = validateSchema(schema, resume);
+
+const positions = (resume.work ?? []).map((w) => ({
+  org: w.name || "", title: w.position || "",
+  start: parsePoint(w.startDate), end: w.endDate ? parsePoint(w.endDate) : PRESENT, raw: w,
 }));
 
 let accepted = [];
@@ -133,7 +122,6 @@ for (const c of canonical) {
   }
   matchedLi.add(li);
 
-  // title
   if (normTitle(c.title) !== normTitle(li.title)) {
     const acc = isAccepted(c.org, "title");
     findings.push({
@@ -143,9 +131,7 @@ for (const c of canonical) {
     if (!acc) factualDrift++;
   }
 
-  // dates
   if (c.aggregated) {
-    // aggregate span: each LinkedIn role should fall within the profile's stated years
     const lo = c.start?.year, hi = c.end === PRESENT ? Infinity : c.end?.year;
     const sY = li.start?.year, eY = li.end === PRESENT ? new Date().getFullYear() : li.end?.year;
     if (lo && hi && sY && eY && (sY < lo || eY > hi)) {
@@ -155,9 +141,7 @@ for (const c of canonical) {
     }
   } else {
     const months = !c.loose;
-    const startOk = pointsMatch(c.start, li.start, { months });
-    const endOk = pointsMatch(c.end, li.end, { months });
-    if (!startOk || !endOk) {
+    if (!pointsMatch(c.start, li.start, { months }) || !pointsMatch(c.end, li.end, { months })) {
       const acc = isAccepted(c.org, "dates");
       findings.push({
         level: acc ? "accepted" : "drift", org: c.org,
@@ -173,23 +157,27 @@ for (const li of positions) {
   if (!matchedLi.has(li)) findings.push({ level: "info", org: li.org, msg: `on LinkedIn ("${li.title}"), not in profile.json — intentionally omitted?` });
 }
 
-// optional: skills coverage
-const skillsPath = join(lkDir, "skills.csv");
-if (await exists(skillsPath)) {
-  const liSkills = parseCsv(await readFile(skillsPath, "utf8")).map((r) => squish(r["Name"] || r["Skill"] || ""));
+// skills coverage: canonical skills missing from the LinkedIn export
+const liSkills = (resume.skills ?? []).flatMap((s) => [s.name, ...(s.keywords ?? [])]).filter(Boolean).map(squish);
+if (liSkills.length) {
   const missing = (profile.skills ?? []).filter((s) => !liSkills.some((l) => l && (l.includes(squish(s)) || squish(s).includes(l))));
   if (missing.length) findings.push({ level: "warn", org: "(skills)", msg: `canonical skills not on LinkedIn: ${missing.join(", ")}` });
 }
 
 // ---- report --------------------------------------------------------------------
-const ICON = { drift: "✗", warn: "△", accepted: "✓", info: "·" };
+const ICON = { schema: "✗", drift: "✗", warn: "△", accepted: "✓", info: "·" };
 const order = ["drift", "warn", "accepted", "info"];
-const counts = Object.fromEntries(order.map((l) => [l, findings.filter((f) => f.level === l).length]));
 
 const lines = [];
 lines.push(`# LinkedIn ↔ profile.json drift\n`);
-lines.push(`Canonical: \`data/profile.json\` · Export: \`data/linkedin/positions.csv\`\n`);
-if (!findings.some((f) => f.level === "drift")) lines.push(`**No unaccepted drift.** ✓\n`);
+lines.push(`Canonical: \`data/profile.json\` · Export: \`data/linkedin/resume.json\` (JSON Resume)\n`);
+
+if (schemaErrors.length) {
+  lines.push(`\n## ✗ Schema — resume.json is not valid JSON Resume`);
+  for (const e of schemaErrors) lines.push(`- ${e}`);
+}
+
+if (!schemaErrors.length && !findings.some((f) => f.level === "drift")) lines.push(`**Valid JSON Resume. No unaccepted drift.** ✓\n`);
 for (const lvl of order) {
   const fs = findings.filter((f) => f.level === lvl);
   if (!fs.length) continue;
@@ -206,5 +194,6 @@ if (process.env.GITHUB_STEP_SUMMARY) {
   writeFileSync(process.env.GITHUB_STEP_SUMMARY, report + "\n", { flag: "a" });
 }
 
-console.error(`\n${counts.drift} drift · ${counts.warn} review · ${counts.accepted} accepted · ${counts.info} info`);
-if (strict && factualDrift > 0) process.exit(1);
+const counts = Object.fromEntries(order.map((l) => [l, findings.filter((f) => f.level === l).length]));
+console.error(`\n${schemaErrors.length} schema · ${counts.drift} drift · ${counts.warn} review · ${counts.accepted} accepted · ${counts.info} info`);
+if (strict && (factualDrift > 0 || schemaErrors.length > 0)) process.exit(1);
