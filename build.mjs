@@ -4,6 +4,7 @@
 import { rm, mkdir, cp, access, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { validateSchema } from "./schema-validate.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const dist = join(root, "dist");
@@ -15,14 +16,23 @@ if (!(await exists(join(brand, "tokens", "tokens.css")))) {
   console.error("✗ brand/ is empty. Run: git submodule update --init --recursive");
   process.exit(1);
 }
-const site = JSON.parse(await readFile(join(root, "data", "site.json"), "utf8"));
-for (const k of ["generatedAt", "owner", "stats", "highlights"]) {
-  if (!(k in site)) { console.error(`✗ site.json violates contract: missing ${k}`); process.exit(1); }
-}
-const profile = JSON.parse(await readFile(join(root, "data", "profile.json"), "utf8"));
-for (const k of ["name", "role", "headline", "summary", "links"]) {
-  if (!(k in profile)) { console.error(`✗ profile.json violates contract: missing ${k}`); process.exit(1); }
-}
+// Static analysis: validate both contracts against their JSON Schemas (not just
+// key-presence). Invalid content can't produce a build — invalid states made
+// unrepresentable at the boundary.
+const loadJson = async (p) => JSON.parse(await readFile(p, "utf8"));
+const validateContract = async (name) => {
+  const data = await loadJson(join(root, "data", `${name}.json`));
+  const schema = await loadJson(join(root, "contract", `${name}.schema.json`));
+  const errors = validateSchema(schema, data);
+  if (errors.length) {
+    console.error(`✗ ${name}.json violates contract/${name}.schema.json:`);
+    for (const e of errors) console.error(`    ${e}`);
+    process.exit(1);
+  }
+  return data;
+};
+const site = await validateContract("site");
+const profile = await validateContract("profile");
 const linksHtml = profile.links
   .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
   .join("\n        ");
@@ -104,16 +114,33 @@ const topicChips = stats.topics.length
   ? stats.topics.slice(0, 16).map((t) => `<span class="chip">${esc(t.name)} <em>${t.count}</em></span>`).join("\n        ")
   : `<span class="chip chip--muted">topics: ${stats.tagged}/${stats.public} tagged — self-labeling in progress</span>`;
 
-const cards = highlights.map((h) => {
+// Selected work, broken out by tag — thesis tags first, the rest after.
+const TAG_ORDER = ["capability-security", "agent-infra", "ai", "developer-tools", "cli", "infrastructure", "library", "nix", "web", "design-tokens"];
+const tagLabel = (t) => t.replace(/-/g, " ");
+const card = (h) => {
   const topics = (h.topics || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
   return `<li class="proj">
-        <a href="${esc(h.url)}">
-          <div class="proj__top"><span class="proj__name">${esc(h.name)}</span>${h.pinned ? '<span class="proj__pin">pinned</span>' : ""}</div>
-          <p class="proj__desc">${esc(h.description)}</p>
-          <div class="proj__meta">${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}${topics}</div>
-        </a>
-      </li>`;
-}).join("\n      ");
+          <a href="${esc(h.url)}">
+            <div class="proj__top"><span class="proj__name">${esc(h.name)}</span>${h.pinned ? '<span class="proj__pin">pinned</span>' : ""}</div>
+            <p class="proj__desc">${esc(h.description)}</p>
+            <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}${topics}</div>
+          </a>
+        </li>`;
+};
+const primaryTag = (h) => TAG_ORDER.find((t) => (h.topics || []).includes(t)) ?? (h.topics?.[0] ?? "other");
+const workByTag = new Map();
+for (const h of highlights) {
+  const k = primaryTag(h);
+  (workByTag.get(k) ?? workByTag.set(k, []).get(k)).push(h);
+}
+const rank = (t) => { const i = TAG_ORDER.indexOf(t); return i < 0 ? 99 : i; };
+const workGroups = [...workByTag.keys()].sort((a, b) => rank(a) - rank(b)).map((k) => `
+      <div class="work-group">
+        <h3 class="work-group__tag">${esc(tagLabel(k))} <em>${workByTag.get(k).length}</em></h3>
+        <ul class="projects">
+        ${workByTag.get(k).map(card).join("\n        ")}
+        </ul>
+      </div>`).join("\n");
 
 const html = `<!doctype html>
 <html lang="en">
@@ -156,10 +183,8 @@ const html = `<!doctype html>
     </section>
 
     <section class="work">
-      <h2 class="bs-text-label eyebrow">Selected work</h2>
-      <ul class="projects">
-      ${cards}
-      </ul>
+      <h2 class="bs-text-label eyebrow">Selected work — by tag</h2>
+      ${workGroups}
     </section>
 
     <footer class="foot">
