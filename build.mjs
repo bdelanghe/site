@@ -69,8 +69,8 @@ const proofHtml = profile.proof?.length
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
 const SITE = "https://robertdelanghe.dev";
 const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
-const head = ({ title, description, path = "/", appCss = true }) => {
-  const url = SITE + path, t = esc(title), d = esc(description);
+const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType = "website", ogImage = OG_IMAGE }) => {
+  const url = SITE + path, t = esc(title), d = esc(description), ot = esc(ogTitle ?? title), img = ogImage.startsWith("http") ? ogImage : SITE + ogImage;
   return `<meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${t}</title>
@@ -79,15 +79,15 @@ const head = ({ title, description, path = "/", appCss = true }) => {
   <meta name="theme-color" content="#0C5A42">
   <link rel="icon" type="image/png" href="/brand/favicon-32.png">
   <link rel="icon" type="image/svg+xml" href="/brand/mark/mark-forest.svg">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="${ogType}">
   <meta property="og:url" content="${url}">
-  <meta property="og:title" content="${t}">
+  <meta property="og:title" content="${ot}">
   <meta property="og:description" content="${d}">
-  <meta property="og:image" content="${OG_IMAGE}">
+  <meta property="og:image" content="${img}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${t}">
+  <meta name="twitter:title" content="${ot}">
   <meta name="twitter:description" content="${d}">
-  <meta name="twitter:image" content="${OG_IMAGE}">
+  <meta name="twitter:image" content="${img}">
   <link rel="alternate" type="application/atom+xml" title="Robert DeLanghe — Writing" href="/feed.xml">
   <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${(profile.social ?? []).map((s) => `
   <link rel="me" href="${esc(s.href)}">`).join("")}
@@ -349,7 +349,7 @@ for (const p of posts) {
   const ph = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${p.meta.title} — ${profile.name}`, description: p.meta.description, path: postUrl(p) })}
+${head({ title: `${p.meta.title} — ${profile.name}`, ogTitle: p.meta.title, ogType: "article", description: p.meta.description, path: postUrl(p) })}
   <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>
 </head>
 <body>
