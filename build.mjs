@@ -31,6 +31,41 @@ const proofHtml = profile.proof?.length
   ? `<p class="proof">Proof — ${profile.proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
   : "";
 
+// ---- complete <head> meta (SEO + social + agent), one source -------------------
+const SITE = "https://robertdelanghe.dev";
+const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
+const head = ({ title, description, path = "/", appCss = true }) => {
+  const url = SITE + path, t = esc(title), d = esc(description);
+  return `<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${t}</title>
+  <meta name="description" content="${d}">
+  <link rel="canonical" href="${url}">
+  <meta name="theme-color" content="#0C5A42">
+  <link rel="icon" type="image/png" href="/brand/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="/brand/mark/mark-forest.svg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${url}">
+  <meta property="og:title" content="${t}">
+  <meta property="og:description" content="${d}">
+  <meta property="og:image" content="${OG_IMAGE}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${t}">
+  <meta name="twitter:description" content="${d}">
+  <meta name="twitter:image" content="${OG_IMAGE}">
+  <link rel="stylesheet" href="/brand/css/fonts.css">
+  <link rel="stylesheet" href="/brand/tokens/tokens.css">${appCss ? `
+  <link rel="stylesheet" href="/brand/css/base.css">
+  <link rel="stylesheet" href="/styles.css">` : ""}`;
+};
+const ghHref = profile.links.find((l) => /github\.com/i.test(l.href))?.href;
+const liHref = profile.links.find((l) => /linkedin/i.test(l.href))?.href;
+const jsonLd = `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org", "@type": "Person",
+  name: profile.name, url: SITE, jobTitle: profile.role, description: profile.headline,
+  sameAs: [ghHref, liHref].filter(Boolean),
+}).replace(/</g, "\\u003c")}</script>`;
+
 const entry = (e) =>
   `<li class="entry"><span class="entry__when">${esc(e.when)}</span><span class="entry__body">` +
   `<span class="entry__org">${esc(e.org)}${e.role ? ` · <span class="entry__role">${esc(e.role)}</span>` : ""}</span>` +
@@ -83,24 +118,8 @@ const cards = highlights.map((h) => {
 const html = `<!doctype html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Robert DeLanghe — Software Engineer</title>
-  <meta name="description" content="Robert DeLanghe — software engineer building agent infrastructure and capability-security systems. ${stats.repos} repositories, parsed and curated.">
-  <link rel="canonical" href="https://robertdelanghe.dev/">
-  <meta name="theme-color" content="#0C5A42">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://robertdelanghe.dev/">
-  <meta property="og:title" content="Robert DeLanghe — Software Engineer">
-  <meta property="og:description" content="Building agent infrastructure and capability-security systems — mostly in the open.">
-  <meta property="og:image" content="https://robertdelanghe.dev/assets/og.png">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:image" content="https://robertdelanghe.dev/assets/og.png">
-  <link rel="stylesheet" href="brand/css/fonts.css">
-  <link rel="stylesheet" href="brand/tokens/tokens.css">
-  <link rel="stylesheet" href="brand/css/base.css">
-  <link rel="stylesheet" href="styles.css">
+  ${head({ title: `${profile.name} — ${profile.role}`, description: `${profile.role} — ${profile.headline}`, path: "/" })}
+  ${jsonLd}
 </head>
 <body>
   <main class="wrap">
@@ -169,11 +188,7 @@ const rSkills = (profile.skills ?? []).map(esc).join(" · ");
 const resumeHtml = `<!doctype html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(profile.name)} — Résumé</title>
-<link rel="stylesheet" href="/brand/css/fonts.css">
-<link rel="stylesheet" href="/brand/tokens/tokens.css">
+${head({ title: `${profile.name} — Résumé`, description: `Résumé — ${profile.name}, ${profile.role}.`, path: "/resume", appCss: false })}
 <style>
   @page { margin: 14mm; }
   * { box-sizing: border-box; }
@@ -199,6 +214,7 @@ const resumeHtml = `<!doctype html>
 </style>
 </head>
 <body>
+  <main>
   <header>
     <h1>${esc(profile.name)}</h1>
     <p class="r-title">${esc(profile.role)}${profile.headline ? ` — ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
@@ -209,6 +225,7 @@ const resumeHtml = `<!doctype html>
   ${rSkills ? `<h2>Skills</h2><p class="r-skills">${rSkills}</p>` : ""}
   <h2>Experience</h2>${rExp}
   <h2>Education</h2>${rEdu}
+  </main>
 </body>
 </html>
 `;
@@ -219,14 +236,7 @@ await cp(join(root, "404.html"), join(dist, "404.html"));
 const blogHtml = `<!doctype html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Writing — ${esc(profile.name)}</title>
-<meta name="description" content="Writing by ${esc(profile.name)} on capability security for agentic systems.">
-<link rel="stylesheet" href="/brand/css/fonts.css">
-<link rel="stylesheet" href="/brand/tokens/tokens.css">
-<link rel="stylesheet" href="/brand/css/base.css">
-<link rel="stylesheet" href="/styles.css">
+${head({ title: `Writing — ${profile.name}`, description: `Writing by ${profile.name} on capability security for agentic systems.`, path: "/blog" })}
 </head>
 <body>
   <main class="wrap">
@@ -252,7 +262,29 @@ await cp(join(root, "styles.css"), join(dist, "styles.css"));
 await cp(join(root, "assets/logo.svg"), join(dist, "assets/logo.svg"));
 await cp(join(root, "assets/og.png"), join(dist, "assets/og.png"));
 await mkdir(join(dist, "brand"), { recursive: true });
-for (const p of ["tokens/tokens.css", "css"]) {
+for (const p of ["tokens/tokens.css", "css", "lockup", "mark", "favicon-32.png"]) {
   await cp(join(brand, p), join(dist, "brand", p), { recursive: true });
 }
-console.log(`✓ built dist/  — ${highlights.length} highlights, ${stats.languages.length} languages`);
+
+// ---- agent + crawler affordances, from the same contract ----------------------
+const llms = `# ${profile.name}
+> ${profile.headline}
+
+${profile.summary}
+
+${profile.role}${profile.place ? ` · ${profile.place}` : ""}
+
+## Links
+${profile.links.map((l) => `- [${l.label}](${l.href.startsWith("http") ? l.href : SITE + l.href})`).join("\n")}
+
+## Selected work
+${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
+`;
+await writeFile(join(dist, "llms.txt"), llms);
+await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
+await writeFile(join(dist, "sitemap.xml"),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+  ["/", "/resume", "/blog"].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
+  `\n</urlset>\n`);
+
+console.log(`✓ built dist/  — ${highlights.length} highlights, ${stats.languages.length} languages, +meta/llms.txt/sitemap`);
