@@ -46,12 +46,13 @@ and deploys `site` automatically (serves robertdelanghe.dev + www).
   daily auto-gen was intentionally retired). Update it by hand. `synoptic-github` remains a
   standalone tool — `validate`/`suggest` still keep repo topics honest.
 - **LinkedIn drift** — `profile.json` is canonical; LinkedIn is a downstream copy that
-  drifts. `linkedin-check.mjs` (`npm run check:linkedin`) diffs the committed LinkedIn
-  export (`data/linkedin/positions.csv`) against `profile.json` and reports title/date
-  drift to fix **on LinkedIn**. Intentional divergences live in
-  `data/linkedin/accepted-drift.json`. CI runs it advisory-only on PRs that touch
-  `profile.json` or `data/linkedin/` (`.github/workflows/linkedin-check.yml`). Refresh the
-  export per `data/linkedin/README.md`.
+  drifts. `linkedin-check.mjs` (`npm run check:linkedin`) validates the committed LinkedIn
+  export (`data/linkedin/resume.json`, [JSON Resume](https://jsonresume.org) format, schema
+  vendored at `contract/jsonresume.schema.json`) and diffs its `work`/`skills` against
+  `profile.json`, reporting title/date drift to fix **on LinkedIn**. Intentional
+  divergences live in `data/linkedin/accepted-drift.json`. CI runs it advisory-only on PRs
+  that touch `profile.json` or `data/linkedin/` (`.github/workflows/linkedin-check.yml`).
+  Refresh the export per `data/linkedin/README.md`.
 
 ## Determinism / provenance
 

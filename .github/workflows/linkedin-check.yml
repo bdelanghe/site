@@ -1,7 +1,8 @@
 name: linkedin-check
 
 # Advisory drift check: data/profile.json (canonical) vs the committed LinkedIn
-# export (data/linkedin/positions.csv). GitHub is the source of truth — this never
+# export (data/linkedin/resume.json, JSON Resume — validated against
+# contract/jsonresume.schema.json). GitHub is the source of truth — this never
 # blocks; it reports what to fix *on LinkedIn* into the run summary.
 on:
   workflow_dispatch:
