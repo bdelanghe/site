@@ -193,25 +193,25 @@ ${head({ title: `${profile.name} — Résumé`, description: `Résumé — ${pro
 <style>
   @page { margin: 14mm; }
   * { box-sizing: border-box; }
-  body { font-family: var(--bs-font-display); color: #1a1a1a; max-width: 760px; margin: 28px auto; padding: 0 24px; font-size: 13px; line-height: 1.5; }
+  body { font-family: var(--bs-font-display); color: var(--bs-color-ink); max-width: 760px; margin: 28px auto; padding: 0 24px; font-size: 13px; line-height: 1.5; }
   a { color: var(--bs-color-forest); text-decoration: none; }
   h1 { font-size: 26px; letter-spacing: -0.02em; margin: 0; }
   .r-title { font-size: 14px; color: var(--bs-color-forest); font-weight: 600; margin: 4px 0 6px; }
-  .r-contact { font-family: var(--bs-font-mono); font-size: 11px; color: #555; margin: 0 0 14px; }
+  .r-contact { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-soft); margin: 0 0 14px; }
   .r-summary { margin: 0 0 16px; }
-  h2 { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bs-color-forest); border-bottom: 1px solid #e2e2e2; padding-bottom: 4px; margin: 18px 0 10px; }
-  .r-skills { font-size: 12px; color: #333; }
+  h2 { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bs-color-forest); border-bottom: 1px solid var(--bs-color-line); padding-bottom: 4px; margin: 18px 0 10px; }
+  .r-skills { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-job { margin: 0 0 12px; break-inside: avoid; }
   .r-job__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .r-job__org { font-weight: 600; font-size: 14px; }
-  .r-job__when { font-family: var(--bs-font-mono); font-size: 11px; color: #666; white-space: nowrap; }
+  .r-job__when { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); white-space: nowrap; }
   .r-job__role { font-size: 12px; color: var(--bs-color-forest); margin-bottom: 4px; }
   .r-job ul { margin: 4px 0 0; padding-left: 16px; }
   .r-job li { margin: 0 0 3px; }
-  .r-edu { font-size: 12px; color: #333; }
+  .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
   .r-print:hover { border-color: var(--bs-color-forest); }
-  @media print { body { margin: 0; } a { color: #1a1a1a; } .r-print { display: none !important; } }
+  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } }
 </style>
 </head>
 <body>
