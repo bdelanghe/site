@@ -62,6 +62,7 @@
   "links": [
     { "label": "GitHub", "href": "https://github.com/bdelanghe" },
     { "label": "Résumé", "href": "/resume" },
+    { "label": "Writing", "href": "/blog" },
     { "label": "bounded.tools", "href": "https://bounded.tools" },
     { "label": "cv@robertdelanghe.com", "href": "mailto:cv@robertdelanghe.com" }
   ]

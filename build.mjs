@@ -206,6 +206,38 @@ const resumeHtml = `<!doctype html>
 `;
 await writeFile(join(dist, "resume.html"), resumeHtml);
 
+// ---- /blog (placeholder until posts land; subdomain later) --------------------
+const blogHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing — ${esc(profile.name)}</title>
+<meta name="description" content="Writing by ${esc(profile.name)} on capability security for agentic systems.">
+<link rel="stylesheet" href="/brand/css/fonts.css">
+<link rel="stylesheet" href="/brand/tokens/tokens.css">
+<link rel="stylesheet" href="/brand/css/base.css">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="intro">
+      <p class="bs-text-label eyebrow">${esc(profile.name)} &nbsp;&middot;&nbsp; Writing</p>
+      <h1>Writing</h1>
+      <p class="lead">Long-form thinking on capability security for agentic systems lives at
+        <strong><a href="https://bounded.tools" style="color:var(--bs-color-forest)">bounded.tools</a></strong> —
+        the thesis, graded against the running code. More notes will land here.</p>
+      <nav class="links">
+        <a href="/">&larr;&nbsp;Home</a>
+        <a href="https://bounded.tools">bounded.tools&nbsp;&#8599;</a>
+        <a href="https://github.com/bounded-systems">GitHub&nbsp;&#8599;</a>
+      </nav>
+    </header>
+  </main>
+</body>
+</html>
+`;
+await writeFile(join(dist, "blog.html"), blogHtml);
+
 await cp(join(root, "styles.css"), join(dist, "styles.css"));
 await mkdir(join(dist, "brand"), { recursive: true });
 for (const p of ["tokens/tokens.css", "css"]) {
