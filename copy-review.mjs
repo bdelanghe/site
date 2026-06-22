@@ -138,11 +138,22 @@ function render(result) {
   return { md: lines.join("\n"), blockers };
 }
 
+// Write a line to the GitHub Actions run summary when present, so skips and
+// errors are visible in the PR's checks tab — not buried in raw job logs.
+async function summary(md) {
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    const { appendFile } = await import("node:fs/promises");
+    await appendFile(process.env.GITHUB_STEP_SUMMARY, md + "\n");
+  }
+}
+
 // ---- main ----------------------------------------------------------------------
 async function main() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    console.log("copy-review: skipped — ANTHROPIC_API_KEY is not set.");
+    const msg = "copy-review: skipped — ANTHROPIC_API_KEY is not set.";
+    console.log(msg);
+    await summary(`# Copy review\n\n⚠️ _${msg}_`);
     return 0; // never block a contributor who can't run the review
   }
 
@@ -189,11 +200,13 @@ async function main() {
     // merge — the gate blocks on content problems, not on transient API errors.
     console.error(`copy-review: API call failed — ${err.message}`);
     console.error("copy-review: treating as a skip (no merge block on infra errors).");
+    await summary(`# Copy review\n\n⚠️ _API call failed — ${err.message}. Treated as a skip._`);
     return 0;
   }
 
   if (resp.stop_reason === "refusal") {
     console.error("copy-review: model declined to review; skipping.");
+    await summary("# Copy review\n\n⚠️ _Model declined to review; skipped._");
     return 0;
   }
 
@@ -204,16 +217,13 @@ async function main() {
   } catch {
     console.error("copy-review: could not parse model response; skipping.");
     console.error(text.slice(0, 500));
+    await summary("# Copy review\n\n⚠️ _Could not parse the model response; skipped._");
     return 0;
   }
 
   const { md, blockers } = render(result);
   console.log(md);
-
-  // Mirror into the GitHub Actions run summary when present.
-  if (process.env.GITHUB_STEP_SUMMARY) {
-    await (await import("node:fs/promises")).appendFile(process.env.GITHUB_STEP_SUMMARY, md + "\n");
-  }
+  await summary(md);
 
   if (strict && blockers > 0) {
     console.error(`\ncopy-review: ${blockers} blocker(s) under --strict → failing.`);
