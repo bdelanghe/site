@@ -76,6 +76,19 @@
         "href": { "type": "string" }
       }
     },
+    "social": {
+      "type": "array",
+      "description": "Canonical identity set — profiles you control. One source for JSON-LD sameAs, rel=me (IndieAuth), and the footer 'Elsewhere' line.",
+      "items": {
+        "type": "object",
+        "required": ["label", "href"],
+        "additionalProperties": false,
+        "properties": {
+          "label": { "type": "string" },
+          "href": { "type": "string" }
+        }
+      }
+    },
     "links": {
       "type": "array",
       "minItems": 1,

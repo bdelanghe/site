@@ -130,3 +130,12 @@
 .post__body li { margin: 0 0 6px; }
 .post__body hr { border: 0; border-top: 1px solid var(--bs-color-line); margin: 28px 0; }
 .post .tag { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
+
+/* ---- social identity + POSSE syndication ----------------------------------- */
+.foot__social a { color: var(--bs-color-forest); text-decoration: none; }
+.foot__social a:hover { text-decoration: underline; }
+.post__synd {
+  margin-top: clamp(28px, 5vw, 40px); padding-top: 16px; border-top: 1px solid var(--bs-color-line);
+  font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono);
+}
+.post__synd a { color: var(--bs-color-forest); text-decoration: none; }
