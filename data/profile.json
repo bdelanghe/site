@@ -31,7 +31,7 @@
       "what": "Built the quality gates and developer experience for a 20-engineer team — static-analysis PR gating that blocked defects before merge, on top of design-system and performance work.",
       "bullets": [
         "Built static-analysis gating into the PR pipeline — blocking defects before merge, cutting critical bugs ~20% and high-priority issues ~25% across a 20-engineer team.",
-        "Shipped the frontend platform behind it — a design system (−30% task lead time), a dashboard framework (widget builds a week → a day), and pagination/perf work (page loads ~30s → near-instant)."
+        "Shipped the frontend platform behind it — a design system (−30% task lead time), a dashboard framework (widget builds a week → a day), and pagination + perf work that brought First Contentful Paint under a second."
       ]
     },
     {
