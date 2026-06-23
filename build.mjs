@@ -167,6 +167,11 @@ const materials = [
   { name: "data/profile.json", id: (await sha256File(join(root, "data", "profile.json"))).slice(0, 18) + "…" },
   { name: "data/site.json", id: (await sha256File(join(root, "data", "site.json"))).slice(0, 18) + "…" },
 ];
+// the design system — content-addressed, not just a version string. The tokens
+// (visual) + content strings (verbal) are real build inputs; attest them by digest.
+for (const f of ["brand/tokens/tokens.json", "brand/tokens/tokens.css", "brand/content/strings.json", "brand/css/base.css", "brand/css/fonts.css"]) {
+  if (await exists(join(root, f))) materials.push({ name: f, id: (await sha256File(join(root, f))).slice(0, 18) + "…" });
+}
 
 const langBars = stats.languages.slice(0, 6).map((l) =>
   `<div class="bar"><span class="bar__k">${esc(l.name)}</span>` +
