@@ -167,6 +167,15 @@ const materials = [
   { name: "data/profile.json", id: (await sha256File(join(root, "data", "profile.json"))).slice(0, 18) + "…" },
   { name: "data/site.json", id: (await sha256File(join(root, "data", "site.json"))).slice(0, 18) + "…" },
 ];
+
+// short digests for the chain copy — each process step names what it ran, by sha
+const dg = async (p) => (await exists(join(root, p))) ? (await sha256File(join(root, p))).slice(0, 18) + "…" : "(absent)";
+const dgProfile = await dg("data/profile.json");
+const dgProfileSchema = await dg("contract/profile.schema.json");
+const dgPostsSchema = await dg("contract/posts.schema.json");
+const dgCopyReview = await dg("copy-review.mjs");
+const dgLinkedin = await dg("linkedin-check.mjs");
+const dgBuild = await dg("build.mjs");
 // the design system — content-addressed, not just a version string. The tokens
 // (visual) + content strings (verbal) are real build inputs; attest them by digest.
 for (const f of ["brand/tokens/tokens.json", "brand/tokens/tokens.css", "brand/content/strings.json", "brand/css/base.css", "brand/css/fonts.css"]) {
@@ -412,9 +421,9 @@ ${head({ title: `Provenance — ${profile.name}`, description: `How robertdelang
       <p class="lead">The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.</p>
       <ol class="prov-chain">
         <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
-        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body"><code>profile.json</code> and post frontmatter validate against JSON-Schema; facts transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>) — an unknown token fails the build, so no claim is unsourced.</span></li>
-        <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body"><code>lone</code> blesses each post's DOM (semantic HTML + a11y); <code>copy-review</code> gates overclaims; <code>linkedin-check</code> verifies r&eacute;sum&eacute; claims; <code>@bounded-systems/brand</code> tokens are drift-checked. Error-severity findings block the build.</span></li>
-        <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered deterministically — no network, no GitHub at build. The same materials always produce the same subject.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Two contracts gate content before a byte renders: <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) and every post's frontmatter validate against <code>contract/profile.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>) and <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <code>lone</code> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <code>string-audit</code> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandPkg.version ? ` v${brandPkg.version}` : ""}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
             <p class="prov-seal__title">Subject — signed</p>
