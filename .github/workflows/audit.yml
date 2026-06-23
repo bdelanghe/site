@@ -1,9 +1,9 @@
 name: audit
 
-# string-audit (vendored submodule) over the authored copy: each string is a typed
-# symbol (claim → grounding, headline → punch). Deterministic checks free; claim-
-# grounding via the LLM when ANTHROPIC_API_KEY is set. Report-only — flip to a gate
-# once dictionary + grounding are tuned.
+# string-audit (vendored submodule) over the authored copy as typed symbols.
+# Grounding (dist/grounding.json, sibling of the catalog) = facts a claim may assert,
+# from profile.json. Deterministic checks free; claim-grounding via LLM when keyed.
+# Report-only — flip to a gate once findings are clean.
 on:
   pull_request:
     paths: ["data/**", "posts/**", "build.mjs", ".github/workflows/audit.yml"]
@@ -22,10 +22,12 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
-      - name: Build (emits dist/catalog.json)
+      - name: Build (emits dist/catalog.json + dist/grounding.json)
         run: node build.mjs
       - name: Update string-audit submodule to latest main
         run: git -C string-audit fetch -q --depth 1 origin main && git -C string-audit checkout -q FETCH_HEAD
+      - name: Brand dictionary (quiet domain-term spelling)
+        run: printf '%s\n' agentic claude prx ocap runtime frontend perf contentful crm api etl nyc brooklyn typeclasses unrepresentable bounded xstate recurse bennington aura l2l ajax indexeddb postgresql webarchive devcontainers >> string-audit/dictionary.txt
       - name: Audit copy (report-only)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
