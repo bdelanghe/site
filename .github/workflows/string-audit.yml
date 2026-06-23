@@ -43,12 +43,25 @@ jobs:
       - name: Install string-audit deps
         working-directory: string-audit
         run: npm ci --no-audit --no-fund
+      - name: Restore the CAS memo cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          # string-audit memoizes each symbol's audit by sha256(AUDIT_VERSION:type:value):
+          # persisting .cache/ means only *changed* copy pays for an LLM call. AUDIT_VERSION
+          # is pinned to the grounding hash (below), so the cache is scoped to a grounding
+          # generation — restore the latest cache for this grounding; only changed symbols miss.
+          # Change grounding → new AUDIT_VERSION → every key changes → a deliberate full re-audit.
+          path: string-audit/.cache
+          key: string-audit-${{ hashFiles('data/audit/grounding.json') }}-${{ hashFiles('data/audit/catalog.json') }}
+          restore-keys: |
+            string-audit-${{ hashFiles('data/audit/grounding.json') }}-
       - name: Grounded content audit
         working-directory: string-audit
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CATALOG: ../data/audit/catalog.json
           GROUNDING: ../data/audit/grounding.json
+          AUDIT_VERSION: ${{ hashFiles('data/audit/grounding.json') }}
         run: |
           {
             echo '# Grounded content audit (string-audit)'
