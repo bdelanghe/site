@@ -412,9 +412,9 @@ ${head({ title: `Provenance — ${profile.name}`, description: `How robertdelang
         <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered deterministically — no network, no GitHub at build. The same materials always produce the same subject.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
-            <p class="prov-seal__title">Subject</p>
+            <p class="prov-seal__title">Subject — signed</p>
             <p class="prov-seal__meta">commit ${COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}">${COMMIT.slice(0, 7)}</a>` : "(local)"} &middot; ${date} &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
-            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Shaped as an in-toto <code>Statement/v1</code>; DSSE ed25519 signing via <a href="https://github.com/bounded-systems/anchored-chain">anchored-chain</a> is the next link — as <a href="https://github.com/bounded-systems/string-audit">string-audit</a> already does per audit.</p>
+            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Real in-toto <code>Statement/v1</code> + SLSA provenance, DSSE ed25519-signed over this build's subjects + materials: <a href="/attestation.json">attestation.json</a> — verify against <a href="/attestation.pub">attestation.pub</a>.</p>
           </div>
         </li>
       </ol>
