@@ -1,20 +1,16 @@
 #!/usr/bin/env node
-// Derive a typed-symbol *catalog* for @bounded-systems/string-audit (the pinned
-// `string-audit/` submodule) from this site's contracts. Every shipped string
-// becomes a named, typed symbol; string-audit then runs type-scoped, CAS-memoized
-// audits over it — most usefully the `claim` → grounding check, which flags any
-// metric that isn't in the curated fact registry (data/audit/grounding.json).
+// Derive a typed-symbol *catalog* for the shared, owned auditor
+// @bounded-systems/string-audit from this site's contracts. Every shipped string becomes
+// a named, typed symbol; the auditor runs type-scoped audits over it — most usefully the
+// `claim` → grounding check, which flags any metric not in the curated fact registry
+// (data/audit/grounding.json).
 //
-// This is the bdelanghe/site half of using the shared, owned auditor: fix a rule
-// once in string-audit, bump the submodule, and both sites that consume it inherit
-// the change. This script owns only the mapping contract→catalog; the audit logic
-// and the grounding *check* live upstream in the library.
+// This is the bdelanghe/site half of using the shared auditor: fix a rule once upstream,
+// bump the pinned ref, and every consuming site inherits it. This script owns only the
+// mapping contract→catalog; the audit logic and the grounding check live upstream, run by
+// the library's reusable workflow (.github/workflows/audit.yml).
 //
 //   node audit-catalog.mjs            # regenerate data/audit/catalog.json
-//
-// Then (in CI, where the library's JSR deps are reachable):
-//   cd string-audit && npm ci
-//   CATALOG=../data/audit/catalog.json GROUNDING=../data/audit/grounding.json node audit.mjs
 //
 // Pure + dependency-free: Node builtins only. Writes one file; reads the contracts.
 import { readFile, writeFile, mkdir } from "node:fs/promises";

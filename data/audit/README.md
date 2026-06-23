@@ -1,28 +1,30 @@
 # data/audit — content-audit inputs
 
-Inputs for the deterministic copy-hygiene gates, which import the prose checks from the
-**shared, owned** auditor [`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit)
-(pinned as the `string-audit/` submodule, same pattern as `brand/`). We import `prose.mjs`
-**directly** — its only deps are two public-npm packages — so the gates run locally,
-egress-free. We deliberately don't run the library's `audit.mjs` / `store.mjs`, which pull
-JSR deps (`cas` / `anchored-chain`) a restrictive network policy blocks. Fix a prose rule
-once upstream, bump the submodule, both sites inherit it.
+Inputs for the deterministic copy-hygiene gate, run by the **shared, owned** auditor
+[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit). The
+prose + grounding logic lives upstream; this site calls the library's reusable workflow
+(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/...@v0.6.0`) and
+passes the three files below. Fix a rule once upstream, bump the pinned ref, every
+consuming site inherits it — one place to drive content discipline across sites.
 
 | File | Authored by | What it is |
 |---|---|---|
 | `catalog.json` | **generated** (`npm run audit:catalog`) | Every shipped string as a typed symbol `{ type, value }`. Derived from `data/profile.json` + `data/site.json` (+ `data/highlight-copy.json` overrides). **Do not hand-edit** — edit the contracts and regenerate. |
 | `grounding.json` | **curated** | The fact registry: the only metrics a `claim` may assert. An allowlist of attested numbers. |
-| `attested-claims.json` | **curated** | Coverage-claim allowlist: absolute phrases (e.g. "every privileged effect") confirmed defensible (enforced-by-construction + linked in `proof[]`). Matching `overclaim` findings are demoted out of the blocking tier. |
+| `attested-claims.json` | **curated** | Coverage-claim allowlist as `{ symbol, check }` entries (the gate's schema): each names a catalog symbol whose `overclaim` finding is confirmed defensible (enforced-by-construction + linked in `proof[]`), demoting it out of the blocking tier. A `note` records the rationale. (Empty `symbol` would match any symbol for that check.) |
 
-## The gates
+## The gate
 
-| Gate | Script | Blocks (`--strict`) on |
-|---|---|---|
-| Prose | `npm run check:prose` | `error`-level prose findings — chatbot artifacts, placeholders, lorem ipsum, **un-attested** absolutes. Attested overclaims, warns (em-dash cadence, tricolon) and suggestions (readability) are report-only. |
-| Grounding | `npm run check:grounding` | any `claim` metric not in `grounding.json`. |
+The upstream auditor runs two checks under `--strict`, both blocking:
 
-`npm run check:content` runs both. CI (`.github/workflows/string-audit.yml`) runs both with
-`--strict` on PRs touching the contracts, the registries, or the gate scripts.
+| Check | Blocks on |
+|---|---|
+| Prose | `error`-level prose findings — chatbot artifacts, placeholders, lorem ipsum, **un-attested** absolutes. Attested overclaims, warns (em-dash cadence, tricolon) and suggestions (readability) are report-only. |
+| Grounding | any `claim` metric not in `grounding.json`. |
+
+CI (`.github/workflows/audit.yml`) regenerates the catalog (`node audit-catalog.mjs`) and
+runs the gate on PRs touching the contracts, the registries, or the catalog generator.
+Locally, `npm run audit:catalog` regenerates `catalog.json`; the gate itself runs in CI.
 
 ## Why grounding + attestation are separate and hand-curated
 
