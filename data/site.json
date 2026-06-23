@@ -201,42 +201,31 @@
       ]
     },
     {
-      "name": "dev-contracts-spec",
-      "fullName": "bdelanghe/dev-contracts-spec",
-      "url": "https://github.com/bdelanghe/dev-contracts-spec",
-      "description": "Zod schemas and types for dev-contracts",
+      "name": "ocap-provenance",
+      "fullName": "bounded-systems/ocap-provenance",
+      "url": "https://github.com/bounded-systems/ocap-provenance",
+      "description": "Capability-use provenance — a schema + SLSA mapping binding each privileged effect to a signed owner and an auditable chain.",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
       "topics": [
-        "developer-tools",
+        "capability-security",
         "library"
       ]
     },
     {
-      "name": "bdelanghe-claude-skills",
-      "fullName": "bdelanghe/bdelanghe-claude-skills",
-      "url": "https://github.com/bdelanghe/bdelanghe-claude-skills",
-      "description": "Claude Code skills and plugins for AI-assisted engineering workflows",
-      "language": null,
+      "name": "string-audit",
+      "fullName": "bounded-systems/string-audit",
+      "url": "https://github.com/bounded-systems/string-audit",
+      "description": "Cost-aware, grounded content auditor — typed string symbols, type-scoped audits, CAS-memoized LLM calls.",
+      "language": "JavaScript",
       "stars": 0,
       "pinned": true,
       "topics": [
         "ai",
-        "developer-tools"
-      ]
-    },
-    {
-      "name": "gh-project-room",
-      "fullName": "bounded-systems/gh-project-room",
-      "url": "https://github.com/bounded-systems/gh-project-room",
-      "description": "Front Desk projection + sync room for bounded-systems (org project #2)",
-      "language": "TypeScript",
-      "stars": 0,
-      "pinned": false,
-      "topics": [
-        "agent-infra",
-        "developer-tools"
+        "capability-security",
+        "developer-tools",
+        "library"
       ]
     }
   ]
