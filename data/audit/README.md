@@ -1,11 +1,11 @@
 # data/audit — content-audit inputs
 
-Inputs for the deterministic copy-hygiene gate, run by the **shared, owned** auditor
-[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit). The
-prose + grounding logic lives upstream; this site calls the library's reusable workflow
-(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/...@v0.6.0`) and
-passes the three files below. Fix a rule once upstream, bump the pinned ref, every
-consuming site inherits it — one place to drive content discipline across sites.
+Inputs for the deterministic copy-hygiene gate. The prose + grounding logic is the
+**shared, owned** auditor [`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit),
+**vendored** into `vendor/string-audit/` and pinned by sha256 (`vendor/string-audit/provenance.json`).
+`npm run audit` runs the same gate locally and in CI — it verifies the vendored files
+against their hashes, regenerates the catalog, and runs the gate over the three files
+below. Bump the auditor with `npm run audit:vendor -- --ref <tag>`.
 
 | File | Authored by | What it is |
 |---|---|---|
@@ -15,16 +15,16 @@ consuming site inherits it — one place to drive content discipline across site
 
 ## The gate
 
-The upstream auditor runs two checks under `--strict`, both blocking:
+`npm run audit` runs two checks under `--strict`, both blocking:
 
 | Check | Blocks on |
 |---|---|
 | Prose | `error`-level prose findings — chatbot artifacts, placeholders, lorem ipsum, **un-attested** absolutes. Attested overclaims, warns (em-dash cadence, tricolon) and suggestions (readability) are report-only. |
 | Grounding | any `claim` metric not in `grounding.json`. |
 
-CI (`.github/workflows/audit.yml`) regenerates the catalog (`node audit-catalog.mjs`) and
-runs the gate on PRs touching the contracts, the registries, or the catalog generator.
-Locally, `npm run audit:catalog` regenerates `catalog.json`; the gate itself runs in CI.
+The same `npm run audit` runs locally and in CI (`.github/workflows/audit.yml`, on PRs
+touching the contracts, the registries, the catalog generator, or the vendored gate).
+Run `node scripts/audit.mjs` (no `--strict`) for a report-only pass.
 
 ## Why grounding + attestation are separate and hand-curated
 
