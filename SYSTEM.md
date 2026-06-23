@@ -12,6 +12,7 @@ data/site.json      ← the GitHub corpus (stats + curated highlights)   [genera
         ▼  build.mjs  (pure: no network — safe in nix; validates both contracts)
    dist/index.html   hero · proof · "open to roles" · background · corpus · selected work
    dist/resume.html  print-optimized résumé + "Download PDF" (window.print)
+   dist/resume.json  JSON Résumé (machine-readable, schema-valid) — for parsers/ATS
    dist/blog.html    writing (placeholder)
    dist/brand/…      copied from the @bounded-systems/brand submodule
 ```

@@ -262,10 +262,68 @@ const rExp = (profile.experience ?? []).map((e) => `
 const rEdu = (profile.education ?? []).map((e) => `
       <div class="r-job"><div class="r-job__head"><span class="r-job__org">${esc(e.org)}</span><span class="r-job__when">${esc(e.when)}</span></div><div class="r-edu">${esc(e.what)}</div></div>`).join("");
 const rSkills = (profile.skills ?? []).map(esc).join(" · ");
+
+// ---- JSON Résumé (machine-readable, for parsers / ATS) -------------------------
+// Generated from the same contract (profile.json), schema-validated against the
+// vendored JSON Resume schema, and exposed at /resume.json — a standard structured
+// artifact a résumé parser consumes cleanly, alongside the human page.
+const MON = { jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06", jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12" };
+const SEASON = { spring: "03", summer: "06", fall: "09", autumn: "09", winter: "12" };
+const isoPoint = (s) => {
+  const t = String(s ?? "").trim().toLowerCase();
+  if (!t || t === "present") return undefined;
+  const year = t.match(/\b(?:19|20)\d{2}\b/);
+  if (!year) return undefined;
+  const word = t.match(/[a-z]+/);
+  const mm = word ? (MON[word[0].slice(0, 3)] ?? SEASON[word[0]]) : null;
+  return mm ? `${year[0]}-${mm}` : year[0];
+};
+const isoRange = (when) => {
+  const parts = String(when ?? "").split(/\s*(?:—|–|-|\bto\b)\s*/i).filter(Boolean);
+  return { start: isoPoint(parts[0]), end: parts.length > 1 ? isoPoint(parts[1]) : undefined };
+};
+const emailAddr = (profile.links.find((l) => /^mailto:/i.test(l.href))?.href || "").replace(/^mailto:/i, "");
+const jsonResume = {
+  basics: {
+    name: profile.name,
+    label: profile.role,
+    email: emailAddr,
+    url: SITE,
+    summary: profile.summary,
+    location: { city: "Brooklyn", region: "NY", countryCode: "US" },
+    profiles: (profile.social ?? []).map((s) => ({ network: s.label, url: s.href, username: (s.href.match(/([^/]+)\/?$/) || [])[1] || s.label })),
+  },
+  work: (profile.experience ?? []).map((e) => {
+    const { start, end } = isoRange(e.when);
+    const w = { name: e.org, position: e.role, summary: e.what, highlights: e.bullets ?? [] };
+    if (e.where) w.location = e.where;
+    if (start) w.startDate = start;
+    if (end) w.endDate = end;
+    return w;
+  }),
+  education: (profile.education ?? []).map((e) => {
+    const { start, end } = isoRange(e.when);
+    const ed = { institution: e.org, area: String(e.what ?? "").split(/[—–:.]/)[0].trim() };
+    if (start) ed.startDate = start;
+    if (end) ed.endDate = end;
+    return ed;
+  }),
+  skills: (profile.skills ?? []).flatMap((s) => String(s).split(/\s*·\s*/)).map((name) => ({ name })),
+};
+const jsonResumeSchema = await loadJson(join(root, "contract", "jsonresume.schema.json"));
+const jrErrors = validateSchema(jsonResumeSchema, jsonResume);
+if (jrErrors.length) {
+  console.error("✗ generated resume.json violates contract/jsonresume.schema.json:");
+  for (const e of jrErrors) console.error(`    ${e}`);
+  process.exit(1);
+}
+
 const resumeHtml = `<!doctype html>
 <html lang="en">
 <head>
 ${head({ title: `${profile.name} — Résumé`, description: `Résumé — ${profile.name}, ${profile.role}.`, path: "/resume", appCss: false })}
+<link rel="alternate" type="application/json" href="/resume.json" title="JSON Résumé (machine-readable)">
+${jsonLd}
 <style>
   @page { margin: 14mm; }
   * { box-sizing: border-box; }
@@ -307,6 +365,7 @@ ${head({ title: `${profile.name} — Résumé`, description: `Résumé — ${pro
 </html>
 `;
 await writeFile(join(dist, "resume.html"), resumeHtml);
+await writeFile(join(dist, "resume.json"), JSON.stringify(jsonResume, null, 2) + "\n");
 
 // ---- /provenance: what produced and validated this artifact -------------------
 const govern = [
