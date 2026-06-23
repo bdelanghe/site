@@ -14,9 +14,13 @@
     "deploy": "wrangler deploy",
     "check:resume": "node resume-parse.mjs",
     "audit:catalog": "node audit-catalog.mjs",
-    "check:audit": "node audit-catalog.mjs && cd string-audit && npm ci --no-audit --no-fund && CATALOG=../data/audit/catalog.json GROUNDING=../data/audit/grounding.json node audit.mjs"
+    "check:prose": "node audit-catalog.mjs && node check-prose.mjs",
+    "check:grounding": "node audit-catalog.mjs && node check-grounding.mjs",
+    "check:content": "node audit-catalog.mjs && node check-prose.mjs && node check-grounding.mjs"
   },
   "devDependencies": {
-    "wrangler": "^4"
+    "an-array-of-english-words": "^2.0.0",
+    "wrangler": "^4",
+    "write-good": "^1.0.8"
   }
 }

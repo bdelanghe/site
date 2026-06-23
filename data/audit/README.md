@@ -1,36 +1,34 @@
-# data/audit — content-audit inputs for `string-audit`
+# data/audit — content-audit inputs
 
-Inputs for the **shared, owned** content auditor
-[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit),
-pinned as the `string-audit/` git submodule (same pattern as `brand/`). Fix a rule
-once upstream, bump the submodule, and every site that consumes it inherits the change.
+Inputs for the deterministic copy-hygiene gates, which import the prose checks from the
+**shared, owned** auditor [`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit)
+(pinned as the `string-audit/` submodule, same pattern as `brand/`). We import `prose.mjs`
+**directly** — its only deps are two public-npm packages — so the gates run locally,
+egress-free. We deliberately don't run the library's `audit.mjs` / `store.mjs`, which pull
+JSR deps (`cas` / `anchored-chain`) a restrictive network policy blocks. Fix a prose rule
+once upstream, bump the submodule, both sites inherit it.
 
 | File | Authored by | What it is |
 |---|---|---|
-| `catalog.json` | **generated** (`npm run audit:catalog`) | Every shipped string as a named, typed symbol `{ type, value }`. Derived from `data/profile.json` + `data/site.json` (with `data/highlight-copy.json` overrides). **Do not hand-edit** — edit the contracts and regenerate. |
-| `grounding.json` | **curated by hand** | The fact registry: the only metrics a `claim` symbol is allowed to assert. An allowlist of attested numbers. |
+| `catalog.json` | **generated** (`npm run audit:catalog`) | Every shipped string as a typed symbol `{ type, value }`. Derived from `data/profile.json` + `data/site.json` (+ `data/highlight-copy.json` overrides). **Do not hand-edit** — edit the contracts and regenerate. |
+| `grounding.json` | **curated** | The fact registry: the only metrics a `claim` may assert. An allowlist of attested numbers. |
+| `attested-claims.json` | **curated** | Coverage-claim allowlist: absolute phrases (e.g. "every privileged effect") confirmed defensible (enforced-by-construction + linked in `proof[]`). Matching `overclaim` findings are demoted out of the blocking tier. |
 
-## Why grounding is separate (and hand-curated)
+## The gates
 
-`string-audit` types every string. A `claim` (any string carrying a number) is checked
-against `grounding.json`: if a claim states a stat that isn't in the registry, the
-auditor **flags** it — it never rewrites it as fact. That only has teeth if the registry
-is an *independent* attestation, not auto-derived from the same copy (which would let
-every claim trivially ground itself).
+| Gate | Script | Blocks (`--strict`) on |
+|---|---|---|
+| Prose | `npm run check:prose` | `error`-level prose findings — chatbot artifacts, placeholders, lorem ipsum, **un-attested** absolutes. Attested overclaims, warns (em-dash cadence, tricolon) and suggestions (readability) are report-only. |
+| Grounding | `npm run check:grounding` | any `claim` metric not in `grounding.json`. |
 
-So the rule is: **a new metric in the copy must also be added here**, deliberately, as
-"yes, this number is real and I can defend it." That is the gate — you cannot ship an
-unbacked number without first attesting it.
+`npm run check:content` runs both. CI (`.github/workflows/string-audit.yml`) runs both with
+`--strict` on PRs touching the contracts, the registries, or the gate scripts.
 
-## Run it
+## Why grounding + attestation are separate and hand-curated
 
-```sh
-npm run audit:catalog   # regenerate catalog.json from the contracts (pure, offline)
-npm run check:audit     # regenerate + run the live audit (needs string-audit's deps)
-```
-
-`check:audit` installs the submodule's deps (JSR registry — reachable in CI; may be
-blocked by a local network policy) and runs `string-audit` over our catalog + grounding.
-With `ANTHROPIC_API_KEY` set it runs the real LLM audit on cache-misses; without a key it
-runs the deterministic, offline checks. CI runs it report-only
-(`.github/workflows/string-audit.yml`).
+A `claim`'s number must be in `grounding.json`; an absolute coverage phrase must be in
+`attested-claims.json`. Both are **independent human attestations**, not auto-derived from
+the copy (which would let any claim ground itself). The rule: **a new metric or a new
+absolute coverage claim must be added to its registry, deliberately** — "yes, this is real
+and I can defend it." That is the gate: you can't ship an unbacked number or an unscoped
+absolute without first attesting it. Same "attest, don't suppress" model throughout.
