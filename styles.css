@@ -158,3 +158,9 @@
 .prov-evidence { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .prov-evidence a { display: inline-block; font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 999px; padding: 5px 12px; }
 .prov-evidence a:hover { border-color: var(--bs-color-forest); }
+.prov-materials { list-style: none; margin: 0; padding: 0; max-width: 60ch; }
+.prov-materials li { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--bs-color-line); }
+.prov-materials li:last-child { border-bottom: 0; }
+.prov-materials code { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink); background: none; padding: 0; }
+.prov-dg { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); white-space: nowrap; }
+.prov-materials__note { display: block; font-size: 13px; color: var(--bs-color-ink-mono); margin-top: 8px; line-height: 1.5; }
