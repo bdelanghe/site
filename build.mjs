@@ -246,7 +246,7 @@ ${head({ title: `Writing — ${profile.name}`, description: `Writing by ${profil
       <h1>Writing</h1>
       <p class="lead">Long-form thinking on capability security for agentic systems lives at
         <strong><a href="https://bounded.tools" style="color:var(--bs-color-forest)">bounded.tools</a></strong> —
-        the thesis, graded against the running code. More notes will land here.</p>
+        the thesis, <a href="https://bounded.tools/#provenance" style="color:var(--bs-color-forest)">graded against the running code</a>. More notes will land here.</p>
       <nav class="links">
         <a href="/">&larr;&nbsp;Home</a>
         <a href="https://bounded.tools">bounded.tools&nbsp;&#8599;</a>
