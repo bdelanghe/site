@@ -586,6 +586,17 @@ for (const p of allPosts) {
   catalog[`post.${p.slug}.desc`] = { type: "meta", value: p.meta.description };
 }
 await writeFile(join(dist, "catalog.json"), JSON.stringify(catalog, null, 2) + "\n");
+// Grounding: the canonical facts a `claim` may assert, from profile.json (the source
+// of truth). Sibling of catalog.json → string-audit auto-loads it. A claim that
+// exceeds these facts is flagged ungrounded.
+const grounding = [
+  ...(profile.experience ?? []).flatMap((e) => [e.org && e.role && `${e.org} — ${e.role} (${e.when ?? ""})`, e.what, ...(e.bullets ?? [])]),
+  ...(profile.education ?? []).map((e) => `${e.org}: ${e.what}`),
+  ...(profile.skills ?? []),
+  ...(profile.proof ?? []).map((p) => `${p.label} — ${p.href}`),
+  profile.role, profile.place, profile.headline, profile.summary, profile.intro,
+].filter(Boolean);
+await writeFile(join(dist, "grounding.json"), JSON.stringify(grounding, null, 2) + "\n");
 
 // Serve text assets as UTF-8 (Cloudflare otherwise sends text/plain with no charset,
 // which some clients decode as Latin-1 → mojibake on em dashes / é).
