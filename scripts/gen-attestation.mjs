@@ -26,6 +26,9 @@ const materials = [];
 for (const f of ["data/profile.json", "data/site.json"]) if (await exists(join(root, f))) materials.push({ uri: f, digest: { sha256: sha256(await readFile(join(root, f))) } });
 const brandPkg = (await exists(join(root, "brand", "package.json"))) ? JSON.parse(await readFile(join(root, "brand", "package.json"), "utf8")) : {};
 if (brandPkg.version) materials.push({ uri: "pkg:jsr/@bounded-systems/brand", version: brandPkg.version });
+// the design system itself — tokens (visual) + content strings (verbal), by digest
+for (const f of ["brand/tokens/tokens.json", "brand/tokens/tokens.css", "brand/content/strings.json", "brand/css/base.css", "brand/css/fonts.css"])
+  if (await exists(join(root, f))) materials.push({ uri: f, digest: { sha256: sha256(await readFile(join(root, f))) } });
 const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
 if (COMMIT) materials.push({ uri: "git+https://github.com/bdelanghe/site", digest: { sha1: COMMIT } });
 
