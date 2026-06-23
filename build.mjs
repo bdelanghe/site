@@ -4,6 +4,7 @@
 import { rm, mkdir, cp, access, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 import { validateSchema } from "./schema-validate.mjs";
 import { loadPosts } from "./posts.mjs";
 
@@ -155,6 +156,17 @@ for (const h of highlights) {
 }
 const langTotal = stats.languages.reduce((n, l) => n + l.count, 0) || 1;
 const date = new Date(site.generatedAt).toISOString().slice(0, 10);
+
+// in-toto materials: the build inputs, content-addressed where computable
+// (pure — file hashes + the brand version, no git/network).
+const sha256File = async (p) => "sha256:" + createHash("sha256").update(await readFile(p)).digest("hex");
+const brandPkg = (await exists(join(brand, "package.json"))) ? await loadJson(join(brand, "package.json")) : {};
+const materials = [
+  { name: "git+github.com/bdelanghe/site", id: COMMIT ? COMMIT.slice(0, 7) : "(local)" },
+  { name: "@bounded-systems/brand", id: brandPkg.version ? `v${brandPkg.version}` : "(submodule)" },
+  { name: "data/profile.json", id: (await sha256File(join(root, "data", "profile.json"))).slice(0, 18) + "…" },
+  { name: "data/site.json", id: (await sha256File(join(root, "data", "site.json"))).slice(0, 18) + "…" },
+];
 
 const langBars = stats.languages.slice(0, 6).map((l) =>
   `<div class="bar"><span class="bar__k">${esc(l.name)}</span>` +
@@ -394,7 +406,7 @@ ${head({ title: `Provenance — ${profile.name}`, description: `How robertdelang
       <h2 class="bs-text-label eyebrow">Provenance chain</h2>
       <p class="lead">The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.</p>
       <ol class="prov-chain">
-        <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body">${stats.repos} repositories &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — every figure on the site is computed from this corpus, not asserted.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — the home-page figures are computed over this corpus, not asserted.</span></span></li>
         <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body"><code>profile.json</code> and post frontmatter validate against JSON-Schema; facts transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>) — an unknown token fails the build, so no claim is unsourced.</span></li>
         <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body"><code>lone</code> blesses each post's DOM (semantic HTML + a11y); <code>copy-review</code> gates overclaims; <code>linkedin-check</code> verifies r&eacute;sum&eacute; claims; <code>@bounded-systems/brand</code> tokens are drift-checked. Error-severity findings block the build.</span></li>
         <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered deterministically — no network, no GitHub at build. The same materials always produce the same subject.</span></li>
