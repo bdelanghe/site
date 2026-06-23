@@ -11,7 +11,8 @@
     "check:copy": "node copy-review.mjs",
     "dev": "python3 -m http.server 8080",
     "prebuild": "npm run check",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "check:resume": "node resume-parse.mjs"
   },
   "devDependencies": {
     "wrangler": "^4"
