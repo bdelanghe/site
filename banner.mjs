@@ -26,13 +26,20 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 const profile = JSON.parse(await readFile(profilePath, "utf8"));
 const tokens = JSON.parse(await readFile(tokensPath, "utf8"));
 
-// Resolve a design token (one level of {color.x} aliasing is enough for our picks).
+// Resolve a design-token $value, following {tier.key} aliases through ANY tier
+// (the brand tokens alias color → primitive → hex, e.g. {color.forest} →
+// {primitive.green-700} → "#0C5A42"). Recurses until a literal value remains.
+const resolveRef = (v) => {
+  const m = /^\{([\w-]+)\.([\w-]+)\}$/.exec(String(v));
+  if (!m) return v;
+  const node = tokens[m[1]]?.[m[2]];
+  if (!node) throw new Error(`missing token: ${m[1]}.${m[2]}`);
+  return resolveRef(node.$value);
+};
 const color = (name) => {
   const t = tokens.color?.[name];
   if (!t) throw new Error(`missing color token: color.${name}`);
-  const v = t.$value;
-  const m = /^\{color\.([\w-]+)\}$/.exec(v);
-  return m ? color(m[1]) : v;
+  return resolveRef(t.$value);
 };
 const C = {
   forest: color("forest"), forestDeep: color("forest-deep"), forestSoft: color("forest-soft"),

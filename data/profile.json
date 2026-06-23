@@ -4,8 +4,8 @@
   "role": "Senior Software Engineer",
   "place": "Brooklyn · Aura · Recurse Center · Bennington",
   "banner": {
-    "tagline": "Capability-secured systems & developer tooling",
-    "stack": ["TypeScript", "Deno", "ocap", "AST tooling", "AI-assisted engineering"]
+    "tagline": "Bounded authority for AI agents",
+    "stack": ["Capability security", "Agent infrastructure", "AI", "Developer tools"]
   },
   "headline": "Senior software engineer. I ship systems where agents write the code — and I built the tooling to trust them in production.",
   "intro": "I'm Bobby. I became a software engineer by chasing the parts of code that feel like math — type systems, proofs, recursion, the self-referential knots where a thing contains itself and still holds together. I go down those paths because they're beautiful, not because anyone asked; the useful part shows up on its own. Lately it showed up as agents.",
