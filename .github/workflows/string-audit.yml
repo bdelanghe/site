@@ -1,0 +1,59 @@
+name: string-audit
+
+# Grounded content audit via the shared, owned auditor @bounded-systems/string-audit
+# (pinned as the string-audit/ submodule). Derives a typed-symbol catalog from the
+# contracts, then runs type-scoped, CAS-memoized audits — most usefully the `claim`
+# → grounding check, which flags any metric not in data/audit/grounding.json.
+#
+# Report-only: findings land in the run summary; it never blocks. With ANTHROPIC_API_KEY
+# set it runs the real LLM audit on cache-misses; without a key it runs the
+# deterministic, offline checks.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "data/profile.json"
+      - "data/site.json"
+      - "data/highlight-copy.json"
+      - "data/audit/grounding.json"
+      - "audit-catalog.mjs"
+      - ".gitmodules"
+
+permissions:
+  contents: read
+
+jobs:
+  string-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive # bring in the pinned string-audit/ (+ brand/)
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Regenerate catalog from the contracts
+        run: node audit-catalog.mjs
+      - name: Verify catalog is in sync with the contracts
+        run: |
+          git diff --exit-code data/audit/catalog.json || {
+            echo "::error::data/audit/catalog.json is stale — run 'npm run audit:catalog' and commit."
+            exit 1
+          }
+      - name: Install string-audit deps
+        working-directory: string-audit
+        run: npm ci --no-audit --no-fund
+      - name: Grounded content audit
+        working-directory: string-audit
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CATALOG: ../data/audit/catalog.json
+          GROUNDING: ../data/audit/grounding.json
+        run: |
+          {
+            echo '# Grounded content audit (string-audit)'
+            echo
+            echo '```'
+            node audit.mjs
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
