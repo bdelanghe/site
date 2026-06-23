@@ -14,7 +14,7 @@
     { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
     { "label": "guest-room", "href": "https://github.com/bounded-systems/guest-room" },
     { "label": "ocap-provenance", "href": "https://github.com/bounded-systems/ocap-provenance" },
-    { "label": "bounded.tools", "href": "https://bounded.tools" }
+    { "label": "bounded.tools", "href": "https://bounded.tools/#provenance" }
   ],
   "experience": [
     {
