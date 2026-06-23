@@ -569,6 +569,24 @@ ${profile.links.map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.h
 ${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
 ${posts.length ? `\n## Writing\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}`;
 await writeFile(join(dist, "llms.txt"), llms);
+
+// ---- string-audit catalog: the authored copy as typed symbols ------------------
+// Consumed by the `audit` workflow (bounded-systems/string-audit): each string is a
+// typed symbol; the type picks the checks (claim → grounding, headline → punch, …).
+const catalog = {};
+catalog["hero.headline"] = { type: "headline", value: profile.headline };
+if (profile.intro) catalog["hero.intro"] = { type: "body", value: profile.intro };
+catalog["hero.summary"] = { type: "body", value: profile.summary };
+if (profile.banner?.tagline) catalog["banner.tagline"] = { type: "headline", value: profile.banner.tagline };
+if (profile.seeking?.focus) catalog["seeking.focus"] = { type: "body", value: profile.seeking.focus };
+if (profile.seeking?.detail) catalog["seeking.detail"] = { type: "body", value: profile.seeking.detail };
+(profile.experience ?? []).forEach((e, i) => (e.bullets ?? []).forEach((b, j) => { catalog[`exp${i}.claim${j}`] = { type: "claim", value: b }; }));
+for (const p of allPosts) {
+  catalog[`post.${p.slug}.title`] = { type: "headline", value: p.meta.title };
+  catalog[`post.${p.slug}.desc`] = { type: "meta", value: p.meta.description };
+}
+await writeFile(join(dist, "catalog.json"), JSON.stringify(catalog, null, 2) + "\n");
+
 // Serve text assets as UTF-8 (Cloudflare otherwise sends text/plain with no charset,
 // which some clients decode as Latin-1 → mojibake on em dashes / é).
 await writeFile(join(dist, "_headers"), `/*.txt\n  Content-Type: text/plain; charset=utf-8\n`);
