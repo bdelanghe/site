@@ -118,9 +118,10 @@ const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   sameAs: (profile.social ?? []).map((s) => s.href),
 }).replace(/</g, "\\u003c")}</script>`;
 
+const orgLink = (e) => (e.url ? `<a href="${esc(e.url)}">${esc(e.org)}</a>` : esc(e.org));
 const entry = (e) =>
   `<li class="entry"><span class="entry__when">${esc(e.when)}</span><span class="entry__body">` +
-  `<span class="entry__org">${esc(e.org)}${e.role ? ` · <span class="entry__role">${esc(e.role)}</span>` : ""}</span>` +
+  `<span class="entry__org">${orgLink(e)}${e.role ? ` · <span class="entry__role">${esc(e.role)}</span>` : ""}</span>` +
   `<span class="entry__what">${esc(e.what)}</span></span></li>`;
 const exp = profile.experience ?? [];
 const edu = profile.education ?? [];
@@ -255,12 +256,12 @@ await writeFile(join(dist, "index.html"), html);
 const rLinks = profile.links.filter((l) => l.href !== "/resume").map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" · ");
 const rExp = (profile.experience ?? []).map((e) => `
       <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${esc(e.org)}</span><span class="r-job__when">${esc(e.when)}</span></div>
+        <div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div>
         <div class="r-job__role">${esc([e.role, e.where].filter(Boolean).join(" · "))}</div>
         <ul>${(e.bullets ?? (e.what ? [e.what] : [])).map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
       </div>`).join("");
 const rEdu = (profile.education ?? []).map((e) => `
-      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${esc(e.org)}</span><span class="r-job__when">${esc(e.when)}</span></div><div class="r-edu">${esc(e.what)}</div></div>`).join("");
+      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div><div class="r-edu">${esc(e.what)}</div></div>`).join("");
 const rSkills = (profile.skills ?? []).map(esc).join(" · ");
 
 // ---- JSON Résumé (machine-readable, for parsers / ATS) -------------------------
@@ -296,6 +297,7 @@ const jsonResume = {
   work: (profile.experience ?? []).map((e) => {
     const { start, end } = isoRange(e.when);
     const w = { name: e.org, position: e.role, summary: e.what, highlights: e.bullets ?? [] };
+    if (e.url) w.url = e.url;
     if (e.where) w.location = e.where;
     if (start) w.startDate = start;
     if (end) w.endDate = end;
@@ -303,7 +305,15 @@ const jsonResume = {
   }),
   education: (profile.education ?? []).map((e) => {
     const { start, end } = isoRange(e.when);
-    const ed = { institution: e.org, area: String(e.what ?? "").split(/[—–:.]/)[0].trim() };
+    const ed = { institution: e.org };
+    if (e.degree) {
+      const [st, ...rest] = String(e.degree).split(",");
+      ed.studyType = st.trim();
+      ed.area = rest.length ? rest.join(",").trim() : String(e.what ?? "").split(/[—–:.]/)[0].trim();
+    } else {
+      ed.area = String(e.what ?? "").split(/[—–:.]/)[0].trim();
+    }
+    if (e.url) ed.url = e.url;
     if (start) ed.startDate = start;
     if (end) ed.endDate = end;
     return ed;
