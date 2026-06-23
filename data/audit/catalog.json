@@ -27,6 +27,14 @@
     "type": "body",
     "value": "Senior engineering on teams building agentic products — where having shipped agent-authored systems and their guardrails is the rare part. Brooklyn · NYC · remote."
   },
+  "exp.bounded-systems.what": {
+    "type": "body",
+    "value": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The open, general form of the guardrails I ship at Aura."
+  },
+  "exp.bounded-systems.b0": {
+    "type": "body",
+    "value": "Designed a capability runtime — prx, guest-room, claude-box — where agents act only through the scoped door references they hold, every privileged effect is verified against its signed owner, and provenance is bound to an auditable chain (ocap-provenance)."
+  },
   "exp.aura.what": {
     "type": "claim",
     "value": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems — I architected the contract-and-validation layer behind inventory-purchasing: one source of truth, CI drift-gated across 130+ components, delivered as agent-authored PRs."
@@ -69,7 +77,7 @@
   },
   "exp.kaleida-studio.b0": {
     "type": "claim",
-    "value": "Just-in-time production workflows — shipping lead time 7 days → 2."
+    "value": "Just-in-time production workflows — eliminated edition-numbering errors (10/month → 0)."
   },
   "exp.the-prepared.what": {
     "type": "body",
