@@ -31,6 +31,7 @@ data/site.json      ← the GitHub corpus (stats + curated highlights)   [genera
 | Change proof links | `data/profile.json` → `proof` | push |
 | Refresh the GitHub corpus now | `GITHUB_TOKEN=$(gh auth token) GH_USER=bdelanghe ORGS=bounded-systems node fetch.mjs` | commit `data/site.json` |
 | Change which repos are highlighted | `PINS` in `fetch.mjs` (editorial, pins-only) | re-run fetch (or hand-edit `data/site.json`) |
+| Sharpen a Selected Work description | `data/highlight-copy.json` (overrides the GitHub repo description by repo name) | push |
 | Rebuild locally | `npm run build` (or `nix build .#site` for a hermetic build) | — |
 
 A push to `main` is all you normally need: **Cloudflare Workers Builds** runs `npm run build`
@@ -96,3 +97,33 @@ is always in sync — no committed binary to drift.
 `site` worker serves `robertdelanghe.dev` + `www` (custom domains attached to the worker).
 DNS + zone are on Cloudflare. The Cloudflare MCP plugin can manage Workers/DNS/domains
 directly (`/plugin install cloudflare@cloudflare`, OAuth).
+
+## Handoff — running this yourself
+
+Everything that renders is a function of files **in this repo** + the pinned `brand/`
+submodule. No tribal knowledge: edit the contract, push, the site regenerates and redeploys.
+
+**Run / change / review:**
+- **Build:** `npm run build` → `dist/` (pure, no network — safe in `nix build`).
+- **Change copy:** `data/profile.json` (bio, experience, seeking) or `data/highlight-copy.json`
+  (Selected Work descriptions). Push — Cloudflare builds + deploys.
+- **Change the corpus / pins:** `PINS` in `fetch.mjs`, then refresh (`refresh.yml` runs it weekly).
+- **Review copy:** `npm run check:copy` locally, or it runs on every PR touching the copy
+  (see §Copy review for how to triage findings).
+
+**The gates:**
+- `build.mjs` — schema-validates both contracts (blocking).
+- `brand-checks.yml` — tokens, content, meta, a11y contrast (blocking).
+- `copy-review.yml` — agentic copy review (report-only; `--strict` to block).
+- `linkedin-check.yml` — `profile.json` ↔ LinkedIn drift (report-only).
+
+**Definition of done (handoff-ready):**
+- [ ] `npm run build` green; both contracts schema-valid.
+- [ ] `brand-checks` green.
+- [ ] `copy-review` shows **zero blockers** (suggestions / nits triaged — fixed, confirmed-defensible, or cut).
+- [ ] `ANTHROPIC_API_KEY` is in the repo's **Actions** secret store, so copy-review runs live.
+- [ ] Selected Work is the editorial pin set; every description reads self-contained.
+
+**Secrets** live in the repo's **Actions** secret store (Settings → Secrets and variables →
+Actions): `ANTHROPIC_API_KEY` (copy review) and `CLOUDFLARE_API_TOKEN` (deploy). The
+Codespaces / Dependabot / Copilot stores are separate — Actions can't read them.

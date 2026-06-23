@@ -89,7 +89,7 @@ const SCHEMA = {
 // ---- assemble the copy bundle (authored prose only) ----------------------------
 const readJson = async (p) => JSON.parse(await readFile(join(root, p), "utf8"));
 
-function bundle(profile, site) {
+function bundle(profile, site, highlightCopy = {}) {
   const out = {
     headline: profile.headline,
     intro: profile.intro,
@@ -105,9 +105,12 @@ function bundle(profile, site) {
       what: e.what,
       bullets: e.bullets,
     })),
+    // Review the copy that actually ships: apply the editorial overrides
+    // (data/highlight-copy.json) that build.mjs applies, not the raw upstream
+    // GitHub descriptions in site.json.
     selected_work: (site.highlights || []).map((h) => ({
       name: h.name,
-      description: h.description,
+      description: highlightCopy[h.name] ?? h.description,
     })),
   };
   return out;
@@ -161,11 +164,12 @@ async function main() {
     return 0; // never block a contributor who can't run the review
   }
 
-  const [profile, site] = await Promise.all([
+  const [profile, site, highlightCopy] = await Promise.all([
     readJson("data/profile.json"),
     readJson("data/site.json"),
+    readJson("data/highlight-copy.json").catch(() => ({})),
   ]);
-  const copy = bundle(profile, site);
+  const copy = bundle(profile, site, highlightCopy);
 
   let resp;
   try {

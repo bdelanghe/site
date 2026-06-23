@@ -144,6 +144,14 @@ const seekingHtml = s
   : "";
 
 const { stats, highlights } = site;
+// Editorial copy layer: the site controls its own Selected Work descriptions,
+// overriding the upstream GitHub repo description by repo name. Keeps the copy
+// in this repo (the contract) instead of scattered across the source repos —
+// so a description fix here, not a round-trip to another repo.
+const highlightCopy = (await exists(join(root, "data", "highlight-copy.json"))) ? await loadJson(join(root, "data", "highlight-copy.json")) : {};
+for (const h of highlights) {
+  if (highlightCopy[h.name]) h.description = highlightCopy[h.name];
+}
 const langTotal = stats.languages.reduce((n, l) => n + l.count, 0) || 1;
 const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 
