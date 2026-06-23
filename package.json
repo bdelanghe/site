@@ -5,7 +5,7 @@
   "description": "robertdelanghe.dev — software-engineering portfolio, built on @bounded-systems/brand.",
   "type": "module",
   "scripts": {
-    "build": "node build.mjs",
+    "build": "node build.mjs && node scripts/gen-attestation.mjs",
     "check": "node brand/tokens/build-tokens.mjs --check",
     "check:linkedin": "node linkedin-check.mjs",
     "check:copy": "node copy-review.mjs",
