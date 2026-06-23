@@ -92,31 +92,30 @@ pins-only), not an auto-filled tag dump. Breadth lives in the corpus stats.
 ## Grounded content audit — the shared, owned auditor
 
 Content discipline runs through the **shared, owned** auditor
-[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit). The
-prose + grounding logic lives upstream; this site calls the library's **reusable workflow**
-(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/.github/workflows/audit.yml@v0.6.0`).
-Fix a rule once upstream, bump the pinned ref, and every consuming site inherits the change —
-one place to drive content discipline across sites. (Previously vendored as a submodule;
-now invoked via the reusable workflow, so the site holds only its own audit data.)
+[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit), **vendored**
+into `vendor/string-audit/` and pinned by sha256 (`vendor/string-audit/provenance.json`).
+`npm run audit` runs **the same gate locally and in CI** — one mechanism, one pinned version.
+Bump the auditor with `npm run audit:vendor -- --ref <tag>`; fix a rule upstream, re-vendor,
+commit the diff deliberately.
 
 It works on a **catalog** of typed symbols. `npm run audit:catalog` (`audit-catalog.mjs`)
 derives `data/audit/catalog.json` from the contracts — every shipped string becomes
 `{ type, value }`; a string carrying a number is typed `claim`. The catalog is **generated**
-(don't hand-edit; CI regenerates it before gating). Two curated registries gate it (the
+(don't hand-edit; the gate regenerates it before running). Two curated registries gate it (the
 "attest, don't suppress" model): `data/audit/grounding.json` (metrics a `claim` may assert)
 and `data/audit/attested-claims.json` (`{ symbol, check }` entries naming the coverage claims
 confirmed defensible, demoting their `overclaim` findings). See `data/audit/README.md`.
 
-The gate (`audit.yml`) runs two `--strict` checks, both blocking, on PRs touching the
-contracts, the registries, or the catalog generator:
+`npm run audit` (`scripts/audit.mjs`) verifies the vendored gate against its hashes, then runs
+two `--strict` checks, both blocking:
 - **Prose** — aiIsms / overclaims / proofread / readability; blocks on `error` (chatbot
   artifacts, placeholders, **un-attested** absolutes). Attested overclaims, warns (em-dash
   cadence, tricolon), and readability are report-only.
 - **Grounding** — every `claim` metric must be in the grounding registry.
 
-Locally, `npm run audit:catalog` regenerates the catalog (pure, offline); the gate itself
-runs in CI. The cross-site half (mirroring this into `bounded-systems/site`, and rule changes
-that belong upstream) lives in those repos, not here.
+It runs offline (the gate is vendored; its only npm deps are dev-installed). The cross-site
+half (mirroring this into `bounded-systems/site`, and rule changes that belong upstream) lives
+in those repos, not here.
 
 ## Determinism / provenance
 
@@ -142,12 +141,13 @@ submodule. No tribal knowledge: edit the contract, push, the site regenerates an
 - **Change the corpus / pins:** `PINS` in `fetch.mjs`, then refresh (`refresh.yml` runs it weekly).
 - **Review copy:** `npm run check:copy` locally, or it runs on every PR touching the copy
   (see §Copy review for how to triage findings).
+- **Audit copy:** `npm run audit` locally (same gate as CI; vendored + pinned, runs offline).
 
 **The gates:**
 - `build.mjs` — schema-validates both contracts (blocking).
 - `brand-checks.yml` — tokens, content, meta, a11y contrast (blocking).
 - `copy-review.yml` — agentic copy review (report-only; `--strict` to block).
-- `audit.yml` — prose + grounding gates via the shared auditor's reusable workflow (`--strict`: blocks on error / ungrounded).
+- `audit.yml` — `npm run audit`: prose + grounding gates via the vendored auditor (`--strict`: blocks on error / ungrounded).
 - `linkedin-check.yml` — `profile.json` ↔ LinkedIn drift (report-only).
 
 **Definition of done (handoff-ready):**

@@ -6,9 +6,9 @@
 // (data/audit/grounding.json).
 //
 // This is the bdelanghe/site half of using the shared auditor: fix a rule once upstream,
-// bump the pinned ref, and every consuming site inherits it. This script owns only the
-// mapping contract→catalog; the audit logic and the grounding check live upstream, run by
-// the library's reusable workflow (.github/workflows/audit.yml).
+// re-vendor, and the gate inherits it. This script owns only the mapping contract→catalog;
+// the audit logic and the grounding check live in the vendored auditor (vendor/string-audit/),
+// run by `npm run audit` (scripts/audit.mjs).
 //
 //   node audit-catalog.mjs            # regenerate data/audit/catalog.json
 //
