@@ -1,10 +1,13 @@
-name: deploy (manual fallback)
+name: deploy
 
-# Resilient fallback deploy, INDEPENDENT of Cloudflare's Workers Builds Git App.
-# Manual-only (workflow_dispatch) so it never double-deploys with Workers Builds —
-# run it from the Actions tab (or `gh workflow run deploy.yml`) if Builds breaks.
-# Hermetic: nix build (nodejs + brand pinned by flake.lock) → wrangler deploy.
+# Primary deploy: one repo-owned, hermetic pipeline. nix build (nodejs + brand
+# pinned by flake.lock) → sign a real in-toto/SLSA attestation → wrangler deploy.
+# The builder is THIS workflow (an honest SLSA builder id), and ATTEST_KEY lives in
+# one place (GitHub secrets). Disconnect Cloudflare's Workers Builds Git App so the
+# two don't double-deploy.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
