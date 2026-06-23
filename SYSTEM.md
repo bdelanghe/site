@@ -91,36 +91,32 @@ pins-only), not an auto-filled tag dump. Breadth lives in the corpus stats.
 
 ## Grounded content audit — the shared, owned auditor
 
-`string-audit/` is a pinned git submodule of
-[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit) — the
-**shared** content auditor (same submodule pattern as `brand/`). Fix a rule once upstream,
-bump the submodule, and every site that consumes it inherits the change — one place to drive
-content discipline across sites.
-
-We import the library's `prose.mjs` checks **directly** — the lightweight, egress-free path.
-`prose.mjs`'s only deps are two public-npm packages, so the gates run the same locally as in
-CI; we deliberately don't run the library's `audit.mjs` / `store.mjs`, which pull JSR deps
-(`cas` / `anchored-chain`) a restrictive network policy blocks.
+Content discipline runs through the **shared, owned** auditor
+[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit). The
+prose + grounding logic lives upstream; this site calls the library's **reusable workflow**
+(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/.github/workflows/audit.yml@v0.4.0`).
+Fix a rule once upstream, bump the pinned ref, and every consuming site inherits the change —
+one place to drive content discipline across sites. (Previously vendored as a submodule;
+now invoked via the reusable workflow, so the site holds only its own audit data.)
 
 It works on a **catalog** of typed symbols. `npm run audit:catalog` (`audit-catalog.mjs`)
 derives `data/audit/catalog.json` from the contracts — every shipped string becomes
 `{ type, value }`; a string carrying a number is typed `claim`. The catalog is **generated**
-(don't hand-edit; CI fails if it's stale). Two curated registries gate it (the "attest, don't
-suppress" model): `data/audit/grounding.json` (metrics a `claim` may assert) and
-`data/audit/attested-claims.json` (absolute coverage phrases confirmed defensible). See
+(don't hand-edit; CI regenerates it before gating). Two curated registries gate it (the
+"attest, don't suppress" model): `data/audit/grounding.json` (metrics a `claim` may assert)
+and `data/audit/attested-claims.json` (absolute coverage phrases confirmed defensible). See
 `data/audit/README.md`.
 
-- `npm run audit:catalog` — regenerate the catalog (pure, offline; runs anywhere).
-- `npm run check:prose` — aiIsms / overclaims / proofread / readability over the catalog.
-  `--strict` blocks on `error` (chatbot artifacts, placeholders, **un-attested** absolutes);
-  attested overclaims, warns (em-dash cadence, tricolon), and readability are report-only.
-- `npm run check:grounding` — every `claim` metric must be in the grounding registry.
-- `npm run check:content` — both. CI: `.github/workflows/string-audit.yml` runs both with
-  `--strict` on PRs touching the contracts, the registries, the gate scripts, or the
-  submodule pin.
+The gate (`audit.yml`) runs two `--strict` checks, both blocking, on PRs touching the
+contracts, the registries, or the catalog generator:
+- **Prose** — aiIsms / overclaims / proofread / readability; blocks on `error` (chatbot
+  artifacts, placeholders, **un-attested** absolutes). Attested overclaims, warns (em-dash
+  cadence, tricolon), and readability are report-only.
+- **Grounding** — every `claim` metric must be in the grounding registry.
 
-The cross-site half (mirroring this into `bounded-systems/site`, and rule changes that belong
-upstream — e.g. pushing the grounding check up into `prose.mjs`) lives in those repos, not here.
+Locally, `npm run audit:catalog` regenerates the catalog (pure, offline); the gate itself
+runs in CI. The cross-site half (mirroring this into `bounded-systems/site`, and rule changes
+that belong upstream) lives in those repos, not here.
 
 ## Determinism / provenance
 
@@ -151,7 +147,7 @@ submodule. No tribal knowledge: edit the contract, push, the site regenerates an
 - `build.mjs` — schema-validates both contracts (blocking).
 - `brand-checks.yml` — tokens, content, meta, a11y contrast (blocking).
 - `copy-review.yml` — agentic copy review (report-only; `--strict` to block).
-- `string-audit.yml` — prose + grounding gates via the shared auditor (`--strict`: blocks on error / ungrounded).
+- `audit.yml` — prose + grounding gates via the shared auditor's reusable workflow (`--strict`: blocks on error / ungrounded).
 - `linkedin-check.yml` — `profile.json` ↔ LinkedIn drift (report-only).
 
 **Definition of done (handoff-ready):**

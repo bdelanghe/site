@@ -1,37 +1,37 @@
 name: audit
 
-# string-audit (vendored submodule) over the authored copy as typed symbols.
-# Grounding (dist/grounding.json, sibling of the catalog) = facts a claim may assert,
-# from profile.json. Deterministic checks free; claim-grounding via LLM when keyed.
-# Report-only — flip to a gate once findings are clean.
+# Single content gate, run upstream. Calls the reusable workflow in
+# bounded-systems/string-audit (workflow_call) — the prose + grounding logic lives
+# there now (folded from the old check-prose.mjs / check-grounding.mjs), so a rule
+# fix lands once upstream and every consuming site inherits it on a ref bump.
+#
+# Inputs are this site's curated audit data:
+#   - build-cmd  regenerates the typed-symbol catalog from the contracts.
+#   - catalog    data/audit/catalog.json  (generated; the shipped strings as symbols).
+#   - grounding  data/audit/grounding.json (curated stat-token registry a claim may assert).
+#   - attested   data/audit/attested-claims.json (curated absolute-coverage allowlist).
+# Replaces both the old report-only audit.yml and the string-audit.yml gate.
 on:
   pull_request:
-    paths: ["data/**", "posts/**", "build.mjs", ".github/workflows/audit.yml"]
+    paths:
+      - "data/**"
+      - "audit-catalog.mjs"
+      - ".github/workflows/audit.yml"
   push:
     branches: [main]
-    paths: ["data/**", "posts/**", "build.mjs", ".github/workflows/audit.yml"]
+    paths:
+      - "data/**"
+      - "audit-catalog.mjs"
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          submodules: recursive
-      - name: Build (emits dist/catalog.json + dist/grounding.json)
-        run: node build.mjs
-      - name: Update string-audit submodule to latest main
-        run: git -C string-audit fetch -q --depth 1 origin main && git -C string-audit checkout -q FETCH_HEAD
-      - name: Brand dictionary (quiet domain-term spelling)
-        run: printf '%s\n' agentic claude prx ocap runtime frontend perf contentful crm api etl nyc brooklyn typeclasses unrepresentable bounded xstate recurse bennington aura l2l ajax indexeddb postgresql webarchive devcontainers >> string-audit/dictionary.txt
-      - name: Audit copy (report-only)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          cd string-audit
-          npm install --no-save an-array-of-english-words write-good
-          CATALOG="$GITHUB_WORKSPACE/dist/catalog.json" node audit.mjs || true
+    uses: bounded-systems/string-audit/.github/workflows/audit.yml@v0.4.0
+    with:
+      ref: v0.4.0 # run the gate from the same tagged string-audit
+      build-cmd: "node audit-catalog.mjs"
+      catalog: "data/audit/catalog.json"
+      grounding: "data/audit/grounding.json"
+      attested: "data/audit/attested-claims.json"
+      strict: true
+    secrets: inherit

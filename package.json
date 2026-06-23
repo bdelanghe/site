@@ -13,10 +13,7 @@
     "prebuild": "npm run check",
     "deploy": "wrangler deploy",
     "check:resume": "node resume-parse.mjs",
-    "audit:catalog": "node audit-catalog.mjs",
-    "check:prose": "node audit-catalog.mjs && node check-prose.mjs",
-    "check:grounding": "node audit-catalog.mjs && node check-grounding.mjs",
-    "check:content": "node audit-catalog.mjs && node check-prose.mjs && node check-grounding.mjs"
+    "audit:catalog": "node audit-catalog.mjs"
   },
   "devDependencies": {
     "an-array-of-english-words": "^2.0.0",
