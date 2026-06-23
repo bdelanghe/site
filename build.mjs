@@ -432,12 +432,15 @@ ${profile.summary}
 ${profile.role}${profile.place ? ` · ${profile.place}` : ""}
 
 ## Links
-${profile.links.map((l) => `- [${l.label}](${l.href.startsWith("http") ? l.href : SITE + l.href})`).join("\n")}
+${profile.links.map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.href : l.href})`).join("\n")}
 
 ## Selected work
 ${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
 ${posts.length ? `\n## Writing\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}`;
 await writeFile(join(dist, "llms.txt"), llms);
+// Serve text assets as UTF-8 (Cloudflare otherwise sends text/plain with no charset,
+// which some clients decode as Latin-1 → mojibake on em dashes / é).
+await writeFile(join(dist, "_headers"), `/*.txt\n  Content-Type: text/plain; charset=utf-8\n/llms.txt\n  Content-Type: text/plain; charset=utf-8\n`);
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
