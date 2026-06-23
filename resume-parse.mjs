@@ -32,6 +32,7 @@ async function resumeText() {
     .replace(/<style[\s\S]*?<\/style>/g, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&middot;/g, "·")
+    .replace(/&amp;/g, "&")
     .replace(/&[a-z]+;/g, " ")
     .replace(/\s+/g, " ")
     .trim();
