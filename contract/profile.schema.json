@@ -34,6 +34,7 @@
           "role": { "type": "string" },
           "when": { "type": "string" },
           "where": { "type": "string" },
+          "url": { "type": "string", "description": "Canonical org link (e.g. LinkedIn company page)." },
           "what": { "type": "string" },
           "bullets": { "type": "array", "items": { "type": "string" }, "description": "Detailed achievements — used by the résumé." }
         }
@@ -58,7 +59,10 @@
         "additionalProperties": false,
         "properties": {
           "org": { "type": "string" },
+          "degree": { "type": "string" },
           "when": { "type": "string" },
+          "where": { "type": "string" },
+          "url": { "type": "string", "description": "Canonical org link (e.g. LinkedIn school page)." },
           "what": { "type": "string" }
         }
       }
