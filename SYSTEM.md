@@ -104,8 +104,8 @@ derives `data/audit/catalog.json` from the contracts — every shipped string be
 `{ type, value }`; a string carrying a number is typed `claim`. The catalog is **generated**
 (don't hand-edit; CI regenerates it before gating). Two curated registries gate it (the
 "attest, don't suppress" model): `data/audit/grounding.json` (metrics a `claim` may assert)
-and `data/audit/attested-claims.json` (absolute coverage phrases confirmed defensible). See
-`data/audit/README.md`.
+and `data/audit/attested-claims.json` (`{ symbol, check }` entries naming the coverage claims
+confirmed defensible, demoting their `overclaim` findings). See `data/audit/README.md`.
 
 The gate (`audit.yml`) runs two `--strict` checks, both blocking, on PRs touching the
 contracts, the registries, or the catalog generator:

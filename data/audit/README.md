@@ -11,7 +11,7 @@ consuming site inherits it — one place to drive content discipline across site
 |---|---|---|
 | `catalog.json` | **generated** (`npm run audit:catalog`) | Every shipped string as a typed symbol `{ type, value }`. Derived from `data/profile.json` + `data/site.json` (+ `data/highlight-copy.json` overrides). **Do not hand-edit** — edit the contracts and regenerate. |
 | `grounding.json` | **curated** | The fact registry: the only metrics a `claim` may assert. An allowlist of attested numbers. |
-| `attested-claims.json` | **curated** | Coverage-claim allowlist: absolute phrases (e.g. "every privileged effect") confirmed defensible (enforced-by-construction + linked in `proof[]`). Matching `overclaim` findings are demoted out of the blocking tier. |
+| `attested-claims.json` | **curated** | Coverage-claim allowlist as `{ symbol, check }` entries (the gate's schema): each names a catalog symbol whose `overclaim` finding is confirmed defensible (enforced-by-construction + linked in `proof[]`), demoting it out of the blocking tier. A `note` records the rationale. (Empty `symbol` would match any symbol for that check.) |
 
 ## The gate
 
