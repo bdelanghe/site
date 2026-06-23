@@ -18,6 +18,7 @@ on:
       - "data/audit/grounding.json"
       - "audit-catalog.mjs"
       - ".gitmodules"
+      - ".github/workflows/string-audit.yml"
 
 permissions:
   contents: read
