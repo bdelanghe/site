@@ -94,7 +94,7 @@ pins-only), not an auto-filled tag dump. Breadth lives in the corpus stats.
 Content discipline runs through the **shared, owned** auditor
 [`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit). The
 prose + grounding logic lives upstream; this site calls the library's **reusable workflow**
-(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/.github/workflows/audit.yml@v0.4.0`).
+(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/.github/workflows/audit.yml@v0.6.0`).
 Fix a rule once upstream, bump the pinned ref, and every consuming site inherits the change —
 one place to drive content discipline across sites. (Previously vendored as a submodule;
 now invoked via the reusable workflow, so the site holds only its own audit data.)

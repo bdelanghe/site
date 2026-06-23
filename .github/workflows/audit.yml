@@ -26,9 +26,9 @@ on:
 
 jobs:
   audit:
-    uses: bounded-systems/string-audit/.github/workflows/audit.yml@v0.4.0
+    uses: bounded-systems/string-audit/.github/workflows/audit.yml@v0.6.0
     with:
-      ref: v0.4.0 # run the gate from the same tagged string-audit
+      ref: v0.6.0 # run the gate from the same tagged string-audit
       build-cmd: "node audit-catalog.mjs"
       catalog: "data/audit/catalog.json"
       grounding: "data/audit/grounding.json"

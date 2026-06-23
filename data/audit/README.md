@@ -3,7 +3,7 @@
 Inputs for the deterministic copy-hygiene gate, run by the **shared, owned** auditor
 [`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit). The
 prose + grounding logic lives upstream; this site calls the library's reusable workflow
-(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/...@v0.4.0`) and
+(`.github/workflows/audit.yml` → `uses: bounded-systems/string-audit/...@v0.6.0`) and
 passes the three files below. Fix a rule once upstream, bump the pinned ref, every
 consuming site inherits it — one place to drive content discipline across sites.
 
