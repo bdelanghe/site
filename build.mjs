@@ -378,13 +378,6 @@ await writeFile(join(dist, "resume.html"), resumeHtml);
 await writeFile(join(dist, "resume.json"), JSON.stringify(jsonResume, null, 2) + "\n");
 
 // ---- /provenance: what produced and validated this artifact -------------------
-const govern = [
-  ["Content", "<code>profile.json</code> / post frontmatter validated against JSON-Schema contracts — a non-conforming change can't build."],
-  ["Facts", "Post facts transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced."],
-  ["Design", "<code>@bounded-systems/brand</code> design tokens — colour and type from one source, drift-checked in CI."],
-  ["Semantics &amp; accessibility", "<code>lone</code> blesses each rendered post's DOM (semantic HTML + a11y); error-severity findings block the build."],
-  ["Claim integrity", "<code>copy-review</code> (Claude) gates blocker-severity overclaims; <code>linkedin-check</code> verifies r&eacute;sum&eacute; claims against the saved source."],
-];
 const provHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -398,25 +391,28 @@ ${head({ title: `Provenance — ${profile.name}`, description: `How robertdelang
       <p class="lead">This site is built deterministically from versioned sources and validated at every boundary — the same discipline the work itself argues for. Here's what produced and checked this artifact.</p>
     </header>
     <section class="bg">
-      <h2 class="bs-text-label eyebrow">This build</h2>
-      <p class="lead">Commit ${COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}"><code>${COMMIT.slice(0, 7)}</code></a>` : "<code>(local)</code>"} &middot; generated ${date} &middot; source: <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
-    </section>
-    <section class="bg">
-      <h2 class="bs-text-label eyebrow">Contracts &amp; gates</h2>
-      <ul class="entries">
-        ${govern.map(([k, v]) => `<li class="entry"><span class="entry__body"><span class="entry__org">${k}</span><span class="entry__what">${v}</span></span></li>`).join("\n        ")}
-      </ul>
+      <h2 class="bs-text-label eyebrow">Provenance chain</h2>
+      <p class="lead">The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.</p>
+      <ol class="prov-chain">
+        <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body">${stats.repos} repositories &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — every figure on the site is computed from this corpus, not asserted.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body"><code>profile.json</code> and post frontmatter validate against JSON-Schema; facts transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>) — an unknown token fails the build, so no claim is unsourced.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body"><code>lone</code> blesses each post's DOM (semantic HTML + a11y); <code>copy-review</code> gates overclaims; <code>linkedin-check</code> verifies r&eacute;sum&eacute; claims; <code>@bounded-systems/brand</code> tokens are drift-checked. Error-severity findings block the build.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered deterministically — no network, no GitHub at build. The same materials always produce the same subject.</span></li>
+        <li class="prov-seal">
+          <div class="prov-seal__card">
+            <p class="prov-seal__title">Subject</p>
+            <p class="prov-seal__meta">commit ${COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}">${COMMIT.slice(0, 7)}</a>` : "(local)"} &middot; ${date} &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
+            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Shaped as an in-toto <code>Statement/v1</code>; DSSE ed25519 signing via <a href="https://github.com/bounded-systems/anchored-chain">anchored-chain</a> is the next link — as <a href="https://github.com/bounded-systems/string-audit">string-audit</a> already does per audit.</p>
+          </div>
+        </li>
+      </ol>
     </section>
     <section class="bg">
       <h2 class="bs-text-label eyebrow">Claims &rarr; evidence</h2>
       <p class="lead">Every hero claim points at the running code that backs it.</p>
-      <ul class="entries">
-        ${(profile.proof ?? []).map((p) => `<li class="entry"><span class="entry__body"><span class="entry__org"><a href="${esc(p.href)}">${esc(p.label)}</a></span><span class="entry__what">${esc(p.href)}</span></span></li>`).join("\n        ")}
+      <ul class="prov-evidence">
+        ${(profile.proof ?? []).map((p) => `<li><a href="${esc(p.href)}">${esc(p.label)}&nbsp;&#8599;</a></li>`).join("\n        ")}
       </ul>
-    </section>
-    <section class="corpus">
-      <h2 class="bs-text-label eyebrow">Corpus</h2>
-      <p class="lead">${stats.repos} repositories &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — the figures on the home page are computed from this corpus, not asserted.</p>
     </section>
     <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">generated ${date}${commitHtml}</span></footer>
   </main>

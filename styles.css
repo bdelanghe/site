@@ -139,3 +139,22 @@
   font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono);
 }
 .post__synd a { color: var(--bs-color-forest); text-decoration: none; }
+
+/* ---- provenance: the build as a derivation chain --------------------------- */
+.prov-chain { list-style: none; margin: 0; padding: 0; }
+.prov-link { position: relative; padding: 0 0 24px 32px; }
+.prov-link::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: -6px; width: 2px; background: var(--bs-color-line); }
+.prov-link::after { content: ""; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--bs-color-white); border: 2px solid var(--bs-color-forest-soft); }
+.prov-link__name { display: block; font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-forest); margin: 0 0 5px; }
+.prov-link__body { color: var(--bs-color-ink-soft); font-size: 15px; line-height: 1.55; max-width: 60ch; }
+.prov-link__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-forest-tint); padding: 1px 5px; border-radius: 4px; color: var(--bs-color-ink); }
+/* the signed output — the seal that closes the chain */
+.prov-seal { position: relative; padding-left: 32px; }
+.prov-seal::after { content: ""; position: absolute; left: 0; top: 6px; width: 13px; height: 13px; background: var(--bs-color-forest); transform: rotate(45deg); }
+.prov-seal__card { border: 1px solid var(--bs-color-forest-soft); background: var(--bs-color-forest-tint); border-radius: var(--bs-radius-md); padding: 16px 18px; }
+.prov-seal__title { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-forest); margin: 0 0 6px; }
+.prov-seal__meta { font-family: var(--bs-font-mono); font-size: 14px; color: var(--bs-color-ink); margin: 0; }
+.prov-seal__meta a { color: var(--bs-color-forest); text-decoration: none; border-bottom: 1px solid var(--bs-color-forest-soft); }
+.prov-evidence { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.prov-evidence a { display: inline-block; font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 999px; padding: 5px 12px; }
+.prov-evidence a:hover { border-color: var(--bs-color-forest); }
