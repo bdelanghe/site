@@ -1,13 +1,11 @@
-name: deploy
+name: deploy (manual fallback)
 
-# Primary deploy: one repo-owned, hermetic pipeline. nix build (nodejs + brand
-# pinned by flake.lock) → sign a real in-toto/SLSA attestation → wrangler deploy.
-# The builder is THIS workflow (an honest SLSA builder id), and ATTEST_KEY lives in
-# one place (GitHub secrets). Disconnect Cloudflare's Workers Builds Git App so the
-# two don't double-deploy.
+# Manual fallback deploy (Cloudflare Workers Builds is primary). Hermetic: nix build
+# → sign in-toto/SLSA attestation (ATTEST_KEY) → wrangler deploy.
+# NOTE: held at workflow_dispatch — making this deploy-on-push requires the nix build
+# to be green first (currently fails: posts/agent-authored-code-drift.md references
+# {{org}}, which the flake-pinned brand doesn't provide — a brand-pin/token mismatch).
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
