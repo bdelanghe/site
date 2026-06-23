@@ -18,13 +18,14 @@ const PINS = [
   "bounded-systems/guest-room",
   "bounded-systems/claude-box",
   "bounded-systems/door-kit",
-  "bdelanghe/dev-contracts-spec",
-  "bdelanghe/bdelanghe-claude-skills",
+  "bounded-systems/ocap-provenance",
+  "bounded-systems/string-audit",
 ];
 const MAX_HIGHLIGHTS = 12;
-// Selected work is curated tight to the thesis: a repo is shown only if it's
-// pinned or carries one of these tags. Breadth still lives in the corpus stats.
-const THESIS_TAGS = ["capability-security", "agent-infra"];
+// Selected Work is an editorial set: exactly the pinned repos, in pin order.
+// Tag-based auto-include was dropped — the strongest repos are under-tagged, so
+// tags surfaced filler and missed gems. "Real" is the floor; "interesting and
+// on-thesis" is the bar. Breadth still lives in the corpus stats.
 
 async function ghAll(path) {
   const out = [];
@@ -74,9 +75,8 @@ const stats = {
 const isMeta = (r) => r.name === ".github" || r.full_name === "bdelanghe/bdelanghe";
 const eligible = repos.filter((r) => !r.private && !r.fork && !r.archived && !isMeta(r) && r.description);
 const pinRank = new Map(PINS.map((n, i) => [n, i]));
-const isThesis = (r) => topicsOf(r).some((t) => THESIS_TAGS.includes(t));
 const curated = eligible
-  .filter((r) => pinRank.has(r.full_name) || isThesis(r))
+  .filter((r) => pinRank.has(r.full_name))
   .sort((a, b) => {
     const pa = pinRank.has(a.full_name), pb = pinRank.has(b.full_name);
     if (pa && pb) return pinRank.get(a.full_name) - pinRank.get(b.full_name);

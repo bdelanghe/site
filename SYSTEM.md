@@ -30,7 +30,7 @@ data/site.json      ← the GitHub corpus (stats + curated highlights)   [genera
 | Change "Open to roles" | `data/profile.json` → `seeking` | push |
 | Change proof links | `data/profile.json` → `proof` | push |
 | Refresh the GitHub corpus now | `GITHUB_TOKEN=$(gh auth token) GH_USER=bdelanghe ORGS=bounded-systems node fetch.mjs` | commit `data/site.json` |
-| Change which repos are highlighted | `PINS` in `fetch.mjs` | re-run fetch |
+| Change which repos are highlighted | `PINS` in `fetch.mjs` (editorial, pins-only) | re-run fetch (or hand-edit `data/site.json`) |
 | Rebuild locally | `npm run build` (or `nix build .#site` for a hermetic build) | — |
 
 A push to `main` is all you normally need: **Cloudflare Workers Builds** runs `npm run build`
@@ -53,6 +53,37 @@ and deploys `site` automatically (serves robertdelanghe.dev + www).
   divergences live in `data/linkedin/accepted-drift.json`. CI runs it advisory-only on PRs
   that touch `profile.json` or `data/linkedin/` (`.github/workflows/linkedin-check.yml`).
   Refresh the export per `data/linkedin/README.md`.
+
+## Copy review — the gate and the loop
+
+`copy-review.mjs` (`npm run check:copy`) is an **agentic gate**: it sends the authored prose
+(`profile.json` + the `site.json` highlight descriptions) to Claude and gets back structured
+findings (`blocker`/`suggestion`/`nit`) judged on four axes — **claim integrity, thesis
+coherence, voice, clarity**. Report-only by default (findings → the Actions run summary);
+`--strict` fails on blockers. It **skips cleanly** without `ANTHROPIC_API_KEY`, which must
+live in the repo's **Actions** secret store (not the Codespaces / Dependabot / Copilot
+stores — Actions can't read those). CI: `.github/workflows/copy-review.yml` runs it on PRs
+touching `profile.json`, `site.json`, or the script.
+
+It is **non-deterministic** — it won't converge to zero findings; each run scrutinises from a
+fresh angle. That's the point: recurring pressure, not a one-time pass. The gate doesn't
+decide — it surfaces; a human triages each finding through three questions:
+
+1. **Is it true?** A real metric stays. The gate flags precise numbers it can't verify (a
+   false positive) — that's a prompt to *confirm*, not an order to cut. Don't gut real
+   achievements to satisfy a cautious reader.
+2. **Is it interesting?** "Real" is the floor. A true-but-dull item (a boilerplate repo, a
+   vague claim) dilutes the sharp ones around it. Rewording it is lipstick.
+3. **Does it advance the thesis?** Off-throughline color earns less than on-thesis substance.
+
+Then act: **fix** (sharpen — and prefer a *named standard metric* like FCP or Core Web Vitals
+over a bespoke or vague one; never cross metrics, e.g. a page-load "before" with an FCP
+"after"), **confirm-as-defensible** (real and on-thesis → keep, be ready to show the
+methodology), or **cut** (real but dull / off-thesis → remove, don't reword). Re-run to
+confirm the finding clears.
+
+Selected Work follows the same bar — it's an **editorial set** (`PINS` in `fetch.mjs`,
+pins-only), not an auto-filled tag dump. Breadth lives in the corpus stats.
 
 ## Determinism / provenance
 
