@@ -1,9 +1,9 @@
 name: audit
 
-# string-audit (bounded-systems/string-audit, vendored as a submodule) over the
-# authored copy: each string is a typed symbol (claim → grounding, headline → punch).
-# Deterministic checks run free; claim-grounding uses the LLM when ANTHROPIC_API_KEY
-# is set. Report-only for now — flip to a gate once dictionary + grounding are tuned.
+# string-audit (vendored submodule) over the authored copy: each string is a typed
+# symbol (claim → grounding, headline → punch). Deterministic checks free; claim-
+# grounding via the LLM when ANTHROPIC_API_KEY is set. Report-only — flip to a gate
+# once dictionary + grounding are tuned.
 on:
   pull_request:
     paths: ["data/**", "posts/**", "build.mjs", ".github/workflows/audit.yml"]
@@ -29,4 +29,7 @@ jobs:
       - name: Audit copy (report-only)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: cd string-audit && CATALOG="$GITHUB_WORKSPACE/dist/catalog.json" node audit.mjs || true
+        run: |
+          cd string-audit
+          npm install --no-save an-array-of-english-words write-good
+          CATALOG="$GITHUB_WORKSPACE/dist/catalog.json" node audit.mjs || true
