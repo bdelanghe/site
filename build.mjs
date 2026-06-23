@@ -48,8 +48,8 @@ const tokens = {
   repo: Object.fromEntries((site.highlights || []).map((h) => [h.name, h.url])),
 };
 const postSchema = await loadJson(join(root, "contract", "posts.schema.json"));
-const posts = await loadPosts(join(root, "posts"), tokens);
-for (const p of posts) {
+const allPosts = await loadPosts(join(root, "posts"), tokens);
+for (const p of allPosts) {
   const errs = validateSchema(postSchema, p.meta);
   if (errs.length) {
     console.error(`✗ posts/${p.slug}.md frontmatter violates contract/posts.schema.json:`);
@@ -57,6 +57,10 @@ for (const p of posts) {
     process.exit(1);
   }
 }
+// Route by target: this site is robertdelanghe.dev — render only 'dev' posts (or
+// untargeted). A 'bounded-tools' draft that lands here is validated but not published.
+const posts = allPosts.filter((p) => (p.meta.target ?? "dev") === "dev");
+for (const p of allPosts) if ((p.meta.target ?? "dev") !== "dev") console.log(`· skipping ${p.slug} (target=${p.meta.target})`);
 
 const linksHtml = profile.links
   .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
