@@ -12,7 +12,9 @@
     "dev": "python3 -m http.server 8080",
     "prebuild": "npm run check",
     "deploy": "wrangler deploy",
-    "check:resume": "node resume-parse.mjs"
+    "check:resume": "node resume-parse.mjs",
+    "audit:catalog": "node audit-catalog.mjs",
+    "check:audit": "node audit-catalog.mjs && cd string-audit && npm ci --no-audit --no-fund && CATALOG=../data/audit/catalog.json GROUNDING=../data/audit/grounding.json node audit.mjs"
   },
   "devDependencies": {
     "wrangler": "^4"

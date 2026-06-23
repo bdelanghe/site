@@ -33,6 +33,7 @@ data/site.json      ← the GitHub corpus (stats + curated highlights)   [genera
 | Refresh the GitHub corpus now | `GITHUB_TOKEN=$(gh auth token) GH_USER=bdelanghe ORGS=bounded-systems node fetch.mjs` | commit `data/site.json` |
 | Change which repos are highlighted | `PINS` in `fetch.mjs` (editorial, pins-only) | re-run fetch (or hand-edit `data/site.json`) |
 | Sharpen a Selected Work description | `data/highlight-copy.json` (overrides the GitHub repo description by repo name) | push |
+| Attest a new metric (so a `claim` grounds) | `data/audit/grounding.json` (the fact registry) | push |
 | Rebuild locally | `npm run build` (or `nix build .#site` for a hermetic build) | — |
 
 A push to `main` is all you normally need: **Cloudflare Workers Builds** runs `npm run build`
@@ -87,6 +88,33 @@ confirm the finding clears.
 Selected Work follows the same bar — it's an **editorial set** (`PINS` in `fetch.mjs`,
 pins-only), not an auto-filled tag dump. Breadth lives in the corpus stats.
 
+## Grounded content audit — the shared, owned auditor
+
+`string-audit/` is a pinned git submodule of
+[`@bounded-systems/string-audit`](https://github.com/bounded-systems/string-audit) — the
+**shared** content auditor (same submodule pattern as `brand/`). Fix a rule once upstream,
+bump the submodule, and every site that consumes it inherits the change — one place to drive
+content discipline across sites.
+
+It works on a **catalog** of typed symbols. `npm run audit:catalog` (`audit-catalog.mjs`)
+derives `data/audit/catalog.json` from the contracts — every shipped string becomes
+`{ type, value }`; a string carrying a number is typed `claim`. The catalog is **generated**
+(don't hand-edit; CI fails if it's stale). `data/audit/grounding.json` is the **curated** part:
+the fact registry — the only metrics a `claim` may assert. A claim whose number isn't in the
+registry is **flagged, never rewritten** — so you can't ship an unbacked stat without first
+attesting it. See `data/audit/README.md`.
+
+- `npm run audit:catalog` — regenerate the catalog (pure, offline; runs anywhere).
+- `npm run check:audit` — regenerate + run the live audit. Installs the submodule's deps
+  (JSR registry — reachable in CI; may be blocked behind a local network policy) and runs
+  `string-audit` over the catalog + grounding. With `ANTHROPIC_API_KEY` it runs the real LLM
+  audit on cache-misses; without it, the deterministic offline checks.
+- CI: `.github/workflows/string-audit.yml` — report-only, on PRs touching the contracts,
+  grounding, or `audit-catalog.mjs`.
+
+The cross-site half (mirroring this into `bounded-systems/site`, and any rule changes that
+belong upstream) lives in those repos, not here.
+
 ## Determinism / provenance
 
 `build.mjs` is a pure function of the two contracts + the pinned brand submodule, so the
@@ -116,6 +144,7 @@ submodule. No tribal knowledge: edit the contract, push, the site regenerates an
 - `build.mjs` — schema-validates both contracts (blocking).
 - `brand-checks.yml` — tokens, content, meta, a11y contrast (blocking).
 - `copy-review.yml` — agentic copy review (report-only; `--strict` to block).
+- `string-audit.yml` — grounded content audit via the shared auditor (report-only).
 - `linkedin-check.yml` — `profile.json` ↔ LinkedIn drift (report-only).
 
 **Definition of done (handoff-ready):**
