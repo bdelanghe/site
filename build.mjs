@@ -74,11 +74,11 @@ const proofHtml = profile.proof?.length
 const SITE = "https://robertdelanghe.dev";
 const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
 // Build provenance: the commit this artifact was built from (Cloudflare/GitHub CI env).
-// Shown in the footer, linked to the commit for now — later: a full provenance report.
+// The footer SHA links to /provenance — the report of what produced + validated this build.
 const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
 const commitHtml = COMMIT
-  ? ` &middot; <a href="https://github.com/bdelanghe/site/commit/${COMMIT}" title="build provenance (later: full report)">${COMMIT.slice(0, 7)}</a>`
-  : "";
+  ? ` &middot; <a href="/provenance" title="build provenance report">${COMMIT.slice(0, 7)}</a>`
+  : ` &middot; <a href="/provenance">provenance</a>`;
 const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType = "website", ogImage = OG_IMAGE }) => {
   const url = SITE + path, t = esc(title), d = esc(description), ot = esc(ogTitle ?? title), img = ogImage.startsWith("http") ? ogImage : SITE + ogImage;
   return `<meta charset="utf-8">
@@ -299,6 +299,54 @@ ${head({ title: `${profile.name} — Résumé`, description: `Résumé — ${pro
 </html>
 `;
 await writeFile(join(dist, "resume.html"), resumeHtml);
+
+// ---- /provenance: what produced and validated this artifact -------------------
+const govern = [
+  ["Content", "<code>profile.json</code> / post frontmatter validated against JSON-Schema contracts — a non-conforming change can't build."],
+  ["Facts", "Post facts transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced."],
+  ["Design", "<code>@bounded-systems/brand</code> design tokens — colour and type from one source, drift-checked in CI."],
+  ["Semantics &amp; accessibility", "<code>lone</code> blesses each rendered post's DOM (semantic HTML + a11y); error-severity findings block the build."],
+  ["Claim integrity", "<code>copy-review</code> (Claude) gates blocker-severity overclaims; <code>linkedin-check</code> verifies r&eacute;sum&eacute; claims against the saved source."],
+];
+const provHtml = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `Provenance — ${profile.name}`, description: `How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence.`, path: "/provenance" })}
+</head>
+<body>
+  <main class="wrap">
+    <header class="intro">
+      <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;Home</a></p>
+      <h1>Provenance</h1>
+      <p class="lead">This site is built deterministically from versioned sources and validated at every boundary — the same discipline the work itself argues for. Here's what produced and checked this artifact.</p>
+    </header>
+    <section class="bg">
+      <h2 class="bs-text-label eyebrow">This build</h2>
+      <p class="lead">Commit ${COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}"><code>${COMMIT.slice(0, 7)}</code></a>` : "<code>(local)</code>"} &middot; generated ${date} &middot; source: <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
+    </section>
+    <section class="bg">
+      <h2 class="bs-text-label eyebrow">Contracts &amp; gates</h2>
+      <ul class="entries">
+        ${govern.map(([k, v]) => `<li class="entry"><span class="entry__body"><span class="entry__org">${k}</span><span class="entry__what">${v}</span></span></li>`).join("\n        ")}
+      </ul>
+    </section>
+    <section class="bg">
+      <h2 class="bs-text-label eyebrow">Claims &rarr; evidence</h2>
+      <p class="lead">Every hero claim points at the running code that backs it.</p>
+      <ul class="entries">
+        ${(profile.proof ?? []).map((p) => `<li class="entry"><span class="entry__body"><span class="entry__org"><a href="${esc(p.href)}">${esc(p.label)}</a></span><span class="entry__what">${esc(p.href)}</span></span></li>`).join("\n        ")}
+      </ul>
+    </section>
+    <section class="corpus">
+      <h2 class="bs-text-label eyebrow">Corpus</h2>
+      <p class="lead">${stats.repos} repositories &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — the figures on the home page are computed from this corpus, not asserted.</p>
+    </section>
+    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">generated ${date}${commitHtml}</span></footer>
+  </main>
+</body>
+</html>
+`;
+await writeFile(join(dist, "provenance.html"), provHtml);
 await cp(join(root, "404.html"), join(dist, "404.html"));
 
 // ---- /blog: index (h-feed) + per-post pages (h-entry) from posts/*.md ---------
@@ -450,7 +498,7 @@ await writeFile(join(dist, "_headers"), `/*.txt\n  Content-Type: text/plain; cha
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  ["/", "/resume", "/blog", ...posts.map(postUrl)].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
+  ["/", "/resume", "/blog", "/provenance", ...posts.map(postUrl)].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
   `\n</urlset>\n`);
 
 console.log(`✓ built dist/  — ${highlights.length} highlights, ${stats.languages.length} languages, +meta/llms.txt/sitemap`);
