@@ -73,6 +73,12 @@ const proofHtml = profile.proof?.length
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
 const SITE = "https://robertdelanghe.dev";
 const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
+// Build provenance: the commit this artifact was built from (Cloudflare/GitHub CI env).
+// Shown in the footer, linked to the commit for now — later: a full provenance report.
+const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
+const commitHtml = COMMIT
+  ? ` &middot; <a href="https://github.com/bdelanghe/site/commit/${COMMIT}" title="build provenance (later: full report)">${COMMIT.slice(0, 7)}</a>`
+  : "";
 const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType = "website", ogImage = OG_IMAGE }) => {
   const url = SITE + path, t = esc(title), d = esc(description), ot = esc(ogTitle ?? title), img = ogImage.startsWith("http") ? ogImage : SITE + ogImage;
   return `<meta charset="utf-8">
@@ -226,7 +232,7 @@ const html = `<!doctype html>
     <footer class="foot">
       <span>Robert DeLanghe &middot; Bounded Systems</span>
       ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
-      <span class="foot__meta">github.com/bdelanghe &middot; generated ${date}</span>
+      <span class="foot__meta">github.com/bdelanghe &middot; generated ${date}${commitHtml}</span>
     </footer>
   </main>
 </body>
@@ -371,7 +377,7 @@ ${head({ title: `${p.meta.title} — ${profile.name}`, ogTitle: p.meta.title, og
       </div>
       ${(p.meta.syndication && p.meta.syndication.length) ? `<p class="post__synd">Also on: ${p.meta.syndication.map((u) => `<a class="u-syndication" href="${esc(u)}">${esc(new URL(u).hostname.replace(/^www\./, ""))}</a>`).join(" &middot; ")}</p>` : ""}
     </article>
-    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a></span></footer>
+    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a>${commitHtml}</span></footer>
   </main>
 </body>
 </html>
