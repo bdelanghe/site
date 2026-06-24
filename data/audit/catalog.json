@@ -77,7 +77,7 @@
   },
   "exp.pioneer-works.b0": {
     "type": "claim",
-    "value": "A unified CRM + Square-API ETL — cut payment-tracking time 80%, with P&L across 200+ events."
+    "value": "Built a unified CRM + Square-API ETL that reduced payment-tracking time by 80% and tracked profit-and-loss across 200+ events."
   },
   "exp.kaleida-studio.what": {
     "type": "body",
@@ -85,7 +85,7 @@
   },
   "exp.kaleida-studio.b0": {
     "type": "claim",
-    "value": "Just-in-time production workflows — eliminated edition-numbering errors, from 10/month to zero."
+    "value": "Built just-in-time production workflows that eliminated edition-numbering errors, from 10/month to zero."
   },
   "exp.the-prepared.what": {
     "type": "body",
@@ -93,7 +93,7 @@
   },
   "exp.the-prepared.b0": {
     "type": "claim",
-    "value": "A unified content pipeline — cut curation time 70% across 1000+ articles."
+    "value": "Built a unified content pipeline that cut curation time by 70% across 1000+ articles."
   },
   "exp.recurse-center.what": {
     "type": "body",
