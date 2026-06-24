@@ -1,0 +1,43 @@
+[
+  {
+    "name": "defensible-metric-is-not-a-bluff",
+    "note": "Regression: the gate must NOT flag a specific, mechanistically-supported metric as a blocker. This is the flip-flop that broke #63 (it told us to soften, then called the softened version a bluff).",
+    "copy": {
+      "experience": [
+        {
+          "org": "L2L",
+          "role": "Software Engineer",
+          "what": "Quality gates and developer experience for a 20-engineer team.",
+          "bullets": [
+            "Built static-analysis gating into the PR pipeline that blocked defect classes before merge; critical bugs fell 20% and high-priority issues 25% across the 20-engineer team."
+          ]
+        }
+      ]
+    },
+    "expect": { "noBlocker": true }
+  },
+  {
+    "name": "on-thesis-voice-is-not-fluff",
+    "note": "Declarative, on-thesis voice must not be flagged as marketing fluff.",
+    "copy": {
+      "summary": "I build the security layer for agentic systems: privileged effects bound to a signed owner, enforced in CI. The general version is open source — prx and the bounded-systems libraries."
+    },
+    "expect": { "noBlocker": true }
+  },
+  {
+    "name": "ai-slop-cliche-is-flagged",
+    "note": "Empty corporate cliché with no concrete content should produce a finding.",
+    "copy": {
+      "summary": "A passionate, results-driven engineer who leverages cross-functional synergies to drive impactful, scalable outcomes."
+    },
+    "expect": { "anyFinding": true }
+  },
+  {
+    "name": "unsupported-scale-claim-is-a-blocker",
+    "note": "An inflated, unsupported claim an interviewer would expose should be a blocker.",
+    "copy": {
+      "summary": "Single-handedly scaled the platform to 10 million users and 10x'd company revenue in a quarter."
+    },
+    "expect": { "blocker": true }
+  }
+]
