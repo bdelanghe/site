@@ -92,6 +92,7 @@
     { "label": "Résumé", "href": "/resume" },
     { "label": "Writing", "href": "/blog" },
     { "label": "bounded.tools", "href": "https://bounded.tools" },
+    { "label": "robertdelanghe.dev", "href": "https://robertdelanghe.dev" },
     { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
   ]
 }
