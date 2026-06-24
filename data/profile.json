@@ -7,8 +7,8 @@
     "tagline": "Bounded authority for AI agents",
     "stack": ["Capability security", "Agent infrastructure", "AI", "Developer tools"]
   },
-  "headline": "I ship systems where agents write the code, and I build the tooling to trust them in production.",
-  "intro": "I'm Bobby. I became a software engineer by chasing the parts of code that feel like math — type systems, proofs, recursion, the self-referential knots where a thing contains itself and still holds together. I go down those paths because they're beautiful, not because anyone asked; the useful part shows up on its own. Lately it showed up as agents.",
+  "headline": "AI agents write the production code. I write the contract it runs against.",
+  "intro": "I'm Bobby. I chase the parts of code that feel like math — and build the systems that keep AI agents inside the job you gave them.",
   "summary": "At Aura, I write production commerce code with AI assistance, backed by a contract-and-validation layer I built that enforces correctness in CI. Available in open-source form as prx and the bounded-systems libraries.",
   "proof": [
     { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
@@ -29,7 +29,7 @@
       "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 — present", "where": "New York · Hybrid", "url": "https://www.linkedin.com/company/aurahomeinc",
       "what": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "bullets": [
-        "Ship the commerce and supply-chain backbone — NetSuite, Amazon, and Shopify integrations; inbound, Tactical, and LTL automation; EDI; and fulfillment daemons.",
+        "Ship the commerce and supply-chain backbone — NetSuite/Amazon/Shopify/EDI integrations, inbound/Tactical/LTL automation, and fulfillment daemons.",
         "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact — schemas, docs, tests, agent context — with CI blocking anything that drifts out of sync.",
         "Built the auditing in: generated outputs are checked for provenance and against their contract, and sign-off is bound to an owner role enforced in CI rather than to a person."
       ]
