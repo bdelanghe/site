@@ -390,7 +390,7 @@ ${jsonLd}
     <h1>${esc(profile.name)}</h1>
     <p class="r-title">${esc(profile.role)}${profile.headline ? ` — ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
     <p class="r-contact">${profile.place ? esc(profile.place) + " · " : ""}${rLinks}</p>
-    <a class="r-print" href="#" onclick="window.print();return false;">Download PDF&nbsp;&darr;</a>
+    <a class="r-print" href="/resume.pdf" download="${profile.name.split(" ").join("-")}-Resume.pdf">Download PDF&nbsp;&darr;</a>
   </header>
   <p class="r-summary">${esc(profile.summary)}</p>
   ${rSkills ? `<h2>Skills</h2><p class="r-skills">${rSkills}</p>` : ""}
