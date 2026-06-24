@@ -287,7 +287,7 @@ const rExp = (profile.experience ?? []).map((e) => `
         <ul>${(e.bullets ?? (e.what ? [e.what] : [])).map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
       </div>`).join("");
 const rEdu = (profile.education ?? []).map((e) => `
-      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div>${e.degree ? `<div class="r-job__role">${esc(e.degree)}</div>` : ""}<div class="r-edu">${esc(e.what)}</div></div>`).join("");
+      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div>${e.degree ? `<div class="r-job__role">${esc(e.degree)}</div>` : ""}${e.what ? `<div class="r-edu">${esc(e.what)}</div>` : ""}</div>`).join("");
 const rSkills = (profile.skills ?? []).map(esc).join(" · ");
 
 // ---- JSON Résumé (machine-readable, for parsers / ATS) -------------------------

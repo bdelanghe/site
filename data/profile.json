@@ -9,7 +9,7 @@
   },
   "headline": "AI agents write the production code. I write the contract it runs against.",
   "intro": "I'm Bobby. I chase the parts of code that feel like math — and build the systems that keep AI agents inside the job you gave them.",
-  "summary": "At Aura, I write production commerce code with AI assistance, backed by a contract-and-validation layer I built that enforces correctness in CI. Available in open-source form as prx and the bounded-systems libraries.",
+  "summary": "At Aura, I ship production code written by AI agents, backed by a contract-and-validation layer I built that keeps it correct in CI, open-sourced as prx.",
   "proof": [
     { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
     { "label": "guest-room", "href": "https://github.com/bounded-systems/guest-room" },
@@ -18,66 +18,66 @@
   ],
   "experience": [
     {
-      "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 — present", "where": "Brooklyn", "url": "https://www.linkedin.com/company/bounded-systems",
-      "what": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
+      "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 – present", "where": "Brooklyn", "url": "https://www.linkedin.com/company/bounded-systems",
+      "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
       "bullets": [
-        "Build a capability-security toolchain (prx, guest-room, claude-box) that bounds an AI agent to exactly the access it's been handed. Authority is the handle it holds, not a rule it's checked against, so an agent can only do what it was given.",
-        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain — enforced in CI, not by convention."
+        "Build a capability-security toolchain (prx, guest-room, claude-box) that bounds an AI agent to the access it holds: authority is the handle, not a rule it's checked against.",
+        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain, enforced in CI, not by convention."
       ]
     },
     {
-      "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 — present", "where": "New York · Hybrid", "url": "https://www.linkedin.com/company/aurahomeinc",
-      "what": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
+      "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 – present", "where": "New York · Hybrid", "url": "https://www.linkedin.com/company/aurahomeinc",
+      "what": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "bullets": [
-        "Ship the commerce and supply-chain backbone — NetSuite/Amazon/Shopify/EDI integrations, inbound/Tactical/LTL automation, and fulfillment daemons.",
-        "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact (schemas, docs, tests, agent context), with CI blocking anything that drifts out of sync.",
-        "Built the auditing in: generated outputs are checked for provenance and against their contract, and sign-off is bound to an owner role enforced in CI rather than to a person."
+        "Ship the commerce and supply-chain backbone: NetSuite/Amazon/Shopify/EDI integrations, inbound/LTL automation, and fulfillment daemons.",
+        "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact: schemas, docs, tests, agent context. CI blocks anything that drifts out of sync.",
+        "Built the auditing in: generated outputs are checked for provenance and against their contract. Sign-off binds to an owner role enforced in CI, not to a person."
       ]
     },
     {
-      "org": "L2L", "role": "Software Engineer", "when": "Apr 2021 — Sep 2023", "where": "New York · Remote", "url": "https://www.linkedin.com/company/l2l-manufacturingsoftware",
+      "org": "L2L", "role": "Software Engineer", "when": "Apr 2021 – Sep 2023", "where": "New York · Remote", "url": "https://www.linkedin.com/company/l2l-manufacturingsoftware",
       "what": "Owned the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance.",
       "bullets": [
-        "Shipped static-analysis gating into the PR pipeline to block defect classes before merge; over the same period, critical bugs dropped 20% and high-priority issues 25% across the 20-engineer team.",
-        "Delivered the frontend platform: a design system that cut task lead time 30%, a dashboard framework that took widget builds from a week to a day, and pagination and performance work that brought First Contentful Paint under a second."
+        "Shipped static-analysis gating into the PR pipeline to block defect classes before merge. Over the same period, critical bugs dropped 20% and high-priority issues 25% across the 20-engineer team.",
+        "Delivered the frontend platform: a design system cut lead time 30%, and a dashboard framework dropped widget builds from a week to a day. Performance work brought First Contentful Paint under a second."
       ]
     },
     {
-      "org": "Pioneer Works", "role": "Software Engineer (Contract)", "when": "Nov 2018 — Feb 2021", "where": "Brooklyn", "url": "https://www.linkedin.com/company/pioneer-works-center-for-arts-and-innovation",
+      "org": "Pioneer Works", "role": "Software Engineer (Contract)", "when": "Nov 2018 – Feb 2021", "where": "Brooklyn", "url": "https://www.linkedin.com/company/pioneer-works-center-for-arts-and-innovation",
       "what": "Designed the events + revenue data layer for the arts foundation.",
       "bullets": [
         "Created a unified CRM + Square-API ETL that reduced payment-tracking time by 80% and tracked profit-and-loss across 200+ events."
       ]
     },
     {
-      "org": "Kaleida Studio", "role": "Software Engineer (Contract)", "when": "Jun 2019 — Mar 2020", "where": "Brooklyn", "url": "https://www.linkedin.com/company/kaleida",
+      "org": "Kaleida Studio", "role": "Software Engineer (Contract)", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://www.linkedin.com/company/kaleida",
       "what": "Automated just-in-time production for the fabrication studio.",
       "bullets": [
         "Cut edition-numbering errors from 10/month to zero with just-in-time production workflows."
       ]
     },
     {
-      "org": "The Prepared", "role": "Software Engineer (Contract)", "when": "Oct 2018 — Feb 2019", "where": "Brooklyn", "url": "https://www.linkedin.com/company/theprepared",
+      "org": "The Prepared", "role": "Software Engineer (Contract)", "when": "Oct 2018 – Feb 2019", "where": "Brooklyn", "url": "https://www.linkedin.com/company/theprepared",
       "what": "Engineered the publishing pipeline for the manufacturing publication.",
       "bullets": [
         "Cut curation time 70% across 1000+ articles with a unified content pipeline."
       ]
     },
     {
-      "org": "Recurse Center", "role": "Participant", "when": "Sep 2019 — Dec 2019", "where": "Brooklyn", "url": "https://www.recurse.com/",
-      "what": "Type theory in Haskell — using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
+      "org": "Recurse Center", "role": "Resident", "when": "Sep 2019 – Dec 2019", "where": "Brooklyn", "url": "https://www.recurse.com/",
+      "what": "Type theory in Haskell, using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
       "bullets": [
-        "A type-theory reading group in Haskell (monads, typed holes, type-directed design), where one idea stuck: constrain a type enough and the implementation almost falls out, the hole telling you what fits. That bet runs through my agent work: bound what an agent can do, then let it generate inside the bound."
+        "Completed a selective 12-week batch (a self-directed programming retreat); researched Haskell type theory and how a well-constrained type narrows the space of possible implementations."
       ]
     }
   ],
   "education": [
-    { "org": "Bennington College", "degree": "BA, Architecture & Sculpture", "when": "Sep 2009 — Dec 2012", "where": "Bennington, VT", "url": "https://www.linkedin.com/school/bennington-college", "what": "Computational & parametric design — algorithmic design for digital fabrication." }
+    { "org": "Bennington College", "degree": "BA, Architecture & Sculpture", "when": "Sep 2009 – Dec 2012", "where": "Bennington, VT", "url": "https://www.linkedin.com/school/bennington-college" }
   ],
-  "skills": ["TypeScript · Python · Node · Postgres · Docker · AWS", "Systems architecture", "Capability-based security & access control", "CI/CD, provenance & attribution (in-toto/SLSA)", "Developer tooling & CLIs", "Agent safety & policy enforcement", "Nix", "Type-driven design (Haskell; Rust ownership model)"],
+  "skills": ["TypeScript", "Python", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security (in-toto/SLSA)", "Developer tooling", "Agent safety"],
   "seeking": {
     "label": "Open to new roles",
-    "focus": "Founding / senior engineering on agent infrastructure — agent safety and code provenance",
+    "focus": "Founding / senior engineering on agent infrastructure: agent safety and code provenance",
     "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the guardrails that make them trustworthy in production. Brooklyn · NYC · remote.",
     "cta": "Get in touch",
     "href": "mailto:cv@robertdelanghe.dev"
@@ -88,10 +88,9 @@
   ],
   "links": [
     { "label": "GitHub", "href": "https://github.com/bdelanghe" },
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" },
     { "label": "Résumé", "href": "/resume" },
-    { "label": "Writing", "href": "/blog" },
     { "label": "bounded.tools", "href": "https://bounded.tools" },
-    { "label": "robertdelanghe.dev", "href": "https://robertdelanghe.dev" },
     { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
   ]
 }
