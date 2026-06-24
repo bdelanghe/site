@@ -388,7 +388,7 @@ ${jsonLd}
   <main>
   <header>
     <h1>${esc(profile.name)}</h1>
-    <p class="r-title">${esc(profile.role)}${profile.headline ? ` — ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
+    <p class="r-title">${esc(profile.role)}${profile.headline ? ` · ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
     <p class="r-contact">${profile.place ? esc(profile.place) + " · " : ""}${rLinks}</p>
     <a class="r-print" href="/resume.pdf" download="${profile.name.split(" ").join("-")}-Resume.pdf">Download PDF&nbsp;&darr;</a>
   </header>
