@@ -182,6 +182,54 @@ async function summary(md) {
   }
 }
 
+// ---- the reviewer call ---------------------------------------------------------
+// Factored out so the regression harness (copy-review-fixtures.mjs) exercises the
+// *exact* prompt + model the gate uses. Returns { result } on success, or
+// { skip, raw? } on a recoverable non-result (model refusal / unparseable output).
+// Throws on a transport/API error, so the caller decides whether to treat it as a skip.
+//
+// temperature 0: at the default (1.0) the same copy yields a different verdict each
+// run — the gate flip-flops on judgement calls. 0 + the pinned model is the most
+// reproducible setting the Anthropic API offers (it has no `seed`). Not bit-for-bit
+// deterministic, but it curbs the run-to-run churn.
+export async function reviewCopy(copy, apiKey, { temperature = 0 } = {}) {
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 4000,
+      temperature,
+      system: SYSTEM,
+      output_config: { format: { type: "json_schema", schema: SCHEMA } },
+      messages: [
+        {
+          role: "user",
+          content:
+            `THESIS (what the whole site argues):\n${THESIS}\n\n` +
+            `Review this copy. Return findings via the schema.\n\n` +
+            "```json\n" +
+            JSON.stringify(copy, null, 2) +
+            "\n```",
+        },
+      ],
+    }),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  const resp = await r.json();
+  if (resp.stop_reason === "refusal") return { skip: "model declined to review" };
+  const text = (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  try {
+    return { result: JSON.parse(text) };
+  } catch {
+    return { skip: "could not parse model response", raw: text };
+  }
+}
+
 // ---- main ----------------------------------------------------------------------
 async function main() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -199,44 +247,9 @@ async function main() {
   ]);
   const copy = bundle(profile, site, highlightCopy);
 
-  let resp;
+  let out;
   try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 4000,
-        // Determinism: at the default temperature (1.0) the same copy yields a
-        // different verdict each run — the gate flip-flops on judgement calls.
-        // temperature 0 + the pinned model is the most reproducible setting the
-        // Anthropic API offers (it has no `seed` parameter). Not bit-for-bit
-        // deterministic, but it stops the run-to-run blocker churn.
-        temperature: 0,
-        system: SYSTEM,
-        output_config: { format: { type: "json_schema", schema: SCHEMA } },
-        messages: [
-          {
-            role: "user",
-            content:
-              `THESIS (what the whole site argues):\n${THESIS}\n\n` +
-              `Review this copy. Return findings via the schema.\n\n` +
-              "```json\n" +
-              JSON.stringify(copy, null, 2) +
-              "\n```",
-          },
-        ],
-      }),
-    });
-    if (!r.ok) {
-      const body = await r.text();
-      throw new Error(`HTTP ${r.status}: ${body.slice(0, 300)}`);
-    }
-    resp = await r.json();
+    out = await reviewCopy(copy, apiKey);
   } catch (err) {
     // Infrastructure failure (network, rate limit, API hiccup) must not block a
     // merge — the gate blocks on content problems, not on transient API errors.
@@ -245,23 +258,13 @@ async function main() {
     await summary(`# Copy review\n\n⚠️ _API call failed — ${err.message}. Treated as a skip._`);
     return 0;
   }
-
-  if (resp.stop_reason === "refusal") {
-    console.error("copy-review: model declined to review; skipping.");
-    await summary("# Copy review\n\n⚠️ _Model declined to review; skipped._");
+  if (out.skip) {
+    console.error(`copy-review: ${out.skip}; skipping.`);
+    if (out.raw) console.error(out.raw.slice(0, 500));
+    await summary(`# Copy review\n\n⚠️ _${out.skip}; skipped._`);
     return 0;
   }
-
-  const text = (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
-  let result;
-  try {
-    result = JSON.parse(text);
-  } catch {
-    console.error("copy-review: could not parse model response; skipping.");
-    console.error(text.slice(0, 500));
-    await summary("# Copy review\n\n⚠️ _Could not parse the model response; skipped._");
-    return 0;
-  }
+  const result = out.result;
 
   const { md, blockers } = render(result);
   console.log(md);
@@ -280,10 +283,14 @@ async function main() {
   return 0;
 }
 
-main().then(
-  (code) => process.exit(code),
-  (err) => {
-    console.error(err);
-    process.exit(strict ? 1 : 0);
-  },
-);
+// Run as a CLI only — importing this module (e.g. the fixtures harness) must not
+// trigger a review of the live copy.
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main().then(
+    (code) => process.exit(code),
+    (err) => {
+      console.error(err);
+      process.exit(strict ? 1 : 0);
+    },
+  );
+}
