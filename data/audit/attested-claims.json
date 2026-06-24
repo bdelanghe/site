@@ -1,3 +1,4 @@
 [
-  { "symbol": "exp.aura.what", "check": "grounding", "note": "Grounded by sourced evidence kept in the private worklog (merged-PR history + commerce projects led). No inline metric on the public site, by choice; receipts stay private." }
+  { "symbol": "exp.aura.what", "check": "grounding", "note": "Grounded by sourced evidence kept in the private worklog (merged-PR history + commerce projects led). No inline metric on the public site, by choice; receipts stay private." },
+  { "symbol": "exp.recurse-center.b0", "check": "grounding", "note": "Public Recurse Center facts (recurse.com): selective admission, 12-week batch. Descriptive context, not a performance metric." }
 ]
