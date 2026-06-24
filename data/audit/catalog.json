@@ -9,7 +9,7 @@
   },
   "hero.summary": {
     "type": "body",
-    "value": "At Aura I ship agent-authored delivery in production. The instinct behind it is old: make invalid states unrepresentable, push correctness into the type system until violations can't compile. Agents are where it turned urgent — orgs want them shipping like senior engineers and give them none of the safety rails. So I built the rails: a contract-and-validation layer where privileged effects are bound to a signed owner, enforced in CI. The harder, general version is out in the open, in prx and the bounded-systems libraries."
+    "value": "At Aura, I write production commerce code with AI assistance, backed by a contract-and-validation layer I built that enforces correctness in CI. This work is available in open-source form as prx and the bounded-systems libraries."
   },
   "banner.tagline": {
     "type": "tagline",
