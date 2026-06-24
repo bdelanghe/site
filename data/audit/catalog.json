@@ -1,7 +1,7 @@
 {
   "hero.headline": {
     "type": "headline",
-    "value": "Senior software engineer. I ship systems where agents write the code — and I built the tooling to trust them in production."
+    "value": "I ship systems where agents write the code — and I built the tooling to trust them in production."
   },
   "hero.intro": {
     "type": "body",
