@@ -7,7 +7,7 @@
     "tagline": "Bounded authority for AI agents",
     "stack": ["Capability security", "Agent infrastructure", "AI", "Developer tools"]
   },
-  "headline": "I ship systems where agents write the code — and I built the tooling to trust them in production.",
+  "headline": "I ship systems where agents write the code — I build the tooling to trust them in production.",
   "intro": "I'm Bobby. I became a software engineer by chasing the parts of code that feel like math — type systems, proofs, recursion, the self-referential knots where a thing contains itself and still holds together. I go down those paths because they're beautiful, not because anyone asked; the useful part shows up on its own. Lately it showed up as agents.",
   "summary": "At Aura, I write production commerce code with AI assistance, backed by a contract-and-validation layer I built that enforces correctness in CI. This work is available in open-source form as prx and the bounded-systems libraries.",
   "proof": [
@@ -21,18 +21,18 @@
       "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 — present", "where": "Brooklyn", "url": "https://www.linkedin.com/company/bounded-systems",
       "what": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
       "bullets": [
-        "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent reaches only the effects it was handed.",
-        "Bound privileged effects to a signed owner and an auditable in-toto/SLSA provenance chain (ocap-provenance) — attribution and policy enforced in CI, not by convention."
+        "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent can only do what its references allow — nothing it can reach by guessing a name.",
+        "Bound privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain (ocap-provenance) — who authorized what is enforced in CI, not by convention."
       ]
     },
     {
       "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 — present", "where": "New York · Hybrid", "url": "https://www.linkedin.com/company/aurahomeinc",
-      "what": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and architected the contract-and-validation layer behind inventory-purchasing — both delivered as agent-authored PRs.",
+      "what": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "bullets": [
         "Ship the commerce and supply-chain backbone — NetSuite, Amazon, and Shopify integrations; inbound, Tactical, and LTL automation; EDI; and fulfillment daemons.",
-        "Architected the contract-and-validation layer replacing Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing): a compile-and-publish model where one source of truth generates every downstream surface — schemas, docs, tests, agent context — CI drift-gated so nothing falls out of sync.",
-        "Made the pipeline auditable by construction — provenance and contract checks gating every generated output, sign-off bound to an owner-role enforced in CI rather than to individuals.",
-        "Drove it as agent-authored delivery: changes move through one auditable pipeline to a reviewed PR, applying the same provenance-and-contract discipline to the agents' own output."
+        "Replaced Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing) with one source of truth that compiles into every downstream artifact — schemas, docs, tests, agent context — with CI blocking anything that drifts out of sync.",
+        "Built the auditing in: generated outputs are checked for provenance and against their contract, and sign-off is bound to an owner role enforced in CI rather than to a person.",
+        "The changes themselves are written by AI agents, moving through that same pipeline to a reviewed PR — their output held to the same provenance and contract checks as everything else."
       ]
     },
     {
@@ -40,7 +40,7 @@
       "what": "Built the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance.",
       "bullets": [
         "Built static-analysis gating into the PR pipeline, blocking defect classes before merge; critical bugs fell 20% and high-priority issues 25% across the 20-engineer team.",
-        "Shipped the frontend platform behind it — a design system (−30% task lead time), a dashboard framework (widget builds a week → a day), and pagination + perf work that brought First Contentful Paint under a second."
+        "Shipped the frontend platform — a design system (−30% task lead time), a dashboard framework (widget builds a week → a day), and pagination + performance work that brought First Contentful Paint under a second."
       ]
     },
     {
