@@ -19,9 +19,10 @@
   "experience": [
     {
       "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 — present", "where": "Brooklyn", "url": "https://www.linkedin.com/company/bounded-systems",
-      "what": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The open, general form of the guardrails I ship at Aura.",
+      "what": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
       "bullets": [
-        "Designed a capability runtime — prx, guest-room, claude-box — where agents act only through the scoped door references they hold, privileged effects are verified against their signed owner, and provenance is bound to an auditable chain (ocap-provenance)."
+        "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent reaches only the effects it was handed.",
+        "Bound privileged effects to a signed owner and an auditable in-toto/SLSA provenance chain (ocap-provenance) — attribution and policy enforced in CI, not by convention."
       ]
     },
     {
@@ -64,7 +65,7 @@
       ]
     },
     {
-      "org": "Recurse Center", "role": "Participant", "when": "Sep 2019 — Dec 2019", "where": "Brooklyn", "url": "https://www.linkedin.com/company/recurse-center",
+      "org": "Recurse Center", "role": "Participant", "when": "Sep 2019 — Dec 2019", "where": "Brooklyn", "url": "https://www.recurse.com/",
       "what": "Type theory in Haskell — using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
       "bullets": [
         "Type-driven design in Haskell — algebraic data types and typeclasses — the same instinct now applied to security seams: invalid states unrepresentable, sign-off un-forgeable."
@@ -74,10 +75,10 @@
   "education": [
     { "org": "Bennington College", "degree": "BA, Architecture & Sculpture", "when": "Sep 2009 — Dec 2012", "where": "Bennington, VT", "url": "https://www.linkedin.com/school/bennington-college", "what": "Computational & parametric design — algorithmic design for digital fabrication." }
   ],
-  "skills": ["TypeScript", "Systems architecture", "Rust", "Python", "Node · Postgres · Docker · AWS", "CI/CD & provenance", "Nix", "Agent-authored delivery", "Capability-based security", "Access control"],
+  "skills": ["TypeScript · Python · Node · Postgres · Docker · AWS", "Systems architecture", "Capability-based security & access control", "CI/CD, provenance & attribution (in-toto/SLSA)", "Developer tooling & CLIs", "Agent safety & policy enforcement", "Nix", "Type-driven design (Haskell; Rust ownership model)"],
   "seeking": {
     "label": "Open to new roles",
-    "focus": "Engineering on agentic products · safe agent-authored delivery · agent infrastructure",
+    "focus": "Founding / senior engineering on agent infrastructure — agent safety and code provenance",
     "detail": "Senior engineering on teams building agentic products — where having shipped agent-authored systems and their guardrails is the rare part. Brooklyn · NYC · remote.",
     "cta": "Get in touch",
     "href": "mailto:cv@robertdelanghe.dev"

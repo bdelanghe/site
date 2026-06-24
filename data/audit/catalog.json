@@ -21,7 +21,7 @@
   },
   "seeking.focus": {
     "type": "body",
-    "value": "Engineering on agentic products · safe agent-authored delivery · agent infrastructure"
+    "value": "Founding / senior engineering on agent infrastructure — agent safety and code provenance"
   },
   "seeking.detail": {
     "type": "body",
@@ -29,11 +29,15 @@
   },
   "exp.bounded-systems.what": {
     "type": "body",
-    "value": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The open, general form of the guardrails I ship at Aura."
+    "value": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling."
   },
   "exp.bounded-systems.b0": {
     "type": "body",
-    "value": "Designed a capability runtime — prx, guest-room, claude-box — where agents act only through the scoped door references they hold, privileged effects are verified against their signed owner, and provenance is bound to an auditable chain (ocap-provenance)."
+    "value": "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent reaches only the effects it was handed."
+  },
+  "exp.bounded-systems.b1": {
+    "type": "body",
+    "value": "Bound privileged effects to a signed owner and an auditable in-toto/SLSA provenance chain (ocap-provenance) — attribution and policy enforced in CI, not by convention."
   },
   "exp.aura.what": {
     "type": "body",
@@ -101,7 +105,7 @@
   },
   "work.prx": {
     "type": "body",
-    "value": "The agent-run work-unit CLI: capability-scoped agents whose every privileged effect is verified against its signed owner, driving a work unit through one signed pipeline to a merged PR."
+    "value": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against their signed owner, driving a work unit through one signed pipeline to a merged PR."
   },
   "work.guest-room": {
     "type": "body",
