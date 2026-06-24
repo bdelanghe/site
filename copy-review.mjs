@@ -182,6 +182,7 @@ async function main() {
       },
       body: JSON.stringify({
         model: MODEL,
+        temperature: 0,
         max_tokens: 4000,
         system: SYSTEM,
         output_config: { format: { type: "json_schema", schema: SCHEMA } },
