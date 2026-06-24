@@ -74,7 +74,7 @@
   "education": [
     { "org": "Bennington College", "degree": "BA, Architecture & Sculpture", "when": "Sep 2009 – Dec 2012", "where": "Bennington, VT", "url": "https://www.linkedin.com/school/bennington-college" }
   ],
-  "skills": ["TypeScript", "Python", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security (in-toto/SLSA)", "Developer tooling", "Agent safety"],
+  "skills": ["TypeScript", "Python", "Rust", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security (in-toto/SLSA)", "Developer tooling", "Agent safety"],
   "seeking": {
     "label": "Open to new roles",
     "focus": "Founding / senior engineering on agent infrastructure: agent safety and code provenance",
