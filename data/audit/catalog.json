@@ -21,7 +21,7 @@
   },
   "seeking.focus": {
     "type": "body",
-    "value": "Founding / senior engineering on agent infrastructure — agent safety & policy, code provenance & attribution, capability security"
+    "value": "Founding / senior engineering on agent infrastructure — agent safety and code provenance"
   },
   "seeking.detail": {
     "type": "body",
@@ -29,7 +29,7 @@
   },
   "exp.bounded-systems.what": {
     "type": "body",
-    "value": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The open, general form of the guardrails I ship at Aura."
+    "value": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling."
   },
   "exp.bounded-systems.b0": {
     "type": "body",

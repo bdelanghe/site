@@ -19,7 +19,7 @@
   "experience": [
     {
       "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 — present", "where": "Brooklyn", "url": "https://www.linkedin.com/company/bounded-systems",
-      "what": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The open, general form of the guardrails I ship at Aura.",
+      "what": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
       "bullets": [
         "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent reaches only the effects it was handed.",
         "Bound privileged effects to a signed owner and an auditable in-toto/SLSA provenance chain (ocap-provenance) — attribution and policy enforced in CI, not by convention."
@@ -78,7 +78,7 @@
   "skills": ["TypeScript · Python · Node · Postgres · Docker · AWS", "Systems architecture", "Capability-based security & access control", "CI/CD, provenance & attribution (in-toto/SLSA)", "Developer tooling & CLIs", "Agent safety & policy enforcement", "Nix", "Type-driven design (Haskell; Rust ownership model)"],
   "seeking": {
     "label": "Open to new roles",
-    "focus": "Founding / senior engineering on agent infrastructure — agent safety & policy, code provenance & attribution, capability security",
+    "focus": "Founding / senior engineering on agent infrastructure — agent safety and code provenance",
     "detail": "Senior engineering on teams building agentic products — where having shipped agent-authored systems and their guardrails is the rare part. Brooklyn · NYC · remote.",
     "cta": "Get in touch",
     "href": "mailto:cv@robertdelanghe.dev"
