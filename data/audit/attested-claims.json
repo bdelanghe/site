@@ -2,5 +2,6 @@
   { "symbol": "hero.summary", "check": "overclaim", "note": "\"every privileged effect is verified against a signed owner-role enforced in CI\" — defensible: enforced by construction at Aura, linked in proof[]." },
   { "symbol": "exp.bounded-systems.b0", "check": "overclaim", "note": "\"every privileged effect is verified against its signed owner\" — defensible: the capability runtime enforces it by construction." },
   { "symbol": "exp.aura.b2", "check": "overclaim", "note": "\"every change moves through one auditable pipeline to a reviewed PR\" — defensible: the pipeline is the only merge path, enforced in CI." },
-  { "symbol": "work.prx", "check": "overclaim", "note": "\"every privileged effect is verified against its signed owner\" — defensible: prx verifies each effect against its signed owner by construction." }
+  { "symbol": "work.prx", "check": "overclaim", "note": "\"every privileged effect is verified against its signed owner\" — defensible: prx verifies each effect against its signed owner by construction." },
+  { "symbol": "exp.aura.what", "check": "grounding", "note": "Grounded by real, sourced evidence (no inline vanity metric, by choice): 398 merged PRs in pushd-web (git log --author) and Notion Commerce Projects led (Supply Planning, Amazon Inbounds, Ocean Freight, …). Receipts in the private worklog journal." }
 ]

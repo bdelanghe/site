@@ -9,11 +9,11 @@
   },
   "hero.summary": {
     "type": "body",
-    "value": "At Aura I ship agent-authored delivery in production. The instinct behind it is old — make invalid states unrepresentable, push correctness into the type system until violations can't compile — and agents are just where it turned urgent: orgs want them shipping like senior engineers and give them none of the safety rails. So I built the rails — a contract-and-validation layer where every privileged effect is bound to a signed owner, enforced in CI. The harder, general version is out in the open, in prx and the bounded-systems libraries."
+    "value": "At Aura I ship agent-authored delivery in production. The instinct behind it is old: make invalid states unrepresentable, push correctness into the type system until violations can't compile. Agents are where it turned urgent — orgs want them shipping like senior engineers and give them none of the safety rails. So I built the rails: a contract-and-validation layer where privileged effects are bound to a signed owner, enforced in CI. The harder, general version is out in the open, in prx and the bounded-systems libraries."
   },
   "banner.tagline": {
     "type": "tagline",
-    "value": "Capability-secured systems & developer tooling"
+    "value": "Bounded authority for AI agents"
   },
   "seeking.cta": {
     "type": "cta",
@@ -33,23 +33,27 @@
   },
   "exp.bounded-systems.b0": {
     "type": "body",
-    "value": "Designed a capability runtime — prx, guest-room, claude-box — where agents act only through the scoped door references they hold, every privileged effect is verified against its signed owner, and provenance is bound to an auditable chain (ocap-provenance)."
+    "value": "Designed a capability runtime — prx, guest-room, claude-box — where agents act only through the scoped door references they hold, privileged effects are verified against their signed owner, and provenance is bound to an auditable chain (ocap-provenance)."
   },
   "exp.aura.what": {
     "type": "claim",
-    "value": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems — I architected the contract-and-validation layer behind inventory-purchasing: one source of truth, CI drift-gated across 130+ components, delivered as agent-authored PRs."
+    "value": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems — I ship the integration and automation backbone (NetSuite, Amazon, Shopify, EDI/3PL) and architected the contract-and-validation layer behind inventory-purchasing, delivered as agent-authored PRs."
   },
   "exp.aura.b0": {
     "type": "body",
-    "value": "Architected the contract-and-validation layer replacing Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing): a compile-and-publish model where one source of truth generates every downstream surface — schemas, docs, tests, agent context — CI drift-gated so nothing falls out of sync."
+    "value": "Ship the commerce and supply-chain integration and automation backbone — NetSuite, Amazon, and Shopify integrations; inbound, Tactical, and LTL automation; EDI; and fulfillment daemons — as agent-authored delivery."
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Made the pipeline auditable by construction — provenance and contract checks gating every generated output, sign-off bound to an owner-role enforced in CI rather than to individuals."
+    "value": "Architected the contract-and-validation layer replacing Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing): a compile-and-publish model where one source of truth generates every downstream surface — schemas, docs, tests, agent context — CI drift-gated so nothing falls out of sync."
   },
   "exp.aura.b2": {
     "type": "body",
-    "value": "Drove it as agent-authored delivery: every change moves through one auditable pipeline to a reviewed PR, applying the same provenance-and-contract discipline to the agents' own output."
+    "value": "Made the pipeline auditable by construction — provenance and contract checks gating every generated output, sign-off bound to an owner-role enforced in CI rather than to individuals."
+  },
+  "exp.aura.b3": {
+    "type": "body",
+    "value": "Drove it as agent-authored delivery: changes move through one auditable pipeline to a reviewed PR, applying the same provenance-and-contract discipline to the agents' own output."
   },
   "exp.l2l.what": {
     "type": "claim",
@@ -93,7 +97,7 @@
   },
   "exp.recurse-center.b0": {
     "type": "body",
-    "value": "Algebraic data types, typeclasses, and type-driven design — the same instinct now applied to security seams: invalid states unrepresentable, sign-off un-forgeable."
+    "value": "Type-driven design in Haskell — algebraic data types and typeclasses — the same instinct now applied to security seams: invalid states unrepresentable, sign-off un-forgeable."
   },
   "work.prx": {
     "type": "body",
