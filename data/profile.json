@@ -47,21 +47,21 @@
       "org": "Pioneer Works", "role": "Software Engineer (Contract)", "when": "Nov 2018 — Feb 2021", "where": "Brooklyn", "url": "https://www.linkedin.com/company/pioneer-works-center-for-arts-and-innovation",
       "what": "Built the events + revenue data layer for the arts foundation.",
       "bullets": [
-        "A unified CRM + Square-API ETL — cut payment-tracking time 80%, with P&L across 200+ events."
+        "Built a unified CRM + Square-API ETL that reduced payment-tracking time by 80% and tracked profit-and-loss across 200+ events."
       ]
     },
     {
       "org": "Kaleida Studio", "role": "Software Engineer (Contract)", "when": "Jun 2019 — Mar 2020", "where": "Brooklyn", "url": "https://www.linkedin.com/company/kaleida",
       "what": "Built just-in-time production automation for the fabrication studio.",
       "bullets": [
-        "Just-in-time production workflows — eliminated edition-numbering errors, from 10/month to zero."
+        "Built just-in-time production workflows that eliminated edition-numbering errors, from 10/month to zero."
       ]
     },
     {
       "org": "The Prepared", "role": "Software Engineer (Contract)", "when": "Oct 2018 — Feb 2019", "where": "Brooklyn", "url": "https://www.linkedin.com/company/theprepared",
       "what": "Built the publishing pipeline for the manufacturing publication.",
       "bullets": [
-        "A unified content pipeline — cut curation time 70% across 1000+ articles."
+        "Built a unified content pipeline that cut curation time by 70% across 1000+ articles."
       ]
     },
     {
