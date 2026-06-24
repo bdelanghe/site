@@ -8,13 +8,13 @@
     "stack": ["Capability security", "Agent infrastructure", "AI", "Developer tools"]
   },
   "headline": "AI agents write the production code. I write the contract it runs against.",
-  "intro": "I'm Bobby. I chase the parts of code that feel like math — and build the systems that keep AI agents inside the job you gave them.",
-  "summary": "At Aura, I ship production code written by AI agents, backed by a contract-and-validation layer I built that keeps it correct in CI, open-sourced as prx.",
+  "intro": "I'm Bobby. I chase the parts of code that feel like math, and build the systems that keep AI agents inside the job you gave them.",
+  "summary": "I build the layer between provenance and enforcement for agent-authored code: capability seams that bound what an agent can touch, and a signed-owner provenance chain checked in CI. Open-sourced as prx, the same discipline I ship in production at Aura.",
   "proof": [
     { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
+    { "label": "git-ast", "href": "https://github.com/bounded-systems/git-ast" },
     { "label": "guest-room", "href": "https://github.com/bounded-systems/guest-room" },
-    { "label": "ocap-provenance", "href": "https://github.com/bounded-systems/ocap-provenance" },
-    { "label": "bounded.tools", "href": "https://bounded.tools/#provenance" }
+    { "label": "ocap-provenance", "href": "https://github.com/bounded-systems/ocap-provenance" }
   ],
   "experience": [
     {
@@ -22,14 +22,14 @@
       "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
       "bullets": [
         "Build a capability-security toolchain (prx, guest-room, claude-box) that bounds an AI agent to the access it holds: authority is the handle, not a rule it's checked against.",
-        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain, enforced in CI, not by convention."
+        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain, enforced in CI, not by convention.",
+        "Write the systems layer in Rust: door-peercred binds an action to the caller's kernel-verified identity (SO_PEERCRED), git-ast diffs on the syntax tree so authorship survives reformatting, hooksmith builds Rust and Wasm into Git hooks."
       ]
     },
     {
       "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 – present", "where": "New York · Hybrid", "url": "https://www.linkedin.com/company/aurahomeinc",
       "what": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "bullets": [
-        "Ship the commerce and supply-chain backbone: NetSuite/Amazon/Shopify/EDI integrations, inbound/LTL automation, and fulfillment daemons.",
         "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact: schemas, docs, tests, agent context. CI blocks anything that drifts out of sync.",
         "Built the auditing in: generated outputs are checked for provenance and against their contract. Sign-off binds to an owner role enforced in CI, not to a person."
       ]
@@ -38,8 +38,7 @@
       "org": "L2L", "role": "Software Engineer", "when": "Apr 2021 – Sep 2023", "where": "New York · Remote", "url": "https://www.linkedin.com/company/l2l-manufacturingsoftware",
       "what": "Owned the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance.",
       "bullets": [
-        "Shipped static-analysis gating into the PR pipeline to block defect classes before merge. Over the same period, critical bugs dropped 20% and high-priority issues 25% across the 20-engineer team.",
-        "Delivered the frontend platform: a design system cut lead time 30%, and a dashboard framework dropped widget builds from a week to a day. Performance work brought First Contentful Paint under a second."
+        "Shipped static-analysis gating into the PR pipeline to block defect classes before merge. Over the same period, critical bugs dropped 20% and high-priority issues 25% across the 20-engineer team."
       ]
     },
     {
@@ -77,7 +76,7 @@
   "skills": ["TypeScript", "Python", "Rust", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security (in-toto/SLSA)", "Developer tooling", "Agent safety"],
   "seeking": {
     "label": "Open to new roles",
-    "focus": "Founding / senior engineering on agent infrastructure: agent safety and code provenance",
+    "focus": "Senior / founding engineering on agent infrastructure: agent safety and code provenance",
     "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the guardrails that make them trustworthy in production. Brooklyn · NYC · remote.",
     "cta": "Get in touch",
     "href": "mailto:cv@robertdelanghe.dev"
@@ -90,7 +89,6 @@
     { "label": "GitHub", "href": "https://github.com/bdelanghe" },
     { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" },
     { "label": "Résumé", "href": "/resume" },
-    { "label": "bounded.tools", "href": "https://bounded.tools" },
     { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
   ]
 }
