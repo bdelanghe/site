@@ -21,7 +21,7 @@
       "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 — present", "where": "Brooklyn", "url": "https://www.linkedin.com/company/bounded-systems",
       "what": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
       "bullets": [
-        "Design and build a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent can only do what its references allow.",
+        "Build a capability-security toolchain (prx, guest-room, claude-box) that bounds an AI agent to exactly the access it's been handed. Authority is the handle it holds, not a rule it's checked against, so an agent can only do what it was given.",
         "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain — enforced in CI, not by convention."
       ]
     },
@@ -30,7 +30,7 @@
       "what": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "bullets": [
         "Ship the commerce and supply-chain backbone — NetSuite/Amazon/Shopify/EDI integrations, inbound/Tactical/LTL automation, and fulfillment daemons.",
-        "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact — schemas, docs, tests, agent context — with CI blocking anything that drifts out of sync.",
+        "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact (schemas, docs, tests, agent context), with CI blocking anything that drifts out of sync.",
         "Built the auditing in: generated outputs are checked for provenance and against their contract, and sign-off is bound to an owner role enforced in CI rather than to a person."
       ]
     },
@@ -53,7 +53,7 @@
       "org": "Kaleida Studio", "role": "Software Engineer (Contract)", "when": "Jun 2019 — Mar 2020", "where": "Brooklyn", "url": "https://www.linkedin.com/company/kaleida",
       "what": "Automated just-in-time production for the fabrication studio.",
       "bullets": [
-        "Eliminated edition-numbering errors — from 10/month to zero — with just-in-time production workflows."
+        "Cut edition-numbering errors from 10/month to zero with just-in-time production workflows."
       ]
     },
     {
@@ -67,7 +67,7 @@
       "org": "Recurse Center", "role": "Participant", "when": "Sep 2019 — Dec 2019", "where": "Brooklyn", "url": "https://www.recurse.com/",
       "what": "Type theory in Haskell — using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
       "bullets": [
-        "Type-driven design in Haskell — algebraic data types and typeclasses — the same instinct now applied to security seams: invalid states unrepresentable, sign-off un-forgeable."
+        "A type-theory reading group in Haskell (monads, typed holes, type-directed design), where one idea stuck: constrain a type enough and the implementation almost falls out, the hole telling you what fits. That bet runs through my agent work: bound what an agent can do, then let it generate inside the bound."
       ]
     }
   ],
