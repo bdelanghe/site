@@ -55,7 +55,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["org", "when", "what"],
+        "required": ["org", "when"],
         "additionalProperties": false,
         "properties": {
           "org": { "type": "string" },
