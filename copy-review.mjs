@@ -182,6 +182,45 @@ async function summary(md) {
   }
 }
 
+// ---- review one copy bundle (exported for the regression harness) -------------
+// Sends a copy bundle to the model and returns the parsed { verdict, findings }.
+// Throws on infra / refusal / parse failure — the caller decides whether to skip
+// or fail. temperature 0 + the pinned model is the most reproducible the API
+// offers (no `seed` param), so the same bundle yields a stable verdict run to run.
+export async function review(copy, apiKey) {
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 4000,
+      temperature: 0,
+      system: SYSTEM,
+      output_config: { format: { type: "json_schema", schema: SCHEMA } },
+      messages: [
+        {
+          role: "user",
+          content:
+            `THESIS (what the whole site argues):\n${THESIS}\n\n` +
+            `Review this copy. Return findings via the schema.\n\n` +
+            "```json\n" +
+            JSON.stringify(copy, null, 2) +
+            "\n```",
+        },
+      ],
+    }),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  const resp = await r.json();
+  if (resp.stop_reason === "refusal") throw new Error("model declined to review");
+  const text = (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  return JSON.parse(text);
+}
+
 // ---- main ----------------------------------------------------------------------
 async function main() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -199,67 +238,14 @@ async function main() {
   ]);
   const copy = bundle(profile, site, highlightCopy);
 
-  let resp;
-  try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 4000,
-        // Determinism: at the default temperature (1.0) the same copy yields a
-        // different verdict each run — the gate flip-flops on judgement calls.
-        // temperature 0 + the pinned model is the most reproducible setting the
-        // Anthropic API offers (it has no `seed` parameter). Not bit-for-bit
-        // deterministic, but it stops the run-to-run blocker churn.
-        temperature: 0,
-        system: SYSTEM,
-        output_config: { format: { type: "json_schema", schema: SCHEMA } },
-        messages: [
-          {
-            role: "user",
-            content:
-              `THESIS (what the whole site argues):\n${THESIS}\n\n` +
-              `Review this copy. Return findings via the schema.\n\n` +
-              "```json\n" +
-              JSON.stringify(copy, null, 2) +
-              "\n```",
-          },
-        ],
-      }),
-    });
-    if (!r.ok) {
-      const body = await r.text();
-      throw new Error(`HTTP ${r.status}: ${body.slice(0, 300)}`);
-    }
-    resp = await r.json();
-  } catch (err) {
-    // Infrastructure failure (network, rate limit, API hiccup) must not block a
-    // merge — the gate blocks on content problems, not on transient API errors.
-    console.error(`copy-review: API call failed — ${err.message}`);
-    console.error("copy-review: treating as a skip (no merge block on infra errors).");
-    await summary(`# Copy review\n\n⚠️ _API call failed — ${err.message}. Treated as a skip._`);
-    return 0;
-  }
-
-  if (resp.stop_reason === "refusal") {
-    console.error("copy-review: model declined to review; skipping.");
-    await summary("# Copy review\n\n⚠️ _Model declined to review; skipped._");
-    return 0;
-  }
-
-  const text = (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
   let result;
   try {
-    result = JSON.parse(text);
-  } catch {
-    console.error("copy-review: could not parse model response; skipping.");
-    console.error(text.slice(0, 500));
-    await summary("# Copy review\n\n⚠️ _Could not parse the model response; skipped._");
+    result = await review(copy, apiKey);
+  } catch (err) {
+    // Infra / refusal / parse failure must not block a merge — the gate flags
+    // content problems, not transient API errors. Treat it as a clean skip.
+    console.error(`copy-review: ${err.message} — treating as a skip (no merge block).`);
+    await summary(`# Copy review\n\n⚠️ _${err.message}. Treated as a skip._`);
     return 0;
   }
 
@@ -280,10 +266,15 @@ async function main() {
   return 0;
 }
 
-main().then(
-  (code) => process.exit(code),
-  (err) => {
-    console.error(err);
-    process.exit(strict ? 1 : 0);
-  },
-);
+// Only run when invoked directly (node copy-review.mjs). When imported — e.g. by
+// the regression harness (copy-review-test.mjs) — export `review` without running.
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMain) {
+  main().then(
+    (code) => process.exit(code),
+    (err) => {
+      console.error(err);
+      process.exit(strict ? 1 : 0);
+    },
+  );
+}
