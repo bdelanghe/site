@@ -36,12 +36,12 @@
     "value": "Designed a capability runtime — prx, guest-room, claude-box — where agents act only through the scoped door references they hold, privileged effects are verified against their signed owner, and provenance is bound to an auditable chain (ocap-provenance)."
   },
   "exp.aura.what": {
-    "type": "claim",
-    "value": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems — I ship the integration and automation backbone (NetSuite, Amazon, Shopify, EDI/3PL) and architected the contract-and-validation layer behind inventory-purchasing, delivered as agent-authored PRs."
+    "type": "body",
+    "value": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and architected the contract-and-validation layer behind inventory-purchasing — both delivered as agent-authored PRs."
   },
   "exp.aura.b0": {
     "type": "body",
-    "value": "Ship the commerce and supply-chain integration and automation backbone — NetSuite, Amazon, and Shopify integrations; inbound, Tactical, and LTL automation; EDI; and fulfillment daemons — as agent-authored delivery."
+    "value": "Ship the commerce and supply-chain backbone — NetSuite, Amazon, and Shopify integrations; inbound, Tactical, and LTL automation; EDI; and fulfillment daemons."
   },
   "exp.aura.b1": {
     "type": "body",
@@ -57,11 +57,11 @@
   },
   "exp.l2l.what": {
     "type": "claim",
-    "value": "Built the quality gates and developer experience for a 20-engineer team — static-analysis PR gating that blocked defects before merge, on top of design-system and performance work."
+    "value": "Built the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance."
   },
   "exp.l2l.b0": {
     "type": "claim",
-    "value": "Built static-analysis gating into the PR pipeline — blocking defects before merge, cutting critical bugs 20% and high-priority issues 25% across a 20-engineer team."
+    "value": "Built static-analysis gating into the PR pipeline, blocking defect classes before merge; critical bugs fell 20% and high-priority issues 25% across the 20-engineer team."
   },
   "exp.l2l.b1": {
     "type": "claim",
