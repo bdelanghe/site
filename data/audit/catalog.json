@@ -69,7 +69,7 @@
   },
   "exp.l2l.b1": {
     "type": "claim",
-    "value": "Shipped the frontend platform — a design system (−30% task lead time), a dashboard framework (widget builds a week → a day), and pagination + performance work that brought First Contentful Paint under a second."
+    "value": "Shipped the frontend platform: a design system that cut task lead time 30%, a dashboard framework that took widget builds from a week to a day, and pagination and performance work that brought First Contentful Paint under a second."
   },
   "exp.pioneer-works.what": {
     "type": "body",
@@ -77,7 +77,7 @@
   },
   "exp.pioneer-works.b0": {
     "type": "claim",
-    "value": "A unified CRM + Square-API ETL — −80% payment-tracking time, P&L across 200+ events."
+    "value": "A unified CRM + Square-API ETL — cut payment-tracking time 80%, with P&L across 200+ events."
   },
   "exp.kaleida-studio.what": {
     "type": "body",
@@ -85,7 +85,7 @@
   },
   "exp.kaleida-studio.b0": {
     "type": "claim",
-    "value": "Just-in-time production workflows — eliminated edition-numbering errors (10/month → 0)."
+    "value": "Just-in-time production workflows — eliminated edition-numbering errors, from 10/month to zero."
   },
   "exp.the-prepared.what": {
     "type": "body",
@@ -93,7 +93,7 @@
   },
   "exp.the-prepared.b0": {
     "type": "claim",
-    "value": "A unified content pipeline — −70% curation time across 1000+ articles."
+    "value": "A unified content pipeline — cut curation time 70% across 1000+ articles."
   },
   "exp.recurse-center.what": {
     "type": "body",
