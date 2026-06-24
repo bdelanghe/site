@@ -36,6 +36,22 @@ jobs:
         env:
           ATTEST_KEY: ${{ secrets.ATTEST_KEY }}
           GITHUB_SHA: ${{ github.sha }}
+      - name: Render static resume PDF (headless Chrome)
+        # Rendered from the built page AFTER attestation: Chrome output is
+        # non-deterministic + impure, so it stays out of the hermetic nix build
+        # and the signed attestation — same posture as cards.yml. Served as a
+        # static /resume.pdf, regenerated every deploy so it never drifts from
+        # the live page. Chrome is preinstalled on the runner; a tiny local
+        # server lets the page's absolute /brand asset paths resolve.
+        run: |
+          python3 -m http.server 8099 --directory dist &
+          srv=$!
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8099/resume.html >/dev/null 2>&1 && break; sleep 0.5; done
+          google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --no-pdf-header-footer --virtual-time-budget=12000 \
+            --print-to-pdf=dist/resume.pdf http://127.0.0.1:8099/resume.html
+          kill "$srv" 2>/dev/null || true
+          ls -la dist/resume.pdf
       - name: Deploy to Cloudflare Workers
         run: nix develop --command wrangler deploy
         env:
