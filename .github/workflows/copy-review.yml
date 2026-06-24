@@ -3,8 +3,14 @@ name: copy-review
 # Agentic copy review: Claude reads the authored prose (data/profile.json,
 # data/site.json) and judges it against the site's own thesis and voice —
 # claim integrity, thesis coherence, voice, clarity. The deterministic gates
-# can't make those calls; this one can. Report-only by default (findings land
-# in the run summary); add --strict to block on blocker-severity findings.
+# can't make those calls; this one can.
+#
+# REPORT-ONLY: this gate never fails CI. An LLM judge makes judgement calls,
+# not deterministic checks — at --strict it flip-flopped (blocking on a
+# different, sometimes self-contradictory finding each run), so it shouldn't
+# hold a merge veto. Findings post as a sticky PR comment + the run summary;
+# a human decides what to act on. The deterministic `audit` gate (string-audit)
+# still blocks on ungrounded claims and overclaims.
 #
 # Skips cleanly when ANTHROPIC_API_KEY is absent (e.g. fork PRs), so it never
 # blocks a contributor who can't run it.
@@ -18,6 +24,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write # post the review as a sticky PR comment
 
 jobs:
   copy-review:
@@ -30,4 +37,24 @@ jobs:
       - name: Agentic copy review
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node copy-review.mjs # report-only: findings land in the run summary; never blocks merge
+          COPY_REVIEW_MD: copy-review.md # script writes the rendered findings here
+        run: node copy-review.mjs # report-only: never fails CI (no --strict)
+      - name: Post review as sticky PR comment
+        if: github.event_name == 'pull_request' && hashFiles('copy-review.md') != ''
+        continue-on-error: true # surfacing the review must not fail the gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker='<!-- copy-review -->'
+          body="$marker"$'\n'"$(cat copy-review.md)"
+          id=$(gh api "repos/$REPO/issues/$PR/comments" \
+                 --jq "map(select(.body | startswith(\"$marker\"))) | .[0].id // empty")
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" >/dev/null
+            echo "Updated existing copy-review comment ($id)."
+          else
+            gh api -X POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
+            echo "Created copy-review comment."
+          fi
