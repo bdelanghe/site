@@ -182,8 +182,13 @@ async function main() {
       },
       body: JSON.stringify({
         model: MODEL,
-        temperature: 0,
         max_tokens: 4000,
+        // Determinism: at the default temperature (1.0) the same copy yields a
+        // different verdict each run — the gate flip-flops on judgement calls.
+        // temperature 0 + the pinned model is the most reproducible setting the
+        // Anthropic API offers (it has no `seed` parameter). Not bit-for-bit
+        // deterministic, but it stops the run-to-run blocker churn.
+        temperature: 0,
         system: SYSTEM,
         output_config: { format: { type: "json_schema", schema: SCHEMA } },
         messages: [
@@ -233,6 +238,12 @@ async function main() {
   const { md, blockers } = render(result);
   console.log(md);
   await summary(md);
+  // When asked (CI), also drop the rendered review to a file so the workflow can
+  // post it as a sticky PR comment — findings surface inline, not buried in logs.
+  if (process.env.COPY_REVIEW_MD) {
+    const { writeFile } = await import("node:fs/promises");
+    await writeFile(process.env.COPY_REVIEW_MD, md + "\n");
+  }
 
   if (strict && blockers > 0) {
     console.error(`\ncopy-review: ${blockers} blocker(s) under --strict → failing.`);
