@@ -149,7 +149,7 @@
       "name": "prx",
       "fullName": "bounded-systems/prx",
       "url": "https://github.com/bounded-systems/prx",
-      "description": "The agent-run work-unit CLI: capability-scoped agents whose every privileged effect is verified against its signed owner, driving a work unit through one signed pipeline to a merged PR.",
+      "description": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against their signed owner, driving a work unit through one signed pipeline to a merged PR.",
       "language": "TypeScript",
       "stars": 1,
       "pinned": true,
