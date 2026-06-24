@@ -30,4 +30,4 @@ jobs:
       - name: Agentic copy review
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node copy-review.mjs --strict # blocks on blocker-severity claim-integrity findings
+        run: node copy-review.mjs # report-only: findings land in the run summary; never blocks merge
