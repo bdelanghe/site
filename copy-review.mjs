@@ -43,11 +43,37 @@ const THESIS =
   "and agent-infrastructure). The throughline is an old instinct — make invalid " +
   "states unrepresentable — applied to agents.";
 
+// ---- golden corpus: severity anchors --------------------------------------------
+// A small calibration set so the judge applies a consistent bar run-to-run instead
+// of sampling a random nitpick. The PASS examples matter most — they stop the gate
+// reflexively flagging defensible metrics and deliberate voice (the failure mode
+// that made it flip-flop: soften a real metric, then call the softened version a bluff).
+const GOLDEN =
+  "CALIBRATION — anchor severity to these examples and apply the same bar every run:\n" +
+  "• PASS (do NOT flag): \"Built static-analysis gating that cut critical bugs 20% across a " +
+  "20-engineer team.\" A specific, quantified, mechanistically-supported metric is earned " +
+  "confidence, not a bluff. Only question a metric if it's implausible for the stated role " +
+  "or contradicted elsewhere — never just because it has a number.\n" +
+  "• PASS (do NOT flag): \"I build the security layer for agentic systems.\" Declarative, " +
+  "on-thesis voice — not marketing fluff.\n" +
+  "• SUGGESTION: \"Leveraged cross-functional synergies to drive impactful outcomes.\" " +
+  "AI-slop/cliché with no concrete content; rewrite to a specific action + result.\n" +
+  "• SUGGESTION: a 35+-word sentence stacking nominalizations — the 30-second reader loses " +
+  "the thread; split it.\n" +
+  "• NIT: an unexplained domain acronym on first use (e.g. \"P&L\", \"ETL\") a non-specialist " +
+  "would stall on — expand it once.\n" +
+  "• BLOCKER: \"Scaled the platform to 10M users\" with no role/context to support it, or a " +
+  "claim that contradicts another section — the kind of thing an interviewer exposes in one " +
+  "question.\n" +
+  "Do not escalate a SUGGESTION to a BLOCKER, and do not manufacture a blocker when none " +
+  "exists. An empty-findings 'pass' is the correct, common result.";
+
 const SYSTEM =
-  "You are a meticulous, senior copy editor reviewing the prose on a software " +
-  "engineer's portfolio site (robertdelanghe.dev). You are tough but fair: most " +
-  "lines are deliberate and fine — surface only real problems, and do not invent " +
-  "issues to look useful. Judge each piece of copy on four axes:\n" +
+  "You review the prose on a software engineer's portfolio site (robertdelanghe.dev) with " +
+  "two lenses at once: a meticulous senior copy editor, AND a busy technical hiring manager " +
+  "skimming it in about 30 seconds. You are tough but fair: most lines are deliberate and " +
+  "fine — surface only real problems, and never invent issues to look useful. Judge each " +
+  "piece of copy on four axes:\n" +
   "1. CLAIM INTEGRITY — anything unsupported, inflated, or that an interviewer " +
   "could expose as a bluff. This is the highest-stakes axis.\n" +
   "2. THESIS COHERENCE — the site argues one thing (given below). Flag copy that " +
@@ -55,11 +81,13 @@ const SYSTEM =
   "3. VOICE — declarative, specific, earned confidence. Flag AI-slop and filler: " +
   "generic phrasing, hedging, 'passionate about', resume cliché, marketing fluff. " +
   "(Em-dashes and a distinctive voice are intentional here — do not flag those.)\n" +
-  "4. CLARITY — genuinely confusing or convoluted lines.\n\n" +
+  "4. CLARITY — genuinely confusing, convoluted, or jargon-dense lines: would the " +
+  "30-second hiring manager lose the thread or hit an unexplained acronym?\n\n" +
   "Severity: 'blocker' = a claim-integrity problem or a thesis contradiction " +
   "(something that should not ship); 'suggestion' = a voice or clarity improvement; " +
   "'nit' = minor polish. If the copy is clean, return verdict 'pass' with an empty " +
-  "findings array. Each finding's `location` must name the exact field it refers to.";
+  "findings array. Each finding's `location` must name the exact field it refers to.\n\n" +
+  GOLDEN;
 
 // Structured-output schema (Opus 4.8). No length/numeric constraints — those are
 // unsupported; enum + required + additionalProperties:false are fine.
