@@ -39,7 +39,7 @@
       "org": "L2L", "role": "Software Engineer", "when": "Apr 2021 — Sep 2023", "where": "New York · Remote", "url": "https://www.linkedin.com/company/l2l-manufacturingsoftware",
       "what": "Built the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance.",
       "bullets": [
-        "Built static-analysis gating into the PR pipeline, blocking defect classes before merge; critical bugs fell 20% and high-priority issues 25% across the 20-engineer team.",
+        "Built static-analysis gating into the PR pipeline to block defect classes before merge; over the same period, critical bugs dropped 20% and high-priority issues 25% across the 20-engineer team.",
         "Shipped the frontend platform: a design system that cut task lead time 30%, a dashboard framework that took widget builds from a week to a day, and pagination and performance work that brought First Contentful Paint under a second."
       ]
     },
@@ -79,7 +79,7 @@
   "seeking": {
     "label": "Open to new roles",
     "focus": "Founding / senior engineering on agent infrastructure — agent safety and code provenance",
-    "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the guardrails that make them safe to run in production. Brooklyn · NYC · remote.",
+    "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the guardrails that make them trustworthy in production. Brooklyn · NYC · remote.",
     "cta": "Get in touch",
     "href": "mailto:cv@robertdelanghe.dev"
   },
