@@ -45,21 +45,21 @@
       "org": "Pioneer Works", "role": "Software Engineer (Contract)", "when": "Nov 2018 – Feb 2021", "where": "Brooklyn", "url": "https://www.linkedin.com/company/pioneer-works-center-for-arts-and-innovation",
       "what": "Designed the events + revenue data layer for the arts foundation.",
       "bullets": [
-        "Created a unified CRM + Square-API ETL that reduced payment-tracking time by 80% and tracked profit-and-loss across 200+ events."
+        "Drove event status from attached documents (certificate of occupancy, design, invoice) across a highly relational model, so state was derived from evidence rather than a human-set flag that could drift out of sync."
       ]
     },
     {
       "org": "Kaleida Studio", "role": "Software Engineer (Contract)", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://www.linkedin.com/company/kaleida",
       "what": "Automated just-in-time production for the fabrication studio.",
       "bullets": [
-        "Cut edition-numbering errors from 10/month to zero with just-in-time production workflows."
+        "Cut edition-numbering errors from 10/month to zero by making the invalid state unrepresentable in the production workflow."
       ]
     },
     {
       "org": "The Prepared", "role": "Software Engineer (Contract)", "when": "Oct 2018 – Feb 2019", "where": "Brooklyn", "url": "https://www.linkedin.com/company/theprepared",
       "what": "Engineered the publishing pipeline for the manufacturing publication.",
       "bullets": [
-        "Cut curation time 70% across 1000+ articles with a unified content pipeline."
+        "Designed the schema that moved unstructured spreadsheet data into a relational database, making malformed records unrepresentable at the data layer rather than caught downstream."
       ]
     },
     {
@@ -82,11 +82,11 @@
     "href": "mailto:cv@robertdelanghe.dev"
   },
   "social": [
-    { "label": "GitHub", "href": "https://github.com/bdelanghe" },
+    { "label": "GitHub", "href": "https://github.com/bounded-systems" },
     { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" }
   ],
   "links": [
-    { "label": "GitHub", "href": "https://github.com/bdelanghe" },
+    { "label": "GitHub", "href": "https://github.com/bounded-systems" },
     { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" },
     { "label": "Résumé", "href": "/resume" },
     { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
