@@ -9,6 +9,7 @@
     "check": "node brand/tokens/build-tokens.mjs --check",
     "check:linkedin": "node linkedin-check.mjs",
     "check:copy": "node copy-review.mjs",
+    "check:copy-fixtures": "node copy-review-fixtures.mjs",
     "test:copy-review": "node copy-review-test.mjs",
     "dev": "python3 -m http.server 8080",
     "prebuild": "npm run check",

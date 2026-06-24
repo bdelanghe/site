@@ -1,0 +1,28 @@
+name: copy-review-fixtures
+
+# Regression harness for the copy-review calibration. Runs the severity-anchored
+# fixtures (most of them real human catches) through the actual reviewer and asserts
+# it still classifies them correctly — PASS fixtures never blocked, FLAG fixtures
+# caught at >= their floor.
+#
+# Manual / on-demand only (workflow_dispatch): one API call per fixture, and an LLM
+# judge isn't worth running on every PR. Fails loudly on a real classification
+# regression; skips cleanly (exit 0) without an API key.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Copy-review fixtures
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node copy-review-fixtures.mjs

@@ -1,0 +1,49 @@
+[
+  {
+    "id": "metric-defensible",
+    "snippet": "Built static-analysis gating that cut critical bugs 20% across a 20-engineer team.",
+    "expect": "pass",
+    "note": "The flip-flop failure that motivated this harness: the gate softened this real metric, then called the softened version a 'soft bluff'. A specific, mechanistically-supported metric is earned confidence — it must never draw a blocker."
+  },
+  {
+    "id": "voice-declarative",
+    "snippet": "I build the security layer for agentic systems.",
+    "expect": "pass",
+    "note": "Declarative, on-thesis voice — not marketing fluff. Must not be flagged as a blocker."
+  },
+  {
+    "id": "jargon-effects",
+    "snippet": "An agent reaches only the effects it was handed.",
+    "expect": "flag",
+    "minSeverity": "nit",
+    "note": "Real human catch ('Idk what effects means'): a non-expert reader stalls on 'effects'. The recruiter lens should at least notice the clarity problem."
+  },
+  {
+    "id": "acronym-pl",
+    "snippet": "A unified CRM and Square-API ETL that tracked P&L across 200+ events.",
+    "expect": "flag",
+    "minSeverity": "nit",
+    "note": "Real human catch ('Idk what P&L is'): an unexplained domain acronym on first use."
+  },
+  {
+    "id": "ambiguous-pronoun",
+    "snippet": "Shipped the frontend platform behind it, a design system and a dashboard framework.",
+    "expect": "flag",
+    "minSeverity": "nit",
+    "note": "Real human catch ('what is it?'): an ambiguous pronoun antecedent — a clarity problem."
+  },
+  {
+    "id": "ai-slop",
+    "snippet": "Leveraged cross-functional synergies to drive impactful outcomes.",
+    "expect": "flag",
+    "minSeverity": "suggestion",
+    "note": "Resume cliche / AI-slop with no concrete content — the voice axis should catch it."
+  },
+  {
+    "id": "unsupported-overclaim",
+    "snippet": "Single-handedly scaled the platform to 10M users.",
+    "expect": "flag",
+    "minSeverity": "blocker",
+    "note": "An unsupported scale claim with no role or context — the kind of thing an interviewer exposes in one question. Claim-integrity blocker."
+  }
+]
