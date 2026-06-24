@@ -1,7 +1,7 @@
 {
   "hero.headline": {
     "type": "headline",
-    "value": "I ship systems where agents write the code — I build the tooling to trust them in production."
+    "value": "I ship systems where agents write the code, and I build the tooling to trust them in production."
   },
   "hero.intro": {
     "type": "body",
@@ -33,11 +33,11 @@
   },
   "exp.bounded-systems.b0": {
     "type": "body",
-    "value": "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent can only do what its references allow — nothing it can reach by guessing a name."
+    "value": "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent can only do what its references allow."
   },
   "exp.bounded-systems.b1": {
     "type": "body",
-    "value": "Bound privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain (ocap-provenance) — who authorized what is enforced in CI, not by convention."
+    "value": "Tied privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain — enforced in CI, not by convention."
   },
   "exp.aura.what": {
     "type": "body",
@@ -49,15 +49,11 @@
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Replaced Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing) with one source of truth that compiles into every downstream artifact — schemas, docs, tests, agent context — with CI blocking anything that drifts out of sync."
+    "value": "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact — schemas, docs, tests, agent context — with CI blocking anything that drifts out of sync."
   },
   "exp.aura.b2": {
     "type": "body",
     "value": "Built the auditing in: generated outputs are checked for provenance and against their contract, and sign-off is bound to an owner role enforced in CI rather than to a person."
-  },
-  "exp.aura.b3": {
-    "type": "body",
-    "value": "The changes themselves are written by AI agents, moving through that same pipeline to a reviewed PR — their output held to the same provenance and contract checks as everything else."
   },
   "exp.l2l.what": {
     "type": "claim",
