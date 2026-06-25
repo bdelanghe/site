@@ -101,12 +101,16 @@ const isAccepted = (org, field) => accepted.find((a) => orgMatch(a.org, org) && 
 // ---- expand canonical experience (some entries aggregate several orgs) ---------
 // org "A · B · C" => one canonical title spread across orgs A, B, C.
 // role "Title · Team" => compare only the Title half.
-const canonical = (profile.experience ?? []).flatMap((e) => {
-  const orgs = String(e.org).split(/\s+·\s+/);
-  const title = String(e.role ?? "").split(/\s+·\s+/)[0].trim();
-  const { start, end, loose } = parseWhen(e.when);
+// Canonical is JSON Resume: experience is `work` with ISO startDate/endDate.
+const canonical = (profile.work ?? []).flatMap((w) => {
+  const orgs = String(w.name).split(/\s+·\s+/);
+  const title = String(w.position ?? "").split(/\s+·\s+/)[0].trim();
+  const start = parsePoint(w.startDate);
+  const end = w.endDate ? parsePoint(w.endDate) : PRESENT;
+  const loose = !/^\d{4}-\d{2}/.test(String(w.startDate ?? "")); // year-only → month-agnostic
   const aggregated = orgs.length > 1;
-  return orgs.map((org) => ({ org: org.trim(), title, start, end, aggregated, loose, when: e.when }));
+  const when = `${w.startDate ?? "?"} – ${w.endDate ?? "present"}`;
+  return orgs.map((org) => ({ org: org.trim(), title, start, end, aggregated, loose, when }));
 });
 
 // ---- compare -------------------------------------------------------------------
@@ -160,7 +164,8 @@ for (const li of positions) {
 // skills coverage: canonical skills missing from the LinkedIn export
 const liSkills = (resume.skills ?? []).flatMap((s) => [s.name, ...(s.keywords ?? [])]).filter(Boolean).map(squish);
 if (liSkills.length) {
-  const missing = (profile.skills ?? []).filter((s) => !liSkills.some((l) => l && (l.includes(squish(s)) || squish(s).includes(l))));
+  const canonSkills = (profile.skills ?? []).flatMap((g) => g.keywords ?? [g.name]);
+  const missing = canonSkills.filter((s) => !liSkills.some((l) => l && (l.includes(squish(s)) || squish(s).includes(l))));
   if (missing.length) findings.push({ level: "warn", org: "(skills)", msg: `canonical skills not on LinkedIn: ${missing.join(", ")}` });
 }
 

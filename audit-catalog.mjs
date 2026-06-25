@@ -32,10 +32,11 @@ function buildCatalog(profile, site, highlightCopy) {
     if (value && value.trim()) c[key] = { type, value };
   };
 
-  // Hero + identity copy.
-  put("hero.headline", "headline", profile.headline);
+  // Hero + identity copy. Canonical is JSON Resume: headline/summary live under basics.
+  const basics = profile.basics ?? {};
+  put("hero.headline", "headline", basics.headline);
   put("hero.intro", "body", profile.intro);
-  put("hero.summary", "body", profile.summary);
+  put("hero.summary", "body", basics.summary);
   if (profile.banner?.tagline) put("banner.tagline", "tagline", profile.banner.tagline);
 
   // Open-to-roles callout.
@@ -43,12 +44,17 @@ function buildCatalog(profile, site, highlightCopy) {
   if (profile.seeking?.focus) put("seeking.focus", "body", profile.seeking.focus);
   if (profile.seeking?.detail) put("seeking.detail", "body", profile.seeking.detail);
 
-  // Experience: the `what` line and every bullet. Metric-bearing strings become
+  // Work: the summary line and every highlight. Metric-bearing strings become
   // `claim`s so string-audit checks them against the grounding registry.
-  for (const e of profile.experience || []) {
-    const s = slug(e.org);
-    put(`exp.${s}.what`, claimOrBody(e.what), e.what);
-    (e.bullets || []).forEach((b, i) => put(`exp.${s}.b${i}`, claimOrBody(b), b));
+  for (const w of profile.work || []) {
+    const s = slug(w.name);
+    put(`exp.${s}.what`, claimOrBody(w.summary), w.summary);
+    (w.highlights || []).forEach((b, i) => put(`exp.${s}.b${i}`, claimOrBody(b), b));
+  }
+
+  // Projects: the proof copy now lives here — keep it audited too.
+  for (const p of profile.projects || []) {
+    put(`proj.${slug(p.name)}.desc`, claimOrBody(p.description), p.description);
   }
 
   // Selected Work: the copy that actually ships (editorial overrides applied,

@@ -1,5 +1,5 @@
 {
-  "_source": "Render-context for the site (homepage hero + nav). Decorates the canonical résumé doc profile.json — it never redefines canonical fields (name/role/summary/…). build.mjs shallow-merges presentation over profile. Authored + signed off in bdelanghe/cv; published here.",
+  "_source": "Render-context for bdelanghe/site (homepage hero + nav). Decorates the canonical résumé doc profile.json — never redefines a canonical field. Authored + signed off here (the same string-audit bar as the résumé copy) and published to site, where build.mjs shallow-merges presentation over profile.",
   "banner": {
     "tagline": "Bounded authority for AI agents",
     "stack": [
@@ -10,12 +10,7 @@
     ]
   },
   "intro": "I'm Bobby. I chase the parts of code that feel like math, and build the systems that keep AI agents inside the job you gave them.",
-  "proof": [
-    { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
-    { "label": "git-ast", "href": "https://github.com/bounded-systems/git-ast" },
-    { "label": "guest-room", "href": "https://github.com/bounded-systems/guest-room" },
-    { "label": "ocap-provenance", "href": "https://github.com/bounded-systems/ocap-provenance" }
-  ],
+  "place": "Brooklyn · Aura · Recurse Center · Bennington",
   "seeking": {
     "label": "Open to new roles",
     "focus": "Senior / founding engineering on agent infrastructure: agent safety and code provenance",

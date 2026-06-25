@@ -45,11 +45,11 @@
   },
   "exp.aura.b0": {
     "type": "claim",
-    "value": "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into 61 schema contracts, 173 test scenarios, and 145 dashboard cards."
+    "value": "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into dozens of downstream schema contracts checked by hundreds of test scenarios."
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Built the validation layer that checks generated outputs against Gherkin specs and golden sets, with provenance tracked and sign-off bound to an owner role, not a person."
+    "value": "Maintain the Ruby gems behind Aura's Amazon Selling Partner and NetSuite integrations — both code-generated from the vendor API specs (SP-API Swagger, SuiteTalk WSDL) so the client tracks the spec instead of drifting by hand."
   },
   "exp.l2l.what": {
     "type": "claim",
@@ -90,6 +90,22 @@
   "exp.recurse-center.b0": {
     "type": "claim",
     "value": "Completed a selective 12-week programming retreat researching Haskell type theory and how a well-constrained type narrows the space of possible implementations."
+  },
+  "proj.prx.desc": {
+    "type": "body",
+    "value": "Object-capability toolchain that bounds an AI agent to the access it holds."
+  },
+  "proj.git-ast.desc": {
+    "type": "body",
+    "value": "Rust systems-layer component for AST-level git operations in the provenance chain."
+  },
+  "proj.guest-room.desc": {
+    "type": "body",
+    "value": "Sandbox that runs an agent with only the capabilities it was granted."
+  },
+  "proj.ocap-provenance.desc": {
+    "type": "body",
+    "value": "in-toto/SLSA provenance chain that attributes each privileged effect to a signed owner."
   },
   "work.prx": {
     "type": "body",

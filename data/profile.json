@@ -1,117 +1,156 @@
 {
-  "_source": "Curated from a saved LinkedIn webarchive (2026-06). NOT live-fetched — this is the canonical résumé doc (semantic content tokens / slugs). Render context (banner, intro, proof, seeking, nav links) lives in presentation.json. Authored + signed off in bdelanghe/cv; published here. Edit there, not here.",
-  "name": "Robert DeLanghe",
-  "role": "Senior Software Engineer",
-  "place": "Brooklyn · Aura · Recurse Center · Bennington",
-  "headline": "AI agents ship code. I write the contracts that keep them in check.",
-  "summary": "I make agent-authored code accountable by construction: an agent can only touch what its capabilities allow, with effects bound to a signed owner and checked in CI, so permission and accountability are settled by the same check. Open-sourced as prx; shipped in production at Aura.",
-  "email": "cv@robertdelanghe.dev",
-  "experience": [
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "basics": {
+    "name": "Robert DeLanghe",
+    "label": "Senior Software Engineer",
+    "headline": "AI agents ship code. I write the contracts that keep them in check.",
+    "email": "cv@robertdelanghe.dev",
+    "url": "https://robertdelanghe.dev",
+    "summary": "I make agent-authored code accountable by construction: an agent can only touch what its capabilities allow, with effects bound to a signed owner and checked in CI, so permission and accountability are settled by the same check. Open-sourced as prx; shipped in production at Aura.",
+    "location": { "city": "Brooklyn", "region": "NY", "countryCode": "US" },
+    "profiles": [
+      { "network": "GitHub", "username": "bdelanghe", "url": "https://github.com/bdelanghe" },
+      { "network": "LinkedIn", "username": "rdelanghe", "url": "https://www.linkedin.com/in/rdelanghe/" }
+    ]
+  },
+  "work": [
     {
-      "org": "Bounded Systems",
-      "role": "Creator, Independent Project",
-      "when": "2025 – present",
-      "where": "Brooklyn",
+      "name": "Bounded Systems",
+      "position": "Creator, Independent Project",
+      "location": "Brooklyn",
       "url": "https://bounded.tools",
-      "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
-      "bullets": [
+      "startDate": "2025",
+      "summary": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
+      "highlights": [
         "Build prx and guest-room: an object-capability toolchain that bounds an AI agent to the access it holds.",
         "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain. The Rust systems layer is door-peercred, git-ast, and hooksmith."
       ]
     },
     {
-      "org": "Aura",
-      "role": "Senior Software Engineer · Commerce",
-      "when": "Oct 2023 – present",
-      "where": "New York · Hybrid",
+      "name": "Aura",
+      "position": "Senior Software Engineer · Commerce",
+      "location": "New York · Hybrid",
       "url": "https://auraframes.com",
-      "what": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
-      "bullets": [
-        "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into 61 schema contracts, 173 test scenarios, and 145 dashboard cards.",
-        "Built the validation layer that checks generated outputs against Gherkin specs and golden sets, with provenance tracked and sign-off bound to an owner role, not a person."
+      "startDate": "2023-10",
+      "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
+      "highlights": [
+        "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into dozens of downstream schema contracts checked by hundreds of test scenarios.",
+        "Maintain the Ruby gems behind Aura's Amazon Selling Partner and NetSuite integrations — both code-generated from the vendor API specs (SP-API Swagger, SuiteTalk WSDL) so the client tracks the spec instead of drifting by hand."
       ]
     },
     {
-      "org": "L2L",
-      "role": "Software Engineer",
-      "when": "Apr 2021 – Sep 2023",
-      "where": "New York · Remote",
+      "name": "L2L",
+      "position": "Software Engineer",
+      "location": "New York · Remote",
       "url": "https://l2l.com",
-      "what": "Owned the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance.",
-      "bullets": [
+      "startDate": "2021-04",
+      "endDate": "2023-09",
+      "summary": "Owned the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance.",
+      "highlights": [
         "Shipped static-analysis gating into the PR pipeline, blocking whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
       ]
     },
     {
-      "org": "Pioneer Works",
-      "role": "Contract Software Engineer",
-      "when": "Nov 2018 – Feb 2021",
-      "where": "Brooklyn",
+      "name": "Pioneer Works",
+      "position": "Contract Software Engineer",
+      "location": "Brooklyn",
       "url": "https://pioneerworks.org",
-      "what": "Delivered the event-planning platform for a major Brooklyn arts center.",
-      "bullets": [
+      "startDate": "2018-11",
+      "endDate": "2021-02",
+      "summary": "Delivered the event-planning platform for a major Brooklyn arts center.",
+      "highlights": [
         "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
       ]
     },
     {
-      "org": "Kaleida",
-      "role": "Contract Software Engineer",
-      "when": "Jun 2019 – Mar 2020",
-      "where": "Brooklyn",
+      "name": "Kaleida",
+      "position": "Contract Software Engineer",
+      "location": "Brooklyn",
       "url": "https://kaleida.studio",
-      "what": "Automated just-in-time production for an AR and print-making studio.",
-      "bullets": [
+      "startDate": "2019-06",
+      "endDate": "2020-03",
+      "summary": "Automated just-in-time production for an AR and print-making studio.",
+      "highlights": [
         "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making a duplicate impossible by construction."
       ]
     },
     {
-      "org": "Scope of Work",
-      "role": "Contract Software Engineer",
-      "when": "Oct 2018 – Feb 2019",
-      "where": "Brooklyn",
+      "name": "Scope of Work",
+      "position": "Contract Software Engineer",
+      "location": "Brooklyn",
       "url": "https://scopeofwork.net",
-      "what": "Engineered the contact-management system for the manufacturing publication.",
-      "bullets": [
+      "startDate": "2018-10",
+      "endDate": "2019-02",
+      "summary": "Engineered the contact-management system for the manufacturing publication.",
+      "highlights": [
         "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
       ]
     },
     {
-      "org": "Recurse Center",
-      "role": "Resident",
-      "when": "Sep 2019 – Dec 2019",
-      "where": "Brooklyn",
+      "name": "Recurse Center",
+      "position": "Resident",
+      "location": "Brooklyn",
       "url": "https://www.recurse.com/",
-      "what": "Type theory in Haskell, using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
-      "bullets": [
+      "startDate": "2019-09",
+      "endDate": "2019-12",
+      "summary": "Type theory in Haskell, using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
+      "highlights": [
         "Completed a selective 12-week programming retreat researching Haskell type theory and how a well-constrained type narrows the space of possible implementations."
       ]
     }
   ],
   "education": [
     {
-      "org": "Bennington College",
-      "degree": "BA, Architecture & Sculpture",
-      "when": "Sep 2009 – Dec 2012",
-      "where": "Bennington, VT",
-      "url": "https://bennington.edu"
+      "institution": "Bennington College",
+      "url": "https://bennington.edu",
+      "studyType": "BA",
+      "area": "Architecture & Sculpture",
+      "startDate": "2009-09",
+      "endDate": "2012-12"
     }
   ],
   "skills": [
-    "Capability-based security",
-    "Supply-chain security",
-    "Agent infrastructure",
-    "Static analysis",
-    "Sandboxing",
-    "Systems architecture",
-    "Rust",
-    "TypeScript",
-    "Python",
-    "Node.js",
-    "AWS",
-    "Developer tooling"
+    { "name": "Languages", "keywords": ["Rust", "TypeScript", "Python", "Node.js"] },
+    { "name": "Security & provenance", "keywords": ["Capability-based security", "Supply-chain security", "Sandboxing", "Static analysis"] },
+    { "name": "Systems & infrastructure", "keywords": ["Systems architecture", "Agent infrastructure", "AWS", "Developer tooling"] }
   ],
-  "social": [
-    { "label": "GitHub", "href": "https://github.com/bdelanghe" },
-    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" }
-  ]
+  "projects": [
+    {
+      "name": "prx",
+      "description": "Object-capability toolchain that bounds an AI agent to the access it holds.",
+      "url": "https://github.com/bounded-systems/prx",
+      "keywords": ["Capability security", "AI agents", "Rust"],
+      "roles": ["Creator"],
+      "entity": "Bounded Systems"
+    },
+    {
+      "name": "git-ast",
+      "description": "Rust systems-layer component for AST-level git operations in the provenance chain.",
+      "url": "https://github.com/bounded-systems/git-ast",
+      "keywords": ["Rust", "Git", "Provenance"],
+      "roles": ["Creator"],
+      "entity": "Bounded Systems"
+    },
+    {
+      "name": "guest-room",
+      "description": "Sandbox that runs an agent with only the capabilities it was granted.",
+      "url": "https://github.com/bounded-systems/guest-room",
+      "keywords": ["Sandboxing", "Capability security"],
+      "roles": ["Creator"],
+      "entity": "Bounded Systems"
+    },
+    {
+      "name": "ocap-provenance",
+      "description": "in-toto/SLSA provenance chain that attributes each privileged effect to a signed owner.",
+      "url": "https://github.com/bounded-systems/ocap-provenance",
+      "keywords": ["Supply-chain security", "in-toto", "SLSA"],
+      "roles": ["Creator"],
+      "entity": "Bounded Systems"
+    }
+  ],
+  "meta": {
+    "canonical": "https://robertdelanghe.dev/resume.json",
+    "version": "v1.0.0",
+    "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
+  }
 }

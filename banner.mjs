@@ -53,9 +53,11 @@ const C = {
 };
 
 // Content tokens (with safe fallbacks so a missing banner block still renders).
-const title = profile.name ?? "";
-const tagline = profile.banner?.tagline ?? profile.role ?? "";
-const stack = (profile.banner?.stack ?? profile.skills ?? []).join(" · ").toUpperCase();
+// Canonical is JSON Resume: name/label live under basics; skills are grouped.
+const title = profile.basics?.name ?? "";
+const tagline = profile.banner?.tagline ?? profile.basics?.label ?? "";
+const skillFallback = (profile.skills ?? []).flatMap((g) => g.keywords ?? [g.name]);
+const stack = (profile.banner?.stack ?? skillFallback).join(" · ").toUpperCase();
 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 

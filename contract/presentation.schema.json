@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://robertdelanghe.dev/contract/presentation.schema.json",
   "title": "presentation / render-context contract",
-  "description": "Homepage render context — banner, intro, proof, seeking, and the homepage nav links. Decorates the canonical profile doc (profile.schema.json) and never redefines its fields; build.mjs shallow-merges presentation over profile. Held to the same string-audit lens as the canonical copy.",
+  "description": "Homepage render context — banner, intro, seeking, the decorative place line, and the homepage nav links. Decorates the canonical JSON Resume doc (contract/jsonresume.schema.json) and never redefines its fields; build.mjs shallow-merges presentation over profile. The homepage proof line derives from the canonical projects[], not from here. Held to the same string-audit lens as the canonical copy.",
   "type": "object",
   "required": ["links"],
   "additionalProperties": false,
@@ -18,16 +18,7 @@
       }
     },
     "intro": { "type": "string", "description": "hero — short first-person bio line, sits between headline and summary" },
-    "proof": {
-      "type": "array",
-      "description": "Claim → evidence: repos/links that back the hero claims.",
-      "items": {
-        "type": "object",
-        "required": ["label", "href"],
-        "additionalProperties": false,
-        "properties": { "label": { "type": "string" }, "href": { "type": "string" } }
-      }
-    },
+    "place": { "type": "string", "description": "decorative hero line — affiliations (e.g. 'Brooklyn · Aura · Recurse Center · Bennington'). The résumé location comes from basics.location, not here." },
     "seeking": {
       "type": "object",
       "description": "Job-search callout: what roles you're open to.",
@@ -43,7 +34,7 @@
     },
     "links": {
       "type": "array",
-      "description": "Homepage nav links (and llms.txt). The résumé contact line uses social + the canonical email, not these.",
+      "description": "Homepage nav links (and llms.txt). The résumé contact line uses basics.profiles + the canonical email, not these.",
       "minItems": 1,
       "items": {
         "type": "object",
