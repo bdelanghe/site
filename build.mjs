@@ -279,7 +279,10 @@ await mkdir(dist, { recursive: true });
 await writeFile(join(dist, "index.html"), html);
 
 // ---- résumé: print-optimized static artifact from the same contract ----------
-const rLinks = profile.links.filter((l) => l.href !== "/resume").map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" · ");
+const rEmail = profile.links.find((l) => /^mailto:/i.test(l.href));
+const rLinks = [...(profile.social ?? []), rEmail].filter(Boolean).map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" · ");
+// résumé contact line: location only (first `place` token) + contact links — affiliations live in Experience/Education
+const rLocation = (profile.place || "").split(/\s*·\s*/)[0];
 const rExp = (profile.experience ?? []).map((e) => `
       <div class="r-job">
         <div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div>
@@ -389,7 +392,7 @@ ${jsonLd}
   <header>
     <h1>${esc(profile.name)}</h1>
     <p class="r-title">${esc(profile.role)}${profile.headline ? ` · ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
-    <p class="r-contact">${profile.place ? esc(profile.place) + " · " : ""}${rLinks}</p>
+    <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
     <a class="r-print" href="/resume.pdf" download="${profile.name.split(" ").join("-")}-Resume.pdf">Download PDF&nbsp;&darr;</a>
   </header>
   <p class="r-summary">${esc(profile.summary)}</p>
