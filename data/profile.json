@@ -18,11 +18,11 @@
   ],
   "experience": [
     {
-      "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 – present", "where": "Brooklyn", "url": "https://bounded.tools",
+      "org": "Bounded Systems", "role": "Creator, Independent Project", "when": "2025 – present", "where": "Brooklyn", "url": "https://bounded.tools",
       "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
       "bullets": [
-        "Build an object-capability (OCAP) toolchain (prx, guest-room, claude-box) that bounds an AI agent to exactly the access it holds: authority is the handle, not a rule it's checked against.",
-        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain; the systems layer is Rust (door-peercred, git-ast, hooksmith)."
+        "Build prx, guest-room, and claude-box: an object-capability toolchain that bounds an AI agent to exactly the access it holds. Authority is the handle, not a rule it's checked against.",
+        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain; the Rust systems layer is door-peercred, git-ast, and hooksmith."
       ]
     },
     {
@@ -65,18 +65,18 @@
       "org": "Recurse Center", "role": "Resident", "when": "Sep 2019 – Dec 2019", "where": "Brooklyn", "url": "https://www.recurse.com/",
       "what": "Type theory in Haskell, using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile.",
       "bullets": [
-        "Completed a selective 12-week batch (a self-directed programming retreat); researched Haskell type theory and how a well-constrained type narrows the space of possible implementations."
+        "Completed a selective 12-week programming retreat researching Haskell type theory and how a well-constrained type narrows the space of possible implementations."
       ]
     }
   ],
   "education": [
     { "org": "Bennington College", "degree": "BA, Architecture & Sculpture", "when": "Sep 2009 – Dec 2012", "where": "Bennington, VT", "url": "https://bennington.edu" }
   ],
-  "skills": ["TypeScript", "Python", "Rust", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security (in-toto/SLSA)", "Developer tooling", "Sandboxing"],
+  "skills": ["TypeScript", "Python", "Rust", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security", "Developer tooling", "Sandboxing"],
   "seeking": {
     "label": "Open to new roles",
     "focus": "Senior / founding engineering on agent infrastructure: agent safety and code provenance",
-    "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the guardrails that make them trustworthy in production. Brooklyn · NYC · remote.",
+    "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy in production. Brooklyn · NYC · remote.",
     "cta": "Get in touch",
     "href": "mailto:cv@robertdelanghe.dev"
   },
