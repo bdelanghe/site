@@ -9,7 +9,7 @@
   },
   "headline": "AI agents write the production code. I write the contract it runs against.",
   "intro": "I'm Bobby. I chase the parts of code that feel like math, and build the systems that keep AI agents inside the job you gave them.",
-  "summary": "I build the layer that makes AI-written code accountable: capability seams that bound what an agent can touch, and a signed-owner provenance chain checked in CI. Open-sourced as prx; the same discipline I ship in production at Aura.",
+  "summary": "I make agent-authored code accountable by construction: an agent can only touch what its capabilities allow, with effects bound to a signed owner and checked in CI, so what's permitted and who's responsible are the same fact. Open-sourced as prx; shipped in production at Aura.",
   "proof": [
     { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
     { "label": "git-ast", "href": "https://github.com/bounded-systems/git-ast" },
@@ -21,17 +21,16 @@
       "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 – present", "where": "Brooklyn", "url": "https://bounded.tools",
       "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
       "bullets": [
-        "Build a capability-security toolchain (prx, guest-room, claude-box) that bounds an AI agent to the access it holds: authority is the handle, not a rule it's checked against.",
-        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain, enforced in CI, not by convention.",
-        "Reach for Rust at the system layer and in Wasm: door-peercred, git-ast, hooksmith."
+        "Build an object-capability (OCAP) toolchain (prx, guest-room, claude-box) that bounds an AI agent to exactly the access it holds: authority is the handle, not a rule it's checked against.",
+        "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain; the systems layer is Rust (door-peercred, git-ast, hooksmith)."
       ]
     },
     {
       "org": "Aura", "role": "Senior Software Engineer · Commerce", "when": "Oct 2023 – present", "where": "New York · Hybrid", "url": "https://auraframes.com",
       "what": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "bullets": [
-        "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact: schemas, docs, tests, agent context. CI blocks anything that drifts out of sync.",
-        "Built the audit layer: generated outputs are checked for provenance and against their contract. Sign-off binds to an owner role enforced in CI, not to a person."
+        "Wrote the orchestration CLI that replaced Aura's spreadsheet-driven supply plan with one source of truth, compiling into every downstream artifact: schemas, docs, tests, agent context.",
+        "Built the validation layer that checks generated outputs against Gherkin specs and golden sets, with provenance tracked and sign-off bound to an owner role in CI, not a person."
       ]
     },
     {
