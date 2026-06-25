@@ -351,15 +351,28 @@ const rExp = work.map((w) => `
         <div class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</div>
         <ul>${(w.highlights ?? (w.summary ? [w.summary] : [])).map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
       </div>`).join("");
-const rProjects = projects.map((p) => {
-  const meta = [p.roles?.length ? p.roles.join(" · ") : "", p.entity || ""].filter(Boolean).join(" · ");
-  const kw = (p.keywords ?? []).join(" · ");
+// Projects bind into one system: render a single block per entity (the umbrella) instead
+// of repeating "Creator · Bounded Systems" on every repo. Each repo is a dated bullet.
+const projByEntity = [];
+for (const p of projects) {
+  const k = p.entity || p.name;
+  let g = projByEntity.find((x) => x.entity === k);
+  if (!g) { g = { entity: k, items: [] }; projByEntity.push(g); }
+  g.items.push(p);
+}
+const rProjects = projByEntity.map(({ entity, items }) => {
+  const roles = [...new Set(items.flatMap((p) => p.roles ?? []))].join(" · ");
+  const starts = items.map((p) => p.startDate).filter(Boolean).sort();
+  const when = starts.length ? `${starts[0].slice(0, 4)} – present` : "";
+  const bullets = items.map((p) => {
+    const date = p.startDate ? ` · ${esc(fmtDate(p.startDate))}` : "";
+    return `<li><strong>${linkName(p.name, p.url)}</strong>${date}${p.description ? ` — ${esc(p.description)}` : ""}</li>`;
+  }).join("");
   return `
       <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${linkName(p.name, p.url)}</span>${meta ? `<span class="r-job__when">${esc(meta)}</span>` : ""}</div>
-        ${p.description ? `<div class="r-edu">${esc(p.description)}</div>` : ""}
-        ${p.highlights?.length ? `<ul>${p.highlights.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
-        ${kw ? `<div class="r-skills">${esc(kw)}</div>` : ""}
+        <div class="r-job__head"><span class="r-job__org">${esc(entity)}</span>${when ? `<span class="r-job__when">${esc(when)}</span>` : ""}</div>
+        ${roles ? `<div class="r-job__role">${esc(roles)}</div>` : ""}
+        <ul>${bullets}</ul>
       </div>`;
 }).join("");
 const rEdu = education.map((e) => {
