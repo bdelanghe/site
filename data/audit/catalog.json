@@ -49,7 +49,7 @@
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Investigated unreviewed agent-authored commits reaching main, reconstructing each one's entry path across five log domains, then authored the post-mortem and designed the controls (server-side branch protection, credential-less agent sandboxes, daily PR audits) that became Aura's policy for shipping AI-written code."
+    "value": "Investigated unreviewed agent-authored commits reaching main: reconstructed each one's entry path across five log domains, authored the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
   },
   "exp.l2l.what": {
     "type": "claim",

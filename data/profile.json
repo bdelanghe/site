@@ -43,7 +43,7 @@
       "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "highlights": [
         "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into dozens of downstream schema contracts checked by hundreds of test scenarios.",
-        "Investigated unreviewed agent-authored commits reaching main, reconstructing each one's entry path across five log domains, then authored the post-mortem and designed the controls (server-side branch protection, credential-less agent sandboxes, daily PR audits) that became Aura's policy for shipping AI-written code."
+        "Investigated unreviewed agent-authored commits reaching main: reconstructed each one's entry path across five log domains, authored the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
       ]
     },
     {
@@ -163,7 +163,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "363203afef4cdaf58e4de1f8579f0dbfc303ed1ba879ffaa587f95f27bc61ba4",
+    "version": "25da173fc2918db1fc50b2ed8dc56c069da22f514530f562d1f3cccf608f5e92",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
