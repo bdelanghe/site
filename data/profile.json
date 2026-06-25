@@ -9,7 +9,7 @@
   },
   "headline": "AI agents write the production code. I write the contract it runs against.",
   "intro": "I'm Bobby. I chase the parts of code that feel like math, and build the systems that keep AI agents inside the job you gave them.",
-  "summary": "I build the layer between provenance and enforcement for agent-authored code: capability seams that bound what an agent can touch, and a signed-owner provenance chain checked in CI. Open-sourced as prx, the same discipline I ship in production at Aura.",
+  "summary": "I build the layer that makes AI-written code accountable: capability seams that bound what an agent can touch, and a signed-owner provenance chain checked in CI. Open-sourced as prx; the same discipline I ship in production at Aura.",
   "proof": [
     { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
     { "label": "git-ast", "href": "https://github.com/bounded-systems/git-ast" },
@@ -19,7 +19,7 @@
   "experience": [
     {
       "org": "Bounded Systems", "role": "Creator (Independent Project)", "when": "2025 – present", "where": "Brooklyn", "url": "https://bounded.tools",
-      "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling.",
+      "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
       "bullets": [
         "Build a capability-security toolchain (prx, guest-room, claude-box) that bounds an AI agent to the access it holds: authority is the handle, not a rule it's checked against.",
         "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain, enforced in CI, not by convention.",
@@ -31,7 +31,7 @@
       "what": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
       "bullets": [
         "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact: schemas, docs, tests, agent context. CI blocks anything that drifts out of sync.",
-        "Built the auditing in: generated outputs are checked for provenance and against their contract. Sign-off binds to an owner role enforced in CI, not to a person."
+        "Built the audit layer: generated outputs are checked for provenance and against their contract. Sign-off binds to an owner role enforced in CI, not to a person."
       ]
     },
     {
@@ -43,23 +43,23 @@
     },
     {
       "org": "Pioneer Works", "role": "Software Engineer (Contract)", "when": "Nov 2018 – Feb 2021", "where": "Brooklyn", "url": "https://pioneerworks.org",
-      "what": "Designed the events + revenue data layer for the arts foundation.",
+      "what": "Delivered the event-planning platform for a major Brooklyn arts center.",
       "bullets": [
-        "Drove event status from attached documents (certificate of occupancy, design, invoice) for a major arts center's large public concerts, so state was derived from evidence, not a human-set flag that could drift."
+        "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
       ]
     },
     {
       "org": "Kaleida", "role": "Software Engineer (Contract)", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://kaleida.studio",
-      "what": "Automated just-in-time production for the fabrication studio.",
+      "what": "Automated just-in-time production for an AR and print-making studio.",
       "bullets": [
         "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making the invalid state unrepresentable."
       ]
     },
     {
       "org": "Scope of Work", "role": "Software Engineer (Contract)", "when": "Oct 2018 – Feb 2019", "where": "Brooklyn", "url": "https://scopeofwork.net",
-      "what": "Engineered the publishing pipeline for the manufacturing publication.",
+      "what": "Engineered the contact-management system for the manufacturing publication.",
       "bullets": [
-        "Designed the contact-management schema that moved unstructured spreadsheet data into a relational database, making malformed records unrepresentable rather than caught downstream."
+        "Designed the schema that moved spreadsheet data into a relational database, making malformed records unrepresentable."
       ]
     },
     {
@@ -73,7 +73,7 @@
   "education": [
     { "org": "Bennington College", "degree": "BA, Architecture & Sculpture", "when": "Sep 2009 – Dec 2012", "where": "Bennington, VT", "url": "https://bennington.edu" }
   ],
-  "skills": ["TypeScript", "Python", "Rust", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security (in-toto/SLSA)", "Developer tooling", "Agent safety"],
+  "skills": ["TypeScript", "Python", "Rust", "Node.js", "AWS", "AI agents", "Systems architecture", "Static analysis", "Capability-based security", "Supply-chain security (in-toto/SLSA)", "Developer tooling", "Sandboxing"],
   "seeking": {
     "label": "Open to new roles",
     "focus": "Senior / founding engineering on agent infrastructure: agent safety and code provenance",
