@@ -49,7 +49,7 @@
       ]
     },
     {
-      "org": "Kaleida", "role": "Software Engineer (Contract)", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://www.linkedin.com/company/kaleida",
+      "org": "Kaleida", "role": "Software Engineer (Contract)", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://kaleida.studio",
       "what": "Automated just-in-time production for the fabrication studio.",
       "bullets": [
         "Cut edition-numbering errors from 10/month to zero by making the invalid state unrepresentable in the production workflow."
