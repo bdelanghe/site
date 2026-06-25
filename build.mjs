@@ -280,7 +280,9 @@ await writeFile(join(dist, "index.html"), html);
 
 // ---- résumé: print-optimized static artifact from the same contract ----------
 const rEmail = profile.links.find((l) => /^mailto:/i.test(l.href));
-const rLinks = [...(profile.social ?? []), rEmail].filter(Boolean).map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" · ");
+// raw address as visible text so the printed PDF is usable (no clickable links on paper)
+const rawAddr = (href) => href.replace(/^mailto:/i, "").replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/\/+$/, "");
+const rLinks = [...(profile.social ?? []), rEmail].filter(Boolean).map((l) => `<a href="${esc(l.href)}">${esc(rawAddr(l.href))}</a>`).join(" · ");
 // résumé contact line: location only (first `place` token) + contact links — affiliations live in Experience/Education
 const rLocation = (profile.place || "").split(/\s*·\s*/)[0];
 const rExp = (profile.experience ?? []).map((e) => `
@@ -384,7 +386,8 @@ ${jsonLd}
   .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
   .r-print:hover { border-color: var(--bs-color-forest); }
-  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact a[href^="http"]::after { content: " " attr(href); color: var(--bs-color-ink-soft); font-weight: 400; word-break: break-all; } }
+  .r-contact a { word-break: break-all; }
+  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } }
 </style>
 </head>
 <body>
