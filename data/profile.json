@@ -39,7 +39,7 @@
       "url": "https://bounded.tools",
       "what": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
       "bullets": [
-        "Build prx, guest-room, and claude-box: an object-capability toolchain that bounds an AI agent to exactly the access it holds.",
+        "Build prx and guest-room: an object-capability toolchain that bounds an AI agent to exactly the access it holds.",
         "Tie privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain; the Rust systems layer is door-peercred, git-ast, and hooksmith."
       ]
     },
@@ -85,7 +85,7 @@
       "url": "https://kaleida.studio",
       "what": "Automated just-in-time production for an AR and print-making studio.",
       "bullets": [
-        "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making the invalid state unrepresentable."
+        "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making a duplicate impossible by construction."
       ]
     },
     {
@@ -96,7 +96,7 @@
       "url": "https://scopeofwork.net",
       "what": "Engineered the contact-management system for the manufacturing publication.",
       "bullets": [
-        "Designed the schema that moved spreadsheet data into a relational database, making malformed records unrepresentable."
+        "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
       ]
     },
     {
@@ -121,18 +121,18 @@
     }
   ],
   "skills": [
-    "TypeScript",
-    "Python",
-    "Rust",
-    "Node.js",
-    "AWS",
-    "AI agents",
-    "Systems architecture",
-    "Static analysis",
     "Capability-based security",
     "Supply-chain security",
-    "Developer tooling",
-    "Sandboxing"
+    "AI agents",
+    "Static analysis",
+    "Sandboxing",
+    "Systems architecture",
+    "Rust",
+    "TypeScript",
+    "Python",
+    "Node.js",
+    "AWS",
+    "Developer tooling"
   ],
   "seeking": {
     "label": "Open to new roles",
