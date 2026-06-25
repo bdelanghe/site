@@ -44,6 +44,11 @@ const canonical = await validateContract("profile");
 const presentation = await validateContract("presentation");
 const profile = { ...canonical, ...presentation };
 
+// skills: tolerate either a flat string[] (legacy) or [{label, items}] groups.
+const skillGroups = (profile.skills ?? []).map((s) => (typeof s === "string" ? { label: "", items: [s] } : s));
+const flatSkills = skillGroups.flatMap((g) => g.items ?? []);
+const labeledSkills = skillGroups.some((g) => g.label);
+
 // Canonical token bag: brand content strings + profile slugs. Posts transclude
 // facts from this ({{thesis}}, {{proof.prx}}, {{email}}) instead of re-typing them;
 // an unknown token fails the build, so a claim can't cite a fact that isn't here.
@@ -120,7 +125,7 @@ const socialHtml = (profile.social ?? []).map((s) => `<a rel="me" href="${esc(s.
 const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org", "@type": "Person",
   name: profile.name, url: SITE, jobTitle: profile.role, description: profile.headline,
-  knowsAbout: profile.skills?.length ? profile.skills : undefined,
+  knowsAbout: flatSkills.length ? flatSkills : undefined,
   alumniOf: (profile.education ?? []).map((e) => ({ "@type": "Organization", name: e.org })),
   // claim → evidence: each hero claim points at the repo that backs it.
   subjectOf: (profile.proof ?? []).map((p) => ({ "@type": "CreativeWork", name: p.label, url: p.href })),
@@ -305,7 +310,9 @@ const rExp = (profile.experience ?? []).map((e) => `
       </div>`).join("");
 const rEdu = (profile.education ?? []).map((e) => `
       <div class="r-job"><div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div>${e.degree ? `<div class="r-job__role">${esc(e.degree)}</div>` : ""}${e.what ? `<div class="r-edu">${esc(e.what)}</div>` : ""}</div>`).join("");
-const rSkills = (profile.skills ?? []).map(esc).join(" · ");
+const rSkills = labeledSkills
+  ? skillGroups.map((g) => `<span class="r-skill-group"><strong>${esc(g.label)}:</strong> ${(g.items ?? []).map(esc).join(" · ")}</span>`).join("")
+  : flatSkills.map(esc).join(" · ");
 
 // ---- JSON Résumé (machine-readable, for parsers / ATS) -------------------------
 // Generated from the same contract (profile.json), schema-validated against the
@@ -361,7 +368,9 @@ const jsonResume = {
     if (end) ed.endDate = end;
     return ed;
   }),
-  skills: (profile.skills ?? []).flatMap((s) => String(s).split(/\s*·\s*/)).map((name) => ({ name })),
+  skills: labeledSkills
+    ? skillGroups.map((g) => ({ name: g.label, keywords: g.items ?? [] }))
+    : flatSkills.map((name) => ({ name })),
 };
 const jsonResumeSchema = await loadJson(join(root, "contract", "jsonresume.schema.json"));
 const jrErrors = validateSchema(jsonResumeSchema, jsonResume);
@@ -388,6 +397,8 @@ ${jsonLd}
   .r-summary { margin: 0 0 16px; }
   h2 { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bs-color-forest); border-bottom: 1px solid var(--bs-color-line); padding-bottom: 4px; margin: 18px 0 10px; }
   .r-skills { font-size: 12px; color: var(--bs-color-ink-soft); }
+  .r-skill-group { display: block; }
+  .r-skill-group strong { color: var(--bs-color-ink); }
   .r-job { margin: 0 0 12px; break-inside: avoid; }
   .r-job__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .r-job__org { font-weight: 600; font-size: 14px; }
