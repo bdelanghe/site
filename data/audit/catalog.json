@@ -32,12 +32,8 @@
     "value": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling."
   },
   "exp.bounded-systems.b0": {
-    "type": "body",
-    "value": "Build prx and guest-room: an object-capability toolchain that bounds an AI agent to the access it holds."
-  },
-  "exp.bounded-systems.b1": {
-    "type": "body",
-    "value": "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain, checked in CI."
+    "type": "claim",
+    "value": "Shared the 58 capability-security tools behind my own production work — one public contract, each a single sanctioned access point that bounds an agent to what it holds."
   },
   "exp.aura.what": {
     "type": "body",

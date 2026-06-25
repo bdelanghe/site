@@ -30,8 +30,7 @@
       "startDate": "2025",
       "summary": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
       "highlights": [
-        "Build prx and guest-room: an object-capability toolchain that bounds an AI agent to the access it holds.",
-        "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain, checked in CI."
+        "Shared the 58 capability-security tools behind my own production work — one public contract, each a single sanctioned access point that bounds an agent to what it holds."
       ]
     },
     {
@@ -163,7 +162,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "25da173fc2918db1fc50b2ed8dc56c069da22f514530f562d1f3cccf608f5e92",
+    "version": "3f2546ad070c3ea2109cd13ed938fd1a5b5d2284281cfe8bde8afe03dc3c7403",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
