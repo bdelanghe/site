@@ -49,7 +49,7 @@
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Maintain the Ruby gems behind Aura's Amazon Selling Partner and NetSuite integrations — both code-generated from the vendor API specs (SP-API Swagger, SuiteTalk WSDL) so the client tracks the spec instead of drifting by hand."
+    "value": "Investigated unreviewed agent-authored commits reaching main: reconstructed each one's entry path across five log domains, authored the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
   },
   "exp.l2l.what": {
     "type": "claim",
