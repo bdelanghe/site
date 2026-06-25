@@ -381,7 +381,7 @@ ${jsonLd}
   .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
   .r-print:hover { border-color: var(--bs-color-forest); }
-  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } }
+  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact a[href^="http"]::after { content: " " attr(href); color: var(--bs-color-ink-soft); font-weight: 400; word-break: break-all; } }
 </style>
 </head>
 <body>
