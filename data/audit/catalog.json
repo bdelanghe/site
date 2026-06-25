@@ -1,15 +1,15 @@
 {
   "hero.headline": {
     "type": "headline",
-    "value": "I ship systems where agents write the code, and I build the tooling to trust them in production."
+    "value": "AI agents ship code. I write the contracts that keep them in check."
   },
   "hero.intro": {
     "type": "body",
-    "value": "I'm Bobby. I became a software engineer by chasing the parts of code that feel like math — type systems, proofs, recursion, the self-referential knots where a thing contains itself and still holds together. I go down those paths because they're beautiful, not because anyone asked; the useful part shows up on its own. Lately it showed up as agents."
+    "value": "I'm Bobby. I chase the parts of code that feel like math, and build the systems that keep AI agents inside the job you gave them."
   },
   "hero.summary": {
     "type": "body",
-    "value": "At Aura, I write production commerce code with AI assistance, backed by a contract-and-validation layer I built that enforces correctness in CI. This work is available in open-source form as prx and the bounded-systems libraries."
+    "value": "I make agent-authored code accountable by construction: an agent can only touch what its capabilities allow, with effects bound to a signed owner and checked in CI, so permission and accountability are settled by the same check. Open-sourced as prx; shipped in production at Aura."
   },
   "banner.tagline": {
     "type": "tagline",
@@ -21,83 +21,75 @@
   },
   "seeking.focus": {
     "type": "body",
-    "value": "Founding / senior engineering on agent infrastructure — agent safety and code provenance"
+    "value": "Senior / founding engineering on agent infrastructure: agent safety and code provenance"
   },
   "seeking.detail": {
     "type": "body",
-    "value": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the guardrails that make them trustworthy in production. Brooklyn · NYC · remote."
+    "value": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy in production. Brooklyn · NYC · remote."
   },
   "exp.bounded-systems.what": {
     "type": "body",
-    "value": "Capability security for AI agents — software delivered by agents, governed like infrastructure. The same discipline I ship at Aura, generalised into open tooling."
+    "value": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling."
   },
   "exp.bounded-systems.b0": {
     "type": "body",
-    "value": "Designed and built a capability-security toolchain — prx, guest-room, claude-box — that bounds what an AI agent can do by the scoped door references it holds: authority is the reference, not a string-matched rule, so an agent can only do what its references allow."
+    "value": "Build prx and guest-room: an object-capability toolchain that bounds an AI agent to the access it holds."
   },
   "exp.bounded-systems.b1": {
     "type": "body",
-    "value": "Tied privileged actions to a signed owner and an auditable in-toto/SLSA provenance chain — enforced in CI, not by convention."
+    "value": "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain. The Rust systems layer is door-peercred, git-ast, and hooksmith."
   },
   "exp.aura.what": {
     "type": "body",
-    "value": "On Commerce — the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing."
+    "value": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing."
   },
   "exp.aura.b0": {
-    "type": "body",
-    "value": "Ship the commerce and supply-chain backbone — NetSuite, Amazon, and Shopify integrations; inbound, Tactical, and LTL automation; EDI; and fulfillment daemons."
+    "type": "claim",
+    "value": "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into 61 schema contracts, 173 test scenarios, and 145 dashboard cards."
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Replaced Aura's spreadsheet-driven supply plan with one source of truth that compiles into every downstream artifact — schemas, docs, tests, agent context — with CI blocking anything that drifts out of sync."
-  },
-  "exp.aura.b2": {
-    "type": "body",
-    "value": "Built the auditing in: generated outputs are checked for provenance and against their contract, and sign-off is bound to an owner role enforced in CI rather than to a person."
+    "value": "Built the validation layer that checks generated outputs against Gherkin specs and golden sets, with provenance tracked and sign-off bound to an owner role, not a person."
   },
   "exp.l2l.what": {
     "type": "claim",
-    "value": "Built the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance."
+    "value": "Owned the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance."
   },
   "exp.l2l.b0": {
     "type": "claim",
-    "value": "Built static-analysis gating into the PR pipeline to block defect classes before merge; over the same period, critical bugs dropped 20% and high-priority issues 25% across the 20-engineer team."
-  },
-  "exp.l2l.b1": {
-    "type": "claim",
-    "value": "Shipped the frontend platform: a design system that cut task lead time 30%, a dashboard framework that took widget builds from a week to a day, and pagination and performance work that brought First Contentful Paint under a second."
+    "value": "Shipped static-analysis gating into the PR pipeline, blocking whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
   },
   "exp.pioneer-works.what": {
     "type": "body",
-    "value": "Built the events + revenue data layer for the arts foundation."
+    "value": "Delivered the event-planning platform for a major Brooklyn arts center."
   },
   "exp.pioneer-works.b0": {
-    "type": "claim",
-    "value": "Built a unified CRM + Square-API ETL that reduced payment-tracking time by 80% and tracked profit-and-loss across 200+ events."
-  },
-  "exp.kaleida-studio.what": {
     "type": "body",
-    "value": "Built just-in-time production automation for the fabrication studio."
+    "value": "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
   },
-  "exp.kaleida-studio.b0": {
-    "type": "claim",
-    "value": "Built just-in-time production workflows that eliminated edition-numbering errors, from 10/month to zero."
-  },
-  "exp.the-prepared.what": {
+  "exp.kaleida.what": {
     "type": "body",
-    "value": "Built the publishing pipeline for the manufacturing publication."
+    "value": "Automated just-in-time production for an AR and print-making studio."
   },
-  "exp.the-prepared.b0": {
-    "type": "claim",
-    "value": "Built a unified content pipeline that cut curation time by 70% across 1000+ articles."
+  "exp.kaleida.b0": {
+    "type": "body",
+    "value": "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making a duplicate impossible by construction."
+  },
+  "exp.scope-of-work.what": {
+    "type": "body",
+    "value": "Engineered the contact-management system for the manufacturing publication."
+  },
+  "exp.scope-of-work.b0": {
+    "type": "body",
+    "value": "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
   },
   "exp.recurse-center.what": {
     "type": "body",
-    "value": "Type theory in Haskell — using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile."
+    "value": "Type theory in Haskell, using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile."
   },
   "exp.recurse-center.b0": {
-    "type": "body",
-    "value": "Type-driven design in Haskell — algebraic data types and typeclasses — the same instinct now applied to security seams: invalid states unrepresentable, sign-off un-forgeable."
+    "type": "claim",
+    "value": "Completed a selective 12-week programming retreat researching Haskell type theory and how a well-constrained type narrows the space of possible implementations."
   },
   "work.prx": {
     "type": "body",
