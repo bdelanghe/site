@@ -33,11 +33,11 @@
   },
   "exp.bounded-systems.b0": {
     "type": "body",
-    "value": "Build prx and guest-room: an object-capability toolchain that bounds an AI agent to the access it holds."
+    "value": "Bring a set of separate capability-security projects under one roof and integrate them into a shared, public contract — usable as one system."
   },
   "exp.bounded-systems.b1": {
     "type": "body",
-    "value": "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain, checked in CI."
+    "value": "Bind an AI agent to the access it holds, with privileged actions tied to a signed owner and an in-toto/SLSA provenance chain, checked in CI."
   },
   "exp.aura.what": {
     "type": "body",
