@@ -257,10 +257,13 @@ const workGroups = [...workByTag.keys()].sort((a, b) => rank(a) - rank(b)).map((
         </ul>
       </div>`).join("\n");
 
+// Homepage social card (og:image): the personal home card if it's been generated
+// (foregrounds the person, not the org), else the brand lockup. See .github/workflows/cards.yml.
+const homeOgImage = (await exists(join(root, "assets", "cards", "home.png"))) ? "/assets/cards/home.png" : OG_IMAGE;
 const html = `<!doctype html>
 <html lang="en">
 <head>
-  ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/" })}
+  ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/", ogImage: homeOgImage })}
   ${jsonLd}
 </head>
 <body>
