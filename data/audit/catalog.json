@@ -37,7 +37,7 @@
   },
   "exp.bounded-systems.b1": {
     "type": "body",
-    "value": "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain. The Rust systems layer is door-peercred, git-ast, and hooksmith."
+    "value": "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain, checked in CI."
   },
   "exp.aura.what": {
     "type": "body",
@@ -93,19 +93,23 @@
   },
   "proj.prx.desc": {
     "type": "body",
-    "value": "Object-capability toolchain that bounds an AI agent to the access it holds."
+    "value": "Object-capability seam library that bounds an AI agent to the access it holds."
   },
   "proj.git-ast.desc": {
     "type": "body",
-    "value": "Rust systems-layer component for AST-level git operations in the provenance chain."
+    "value": "Git extension that diffs syntax trees instead of lines, so authorship and intent survive reformatting."
   },
-  "proj.guest-room.desc": {
+  "proj.peercred.desc": {
     "type": "body",
-    "value": "Sandbox that runs an agent with only the capabilities it was granted."
+    "value": "Binds a request's authority to the caller's kernel identity (SO_PEERCRED), not a forgeable token."
   },
   "proj.ocap-provenance.desc": {
     "type": "body",
     "value": "in-toto/SLSA provenance chain that attributes each privileged effect to a signed owner."
+  },
+  "proj.hooksmith.desc": {
+    "type": "body",
+    "value": "Git-hook manager that wires repository policy checks into the commit and push lifecycle."
   },
   "work.prx": {
     "type": "body",

@@ -23,7 +23,7 @@
       "summary": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
       "highlights": [
         "Build prx and guest-room: an object-capability toolchain that bounds an AI agent to the access it holds.",
-        "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain. The Rust systems layer is door-peercred, git-ast, and hooksmith."
+        "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain, checked in CI."
       ]
     },
     {
@@ -117,25 +117,25 @@
   "projects": [
     {
       "name": "prx",
-      "description": "Object-capability toolchain that bounds an AI agent to the access it holds.",
+      "description": "Object-capability seam library that bounds an AI agent to the access it holds.",
       "url": "https://github.com/bounded-systems/prx",
-      "keywords": ["Capability security", "AI agents", "Rust"],
+      "keywords": ["Capability security", "AI agents", "TypeScript"],
       "roles": ["Creator"],
       "entity": "Bounded Systems"
     },
     {
       "name": "git-ast",
-      "description": "Rust systems-layer component for AST-level git operations in the provenance chain.",
+      "description": "Git extension that diffs syntax trees instead of lines, so authorship and intent survive reformatting.",
       "url": "https://github.com/bounded-systems/git-ast",
-      "keywords": ["Rust", "Git", "Provenance"],
+      "keywords": ["Git", "Rust", "Provenance"],
       "roles": ["Creator"],
       "entity": "Bounded Systems"
     },
     {
-      "name": "guest-room",
-      "description": "Sandbox that runs an agent with only the capabilities it was granted.",
-      "url": "https://github.com/bounded-systems/guest-room",
-      "keywords": ["Sandboxing", "Capability security"],
+      "name": "peercred",
+      "description": "Binds a request's authority to the caller's kernel identity (SO_PEERCRED), not a forgeable token.",
+      "url": "https://github.com/bounded-systems/door-peercred",
+      "keywords": ["Capability security", "Rust"],
       "roles": ["Creator"],
       "entity": "Bounded Systems"
     },
@@ -144,6 +144,14 @@
       "description": "in-toto/SLSA provenance chain that attributes each privileged effect to a signed owner.",
       "url": "https://github.com/bounded-systems/ocap-provenance",
       "keywords": ["Supply-chain security", "in-toto", "SLSA"],
+      "roles": ["Creator"],
+      "entity": "Bounded Systems"
+    },
+    {
+      "name": "hooksmith",
+      "description": "Git-hook manager that wires repository policy checks into the commit and push lifecycle.",
+      "url": "https://github.com/bounded-systems/hooksmith",
+      "keywords": ["Git", "Rust", "Developer tooling"],
       "roles": ["Creator"],
       "entity": "Bounded Systems"
     }
