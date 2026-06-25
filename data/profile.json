@@ -38,28 +38,28 @@
       "org": "L2L", "role": "Software Engineer", "when": "Apr 2021 – Sep 2023", "where": "New York · Remote", "url": "https://l2l.com",
       "what": "Owned the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance.",
       "bullets": [
-        "Shipped static-analysis gating into the PR pipeline to block defect classes before merge. Over the same period, critical bugs dropped 20% and high-priority issues 25% across the 20-engineer team."
+        "Shipped static-analysis gating into the PR pipeline, blocking whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
       ]
     },
     {
       "org": "Pioneer Works", "role": "Software Engineer (Contract)", "when": "Nov 2018 – Feb 2021", "where": "Brooklyn", "url": "https://pioneerworks.org",
       "what": "Designed the events + revenue data layer for the arts foundation.",
       "bullets": [
-        "Drove event status from attached documents (certificate of occupancy, design, invoice) across a highly relational model, so state was derived from evidence rather than a human-set flag that could drift out of sync."
+        "Drove event status from attached documents (certificate of occupancy, design, invoice) for a major arts center's large public concerts, so state was derived from evidence, not a human-set flag that could drift."
       ]
     },
     {
       "org": "Kaleida", "role": "Software Engineer (Contract)", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://kaleida.studio",
       "what": "Automated just-in-time production for the fabrication studio.",
       "bullets": [
-        "Cut edition-numbering errors from 10/month to zero by making the invalid state unrepresentable in the production workflow."
+        "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making the invalid state unrepresentable."
       ]
     },
     {
       "org": "Scope of Work", "role": "Software Engineer (Contract)", "when": "Oct 2018 – Feb 2019", "where": "Brooklyn", "url": "https://scopeofwork.net",
       "what": "Engineered the publishing pipeline for the manufacturing publication.",
       "bullets": [
-        "Designed the schema that moved unstructured spreadsheet data into a relational database, making malformed records unrepresentable at the data layer rather than caught downstream."
+        "Designed the contact-management schema that moved unstructured spreadsheet data into a relational database, making malformed records unrepresentable rather than caught downstream."
       ]
     },
     {
