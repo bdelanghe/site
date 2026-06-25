@@ -294,7 +294,16 @@ await writeFile(join(dist, "index.html"), html);
 // on canonical fields (nav `links` are render-context). Reproduces the old rendered
 // contact line exactly: label = the address, href = mailto:<address>.
 const rEmail = profile.email ? { label: profile.email, href: `mailto:${profile.email}` } : null;
-const rLinks = [...(profile.social ?? []), rEmail].filter(Boolean).map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" · ");
+// Contact links: web profiles render as favicon + handle (no label, no full URL),
+// email stays as the address. All remain links. Handle = last path segment
+// (github.com/bdelanghe → bdelanghe; linkedin.com/in/rdelanghe/ → rdelanghe).
+const linkHost = (href) => { try { return new URL(href).hostname.replace(/^www\./, ""); } catch { return ""; } };
+const linkHandle = (href) => { try { const u = new URL(href); return u.pathname.split("/").filter(Boolean).pop() || u.hostname; } catch { return href; } };
+const rLinks = [...(profile.social ?? []), rEmail].filter(Boolean).map((l) =>
+  /^https?:/i.test(l.href)
+    ? `<a href="${esc(l.href)}" title="${esc(l.label)}"><img class="r-fav" src="https://${esc(linkHost(l.href))}/favicon.ico" alt="${esc(l.label)}" width="12" height="12" loading="lazy">${esc(linkHandle(l.href))}</a>`
+    : `<a href="${esc(l.href)}">${esc(l.label)}</a>`
+).join(" · ");
 // résumé contact line: location only (first `place` token) + contact links — affiliations live in Experience/Education
 const rLocation = (profile.place || "").split(/\s*·\s*/)[0];
 const rExp = (profile.experience ?? []).map((e) => `
@@ -398,7 +407,8 @@ ${jsonLd}
   .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
   .r-print:hover { border-color: var(--bs-color-forest); }
-  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact a[href^="http"]::after { content: " " attr(href); color: var(--bs-color-ink-soft); font-weight: 400; word-break: break-all; } }
+  .r-contact .r-fav { width: 12px; height: 12px; vertical-align: -2px; margin-right: 4px; }
+  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact .r-fav { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style>
 </head>
 <body>
