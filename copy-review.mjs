@@ -118,20 +118,27 @@ const SCHEMA = {
 const readJson = async (p) => JSON.parse(await readFile(join(root, p), "utf8"));
 
 function bundle(profile, site, highlightCopy = {}) {
+  // Canonical is JSON Resume: headline/summary under basics; experience is `work`.
+  const basics = profile.basics ?? {};
   const out = {
-    headline: profile.headline,
+    headline: basics.headline,
     intro: profile.intro,
-    summary: profile.summary,
+    summary: basics.summary,
     seeking: profile.seeking && {
       label: profile.seeking.label,
       focus: profile.seeking.focus,
       detail: profile.seeking.detail,
     },
-    experience: (profile.experience || []).map((e) => ({
-      org: e.org,
-      role: e.role,
-      what: e.what,
-      bullets: e.bullets,
+    experience: (profile.work || []).map((w) => ({
+      org: w.name,
+      role: w.position,
+      what: w.summary,
+      bullets: w.highlights,
+    })),
+    projects: (profile.projects || []).map((p) => ({
+      name: p.name,
+      description: p.description,
+      highlights: p.highlights,
     })),
     // Review the copy that actually ships: apply the editorial overrides
     // (data/highlight-copy.json) that build.mjs applies, not the raw upstream

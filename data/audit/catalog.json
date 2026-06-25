@@ -37,7 +37,7 @@
   },
   "exp.bounded-systems.b1": {
     "type": "body",
-    "value": "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain. The Rust systems layer is door-peercred, git-ast, and hooksmith."
+    "value": "Tie privileged actions to a signed owner and an in-toto/SLSA provenance chain, checked in CI."
   },
   "exp.aura.what": {
     "type": "body",
@@ -45,11 +45,11 @@
   },
   "exp.aura.b0": {
     "type": "claim",
-    "value": "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into 61 schema contracts, 173 test scenarios, and 145 dashboard cards."
+    "value": "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into dozens of downstream schema contracts checked by hundreds of test scenarios."
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Built the validation layer that checks generated outputs against Gherkin specs and golden sets, with provenance tracked and sign-off bound to an owner role, not a person."
+    "value": "Maintain the Ruby gems behind Aura's Amazon Selling Partner and NetSuite integrations — both code-generated from the vendor API specs (SP-API Swagger, SuiteTalk WSDL) so the client tracks the spec instead of drifting by hand."
   },
   "exp.l2l.what": {
     "type": "claim",
@@ -90,6 +90,26 @@
   "exp.recurse-center.b0": {
     "type": "claim",
     "value": "Completed a selective 12-week programming retreat researching Haskell type theory and how a well-constrained type narrows the space of possible implementations."
+  },
+  "proj.prx.desc": {
+    "type": "body",
+    "value": "Object-capability seam library that bounds an AI agent to the access it holds."
+  },
+  "proj.git-ast.desc": {
+    "type": "body",
+    "value": "Git extension that diffs syntax trees instead of lines, so authorship and intent survive reformatting."
+  },
+  "proj.peercred.desc": {
+    "type": "body",
+    "value": "Binds a request's authority to the caller's kernel identity (SO_PEERCRED), not a forgeable token."
+  },
+  "proj.ocap-provenance.desc": {
+    "type": "body",
+    "value": "in-toto/SLSA provenance chain that attributes each privileged effect to a signed owner."
+  },
+  "proj.hooksmith.desc": {
+    "type": "body",
+    "value": "Git-hook manager that wires repository policy checks into the commit and push lifecycle."
   },
   "work.prx": {
     "type": "body",

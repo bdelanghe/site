@@ -22,6 +22,6 @@ That gap is where agent-authored code drifts. The question that matters is not w
 
 The bet behind {{org}}: **{{thesis}}** Then make two more things true. Bind every privileged effect to a signed owner, checked in CI, so nothing consequential happens without a traceable source. And generate every downstream surface from one source so that when two of them disagree, the build goes red. The agreement between modules stops being something people remember and becomes something the build checks.
 
-The claims here are checked against running code: [prx]({{proof.prx}}), [guest-room]({{proof.guest-room}}), [ocap-provenance]({{proof.ocap-provenance}}). I would rather you read it than take my word for it.
+The claims here are checked against running code: [prx]({{proof.prx}}), [guest-room]({{repo.guest-room}}), [ocap-provenance]({{proof.ocap-provenance}}). I would rather you read it than take my word for it.
 
 If you are working on this, I would like to compare notes: {{email}}.

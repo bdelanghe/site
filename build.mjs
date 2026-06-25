@@ -22,32 +22,53 @@ if (!(await exists(join(brand, "tokens", "tokens.css")))) {
 // key-presence). Invalid content can't produce a build — invalid states made
 // unrepresentable at the boundary.
 const loadJson = async (p) => JSON.parse(await readFile(p, "utf8"));
-const validateContract = async (name) => {
+const validateContract = async (name, schemaName = name) => {
   const data = await loadJson(join(root, "data", `${name}.json`));
-  const schema = await loadJson(join(root, "contract", `${name}.schema.json`));
+  const schema = await loadJson(join(root, "contract", `${schemaName}.schema.json`));
   const errors = validateSchema(schema, data);
   if (errors.length) {
-    console.error(`✗ ${name}.json violates contract/${name}.schema.json:`);
+    console.error(`✗ ${name}.json violates contract/${schemaName}.schema.json:`);
     for (const e of errors) console.error(`    ${e}`);
     process.exit(1);
   }
   return data;
 };
 const site = await validateContract("site");
-// The canonical résumé doc (profile) and the homepage render-context doc
-// (presentation) are separate contracts: profile is the semantic résumé /resume
-// renders; presentation decorates it with hero-only fields (banner, intro, proof,
-// seeking, nav links) and never redefines a canonical field. Shallow-merge them
+// The canonical résumé doc (profile) is a JSON Resume document; the homepage
+// render-context doc (presentation) decorates it with hero-only fields (banner,
+// intro, seeking, nav links, the decorative place line) and never redefines a
+// canonical field. profile is validated against the JSON Resume schema. Shallow-merge
 // (presentation last — it decorates) so the homepage templates read one `profile`
-// object; /resume + /resume.json read canonical fields only.
-const canonical = await validateContract("profile");
+// object; /resume + /resume.json read canonical (JSON Resume) fields only.
+const canonical = await validateContract("profile", "jsonresume");
 const presentation = await validateContract("presentation");
 const profile = { ...canonical, ...presentation };
 
-// skills: tolerate either a flat string[] (legacy) or [{label, items}] groups.
-const skillGroups = (profile.skills ?? []).map((s) => (typeof s === "string" ? { label: "", items: [s] } : s));
-const flatSkills = skillGroups.flatMap((g) => g.items ?? []);
-const labeledSkills = skillGroups.some((g) => g.label);
+// JSON Resume field aliases — keep the templates readable (basics.* / work / etc.).
+const basics = canonical.basics ?? {};
+const name = basics.name, role = basics.label, headline = basics.headline, summary = basics.summary, email = basics.email;
+const work = canonical.work ?? [];
+const education = canonical.education ?? [];
+const skills = canonical.skills ?? [];          // grouped: [{ name, keywords }]
+const projects = canonical.projects ?? [];
+const social = basics.profiles ?? [];           // [{ network, username, url }]
+const place = presentation.place ?? "";         // decorative hero line (render context)
+// Claim → evidence: the homepage proof line, token bag, and JSON-LD all derive from
+// the canonical projects[] — one source for prx/guest-room/… instead of a duplicate list.
+const proof = projects.map((p) => ({ label: p.name, href: p.url }));
+
+// JSON Resume dates are ISO (YYYY or YYYY-MM); render them the way the human page reads.
+// "2025" → "2025"; "2023-10" → "Oct 2023". fmtRange: "Oct 2023 – present" (no endDate),
+// "Sep 2009 – Dec 2012".
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const fmtDate = (iso) => {
+  if (!iso) return "";
+  const m = String(iso).match(/^(\d{4})(?:-(\d{2}))?/);
+  if (!m) return String(iso);
+  return m[2] ? `${MONTHS[+m[2] - 1]} ${m[1]}` : m[1];
+};
+const fmtRange = (start, end) =>
+  start ? `${fmtDate(start)} – ${end ? fmtDate(end) : "present"}` : (end ? fmtDate(end) : "");
 
 // Canonical token bag: brand content strings + profile slugs. Posts transclude
 // facts from this ({{thesis}}, {{proof.prx}}, {{email}}) instead of re-typing them;
@@ -56,9 +77,9 @@ const sval = (x) => (x && typeof x === "object" && "$value" in x ? x.$value : x)
 const strings = (await exists(join(brand, "content", "strings.json"))) ? await loadJson(join(brand, "content", "strings.json")) : {};
 const tokens = {
   org: sval(strings.name), tagline: sval(strings.tagline), thesis: sval(strings.thesis), brandDesc: sval(strings.description),
-  name: profile.name, role: profile.role, place: profile.place, headline: profile.headline,
-  email: profile.email,
-  proof: Object.fromEntries((profile.proof || []).map((p) => [p.label, p.href])),
+  name, role, place, headline,
+  email,
+  proof: Object.fromEntries(proof.map((p) => [p.label, p.href])),
   repo: Object.fromEntries((site.highlights || []).map((h) => [h.name, h.url])),
 };
 const postSchema = await loadJson(join(root, "contract", "posts.schema.json"));
@@ -80,12 +101,12 @@ const linksHtml = profile.links
   .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
   .join("\n        ");
 
-const proofHtml = profile.proof?.length
-  ? `<p class="proof">Proof — ${profile.proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
+const proofHtml = proof.length
+  ? `<p class="proof">Proof — ${proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
   : "";
 
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
-const SITE = "https://robertdelanghe.dev";
+const SITE = basics.url || "https://robertdelanghe.dev";
 const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
 // Build provenance: the commit this artifact was built from (Cloudflare/GitHub CI env).
 // The footer SHA links to /provenance — the report of what produced + validated this build.
@@ -113,32 +134,33 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <meta name="twitter:description" content="${d}">
   <meta name="twitter:image" content="${img}">
   <link rel="alternate" type="application/atom+xml" title="Robert DeLanghe — Writing" href="/feed.xml">
-  <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${(profile.social ?? []).map((s) => `
-  <link rel="me" href="${esc(s.href)}">`).join("")}
+  <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${social.map((s) => `
+  <link rel="me" href="${esc(s.url)}">`).join("")}
   <link rel="stylesheet" href="/brand/css/fonts.css">
   <link rel="stylesheet" href="/brand/tokens/tokens.css">${appCss ? `
   <link rel="stylesheet" href="/brand/css/base.css">
   <link rel="stylesheet" href="/styles.css">` : ""}`;
 };
-// One source for identity: profile.social → sameAs (JSON-LD), rel=me (head), footer.
-const socialHtml = (profile.social ?? []).map((s) => `<a rel="me" href="${esc(s.href)}">${esc(s.label)}</a>`).join(" &middot; ");
+// One source for identity: basics.profiles → sameAs (JSON-LD), rel=me (head), footer.
+const socialHtml = social.map((s) => `<a rel="me" href="${esc(s.url)}">${esc(s.network)}</a>`).join(" &middot; ");
 const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org", "@type": "Person",
-  name: profile.name, url: SITE, jobTitle: profile.role, description: profile.headline,
-  knowsAbout: flatSkills.length ? flatSkills : undefined,
-  alumniOf: (profile.education ?? []).map((e) => ({ "@type": "Organization", name: e.org })),
-  // claim → evidence: each hero claim points at the repo that backs it.
-  subjectOf: (profile.proof ?? []).map((p) => ({ "@type": "CreativeWork", name: p.label, url: p.href })),
-  sameAs: (profile.social ?? []).map((s) => s.href),
+  name, url: SITE, jobTitle: role, description: headline,
+  knowsAbout: skills.length ? skills.flatMap((g) => (g.keywords?.length ? g.keywords : [g.name])) : undefined,
+  alumniOf: education.map((e) => ({ "@type": "Organization", name: e.institution })),
+  // claim → evidence: each hero claim points at the project repo that backs it.
+  subjectOf: projects.map((p) => ({ "@type": "CreativeWork", name: p.name, url: p.url })),
+  sameAs: social.map((s) => s.url),
 }).replace(/</g, "\\u003c")}</script>`;
 
-const orgLink = (e) => (e.url ? `<a href="${esc(e.url)}">${esc(e.org)}</a>` : esc(e.org));
-const entry = (e) =>
-  `<li class="entry"><span class="entry__when">${esc(e.when)}</span><span class="entry__body">` +
-  `<span class="entry__org">${orgLink(e)}${e.role ? ` · <span class="entry__role">${esc(e.role)}</span>` : ""}</span>` +
-  `<span class="entry__what">${esc(e.what)}</span></span></li>`;
-const exp = profile.experience ?? [];
-const edu = profile.education ?? [];
+// generic: link a name to its url if present (work orgs, education institutions, projects)
+const linkName = (nm, url) => (url ? `<a href="${esc(url)}">${esc(nm)}</a>` : esc(nm));
+const entry = (w) =>
+  `<li class="entry"><span class="entry__when">${esc(fmtRange(w.startDate, w.endDate))}</span><span class="entry__body">` +
+  `<span class="entry__org">${linkName(w.name, w.url)}${w.position ? ` · <span class="entry__role">${esc(w.position)}</span>` : ""}</span>` +
+  `<span class="entry__what">${esc(w.summary)}</span></span></li>`;
+const exp = work;
+const edu = education;
 const backgroundHtml =
   exp.length || edu.length
     ? `<section class="bg">
@@ -185,7 +207,7 @@ const materials = [
 // short digests for the chain copy — each process step names what it ran, by sha
 const dg = async (p) => (await exists(join(root, p))) ? (await sha256File(join(root, p))).slice(0, 18) + "…" : "(absent)";
 const dgProfile = await dg("data/profile.json");
-const dgProfileSchema = await dg("contract/profile.schema.json");
+const dgProfileSchema = await dg("contract/jsonresume.schema.json");
 const dgPresentation = await dg("data/presentation.json");
 const dgPresentationSchema = await dg("contract/presentation.schema.json");
 const dgPostsSchema = await dg("contract/posts.schema.json");
@@ -238,18 +260,18 @@ const workGroups = [...workByTag.keys()].sort((a, b) => rank(a) - rank(b)).map((
 const html = `<!doctype html>
 <html lang="en">
 <head>
-  ${head({ title: `${profile.name} — ${profile.role}`, description: `${profile.role} — ${profile.headline}`, path: "/" })}
+  ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/" })}
   ${jsonLd}
 </head>
 <body>
   <main class="wrap">
     <header class="intro">
-      <p class="bs-text-label eyebrow">${esc(profile.name)}&nbsp;&nbsp;&middot;&nbsp;&nbsp;${esc(profile.role)}</p>
-      <h1>${esc(profile.headline)}</h1>
+      <p class="bs-text-label eyebrow">${esc(name)}&nbsp;&nbsp;&middot;&nbsp;&nbsp;${esc(role)}</p>
+      <h1>${esc(headline)}</h1>
       ${profile.intro ? `<p class="lead lead--intro">${esc(profile.intro)}</p>` : ""}
-      <p class="lead">${esc(profile.summary)}</p>
+      <p class="lead">${esc(summary)}</p>
       ${proofHtml}
-      ${profile.place ? `<p class="place">${esc(profile.place)}</p>` : ""}
+      ${place ? `<p class="place">${esc(place)}</p>` : ""}
       <nav class="links">
         ${linksHtml}
       </nav>
@@ -294,19 +316,17 @@ await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 await writeFile(join(dist, "index.html"), html);
 
-// ---- résumé: print-optimized static artifact from the same contract ----------
-// Synthesize the contact link from the canonical email so the résumé depends only
-// on canonical fields (nav `links` are render-context). Reproduces the old rendered
-// contact line exactly: label = the address, href = mailto:<address>.
-const rEmail = profile.email ? { label: profile.email, href: `mailto:${profile.email}` } : null;
-// Contact links: web profiles render as favicon + handle (no label, no full URL),
-// email stays as the address. All remain links. Handle = last path segment
-// (github.com/bdelanghe → bdelanghe; linkedin.com/in/rdelanghe/ → rdelanghe).
+// ---- résumé: print-optimized static artifact from the canonical JSON Resume doc ----
+// Contact line: identity profiles (basics.profiles) + the canonical email; location
+// from basics.location. Affiliations live in Experience/Projects/Education.
+const rEmail = email ? { label: email, href: `mailto:${email}` } : null;
+// Web profiles render as favicon + handle (no label, no full URL); email stays the
+// address. Handle = last path segment (github.com/bdelanghe → bdelanghe).
 const linkHost = (href) => { try { return new URL(href).hostname.replace(/^www\./, ""); } catch { return ""; } };
 const linkHandle = (href) => { try { const u = new URL(href); return u.pathname.split("/").filter(Boolean).pop() || u.hostname; } catch { return href; } };
-// Monochrome brand marks (simple-icons single paths), filled with the ink token so
-// both icons are one high-contrast color, crisp at any size, and print with no
-// network. Unmapped hosts fall back to the site's favicon.
+// Monochrome brand marks (simple-icons single paths), filled with the ink token —
+// one high-contrast color, crisp at any size, prints with no network. Unmapped hosts
+// fall back to the site's favicon.
 const BRAND_ICONS = {
   "github.com": "M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12",
   "linkedin.com": "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
@@ -317,87 +337,55 @@ const brandMark = (href, label) => {
     ? `<svg class="r-fav" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`
     : `<img class="r-fav" src="https://${esc(linkHost(href))}/favicon.ico" alt="${esc(label)}" width="12" height="12" loading="lazy">`;
 };
-const rLinks = [...(profile.social ?? []), rEmail].filter(Boolean).map((l) =>
+const rLinks = [...social.map((s) => ({ label: s.network, href: s.url })), rEmail].filter(Boolean).map((l) =>
   /^https?:/i.test(l.href)
     ? `<a href="${esc(l.href)}" title="${esc(l.label)}">${brandMark(l.href, l.label)}${esc(linkHandle(l.href))}</a>`
     : `<a href="${esc(l.href)}">${esc(l.label)}</a>`
 ).join(" · ");
-// résumé contact line: location only (first `place` token) + contact links — affiliations live in Experience/Education
-const rLocation = (profile.place || "").split(/\s*·\s*/)[0];
-const rExp = (profile.experience ?? []).map((e) => `
+const rLocation = basics.location?.city
+  ? [basics.location.city, basics.location.region].filter(Boolean).join(", ")
+  : "";
+const rExp = work.map((w) => `
       <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div>
-        <div class="r-job__role">${esc([e.role, e.where].filter(Boolean).join(" · "))}</div>
-        <ul>${(e.bullets ?? (e.what ? [e.what] : [])).map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
+        <div class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span><span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></div>
+        <div class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</div>
+        <ul>${(w.highlights ?? (w.summary ? [w.summary] : [])).map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
       </div>`).join("");
-const rEdu = (profile.education ?? []).map((e) => `
-      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${orgLink(e)}</span><span class="r-job__when">${esc(e.when)}</span></div>${e.degree ? `<div class="r-job__role">${esc(e.degree)}</div>` : ""}${e.what ? `<div class="r-edu">${esc(e.what)}</div>` : ""}</div>`).join("");
-const rSkills = labeledSkills
-  ? skillGroups.map((g) => `<span class="r-skill-group"><strong>${esc(g.label)}:</strong> ${(g.items ?? []).map(esc).join(" · ")}</span>`).join("")
-  : flatSkills.map(esc).join(" · ");
+const rProjects = projects.map((p) => {
+  const meta = [p.roles?.length ? p.roles.join(" · ") : "", p.entity || ""].filter(Boolean).join(" · ");
+  const kw = (p.keywords ?? []).join(" · ");
+  return `
+      <div class="r-job">
+        <div class="r-job__head"><span class="r-job__org">${linkName(p.name, p.url)}</span>${meta ? `<span class="r-job__when">${esc(meta)}</span>` : ""}</div>
+        ${p.description ? `<div class="r-edu">${esc(p.description)}</div>` : ""}
+        ${p.highlights?.length ? `<ul>${p.highlights.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
+        ${kw ? `<div class="r-skills">${esc(kw)}</div>` : ""}
+      </div>`;
+}).join("");
+const rEdu = education.map((e) => {
+  const degree = [e.studyType, e.area].filter(Boolean).join(", ");
+  return `
+      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${linkName(e.institution, e.url)}</span><span class="r-job__when">${esc(fmtRange(e.startDate, e.endDate))}</span></div>${degree ? `<div class="r-job__role">${esc(degree)}</div>` : ""}</div>`;
+}).join("");
+const rSkills = skills.map((g) =>
+  g.keywords?.length
+    ? `<p class="r-skill-grp"><strong>${esc(g.name)}</strong> ${g.keywords.map(esc).join(" · ")}</p>`
+    : `<p class="r-skill-grp">${esc(g.name)}</p>`).join("");
 
-// ---- JSON Résumé (machine-readable, for parsers / ATS) -------------------------
-// Generated from the same contract (profile.json), schema-validated against the
-// vendored JSON Resume schema, and exposed at /resume.json — a standard structured
-// artifact a résumé parser consumes cleanly, alongside the human page.
-const MON = { jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06", jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12" };
-const SEASON = { spring: "03", summer: "06", fall: "09", autumn: "09", winter: "12" };
-const isoPoint = (s) => {
-  const t = String(s ?? "").trim().toLowerCase();
-  if (!t || t === "present") return undefined;
-  const year = t.match(/\b(?:19|20)\d{2}\b/);
-  if (!year) return undefined;
-  const word = t.match(/[a-z]+/);
-  const mm = word ? (MON[word[0].slice(0, 3)] ?? SEASON[word[0]]) : null;
-  return mm ? `${year[0]}-${mm}` : year[0];
-};
-const isoRange = (when) => {
-  const parts = String(when ?? "").split(/\s*(?:—|–|-|\bto\b)\s*/i).filter(Boolean);
-  return { start: isoPoint(parts[0]), end: parts.length > 1 ? isoPoint(parts[1]) : undefined };
-};
-const emailAddr = profile.email;
-const jsonResume = {
-  basics: {
-    name: profile.name,
-    label: profile.role,
-    email: emailAddr,
-    url: SITE,
-    summary: profile.summary,
-    location: { city: "Brooklyn", region: "NY", countryCode: "US" },
-    profiles: (profile.social ?? []).map((s) => ({ network: s.label, url: s.href, username: (s.href.match(/([^/]+)\/?$/) || [])[1] || s.label })),
-  },
-  work: (profile.experience ?? []).map((e) => {
-    const { start, end } = isoRange(e.when);
-    const w = { name: e.org, position: e.role, summary: e.what, highlights: e.bullets ?? [] };
-    if (e.url) w.url = e.url;
-    if (e.where) w.location = e.where;
-    if (start) w.startDate = start;
-    if (end) w.endDate = end;
-    return w;
-  }),
-  education: (profile.education ?? []).map((e) => {
-    const { start, end } = isoRange(e.when);
-    const ed = { institution: e.org };
-    if (e.degree) {
-      const [st, ...rest] = String(e.degree).split(",");
-      ed.studyType = st.trim();
-      ed.area = rest.length ? rest.join(",").trim() : String(e.what ?? "").split(/[—–:.]/)[0].trim();
-    } else {
-      ed.area = String(e.what ?? "").split(/[—–:.]/)[0].trim();
-    }
-    if (e.url) ed.url = e.url;
-    if (start) ed.startDate = start;
-    if (end) ed.endDate = end;
-    return ed;
-  }),
-  skills: labeledSkills
-    ? skillGroups.map((g) => ({ name: g.label, keywords: g.items ?? [] }))
-    : flatSkills.map((name) => ({ name })),
+// ---- /resume.json — the canonical JSON Resume doc itself (machine-readable / ATS) ----
+// Near-identity emit: serve the canonical doc, stamping meta.lastModified, still
+// schema-validated against the vendored JSON Resume schema. basics.headline is
+// non-standard but schema-valid (basics.additionalProperties:true) — kept so
+// /resume.json never diverges from the canonical.
+const resumeDoc = {
+  $schema: canonical.$schema ?? "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  ...canonical,
+  meta: { ...(canonical.meta ?? {}), lastModified: new Date(site.generatedAt).toISOString() },
 };
 const jsonResumeSchema = await loadJson(join(root, "contract", "jsonresume.schema.json"));
-const jrErrors = validateSchema(jsonResumeSchema, jsonResume);
+const jrErrors = validateSchema(jsonResumeSchema, resumeDoc);
 if (jrErrors.length) {
-  console.error("✗ generated resume.json violates contract/jsonresume.schema.json:");
+  console.error("✗ emitted resume.json violates contract/jsonresume.schema.json:");
   for (const e of jrErrors) console.error(`    ${e}`);
   process.exit(1);
 }
@@ -405,7 +393,7 @@ if (jrErrors.length) {
 const resumeHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${profile.name} — Résumé`, description: `Résumé — ${profile.name}, ${profile.role}.`, path: "/resume", appCss: false })}
+${head({ title: `${name} — Résumé`, description: `Résumé — ${name}, ${role}.`, path: "/resume", appCss: false })}
 <link rel="alternate" type="application/json" href="/resume.json" title="JSON Résumé (machine-readable)">
 ${jsonLd}
 <style>
@@ -419,8 +407,7 @@ ${jsonLd}
   .r-summary { margin: 0 0 16px; }
   h2 { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bs-color-forest); border-bottom: 1px solid var(--bs-color-line); padding-bottom: 4px; margin: 18px 0 10px; }
   .r-skills { font-size: 12px; color: var(--bs-color-ink-soft); }
-  .r-skill-group { display: block; }
-  .r-skill-group strong { color: var(--bs-color-ink); }
+  .r-skill-grp { margin: 0 0 4px; font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-job { margin: 0 0 12px; break-inside: avoid; }
   .r-job__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .r-job__org { font-weight: 600; font-size: 14px; }
@@ -438,27 +425,28 @@ ${jsonLd}
 <body>
   <main>
   <header>
-    <h1>${esc(profile.name)}</h1>
-    <p class="r-title">${esc(profile.role)}${profile.headline ? ` · ${esc(profile.headline.replace(/\\.$/, ""))}` : ""}</p>
+    <h1>${esc(name)}</h1>
+    <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline.replace(/\.$/, ""))}` : ""}</p>
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
-    <a class="r-print" href="/resume.pdf" download="${profile.name.split(" ").join("-")}-Resume.pdf">Download PDF&nbsp;&darr;</a>
+    <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">Download PDF&nbsp;&darr;</a>
   </header>
-  <p class="r-summary">${esc(profile.summary)}</p>
-  ${rSkills ? `<h2>Skills</h2><p class="r-skills">${rSkills}</p>` : ""}
+  <p class="r-summary">${esc(summary)}</p>
+  ${rSkills ? `<h2>Skills</h2>${rSkills}` : ""}
   <h2>Experience</h2>${rExp}
+  ${projects.length ? `<h2>Projects</h2>${rProjects}` : ""}
   <h2>Education</h2>${rEdu}
   </main>
 </body>
 </html>
 `;
 await writeFile(join(dist, "resume.html"), resumeHtml);
-await writeFile(join(dist, "resume.json"), JSON.stringify(jsonResume, null, 2) + "\n");
+await writeFile(join(dist, "resume.json"), JSON.stringify(resumeDoc, null, 2) + "\n");
 
 // ---- /provenance: what produced and validated this artifact -------------------
 const provHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `Provenance — ${profile.name}`, description: `How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence.`, path: "/provenance" })}
+${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence.`, path: "/provenance" })}
 </head>
 <body>
   <main class="wrap">
@@ -472,7 +460,7 @@ ${head({ title: `Provenance — ${profile.name}`, description: `How robertdelang
       <p class="lead">The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.</p>
       <ol class="prov-chain">
         <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
-        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against <code>contract/profile.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
         <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <code>lone</code> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <code>string-audit</code> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
         <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandPkg.version ? ` v${brandPkg.version}` : ""}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">
@@ -488,10 +476,10 @@ ${head({ title: `Provenance — ${profile.name}`, description: `How robertdelang
       <h2 class="bs-text-label eyebrow">Claims &rarr; evidence</h2>
       <p class="lead">Every hero claim points at the running code that backs it.</p>
       <ul class="prov-evidence">
-        ${(profile.proof ?? []).map((p) => `<li><a href="${esc(p.href)}">${esc(p.label)}&nbsp;&#8599;</a></li>`).join("\n        ")}
+        ${(proof ?? []).map((p) => `<li><a href="${esc(p.href)}">${esc(p.label)}&nbsp;&#8599;</a></li>`).join("\n        ")}
       </ul>
     </section>
-    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">generated ${date}${commitHtml}</span></footer>
+    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">generated ${date}${commitHtml}</span></footer>
   </main>
 </body>
 </html>
@@ -517,12 +505,12 @@ const blogIndex = posts.length
 const blogHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `Writing — ${profile.name}`, description: `Writing by ${profile.name} on capability security for agentic systems.`, path: "/blog" })}
+${head({ title: `Writing — ${name}`, description: `Writing by ${name} on capability security for agentic systems.`, path: "/blog" })}
 </head>
 <body>
   <main class="wrap">
     <header class="intro">
-      <p class="bs-text-label eyebrow">${esc(profile.name)} &nbsp;&middot;&nbsp; Writing</p>
+      <p class="bs-text-label eyebrow">${esc(name)} &nbsp;&middot;&nbsp; Writing</p>
       <h1>Writing</h1>
       <p class="lead">On capability security for agentic systems — the thesis, graded against the running code.</p>
       <nav class="links">
@@ -549,17 +537,17 @@ for (const p of posts) {
     "@context": "https://schema.org", "@type": "BlogPosting",
     headline: p.meta.title, datePublished: p.meta.date, description: p.meta.description,
     url, mainEntityOfPage: url, inLanguage: "en",
-    author: { "@type": "Person", name: profile.name, url: SITE },
-    publisher: { "@type": "Organization", name: tokens.org || profile.name },
+    author: { "@type": "Person", name: name, url: SITE },
+    publisher: { "@type": "Organization", name: tokens.org || name },
     keywords: (p.meta.tags || []).length ? (p.meta.tags || []).join(", ") : undefined,
     // claim → evidence, same as the homepage Person.subjectOf.
-    citation: (profile.proof || []).map((pr) => ({ "@type": "CreativeWork", name: pr.label, url: pr.href })),
+    citation: (proof || []).map((pr) => ({ "@type": "CreativeWork", name: pr.label, url: pr.href })),
   };
   const tagsHtml = (p.meta.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
   const ph = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${p.meta.title} — ${profile.name}`, ogTitle: p.meta.title, ogType: "article", description: p.meta.description, path: postUrl(p), ogImage })}
+${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "article", description: p.meta.description, path: postUrl(p), ogImage })}
   <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>
 </head>
 <body>
@@ -568,14 +556,14 @@ ${head({ title: `${p.meta.title} — ${profile.name}`, ogTitle: p.meta.title, og
       <header class="post__head">
         <p class="bs-text-label eyebrow"><a href="/blog">&larr;&nbsp;Writing</a></p>
         <h1 class="p-name">${esc(p.meta.title)}</h1>
-        <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> &nbsp;&middot;&nbsp; <a class="p-author h-card" href="${SITE}">${esc(profile.name)}</a>${tagsHtml ? ` &nbsp;&middot;&nbsp; ${tagsHtml}` : ""}</p>
+        <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> &nbsp;&middot;&nbsp; <a class="p-author h-card" href="${SITE}">${esc(name)}</a>${tagsHtml ? ` &nbsp;&middot;&nbsp; ${tagsHtml}` : ""}</p>
       </header>
       <div class="post__body e-content">
       ${p.html}
       </div>
       ${(p.meta.syndication && p.meta.syndication.length) ? `<p class="post__synd">Also on: ${p.meta.syndication.map((u) => `<a class="u-syndication" href="${esc(u)}">${esc(new URL(u).hostname.replace(/^www\./, ""))}</a>`).join(" &middot; ")}</p>` : ""}
     </article>
-    <footer class="foot"><span>${esc(profile.name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a>${commitHtml}</span></footer>
+    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a>${commitHtml}</span></footer>
   </main>
 </body>
 </html>
@@ -589,14 +577,14 @@ const iso = (d) => new Date(d).toISOString();
 const feedUpdated = posts[0]?.meta.date ? iso(posts[0].meta.date) : iso(site.generatedAt);
 const atom = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>${esc(profile.name)} — Writing</title>
-  <subtitle>${esc(tokens.brandDesc || profile.headline)}</subtitle>
+  <title>${esc(name)} — Writing</title>
+  <subtitle>${esc(tokens.brandDesc || headline)}</subtitle>
   <link href="${SITE}/feed.xml" rel="self"/>
   <link href="${HUB}" rel="hub"/>
   <link href="${SITE}/blog"/>
   <id>${SITE}/blog</id>
   <updated>${feedUpdated}</updated>
-  <author><name>${esc(profile.name)}</name></author>
+  <author><name>${esc(name)}</name></author>
 ${posts.map((p) => `  <entry>
     <title>${esc(p.meta.title)}</title>
     <link href="${SITE}${postUrl(p)}"/>
@@ -609,11 +597,11 @@ ${posts.map((p) => `  <entry>
 await writeFile(join(dist, "feed.xml"), atom);
 const jsonFeed = {
   version: "https://jsonfeed.org/version/1.1",
-  title: `${profile.name} — Writing`,
+  title: `${name} — Writing`,
   home_page_url: `${SITE}/blog`, feed_url: `${SITE}/feed.json`,
-  description: tokens.brandDesc || profile.headline,
+  description: tokens.brandDesc || headline,
   hubs: [{ type: "WebSub", url: HUB }],
-  authors: [{ name: profile.name, url: SITE }],
+  authors: [{ name: name, url: SITE }],
   items: posts.map((p) => ({ id: SITE + postUrl(p), url: SITE + postUrl(p), title: p.meta.title, summary: p.meta.description, date_published: iso(p.meta.date), tags: p.meta.tags || [] })),
 };
 await writeFile(join(dist, "feed.json"), JSON.stringify(jsonFeed, null, 2) + "\n");
@@ -628,12 +616,12 @@ for (const p of ["tokens/tokens.css", "css", "lockup", "mark", "favicon-32.png"]
 }
 
 // ---- agent + crawler affordances, from the same contract ----------------------
-const llms = `# ${profile.name}
-> ${profile.headline}
+const llms = `# ${name}
+> ${headline}
 
-${profile.summary}
+${summary}
 
-${profile.role}${profile.place ? ` · ${profile.place}` : ""}
+${role}${place ? ` · ${place}` : ""}
 
 ## Links
 ${profile.links.map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.href : l.href})`).join("\n")}
