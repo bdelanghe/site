@@ -31,7 +31,24 @@
         }
       }
     },
-    "skills": { "type": "array", "items": { "type": "string" }, "description": "Skill keywords for the résumé." },
+    "skills": {
+      "type": "array",
+      "description": "Skill keywords, or labeled skill groups ({label, items}).",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "required": ["label", "items"],
+            "additionalProperties": false,
+            "properties": {
+              "label": { "type": "string" },
+              "items": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        ]
+      }
+    },
     "education": {
       "type": "array",
       "items": {

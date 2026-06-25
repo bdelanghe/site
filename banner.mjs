@@ -55,7 +55,9 @@ const C = {
 // Content tokens (with safe fallbacks so a missing banner block still renders).
 const title = profile.name ?? "";
 const tagline = profile.banner?.tagline ?? profile.role ?? "";
-const stack = (profile.banner?.stack ?? profile.skills ?? []).join(" · ").toUpperCase();
+// skills may be a flat string[] or [{label, items}] groups — flatten for the stack line.
+const skillsFlat = (profile.skills ?? []).flatMap((s) => (typeof s === "string" ? [s] : (s.items ?? [])));
+const stack = (profile.banner?.stack ?? skillsFlat).join(" · ").toUpperCase();
 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 

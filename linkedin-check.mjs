@@ -160,7 +160,8 @@ for (const li of positions) {
 // skills coverage: canonical skills missing from the LinkedIn export
 const liSkills = (resume.skills ?? []).flatMap((s) => [s.name, ...(s.keywords ?? [])]).filter(Boolean).map(squish);
 if (liSkills.length) {
-  const missing = (profile.skills ?? []).filter((s) => !liSkills.some((l) => l && (l.includes(squish(s)) || squish(s).includes(l))));
+  const profileSkills = (profile.skills ?? []).flatMap((s) => (typeof s === "string" ? [s] : (s.items ?? [])));
+  const missing = profileSkills.filter((s) => !liSkills.some((l) => l && (l.includes(squish(s)) || squish(s).includes(l))));
   if (missing.length) findings.push({ level: "warn", org: "(skills)", msg: `canonical skills not on LinkedIn: ${missing.join(", ")}` });
 }
 
