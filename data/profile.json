@@ -6,11 +6,19 @@
     "headline": "AI agents ship code. I write the contracts that keep them in check.",
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
-    "summary": "I make agent-authored code accountable by construction: an agent can only touch what its capabilities allow, with effects bound to a signed owner and checked in CI, so permission and accountability are settled by the same check. Open-sourced as prx; shipped in production at Aura.",
+    "summary": "Programmer building the governance layer for agentic systems, baked into the pipeline. Writes the contracts that make agent-authored code safe to ship: declarative, capability-scoped, enforced before deploy. Open-sourced as prx; in production at Aura.",
     "location": { "city": "Brooklyn", "region": "NY", "countryCode": "US" },
     "profiles": [
-      { "network": "GitHub", "username": "bdelanghe", "url": "https://github.com/bdelanghe" },
-      { "network": "LinkedIn", "username": "rdelanghe", "url": "https://www.linkedin.com/in/rdelanghe/" }
+      {
+        "network": "GitHub",
+        "username": "bdelanghe",
+        "url": "https://github.com/bdelanghe"
+      },
+      {
+        "network": "LinkedIn",
+        "username": "rdelanghe",
+        "url": "https://www.linkedin.com/in/rdelanghe/"
+      }
     ]
   },
   "work": [
@@ -110,13 +118,33 @@
     }
   ],
   "skills": [
-    { "name": "Languages", "keywords": ["Rust", "TypeScript", "Python", "Node.js"] },
-    { "name": "Security & provenance", "keywords": ["Capability-based security", "Supply-chain security", "Sandboxing", "Static analysis"] },
-    { "name": "Systems & infrastructure", "keywords": ["Systems architecture", "Agent infrastructure", "AWS", "Developer tooling"] }
+    {
+      "name": "Languages",
+      "keywords": ["TypeScript", "Python", "Ruby", "Rust"]
+    },
+    {
+      "name": "Security & provenance",
+      "keywords": [
+        "Capability-based security",
+        "Supply-chain security",
+        "Sandboxing",
+        "Static analysis"
+      ]
+    },
+    {
+      "name": "Systems & infrastructure",
+      "keywords": [
+        "Systems architecture",
+        "Agent infrastructure",
+        "AWS",
+        "Developer tooling"
+      ]
+    }
   ],
   "projects": [
     {
       "name": "prx",
+      "startDate": "2026-05",
       "description": "Object-capability seam library that bounds an AI agent to the access it holds.",
       "url": "https://github.com/bounded-systems/prx",
       "keywords": ["Capability security", "AI agents", "TypeScript"],
@@ -125,6 +153,7 @@
     },
     {
       "name": "git-ast",
+      "startDate": "2025-04",
       "description": "Git extension that diffs syntax trees instead of lines, so authorship and intent survive reformatting.",
       "url": "https://github.com/bounded-systems/git-ast",
       "keywords": ["Git", "Rust", "Provenance"],
@@ -133,6 +162,7 @@
     },
     {
       "name": "peercred",
+      "startDate": "2026-06",
       "description": "Binds a request's authority to the caller's kernel identity (SO_PEERCRED), not a forgeable token.",
       "url": "https://github.com/bounded-systems/door-peercred",
       "keywords": ["Capability security", "Rust"],
@@ -141,6 +171,7 @@
     },
     {
       "name": "ocap-provenance",
+      "startDate": "2026-06",
       "description": "in-toto/SLSA provenance chain that attributes each privileged effect to a signed owner.",
       "url": "https://github.com/bounded-systems/ocap-provenance",
       "keywords": ["Supply-chain security", "in-toto", "SLSA"],
@@ -149,6 +180,7 @@
     },
     {
       "name": "hooksmith",
+      "startDate": "2025-08",
       "description": "Git-hook manager that wires repository policy checks into the commit and push lifecycle.",
       "url": "https://github.com/bounded-systems/hooksmith",
       "keywords": ["Git", "Rust", "Developer tooling"],
@@ -158,7 +190,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "v1.0.0",
+    "version": "71480e748a05779baaafb8d6b397ffc02caaed8b9d27d3ce704a26074a8b16fd",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }

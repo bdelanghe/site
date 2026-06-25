@@ -9,7 +9,7 @@
   },
   "hero.summary": {
     "type": "body",
-    "value": "I make agent-authored code accountable by construction: an agent can only touch what its capabilities allow, with effects bound to a signed owner and checked in CI, so permission and accountability are settled by the same check. Open-sourced as prx; shipped in production at Aura."
+    "value": "Programmer building the governance layer for agentic systems, baked into the pipeline. Writes the contracts that make agent-authored code safe to ship: declarative, capability-scoped, enforced before deploy. Open-sourced as prx; in production at Aura."
   },
   "banner.tagline": {
     "type": "tagline",
