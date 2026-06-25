@@ -20,6 +20,15 @@ const profile = JSON.parse(await readFile(arg("--profile", join(here, "data", "p
 let strings = {}; try { strings = JSON.parse(await readFile(arg("--strings", join(here, "brand", "content", "strings.json")), "utf8")); } catch {}
 const org = sval(strings.name) || "Bounded Systems";
 
+// Identity for the byline / home card. JSON Resume nests these under basics; fall
+// back to the flat shape so an older profile.json still renders a name, not "undefined".
+const basics = profile.basics ?? profile;
+const personName = basics.name || "Robert DeLanghe";
+
+// --home renders the personal site card (foregrounds the person, not the org) used
+// as the homepage og:image; without it, this is a per-post card (org eyebrow + title).
+const home = process.argv.includes("--home");
+
 let title = arg("--title");
 const slug = arg("--slug");
 if (!title && slug) title = (/(?:^|\n)title:\s*(.+)/.exec(await readFile(join(here, "posts", `${slug}.md`), "utf8"))?.[1] || slug).trim();
@@ -37,7 +46,8 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>
   .bar{position:absolute;top:0;left:0;width:10px;height:100%;background:linear-gradient(${C.forest},${C.amber})}
   .eyebrow{font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:${C.mint};font-weight:600}
   h1{font-size:66px;line-height:1.07;letter-spacing:-.02em;color:${C.white};font-weight:800;max-width:980px}
-  .foot{display:flex;align-items:center;gap:14px;font-size:25px;color:${C.mint}}
+  .role{margin-top:14px;font-size:32px;line-height:1.1;color:${C.mint};font-weight:600}
+  .foot{display:flex;align-items:center;gap:14px;font-size:25px;color:${C.mint};max-width:1000px}
   .foot b{color:${C.white};font-weight:700}
   .door{position:absolute;right:72px;top:64px;width:92px;height:100px}
 </style></head><body>
@@ -45,11 +55,14 @@ const html = `<!doctype html><html><head><meta charset="utf-8"><style>
   <svg class="door" viewBox="0 0 132 140" fill="none" stroke="${C.mint}" stroke-width="3">
     <rect x="1" y="1" width="130" height="138" rx="10"/><rect x="41" y="44" width="50" height="95" rx="6"/>
     <circle cx="80" cy="92" r="4.5" fill="${C.amber}" stroke="none"/></svg>
-  <div class="eyebrow">${esc(org)}</div>
+${home ? `  <div class="eyebrow">robertdelanghe.dev</div>
+  <div><h1>${esc(personName)}</h1>${basics.label ? `<div class="role">${esc(basics.label)}</div>` : ""}</div>
+  <div class="foot">${esc(basics.headline || "")}</div>`
+       : `  <div class="eyebrow">${esc(org)}</div>
   <h1>${esc(title)}</h1>
-  <div class="foot"><b>${esc(profile.name)}</b> &middot; robertdelanghe.dev</div>
+  <div class="foot"><b>${esc(personName)}</b> &middot; robertdelanghe.dev</div>`}
 </body></html>`;
 
 const out = arg("--out", join(here, "card.html"));
 await writeFile(out, html);
-console.log(`✓ card html → ${out}  | title: ${title}`);
+console.log(`✓ card html → ${out}  | ${home ? `home: ${personName}` : `title: ${title}`}`);
