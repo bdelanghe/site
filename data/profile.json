@@ -41,21 +41,21 @@
       ]
     },
     {
-      "org": "Pioneer Works", "role": "Software Engineer (Contract)", "when": "Nov 2018 – Feb 2021", "where": "Brooklyn", "url": "https://pioneerworks.org",
+      "org": "Pioneer Works", "role": "Contract Software Engineer", "when": "Nov 2018 – Feb 2021", "where": "Brooklyn", "url": "https://pioneerworks.org",
       "what": "Delivered the event-planning platform for a major Brooklyn arts center.",
       "bullets": [
         "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
       ]
     },
     {
-      "org": "Kaleida", "role": "Software Engineer (Contract)", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://kaleida.studio",
+      "org": "Kaleida", "role": "Contract Software Engineer", "when": "Jun 2019 – Mar 2020", "where": "Brooklyn", "url": "https://kaleida.studio",
       "what": "Automated just-in-time production for an AR and print-making studio.",
       "bullets": [
         "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making the invalid state unrepresentable."
       ]
     },
     {
-      "org": "Scope of Work", "role": "Software Engineer (Contract)", "when": "Oct 2018 – Feb 2019", "where": "Brooklyn", "url": "https://scopeofwork.net",
+      "org": "Scope of Work", "role": "Contract Software Engineer", "when": "Oct 2018 – Feb 2019", "where": "Brooklyn", "url": "https://scopeofwork.net",
       "what": "Engineered the contact-management system for the manufacturing publication.",
       "bullets": [
         "Designed the schema that moved spreadsheet data into a relational database, making malformed records unrepresentable."
