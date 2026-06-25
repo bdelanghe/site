@@ -34,7 +34,15 @@ const validateContract = async (name) => {
   return data;
 };
 const site = await validateContract("site");
-const profile = await validateContract("profile");
+// The canonical résumé doc (profile) and the homepage render-context doc
+// (presentation) are separate contracts: profile is the semantic résumé /resume
+// renders; presentation decorates it with hero-only fields (banner, intro, proof,
+// seeking, nav links) and never redefines a canonical field. Shallow-merge them
+// (presentation last — it decorates) so the homepage templates read one `profile`
+// object; /resume + /resume.json read canonical fields only.
+const canonical = await validateContract("profile");
+const presentation = await validateContract("presentation");
+const profile = { ...canonical, ...presentation };
 
 // Canonical token bag: brand content strings + profile slugs. Posts transclude
 // facts from this ({{thesis}}, {{proof.prx}}, {{email}}) instead of re-typing them;
@@ -44,7 +52,7 @@ const strings = (await exists(join(brand, "content", "strings.json"))) ? await l
 const tokens = {
   org: sval(strings.name), tagline: sval(strings.tagline), thesis: sval(strings.thesis), brandDesc: sval(strings.description),
   name: profile.name, role: profile.role, place: profile.place, headline: profile.headline,
-  email: (profile.links.find((l) => /^mailto:/i.test(l.href))?.href || "").replace(/^mailto:/i, ""),
+  email: profile.email,
   proof: Object.fromEntries((profile.proof || []).map((p) => [p.label, p.href])),
   repo: Object.fromEntries((site.highlights || []).map((h) => [h.name, h.url])),
 };
@@ -165,6 +173,7 @@ const materials = [
   { name: "git+github.com/bdelanghe/site", id: COMMIT ? COMMIT.slice(0, 7) : "(local)" },
   { name: "@bounded-systems/brand", id: brandPkg.version ? `v${brandPkg.version}` : "(submodule)" },
   { name: "data/profile.json", id: (await sha256File(join(root, "data", "profile.json"))).slice(0, 18) + "…" },
+  { name: "data/presentation.json", id: (await sha256File(join(root, "data", "presentation.json"))).slice(0, 18) + "…" },
   { name: "data/site.json", id: (await sha256File(join(root, "data", "site.json"))).slice(0, 18) + "…" },
 ];
 
@@ -172,6 +181,8 @@ const materials = [
 const dg = async (p) => (await exists(join(root, p))) ? (await sha256File(join(root, p))).slice(0, 18) + "…" : "(absent)";
 const dgProfile = await dg("data/profile.json");
 const dgProfileSchema = await dg("contract/profile.schema.json");
+const dgPresentation = await dg("data/presentation.json");
+const dgPresentationSchema = await dg("contract/presentation.schema.json");
 const dgPostsSchema = await dg("contract/posts.schema.json");
 const dgCopyReview = await dg("copy-review.mjs");
 const dgLinkedin = await dg("linkedin-check.mjs");
@@ -279,7 +290,10 @@ await mkdir(dist, { recursive: true });
 await writeFile(join(dist, "index.html"), html);
 
 // ---- résumé: print-optimized static artifact from the same contract ----------
-const rEmail = profile.links.find((l) => /^mailto:/i.test(l.href));
+// Synthesize the contact link from the canonical email so the résumé depends only
+// on canonical fields (nav `links` are render-context). Reproduces the old rendered
+// contact line exactly: label = the address, href = mailto:<address>.
+const rEmail = profile.email ? { label: profile.email, href: `mailto:${profile.email}` } : null;
 const rLinks = [...(profile.social ?? []), rEmail].filter(Boolean).map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" · ");
 // résumé contact line: location only (first `place` token) + contact links — affiliations live in Experience/Education
 const rLocation = (profile.place || "").split(/\s*·\s*/)[0];
@@ -312,7 +326,7 @@ const isoRange = (when) => {
   const parts = String(when ?? "").split(/\s*(?:—|–|-|\bto\b)\s*/i).filter(Boolean);
   return { start: isoPoint(parts[0]), end: parts.length > 1 ? isoPoint(parts[1]) : undefined };
 };
-const emailAddr = (profile.links.find((l) => /^mailto:/i.test(l.href))?.href || "").replace(/^mailto:/i, "");
+const emailAddr = profile.email;
 const jsonResume = {
   basics: {
     name: profile.name,
@@ -424,7 +438,7 @@ ${head({ title: `Provenance — ${profile.name}`, description: `How robertdelang
       <p class="lead">The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.</p>
       <ol class="prov-chain">
         <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
-        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Two contracts gate content before a byte renders: <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) and every post's frontmatter validate against <code>contract/profile.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>) and <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against <code>contract/profile.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
         <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <code>lone</code> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <code>string-audit</code> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
         <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandPkg.version ? ` v${brandPkg.version}` : ""}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">

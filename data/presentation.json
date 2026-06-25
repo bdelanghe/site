@@ -1,0 +1,32 @@
+{
+  "_source": "Render-context for the site (homepage hero + nav). Decorates the canonical résumé doc profile.json — it never redefines canonical fields (name/role/summary/…). build.mjs shallow-merges presentation over profile. Authored + signed off in bdelanghe/cv; published here.",
+  "banner": {
+    "tagline": "Bounded authority for AI agents",
+    "stack": [
+      "Capability security",
+      "Agent infrastructure",
+      "AI",
+      "Developer tools"
+    ]
+  },
+  "intro": "I'm Bobby. I chase the parts of code that feel like math, and build the systems that keep AI agents inside the job you gave them.",
+  "proof": [
+    { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
+    { "label": "git-ast", "href": "https://github.com/bounded-systems/git-ast" },
+    { "label": "guest-room", "href": "https://github.com/bounded-systems/guest-room" },
+    { "label": "ocap-provenance", "href": "https://github.com/bounded-systems/ocap-provenance" }
+  ],
+  "seeking": {
+    "label": "Open to new roles",
+    "focus": "Senior / founding engineering on agent infrastructure: agent safety and code provenance",
+    "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy in production. Brooklyn · NYC · remote.",
+    "cta": "Get in touch",
+    "href": "mailto:cv@robertdelanghe.dev"
+  },
+  "links": [
+    { "label": "GitHub", "href": "https://github.com/bounded-systems" },
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" },
+    { "label": "Résumé", "href": "/resume" },
+    { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
+  ]
+}

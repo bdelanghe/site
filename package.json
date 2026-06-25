@@ -11,7 +11,7 @@
     "check:copy": "node copy-review.mjs",
     "check:copy-fixtures": "node copy-review-fixtures.mjs",
     "test:copy-review": "node copy-review-test.mjs",
-    "dev": "python3 -m http.server 8080",
+    "dev": "node scripts/dev.mjs",
     "prebuild": "npm run check",
     "deploy": "wrangler deploy",
     "check:resume": "node resume-parse.mjs",

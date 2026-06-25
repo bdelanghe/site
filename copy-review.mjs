@@ -240,11 +240,15 @@ async function main() {
     return 0; // never block a contributor who can't run the review
   }
 
-  const [profile, site, highlightCopy] = await Promise.all([
+  const [canonical, presentation, site, highlightCopy] = await Promise.all([
     readJson("data/profile.json"),
+    readJson("data/presentation.json"),
     readJson("data/site.json"),
     readJson("data/highlight-copy.json").catch(() => ({})),
   ]);
+  // intro + seeking are render-context (presentation.json); merge so the agentic
+  // review still judges them alongside the canonical headline/summary/experience.
+  const profile = { ...canonical, ...presentation };
   const copy = bundle(profile, site, highlightCopy);
 
   let out;
