@@ -19,11 +19,16 @@ const arg = (flag, def) => {
   return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
 const profilePath = resolve(arg("--profile", join(here, "data", "profile.json")));
+// banner copy (tagline/stack) is render-context — it lives in presentation.json,
+// which decorates the canonical profile (name lives there). Merge the two like build.mjs.
+const presentationPath = resolve(arg("--presentation", join(here, "data", "presentation.json")));
 const tokensPath = resolve(arg("--tokens", join(here, "brand", "tokens", "tokens.json")));
 const out = resolve(arg("--out", join(here, "dist")));
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const profile = JSON.parse(await readFile(profilePath, "utf8"));
+const canonical = JSON.parse(await readFile(profilePath, "utf8"));
+const presentation = JSON.parse(await readFile(presentationPath, "utf8"));
+const profile = { ...canonical, ...presentation };
 const tokens = JSON.parse(await readFile(tokensPath, "utf8"));
 
 // Resolve a design-token $value, following {tier.key} aliases through ANY tier

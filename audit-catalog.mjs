@@ -62,12 +62,16 @@ function buildCatalog(profile, site, highlightCopy) {
 }
 
 async function main() {
-  const [profile, site, highlightCopy] = await Promise.all([
+  const [canonical, presentation, site, highlightCopy] = await Promise.all([
     readJson("data/profile.json"),
+    readJson("data/presentation.json"),
     readJson("data/site.json"),
     readJson("data/highlight-copy.json").catch(() => ({})),
   ]);
 
+  // Render-context copy (banner, intro, seeking) lives in presentation.json now;
+  // merge it in so every shipped string stays audited — one bar, everywhere copy ships.
+  const profile = { ...canonical, ...presentation };
   const catalog = buildCatalog(profile, site, highlightCopy);
   await mkdir(join(root, "data", "audit"), { recursive: true });
   await writeFile(
