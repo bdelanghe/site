@@ -32,8 +32,8 @@
     "value": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling."
   },
   "exp.bounded-systems.b0": {
-    "type": "body",
-    "value": "Move a set of separate capability-security tools into one shared, public contract that bounds an AI agent to the access it holds."
+    "type": "claim",
+    "value": "Shared the 58 capability-security tools behind my own production work, unified under one public contract that builds the implementation."
   },
   "exp.aura.what": {
     "type": "body",

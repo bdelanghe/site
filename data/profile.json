@@ -30,7 +30,7 @@
       "startDate": "2025",
       "summary": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
       "highlights": [
-        "Move a set of separate capability-security tools into one shared, public contract that bounds an AI agent to the access it holds."
+        "Shared the 58 capability-security tools behind my own production work, unified under one public contract that builds the implementation."
       ]
     },
     {
@@ -162,7 +162,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "d6419c8ff405c71114b273be660c48a137a6733cb93f85c01495de19ffceecc5",
+    "version": "5b27c78e202c17a7c5e1c0066177c9833fe540fbc22279f1f44387aab1692219",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
