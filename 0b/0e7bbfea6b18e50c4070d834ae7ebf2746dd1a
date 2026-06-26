@@ -1,0 +1,25 @@
+build.mjs
+  s_98e316d0b3248a::t_56f209758ca63b 123-135,259-264,266,342-346,354-355,528
+contract/presentation.schema.json
+  s_98e316d0b3248a::t_f936545467585f 48-61
+data/presentation.json
+  s_98e316d0b3248a::t_09fbd109fe68c1 26-33
+styles.css
+  s_98e316d0b3248a::t_2bb6b3ede214aa 50-60,87-90,165-167
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "0b0e7bbfea6b18e50c4070d834ae7ebf2746dd1a",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "unknown"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
