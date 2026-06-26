@@ -137,6 +137,19 @@ const proofHtml = proof.length
   ? `<p class="proof">Proof — ${proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
   : "";
 
+// Colophon — "built with": the upstream tools that produce + validate this site,
+// each a real build input or gate (see /provenance for the full signed chain), linked
+// upstream. Lives at the foot of the page: discovered after the work, not before it.
+const colophonHtml = profile.colophon?.length
+  ? `<section class="colophon">
+      <h2 class="bs-text-label eyebrow">Built with</h2>
+      <ul class="colophon__list">
+        ${profile.colophon.map((c) => `<li><a href="${esc(c.href)}"><span class="colophon__name">${esc(c.name)}</span>${c.role ? `<span class="colophon__role">${esc(c.role)}</span>` : ""}</a></li>`).join("\n        ")}
+      </ul>
+      <p class="colophon__more">Hermetic Nix build · signed in-toto/SLSA attestation — <a href="/provenance">full provenance</a></p>
+    </section>`
+  : "";
+
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
 const SITE = basics.url || "https://robertdelanghe.dev";
 const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
@@ -237,7 +250,6 @@ const highlightCopy = (await exists(join(root, "data", "highlight-copy.json"))) 
 for (const h of highlights) {
   if (highlightCopy[h.name]) h.description = highlightCopy[h.name];
 }
-const langTotal = stats.languages.reduce((n, l) => n + l.count, 0) || 1;
 const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 
 // in-toto materials: the build inputs, content-addressed where computable
@@ -268,9 +280,14 @@ for (const f of ["brand/tokens/tokens.json", "brand/tokens/tokens.css", "brand/c
   if (await exists(join(root, f))) materials.push({ name: f, id: (await sha256File(join(root, f))).slice(0, 18) + "…" });
 }
 
-const langBars = stats.languages.slice(0, 6).map((l) =>
+// Bars scale to the leading language (relative, not share-of-total) so the
+// shape reads as rank — the top bar fills the track, the rest are proportional
+// to it. (Share-of-total made every bar look stunted: 26/115 ≈ 22% full.)
+const shownLangs = stats.languages.slice(0, 6);
+const langMax = Math.max(...shownLangs.map((l) => l.count), 1);
+const langBars = shownLangs.map((l) =>
   `<div class="bar"><span class="bar__k">${esc(l.name)}</span>` +
-  `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langTotal) * 100)}%"></span></span>` +
+  `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`).join("\n        ");
 
 const topicChips = stats.topics.length
@@ -346,12 +363,19 @@ const html = `<!doctype html>
       <div class="chips">
         ${topicChips}
       </div>
+      <p class="corpus__src">
+        Computed from <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
+        &middot; <a href="https://github.com/bdelanghe?tab=stars">starred work</a>
+        &middot; topics kept honest by <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
+      </p>
     </section>
 
     <section class="work">
       <h2 class="bs-text-label eyebrow">Selected work — by tag</h2>
       ${workGroups}
     </section>
+
+    ${colophonHtml}
 
     <footer class="foot">
       <span>Robert DeLanghe &middot; Bounded Systems</span>
@@ -533,7 +557,7 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
       <ol class="prov-chain">
         <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
         <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
-        <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <code>lone</code> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <code>string-audit</code> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
         <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandPkg.version ? ` v${brandPkg.version}` : ""}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">

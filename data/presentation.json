@@ -23,5 +23,14 @@
     { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" },
     { "label": "Résumé", "href": "/resume" },
     { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
+  ],
+  "colophon": [
+    { "name": "baobab", "role": "design-system structure — no defaults", "href": "https://github.com/bounded-systems/baobab" },
+    { "name": "brand", "role": "baobab's pinning — tokens, fonts, the mark", "href": "https://github.com/bounded-systems/brand" },
+    { "name": "lone", "role": "blesses every rendered page's DOM — semantic HTML and a11y", "href": "https://github.com/bounded-systems/lone" },
+    { "name": "string-audit", "role": "grounded copy-hygiene gate", "href": "https://github.com/bounded-systems/string-audit" },
+    { "name": "synoptic-github", "role": "keeps repo topics honest — feeds the corpus", "href": "https://github.com/bdelanghe/synoptic-github" },
+    { "name": "lobby", "role": "the vault these posts are written in", "href": "https://github.com/bounded-systems/lobby" },
+    { "name": "unfold-dev", "role": "the container this site is built in", "href": "https://github.com/users/bdelanghe/packages/container/package/unfold-dev" }
   ]
 }

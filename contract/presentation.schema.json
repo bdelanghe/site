@@ -45,6 +45,20 @@
           "href": { "type": "string" }
         }
       }
+    },
+    "colophon": {
+      "type": "array",
+      "description": "\"Built with\" — the upstream tools that produce and validate this site (design system, gates, authoring vault, dev container), surfaced as a homepage colophon and linked to their repos. Each must be a real build input or gate; private repos are omitted (no dead links).",
+      "items": {
+        "type": "object",
+        "required": ["name", "href"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "description": "tool / repo name" },
+          "role": { "type": "string", "description": "one line — what it does in the build" },
+          "href": { "type": "string", "description": "upstream repo / package URL (public)" }
+        }
+      }
     }
   }
 }
