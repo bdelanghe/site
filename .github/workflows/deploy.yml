@@ -53,6 +53,8 @@ jobs:
           kill "$srv" 2>/dev/null || true
           ls -la dist/resume.pdf
       - name: Deploy to Cloudflare Workers
-        run: nix develop --command wrangler deploy
+        # EXPERIMENT: repo-pinned wrangler (4.103) — nixpkgs' 4.93 ignores
+        # assets.run_worker_first, so the worker never runs.
+        run: nix develop --command sh -c 'npm ci --no-audit --no-fund && node_modules/.bin/wrangler deploy'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
