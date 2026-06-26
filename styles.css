@@ -47,7 +47,17 @@
 .links a:hover { border-color: var(--bs-color-forest); }
 
 /* section rhythm */
-.corpus, .work { margin-top: clamp(56px, 9vw, 88px); }
+.corpus, .work, .colophon { margin-top: clamp(56px, 9vw, 88px); }
+
+/* colophon: built-with */
+.colophon__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border: 1px solid var(--bs-color-line); border-radius: var(--bs-radius-md); overflow: hidden; }
+.colophon__list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 12px 16px; text-decoration: none; color: inherit; background: var(--bs-color-card); }
+.colophon__list a:hover { background: var(--bs-color-card-alt); }
+.colophon__name { font-family: var(--bs-font-mono); font-weight: 600; font-size: 13px; color: var(--bs-color-forest); }
+.colophon__role { font-size: 13px; color: var(--bs-color-ink-soft); }
+.colophon__more { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); margin: 14px 0 0; }
+.colophon__more a { color: var(--bs-color-forest); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); }
+.colophon__more a:hover { border-color: var(--bs-color-forest); }
 
 /* corpus: meta-analysis */
 .figures { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 0 28px; }
@@ -73,6 +83,10 @@
 }
 .chip em { color: var(--bs-color-ink-mono); font-style: normal; }
 .chip--muted { color: var(--bs-color-ink-mono); }
+
+.corpus__src { font-family: var(--bs-font-mono); font-size: 11px; line-height: 1.7; color: var(--bs-color-ink-mono); margin: 18px 0 0; }
+.corpus__src a { color: var(--bs-color-forest); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); }
+.corpus__src a:hover { border-color: var(--bs-color-forest); }
 
 /* selected work */
 .work-group { margin-top: 22px; }
@@ -148,6 +162,9 @@
 .prov-link__name { display: block; font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-forest); margin: 0 0 5px; }
 .prov-link__body { color: var(--bs-color-ink-soft); font-size: 15px; line-height: 1.55; max-width: 60ch; }
 .prov-link__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-forest-tint); padding: 1px 5px; border-radius: 4px; color: var(--bs-color-ink); }
+.prov-link__body a { text-decoration: none; }
+.prov-link__body a code { color: var(--bs-color-forest); border-bottom: 1px solid var(--bs-color-line); }
+.prov-link__body a:hover code { border-color: var(--bs-color-forest); }
 /* the signed output — the seal that closes the chain */
 .prov-seal { position: relative; padding-left: 32px; }
 .prov-seal::after { content: ""; position: absolute; left: 0; top: 6px; width: 13px; height: 13px; background: var(--bs-color-forest); transform: rotate(45deg); }
