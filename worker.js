@@ -26,7 +26,9 @@ export default {
       !type.includes("text/html") ||
       response.headers.get("etag")
     ) {
-      return response;
+      const h = new Headers(response.headers);
+      h.set("x-shim", `skip:${request.method}:${response.status}:${type.split(";")[0]}:etag=${!!response.headers.get("etag")}`);
+      return new Response(response.body, { status: response.status, statusText: response.statusText, headers: h });
     }
 
     const body = await response.arrayBuffer();
@@ -36,6 +38,7 @@ export default {
 
     const headers = new Headers(response.headers);
     headers.set("etag", etag);
+    headers.set("x-shim", "etagged");
 
     if (matchesEtag(request.headers.get("if-none-match"), etag)) {
       return new Response(null, { status: 304, headers });
