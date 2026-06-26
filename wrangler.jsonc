@@ -4,8 +4,15 @@
   "name": "site",
   "account_id": "a2ca40f474fa65ed8f751a3efdf74c01",
   "compatibility_date": "2026-06-21",
+  // Thin ETag shim: the build is fully static (dist/), but Cloudflare's html_handling
+  // serves HTML routes without a content ETag. This Worker runs first, wraps the
+  // assets fetch, and attaches a content-hash ETag (+ 304 on If-None-Match) to HTML
+  // so every URL — pages and assets alike — validates via ETag. See worker.js.
+  "main": "worker.js",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "binding": "ASSETS",
+    "run_worker_first": true
   }
 }
