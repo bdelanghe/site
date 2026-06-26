@@ -63,6 +63,20 @@ const profile = { ...canonical, ...presentation };
 const basics = canonical.basics ?? {};
 const name = basics.name, role = basics.label, headline = basics.headline, summary = basics.summary, email = basics.email;
 const work = canonical.work ?? [];
+
+// Anti-scrape contact. Spambots harvest plaintext `user@host` / `mailto:` straight
+// from the static HTML, llms.txt, and JSON — that's the inbound "website-tools" spam.
+// So we never emit the address adjacently: it ships obfuscated as
+// `cv [at] robertdelanghe [dot] dev`, and EMAIL_SCRIPT re-forms the real mailto + text
+// at runtime. Humans (and headless Chrome, for the résumé PDF) get a normal clickable
+// link; a `\b[\w.]+@[\w.]+\.\w+` harvester finds nothing to grab. No-JS readers still
+// see the human-readable obfuscated form.
+const [emailUser, emailHost] = (email || "").split("@");
+const emailObf = email ? `${emailUser} [at] ${emailHost.replace(/\./g, " [dot] ")}` : "";
+// label omitted → the de-obfuscated address becomes the visible text (data-show).
+const mailLink = ({ label = "", cls = "" } = {}) =>
+  email ? `<a${cls ? ` class="${cls}"` : ""} data-mail="${esc(emailObf)}"${label ? "" : " data-show"}>${label || esc(emailObf)}</a>` : "";
+const EMAIL_SCRIPT = `<script>for(const a of document.querySelectorAll('a[data-mail]')){const m=a.getAttribute('data-mail').replace(' [at] ','@').replace(/ \\[dot\\] /g,'.');a.href='mailto:'+m;if(a.hasAttribute('data-show'))a.textContent=m;}</script>`;
 const education = canonical.education ?? [];
 const skills = canonical.skills ?? [];          // grouped: [{ name, keywords }]
 const projects = canonical.projects ?? [];
@@ -93,7 +107,8 @@ const strings = (await exists(join(brand, "content", "strings.json"))) ? await l
 const tokens = {
   org: sval(strings.name), tagline: sval(strings.tagline), thesis: sval(strings.thesis), brandDesc: sval(strings.description),
   name, role, place, headline,
-  email,
+  email: emailObf, // posts transclude {{email}} into prose — keep it un-harvestable too
+
   proof: Object.fromEntries(proof.map((p) => [p.label, p.href])),
   repo: Object.fromEntries((site.highlights || []).map((h) => [h.name, h.url])),
 };
@@ -113,7 +128,9 @@ const posts = allPosts.filter((p) => (p.meta.target ?? "dev") === "dev");
 for (const p of allPosts) if ((p.meta.target ?? "dev") !== "dev") console.log(`· skipping ${p.slug} (target=${p.meta.target})`);
 
 const linksHtml = profile.links
-  .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
+  .map((l) => l.href.startsWith("mailto:")
+    ? mailLink({})
+    : `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
   .join("\n        ");
 
 const proofHtml = proof.length
@@ -200,7 +217,9 @@ const seekingHtml = s
       ${s.label ? `<p class="bs-text-label seeking__label">${esc(s.label)}</p>` : ""}
       <p class="seeking__focus">${esc(s.focus)}</p>
       ${s.detail ? `<p class="seeking__detail">${esc(s.detail)}</p>` : ""}
-      ${s.href ? `<a class="seeking__cta" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>` : ""}
+      ${s.href ? (s.href.startsWith("mailto:")
+        ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta" })
+        : `<a class="seeking__cta" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
     </section>`
   : "";
 
@@ -335,6 +354,7 @@ const html = `<!doctype html>
       <span class="foot__meta">github.com/bdelanghe &middot; generated ${date}${commitHtml}</span>
     </footer>
   </main>
+  ${EMAIL_SCRIPT}
 </body>
 </html>
 `;
@@ -346,7 +366,7 @@ await writeHtml("index.html", html);
 // ---- résumé: print-optimized static artifact from the canonical JSON Resume doc ----
 // Contact line: identity profiles (basics.profiles) + the canonical email; location
 // from basics.location. Affiliations live in Experience/Projects/Education.
-const rEmail = email ? { label: email, href: `mailto:${email}` } : null;
+const rEmail = email ? { mail: true } : null;
 // Web profiles render as favicon + handle (no label, no full URL); email stays the
 // address. Handle = last path segment (github.com/bdelanghe → bdelanghe).
 const linkHost = (href) => { try { return new URL(href).hostname.replace(/^www\./, ""); } catch { return ""; } };
@@ -365,7 +385,9 @@ const brandMark = (href, label) => {
     : `<img class="r-fav" src="https://${esc(linkHost(href))}/favicon.ico" alt="${esc(label)}" width="12" height="12" loading="lazy">`;
 };
 const rLinks = [...social.map((s) => ({ label: s.network, href: s.url })), rEmail].filter(Boolean).map((l) =>
-  /^https?:/i.test(l.href)
+  l.mail
+    ? mailLink({})
+    : /^https?:/i.test(l.href)
     ? `<a href="${esc(l.href)}" title="${esc(l.label)}">${brandMark(l.href, l.label)}${esc(linkHandle(l.href))}</a>`
     : `<a href="${esc(l.href)}">${esc(l.label)}</a>`
 ).join(" · ");
@@ -420,6 +442,10 @@ const rSkills = skills.map((g) =>
 const resumeDoc = {
   $schema: canonical.$schema ?? "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
   ...canonical,
+  // Drop the plaintext email from the published JSON — it's a stable, machine-readable
+  // URL, i.e. prime scrape bait. The address still reaches humans on the rendered page
+  // (obfuscated + JS-assembled). email is optional in JSON Resume, so this stays valid.
+  basics: (({ email: _drop, ...rest }) => rest)(canonical.basics ?? {}),
   meta: { ...(canonical.meta ?? {}), lastModified: new Date(site.generatedAt).toISOString() },
 };
 const jsonResumeSchema = await loadJson(join(root, "contract", "jsonresume.schema.json"));
@@ -476,6 +502,7 @@ ${jsonLd}
   ${projects.length ? `<h2>Projects</h2>${rProjects}` : ""}
   <h2>Education</h2>${rEdu}
   </main>
+  ${EMAIL_SCRIPT}
 </body>
 </html>
 `;
@@ -664,7 +691,7 @@ ${summary}
 ${role}${place ? ` · ${place}` : ""}
 
 ## Links
-${profile.links.map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.href : l.href})`).join("\n")}
+${profile.links.filter((l) => !l.href.startsWith("mailto:")).map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.href : l.href})`).join("\n")}
 
 ## Selected work
 ${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
