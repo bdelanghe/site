@@ -53,10 +53,6 @@ jobs:
           kill "$srv" 2>/dev/null || true
           ls -la dist/resume.pdf
       - name: Deploy to Cloudflare Workers
-        # Use the repo-pinned wrangler (package-lock, 4.103) rather than nixpkgs'
-        # 4.93: 4.93 silently ignored assets.run_worker_first, so the ETag Worker
-        # never ran and HTML shipped without a validator. The build stays hermetic
-        # (nix); only the deploy CLI comes from the lockfile. node from nix devShell.
-        run: nix develop --command sh -c 'npm ci --no-audit --no-fund && node_modules/.bin/wrangler deploy'
+        run: nix develop --command wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
