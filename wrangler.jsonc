@@ -4,12 +4,8 @@
   "name": "site",
   "account_id": "a2ca40f474fa65ed8f751a3efdf74c01",
   "compatibility_date": "2026-06-21",
-  // EXPERIMENT: run the worker first so it can attach a content-hash ETag to HTML.
-  "main": "worker.js",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page",
-    "binding": "ASSETS",
-    "run_worker_first": true
+    "not_found_handling": "404-page"
   }
 }
