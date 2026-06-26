@@ -1,0 +1,21 @@
+lighthouserc.json
+  s_98e316d0b3248a::t_14b01f5c836dae 1-24
+.github/workflows/lighthouse.yml
+  s_98e316d0b3248a::t_366631780c8a8a 1-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "02f06031938caa265dac1d94199ccc6551fa6334",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
