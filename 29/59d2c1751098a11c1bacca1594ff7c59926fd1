@@ -1,0 +1,21 @@
+wrangler.jsonc
+  s_6549ae8e2bd7a3::t_2af53d9fd618e0 9
+.github/workflows/deploy.yml
+  s_6549ae8e2bd7a3::t_b21bd96ff7f3f4 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "2959d2c1751098a11c1bacca1594ff7c59926fd1",
+  "prompts": {},
+  "sessions": {
+    "s_6549ae8e2bd7a3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "923ee5e5-fcc1-4e85-9832-bc22990b5f9a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
