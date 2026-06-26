@@ -144,10 +144,15 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <meta property="og:title" content="${ot}">
   <meta property="og:description" content="${d}">
   <meta property="og:image" content="${img}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:alt" content="${ot}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${ot}">
   <meta name="twitter:description" content="${d}">
   <meta name="twitter:image" content="${img}">
+  <meta name="twitter:image:alt" content="${ot}">
   <link rel="alternate" type="application/atom+xml" title="Robert DeLanghe — Writing" href="/feed.xml">
   <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${social.map((s) => `
   <link rel="me" href="${esc(s.url)}">`).join("")}
