@@ -23,17 +23,6 @@
   },
   "work": [
     {
-      "name": "Bounded Systems",
-      "position": "Creator, Independent Project",
-      "location": "Brooklyn",
-      "url": "https://bounded.tools",
-      "startDate": "2025",
-      "summary": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling.",
-      "highlights": [
-        "Shared the 58 capability-security tools behind my own production work — one public contract, each a single sanctioned access point that bounds an agent to what it holds."
-      ]
-    },
-    {
       "name": "Aura",
       "position": "Senior Software Engineer · Commerce",
       "location": "New York · Hybrid",
@@ -162,7 +151,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "3f2546ad070c3ea2109cd13ed938fd1a5b5d2284281cfe8bde8afe03dc3c7403",
+    "version": "a551e5175a5b0e2cc34a92f356fb8b613d41563aeb76a7f74be080348984a051",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
