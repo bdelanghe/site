@@ -22,7 +22,17 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Get lone
-        run: git clone --depth 1 https://github.com/bounded-systems/lone lone
+      # Pin lone by sha. The a11y/semantic gate must be reproducible — a clone of
+      # "latest main" means the gate that proves provenance has a provenance hole: a
+      # regressed or compromised lone main could silently flip verdicts. Bump
+      # deliberately (and review the diff) rather than tracking main.
+      - name: Get lone (pinned)
+        env:
+          LONE_SHA: 648a9693ef40575f50ffaad51e6e63c5cfcb91e4 # bounded-systems/lone@main 2026-06-23
+        run: |
+          git init -q lone
+          git -C lone remote add origin https://github.com/bounded-systems/lone
+          git -C lone fetch -q --depth 1 origin "$LONE_SHA"
+          git -C lone checkout -q FETCH_HEAD
       - name: lone — bless rendered posts
         run: deno run --allow-read --allow-net --config semantic/deno.json semantic/gate.ts
