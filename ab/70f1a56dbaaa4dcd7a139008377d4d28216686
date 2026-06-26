@@ -1,0 +1,22 @@
+build.mjs
+  s_6549ae8e2bd7a3::t_e10e037942a8b0 162-168
+  s_6549ae8e2bd7a3::t_50a3e4180b986c 199
+  s_6549ae8e2bd7a3::t_ddfe262edf5fb8 748-749
+  s_6549ae8e2bd7a3::t_bf41cd785c2371 712
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "ab70f1a56dbaaa4dcd7a139008377d4d28216686",
+  "prompts": {},
+  "sessions": {
+    "s_6549ae8e2bd7a3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "923ee5e5-fcc1-4e85-9832-bc22990b5f9a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
