@@ -1,8 +1,9 @@
 // semantic/gate.ts — bless each rendered post's DOM with lone (semantic HTML + a11y).
 // Blocking: any error-severity finding fails CI. Run from the site root after
-// `node build.mjs`, with bounded-systems/lone cloned at ./lone.
+// `node build.mjs`. lone is consumed from JSR (jsr:@bounded-systems/lone), pinned by
+// deno.lock — no git clone, no hand-managed sha (see semantic/deno.json import map).
 import { parseHTML } from "linkedom";
-import { validate } from "../lone/src/mod.ts";
+import { validate } from "@bounded-systems/lone";
 
 const DIR = "dist/blog";
 let posts = 0, errors = 0, warns = 0;
