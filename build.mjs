@@ -159,6 +159,13 @@ const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_
 const commitHtml = COMMIT
   ? ` &middot; <a href="/provenance" title="build provenance report">${COMMIT.slice(0, 7)}</a>`
   : ` &middot; <a href="/provenance">provenance</a>`;
+
+// Fingerprint the site's own stylesheet so it can be cached immutably: the URL
+// changes when the content changes, so there's nothing stale to serve. The brand
+// CSS comes from the pinned submodule and keeps the short /* cache window.
+const stylesCss = await readFile(join(root, "styles.css"));
+const stylesHref = `/styles.${createHash("sha256").update(stylesCss).digest("hex").slice(0, 12)}.css`;
+
 const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType = "website", ogImage = OG_IMAGE }) => {
   const url = SITE + path, t = esc(title), d = esc(description), ot = esc(ogTitle ?? title), img = ogImage.startsWith("http") ? ogImage : SITE + ogImage;
   return `<meta charset="utf-8">
@@ -189,7 +196,7 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <link rel="stylesheet" href="/brand/css/fonts.css">
   <link rel="stylesheet" href="/brand/tokens/tokens.css">${appCss ? `
   <link rel="stylesheet" href="/brand/css/base.css">
-  <link rel="stylesheet" href="/styles.css">` : ""}`;
+  <link rel="stylesheet" href="${stylesHref}">` : ""}`;
 };
 // One source for identity: basics.profiles → sameAs (JSON-LD), rel=me (head), footer.
 const socialHtml = social.map((s) => `<a rel="me" href="${esc(s.url)}">${esc(s.network)}</a>`).join(" &middot; ");
@@ -581,7 +588,8 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
 </html>
 `;
 await writeHtml("provenance.html", provHtml);
-await cp(join(root, "404.html"), join(dist, "404.html"));
+// 404.html is a static template; rewrite its stylesheet ref to the fingerprinted name.
+await writeFile(join(dist, "404.html"), (await readFile(join(root, "404.html"), "utf8")).replace("/styles.css", stylesHref));
 
 // ---- /blog: index (h-feed) + per-post pages (h-entry) from posts/*.md ---------
 // Public URL is extensionless (Cloudflare serves /blog/<slug> and 307s the .html
@@ -702,7 +710,7 @@ const jsonFeed = {
 };
 await writeFile(join(dist, "feed.json"), JSON.stringify(jsonFeed, null, 2) + "\n");
 
-await cp(join(root, "styles.css"), join(dist, "styles.css"));
+await writeFile(join(dist, stylesHref.slice(1)), stylesCss); // fingerprinted name (see stylesHref)
 await cp(join(root, "assets/logo.svg"), join(dist, "assets/logo.svg"));
 await cp(join(root, "assets/og.png"), join(dist, "assets/og.png"));
 if (await exists(join(root, "assets", "cards"))) await cp(join(root, "assets", "cards"), join(dist, "assets", "cards"), { recursive: true });
@@ -738,6 +746,8 @@ await writeFile(join(dist, "llms.txt"), llms);
 // otherwise sends text/plain with no charset → Latin-1 mojibake on em dashes / é).
 await writeFile(join(dist, "_headers"), `/*
   Cache-Control: public, max-age=600, stale-while-revalidate=3600
+/styles.*.css
+  Cache-Control: public, max-age=31536000, immutable
 /*.txt
   Content-Type: text/plain; charset=utf-8
 /*.pub
