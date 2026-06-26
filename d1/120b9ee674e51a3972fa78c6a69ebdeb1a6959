@@ -1,0 +1,25 @@
+semantic/gate.ts
+  s_98e316d0b3248a::t_932023d883f966 3-4,6
+.github/workflows/semantic.yml
+  s_98e316d0b3248a::t_1cc5f90cf7a15e 25-27,29
+semantic/deno.json
+  s_98e316d0b3248a::t_932023d883f966 3
+semantic/deno.lock
+  s_98e316d0b3248a::t_ebb49721b188c2 1-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "d1120b9ee674e51a3972fa78c6a69ebdeb1a6959",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
