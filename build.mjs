@@ -14,6 +14,21 @@ const brand = join(root, "brand");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// Boundary guard: a template that reads a field the data doesn't have interpolates
+// the literal string "undefined" into the page (e.g. a work-shaped mapper run over an
+// education record). Fail the build instead of shipping it. Matches only complete
+// interpolation leaks — a value rendered as a whole text node, an attribute value, or
+// after a "·" separator — so prose like "undefined behavior" never trips it.
+const UNDEFINED_LEAK = /(?:>\s*undefined\s*<)|(?:="undefined")|(?:·\s*undefined\s*<)/;
+const writeHtml = async (file, content) => {
+  const m = content.match(UNDEFINED_LEAK);
+  if (m) {
+    console.error(`✗ ${file}: a missing field rendered as "undefined" (${JSON.stringify(m[0])}). A template read a field name the data doesn't have.`);
+    process.exit(1);
+  }
+  await writeFile(join(dist, file), content);
+};
+
 if (!(await exists(join(brand, "tokens", "tokens.css")))) {
   console.error("✗ brand/ is empty. Run: git submodule update --init --recursive");
   process.exit(1);
@@ -159,6 +174,15 @@ const entry = (w) =>
   `<li class="entry"><span class="entry__when">${esc(fmtRange(w.startDate, w.endDate))}</span><span class="entry__body">` +
   `<span class="entry__org">${linkName(w.name, w.url)}${w.position ? ` · <span class="entry__role">${esc(w.position)}</span>` : ""}</span>` +
   `<span class="entry__what">${esc(w.summary)}</span></span></li>`;
+// Education uses JSON Resume field names (institution / studyType / area) and has no
+// summary — it can't share the work-shaped entry() mapper above (name/position/summary),
+// or those fields render as "undefined". Mirrors /resume's rEdu: institution · degree.
+const eduEntry = (e) => {
+  const degree = [e.studyType, e.area].filter(Boolean).join(", ");
+  return `<li class="entry"><span class="entry__when">${esc(fmtRange(e.startDate, e.endDate))}</span><span class="entry__body">` +
+    `<span class="entry__org">${linkName(e.institution, e.url)}${degree ? ` · <span class="entry__role">${esc(degree)}</span>` : ""}</span>` +
+    `</span></li>`;
+};
 const exp = work;
 const edu = education;
 const backgroundHtml =
@@ -166,7 +190,7 @@ const backgroundHtml =
     ? `<section class="bg">
       <h2 class="bs-text-label eyebrow">Background</h2>
       ${exp.length ? `<ul class="entries">\n        ${exp.map(entry).join("\n        ")}\n      </ul>` : ""}
-      ${edu.length ? `<p class="bg__sub bs-text-label">Education</p>\n      <ul class="entries">\n        ${edu.map(entry).join("\n        ")}\n      </ul>` : ""}
+      ${edu.length ? `<p class="bg__sub bs-text-label">Education</p>\n      <ul class="entries">\n        ${edu.map(eduEntry).join("\n        ")}\n      </ul>` : ""}
     </section>`
     : "";
 
@@ -317,7 +341,7 @@ const html = `<!doctype html>
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
-await writeFile(join(dist, "index.html"), html);
+await writeHtml("index.html", html);
 
 // ---- résumé: print-optimized static artifact from the canonical JSON Resume doc ----
 // Contact line: identity profiles (basics.profiles) + the canonical email; location
@@ -455,7 +479,7 @@ ${jsonLd}
 </body>
 </html>
 `;
-await writeFile(join(dist, "resume.html"), resumeHtml);
+await writeHtml("resume.html", resumeHtml);
 await writeFile(join(dist, "resume.json"), JSON.stringify(resumeDoc, null, 2) + "\n");
 
 // ---- /provenance: what produced and validated this artifact -------------------
@@ -500,7 +524,7 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
 </body>
 </html>
 `;
-await writeFile(join(dist, "provenance.html"), provHtml);
+await writeHtml("provenance.html", provHtml);
 await cp(join(root, "404.html"), join(dist, "404.html"));
 
 // ---- /blog: index (h-feed) + per-post pages (h-entry) from posts/*.md ---------
