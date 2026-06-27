@@ -1,0 +1,38 @@
+name: lighthouse
+
+# Lighthouse CI quality gate, run against the STATIC build (dist/). build.mjs is a pure
+# function of the contracts + the pinned brand submodule, so lhci serves dist/ itself
+# (staticDistDir) — no separate web server, no live network. Budgets live in
+# lighthouserc.json: accessibility is a hard error at a perfect 1.0; best-practices and
+# seo are blocking floors; performance is advisory (warn).
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "build.mjs"
+      - "posts/**"
+      - "data/**"
+      - "lighthouserc.json"
+      - ".github/workflows/lighthouse.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Build static site
+        run: node build.mjs
+      - name: Lighthouse CI (serves dist/ via staticDistDir)
+        run: npx @lhci/cli@0.14.x autorun
