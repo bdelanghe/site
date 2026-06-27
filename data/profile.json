@@ -6,7 +6,7 @@
     "headline": "AI agents ship code. I write the contracts that keep them in check.",
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
-    "summary": "Programmer building the governance layer for agentic systems, baked into the pipeline. Writes the contracts that make agent-authored code safe to ship: declarative, capability-scoped, enforced before deploy. Open-sourced as prx; gating production deploys at Aura.",
+    "summary": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. Open-sourced the approach as prx: agent changes land as merged PRs through one signed flow, each git write checked against the capability that holds it.",
     "location": { "city": "Brooklyn", "region": "NY", "countryCode": "US" },
     "profiles": [
       {
