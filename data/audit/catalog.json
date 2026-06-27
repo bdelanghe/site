@@ -27,14 +27,6 @@
     "type": "body",
     "value": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy in production. Brooklyn · NYC · remote."
   },
-  "exp.bounded-systems.what": {
-    "type": "body",
-    "value": "Capability security for AI agents: software delivered by agents, governed like infrastructure. Generalized from my Aura work into open tooling."
-  },
-  "exp.bounded-systems.b0": {
-    "type": "claim",
-    "value": "Shared the 58 capability-security tools behind my own production work — one public contract, each a single sanctioned access point that bounds an agent to what it holds."
-  },
   "exp.aura.what": {
     "type": "body",
     "value": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing."

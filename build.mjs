@@ -146,7 +146,7 @@ const colophonHtml = profile.colophon?.length
       <ul class="colophon__list">
         ${profile.colophon.map((c) => `<li><a href="${esc(c.href)}"><span class="colophon__name">${esc(c.name)}</span>${c.role ? `<span class="colophon__role">${esc(c.role)}</span>` : ""}</a></li>`).join("\n        ")}
       </ul>
-      <p class="colophon__more">Hermetic Nix build · signed in-toto/SLSA attestation — <a href="/provenance">full provenance</a></p>
+      <p class="colophon__more">Hermetic Nix build · keyless-signed in-toto/SLSA provenance (Sigstore · Rekor · GHCR) — <a href="/provenance">full provenance</a></p>
     </section>`
   : "";
 
@@ -570,7 +570,7 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
           <div class="prov-seal__card">
             <p class="prov-seal__title">Subject — signed</p>
             <p class="prov-seal__meta">commit ${COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}">${COMMIT.slice(0, 7)}</a>` : "(local)"} &middot; ${date} &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
-            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Real in-toto <code>Statement/v1</code> + SLSA provenance, DSSE ed25519-signed over this build's subjects + materials: <a href="/attestation.json">attestation.json</a> — verify against <a href="/attestation.pub">attestation.pub</a>.</p>
+            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Real in-toto <code>Statement/v1</code> + SLSA provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via Sigstore — a one-build Fulcio certificate minted from this workflow's GitHub OIDC identity, logged in the public <a href="https://search.sigstore.dev/">Rekor</a> transparency log. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to GHCR as a pullable, signed OCI artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact — not that the build was authorized.</p>
           </div>
         </li>
       </ol>
