@@ -235,6 +235,41 @@ With both in place the loop closes: a string can only reach the page by being an
 (move 1), and the gate proves no string slipped past (move 2). `string-audit` then audits
 **all** copy — because, by construction, all copy is now in the catalog it reads.
 
+### 6.3 Coverage status (what the gate enforces today)
+
+Move 1 (`copy(id)`) and move 2 (`scripts/copy-gate.mjs`) are live. `copy(id)` resolves
+`data/copy.json` and throws on an unknown id; the gate scans the **built `dist/` HTML**
+(body text + the `<head>` page title/description, incl. the og/twitter mirrors) and fails
+under `--strict` on any visible word not traceable to an atom. Routes are migrated and
+enforced incrementally — never partially in silence:
+
+| Surface | Status |
+|---|---|
+| `/` (homepage), `/resume` | **enforced** — body + `<head>` title/description |
+| `/provenance` | **enforced** — chrome (eyebrow, `prov.title`, `prov.lede`, `prov.chain.eyebrow`/`.lede`, footer) + `<head>`; chain step **names** + seal title are atoms (`prov.step.*`, `prov.seal.title`) |
+| `/blog` (index) | **enforced** — eyebrow/`nav.writing`, `blog.lede`, `blog.nav.rss`, nav (`nav.home`/`nav.github`), empty-state + `<head>` |
+| `/blog/<slug>` (posts) | **enforced** — eyebrow, syndication label, footer (`post.foot.*`) + `<head>`; post **title/description/tags** come from frontmatter (`contract/posts.schema.json`) |
+| `llms.txt` headers | **migrated** — `llms.links`, `llms.work`, `nav.writing` (via `copy()`) |
+
+**Region-exempt** (excluded from the body word-scan — documented, not silent): the
+`/provenance` `<ol class="prov-chain">` step **bodies** (long-form provenance narrative
+interleaved with build-computed digests/SHAs, links, and the `@@COMMIT@@`/`@@DATE@@` deploy
+stamps — not static atoms; their step names *are* atoms, enforced by `copy()`), and each
+post's `<div class="post__body e-content">` (prose rendered from the post's markdown — its
+own source, not UI chrome).
+
+**Deferred** (not yet migrated/scanned, with reason): `llms.txt` is not word-scanned (its
+body carries raw URLs + post slugs that are not copy and would false-positive); the
+`<head>` `<link rel="alternate">` `title` attributes — the feed title
+`Robert DeLanghe — Writing` (in `head()`, every page) and the `JSON Résumé
+(machine-readable)` alternate label — are alternate-resource metadata, not the page
+title/description; and the homepage footer literal `Robert DeLanghe · Bounded Systems`
+remains inline (word-covered by `name` + the brand org, so the word-level gate can't see
+it — the documented §6 limitation). A few atoms carry inline emphasis markup or a literal
+HTML entity (`prov.chain.lede`'s `<strong>`/`<em>`, `blog.nav.rss`'s `&nbsp;`,
+`prov.step.contracts`/`.gates`' `&middot;`): the atom holds the **exact rendered chrome
+string**, kept verbatim so output stays byte-identical.
+
 ## 7. Scope options
 
 ### Option A — Formalize in-repo: name the layer, lean on string-audit

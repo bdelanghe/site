@@ -1,5 +1,5 @@
 {
-  "_source": "atomic-copy — the site's user-facing UI chrome as addressable copy atoms (the verbal counterpart to design tokens; see docs/atomic-copy.md). Every static, human-readable string in build.mjs's templates that is NOT sourced from the content contracts (data/profile.json identity/résumé copy, data/presentation.json render-context slugs, data/site.json corpus) lives here, keyed by a stable dotted id and referenced via copy(id) in build.mjs. An unknown id throws and fails the build (like posts.mjs {{token}} transclusion); scripts/copy-gate.mjs scans the rendered homepage + résumé for any visible word not traceable to an atom. Validated against contract/copy.schema.json.",
+  "_source": "atomic-copy — the site's user-facing UI chrome as addressable copy atoms (the verbal counterpart to design tokens; see docs/atomic-copy.md). Every static, human-readable string in build.mjs's templates that is NOT sourced from the content contracts (data/profile.json identity/résumé copy, data/presentation.json render-context slugs, data/site.json corpus) lives here, keyed by a stable dotted id and referenced via copy(id) in build.mjs. An unknown id throws and fails the build (like posts.mjs {{token}} transclusion); scripts/copy-gate.mjs scans the rendered homepage, résumé, /provenance, /blog (index + posts) and the <head> meta (titles/descriptions) for any visible word not traceable to an atom. A few atoms carry inline emphasis markup or a literal HTML entity (e.g. prov.chain.lede's <strong>/<em>, blog.nav.rss's &nbsp;, prov.step.contracts' &middot;) — that is the EXACT rendered chrome string, kept verbatim for byte-identical output. Validated against contract/copy.schema.json.",
 
   "proof.prefix": "Proof —",
 
@@ -29,5 +29,34 @@
   "resume.section.skills": "Skills",
   "resume.section.experience": "Experience",
   "resume.section.projects": "Projects",
-  "resume.section.education": "Education"
+  "resume.section.education": "Education",
+
+  "nav.home": "Home",
+  "nav.writing": "Writing",
+  "nav.github": "GitHub",
+
+  "blog.lede": "On capability security for agentic systems — the thesis, graded against the running code.",
+  "blog.empty": "Notes are landing soon.",
+  "blog.nav.rss": "RSS&nbsp;feed",
+  "post.synd": "Also on:",
+  "post.foot.rss": "RSS",
+  "post.foot.all": "all writing",
+
+  "prov.title": "Provenance",
+  "prov.lede": "This site is built deterministically from versioned sources and validated at every boundary — the same discipline the work itself argues for. Here's what produced and checked this artifact.",
+  "prov.chain.eyebrow": "Provenance chain",
+  "prov.chain.lede": "The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.",
+  "prov.step.materials": "Materials",
+  "prov.step.contracts": "Process &middot; contracts",
+  "prov.step.gates": "Process &middot; gates",
+  "prov.step.builder": "Builder",
+  "prov.seal.title": "Subject — signed",
+
+  "head.resume.label": "Résumé",
+  "head.provenance.desc": "How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence.",
+  "head.blog.desc.lead": "Writing by",
+  "head.blog.desc.tail": "on capability security for agentic systems.",
+
+  "llms.links": "Links",
+  "llms.work": "Selected work"
 }
