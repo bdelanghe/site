@@ -34,7 +34,7 @@
 
 /* seeking callout */
 .seeking { margin-top: clamp(40px, 7vw, 64px); background: var(--bs-color-forest); border-radius: var(--bs-radius-lg); padding: 28px 32px; }
-.seeking__label { color: rgba(255, 255, 255, 0.6); margin: 0 0 10px; }
+.seeking__label { color: rgba(255, 255, 255, 0.72); margin: 0 0 10px; }
 .seeking__focus { font-family: var(--bs-font-display); font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--bs-color-white); margin: 0 0 8px; }
 .seeking__detail { font-size: 15px; line-height: 1.55; color: rgba(255, 255, 255, 0.82); margin: 0 0 16px; max-width: 60ch; }
 .seeking__cta { font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-white); text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, 0.4); padding-bottom: 2px; }
@@ -132,7 +132,7 @@
 .post__head { margin-bottom: clamp(24px, 5vw, 40px); }
 .post__head h1 { font-size: clamp(28px, 5vw, 40px); letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 0; }
 .post__meta { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin-top: 12px; }
-.post__meta a { color: var(--bs-color-forest); text-decoration: none; }
+.post__meta a { color: var(--bs-color-forest); text-decoration: underline; }
 .post__body { font-size: 17px; line-height: 1.65; color: var(--bs-color-ink); }
 .post__body h2 { font-size: 22px; letter-spacing: -0.01em; margin: 36px 0 12px; }
 .post__body h3 { font-size: 18px; margin: 28px 0 8px; }
