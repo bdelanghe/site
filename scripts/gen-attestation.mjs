@@ -30,7 +30,7 @@ const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_
 const provHtml = join(dist, "provenance.html");
 if (await exists(provHtml)) {
   const short = COMMIT ? COMMIT.slice(0, 7) : "(local)";
-  const commitLink = COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}">${short}</a>` : "(local)";
+  const commitLink = COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}" data-build-commit="${COMMIT}">${short}</a>` : "(local)";
   const stampDate = new Date().toISOString().slice(0, 10);
   let html = await readFile(provHtml, "utf8");
   html = html.replaceAll("@@COMMIT@@", commitLink).replaceAll("@@COMMIT_SHORT@@", short).replaceAll("@@DATE@@", stampDate);
