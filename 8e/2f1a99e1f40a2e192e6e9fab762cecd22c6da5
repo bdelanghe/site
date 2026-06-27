@@ -1,0 +1,29 @@
+build.mjs
+  s_6549ae8e2bd7a3::t_bbc6d2a0b40ea1 10
+  s_6549ae8e2bd7a3::t_0e7b179de6745e 37-48
+package.json
+  s_6549ae8e2bd7a3::t_8db951413a2908 16,20
+scripts/gen-attestation.mjs
+  s_6549ae8e2bd7a3::t_b79e92afbef3e3 18
+  s_6549ae8e2bd7a3::t_7288d020b0c805 60-74,90
+docs/css-token-purity.md
+  s_6549ae8e2bd7a3::t_6fdb1cb4b7e20b 3-9
+scripts/check-css.mjs
+  s_6549ae8e2bd7a3::t_2983405e48e4bd 1-105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "8e2f1a99e1f40a2e192e6e9fab762cecd22c6da5",
+  "prompts": {},
+  "sessions": {
+    "s_6549ae8e2bd7a3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "923ee5e5-fcc1-4e85-9832-bc22990b5f9a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
