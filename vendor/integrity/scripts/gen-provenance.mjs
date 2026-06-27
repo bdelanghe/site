@@ -56,6 +56,10 @@ const attIdx = await rekorIndex("attestation.intoto.json.sigstore.json");
 const provenance = {
   scope: "entire-site",
   fileCount,
+  // Machine-readable freshness. The authoritative timestamp is the Rekor entry's
+  // integratedTime (one click away at /rekor) — this is when the build that
+  // produced these bytes ran, surfaced so a verifier can report build age.
+  builtAt: new Date().toISOString(),
   builder: {
     repository: repo,
     commit: sha,
