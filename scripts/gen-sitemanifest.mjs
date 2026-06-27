@@ -24,6 +24,7 @@ const EXCLUDE = new Set([
   "provenance.json",
   "attestation.intoto.json",
   "attestation.intoto.json.sigstore.json",
+  "rekor/index.html",
 ]);
 
 async function walk(dir) {
