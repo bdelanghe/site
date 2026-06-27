@@ -94,6 +94,34 @@ const emailObf = email ? `${emailUser} [at] ${emailHost.replace(/\./g, " [dot] "
 const mailLink = ({ label = "", cls = "" } = {}) =>
   email ? `<a${cls ? ` class="${cls}"` : ""} data-mail="${esc(emailObf)}"${label ? "" : " data-show"}>${label || esc(emailObf)}</a>` : "";
 const EMAIL_SCRIPT = `<script>for(const a of document.querySelectorAll('a[data-mail]')){const m=a.getAttribute('data-mail').replace(' [at] ','@').replace(/ \\[dot\\] /g,'.');a.href='mailto:'+m;if(a.hasAttribute('data-show'))a.textContent=m;}</script>`;
+// On-load freshness probe for the /provenance seal: "are we the latest build?" in
+// two honest senses — your view vs the live deploy (signed baked-in commit vs a
+// fresh /provenance.json; same origin, a cache-freshness check not trust), and the
+// deploy vs source (vs the live tip of main via the GitHub API, an authority the
+// page doesn't run). JS-only; the signed stamp is the no-JS truth; silent on error.
+// Written with string concatenation (no backticks / ${}) so this template literal
+// doesn't interpolate it.
+const FRESHNESS_SCRIPT = `<script>(async()=>{
+  var el=document.getElementById("build-freshness"); if(!el) return;
+  var short=function(s){return String(s||"").slice(0,7);};
+  var ago=function(iso){var ms=Date.now()-Date.parse(iso); if(!isFinite(ms))return ""; return ms<36e5?Math.round(ms/6e4)+"m":ms<864e5?Math.round(ms/36e5)+"h":Math.round(ms/864e5)+"d";};
+  var show=function(t){el.textContent=t; el.hidden=false;};
+  try{
+    var prov=await (await fetch("/provenance.json",{cache:"no-store"})).json();
+    var deploy=(prov&&prov.builder&&prov.builder.commit)||"";
+    var repo=(prov&&prov.builder&&prov.builder.repository)||"bdelanghe/site";
+    var b=document.querySelector("[data-build-commit]");
+    var baked=b?b.getAttribute("data-build-commit"):"";
+    if(baked&&deploy&&baked!==deploy){show("↻ a newer build is live ("+short(deploy)+") — reload to update your view"); return;}
+    var bits=["commit "+short(deploy)];
+    if(prov&&prov.builtAt){var a=ago(prov.builtAt); if(a)bits.push("built "+a+" ago");}
+    try{
+      var res=await fetch("https://api.github.com/repos/"+repo+"/commits/main",{headers:{Accept:"application/vnd.github.sha"}});
+      if(res.ok){var head=(await res.text()).trim(); if(/^[0-9a-f]{40}$/.test(head))bits.push(head===deploy?"matches main":"main is at "+short(head));}
+    }catch(e){}
+    show("✓ this build · "+bits.join(" · "));
+  }catch(e){}
+})();</script>`;
 const education = canonical.education ?? [];
 const skills = canonical.skills ?? [];          // grouped: [{ name, keywords }]
 const projects = canonical.projects ?? [];
@@ -607,12 +635,14 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
             <p class="prov-seal__title">Subject — signed</p>
             <p class="prov-seal__meta">commit @@COMMIT@@ &middot; @@DATE@@ &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
             <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Real in-toto <code>Statement/v1</code> + SLSA provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via Sigstore — a one-build Fulcio certificate minted from this workflow's GitHub OIDC identity, logged in the public <a href="https://search.sigstore.dev/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to GHCR as a pullable, signed OCI artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact — not that the build was authorized.</p>
+            <p id="build-freshness" class="prov-seal__note" style="font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink-mono);" hidden></p>
           </div>
         </li>
       </ol>
     </section>
     <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">generated ${date}${commitHtml}</span></footer>
   </main>
+  ${FRESHNESS_SCRIPT}
 </body>
 </html>
 `;
