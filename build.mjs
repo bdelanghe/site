@@ -160,11 +160,24 @@ const commitHtml = COMMIT
   ? ` &middot; <a href="/provenance" title="build provenance report">${COMMIT.slice(0, 7)}</a>`
   : ` &middot; <a href="/provenance">provenance</a>`;
 
-// Fingerprint the site's own stylesheet so it can be cached immutably: the URL
-// changes when the content changes, so there's nothing stale to serve. The brand
-// CSS comes from the pinned submodule and keeps the short /* cache window.
+// Fingerprint CSS so it can be cached immutably: the URL changes when the content
+// changes, so there's nothing stale to serve. Covers the site's own stylesheet and
+// the always-loaded brand CSS (the render-blocking weight); brand is pinned via
+// flake.lock, so a bump changes content → new hash → new URL. Fonts keep stable
+// names + ETag — fonts.css's relative ./fonts/ url()s still resolve after rename.
 const stylesCss = await readFile(join(root, "styles.css"));
 const stylesHref = `/styles.${createHash("sha256").update(stylesCss).digest("hex").slice(0, 12)}.css`;
+
+const fpBrand = async (rel) => { // rel under brand/, e.g. "css/fonts.css"
+  const buf = await readFile(join(brand, rel));
+  const hash = createHash("sha256").update(buf).digest("hex").slice(0, 12);
+  const i = rel.lastIndexOf(".");
+  const fpRel = `${rel.slice(0, i)}.${hash}${rel.slice(i)}`;
+  return { rel, fpRel, href: `/brand/${fpRel}`, buf };
+};
+const bFonts = await fpBrand("css/fonts.css");
+const bTokens = await fpBrand("tokens/tokens.css");
+const bBase = await fpBrand("css/base.css");
 
 const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType = "website", ogImage = OG_IMAGE }) => {
   const url = SITE + path, t = esc(title), d = esc(description), ot = esc(ogTitle ?? title), img = ogImage.startsWith("http") ? ogImage : SITE + ogImage;
@@ -193,9 +206,9 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <link rel="alternate" type="application/atom+xml" title="Robert DeLanghe — Writing" href="/feed.xml">
   <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${social.map((s) => `
   <link rel="me" href="${esc(s.url)}">`).join("")}
-  <link rel="stylesheet" href="/brand/css/fonts.css">
-  <link rel="stylesheet" href="/brand/tokens/tokens.css">${appCss ? `
-  <link rel="stylesheet" href="/brand/css/base.css">
+  <link rel="stylesheet" href="${bFonts.href}">
+  <link rel="stylesheet" href="${bTokens.href}">${appCss ? `
+  <link rel="stylesheet" href="${bBase.href}">
   <link rel="stylesheet" href="${stylesHref}">` : ""}`;
 };
 // One source for identity: basics.profiles → sameAs (JSON-LD), rel=me (head), footer.
@@ -588,8 +601,12 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
 </html>
 `;
 await writeHtml("provenance.html", provHtml);
-// 404.html is a static template; rewrite its stylesheet ref to the fingerprinted name.
-await writeFile(join(dist, "404.html"), (await readFile(join(root, "404.html"), "utf8")).replace("/styles.css", stylesHref));
+// 404.html is a static template; rewrite its stylesheet refs to the fingerprinted names.
+{
+  let h404 = await readFile(join(root, "404.html"), "utf8");
+  for (const [from, to] of [["/styles.css", stylesHref], ["/brand/css/fonts.css", bFonts.href], ["/brand/tokens/tokens.css", bTokens.href], ["/brand/css/base.css", bBase.href]]) h404 = h404.replace(from, to);
+  await writeFile(join(dist, "404.html"), h404);
+}
 
 // ---- /blog: index (h-feed) + per-post pages (h-entry) from posts/*.md ---------
 // Public URL is extensionless (Cloudflare serves /blog/<slug> and 307s the .html
@@ -718,6 +735,12 @@ await mkdir(join(dist, "brand"), { recursive: true });
 for (const p of ["tokens/tokens.css", "css", "lockup", "mark", "favicon-32.png"]) {
   await cp(join(brand, p), join(dist, "brand", p), { recursive: true });
 }
+// Replace the copied brand CSS with fingerprinted names (immutable-cacheable); the
+// originals aren't referenced anywhere, so drop them. Fonts dir is untouched.
+for (const f of [bFonts, bTokens, bBase]) {
+  await writeFile(join(dist, "brand", f.fpRel), f.buf);
+  await rm(join(dist, "brand", f.rel));
+}
 
 // ---- agent + crawler affordances, from the same contract ----------------------
 const llms = `# ${name}
@@ -751,6 +774,8 @@ const htmlRoutes = ["/", "/resume", "/blog", "/provenance", ...posts.map(postUrl
 await writeFile(join(dist, "_headers"),
   htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600`).join("\n") +
   `\n/styles.*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
+  `/brand/css/*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
+  `/brand/tokens/*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
   `/*.txt\n  Content-Type: text/plain; charset=utf-8\n` +
   `/*.pub\n  Content-Type: text/plain; charset=utf-8\n`);
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
