@@ -59,6 +59,23 @@ const canonical = await validateContract("profile", "jsonresume");
 const presentation = await validateContract("presentation");
 const profile = { ...canonical, ...presentation };
 
+// atomic-copy — the verbal token layer (counterpart to the brand design tokens; see
+// docs/atomic-copy.md). data/copy.json holds the site's static UI chrome (eyebrows,
+// section headings, figure labels, fixed prose connectors, button labels) as addressable
+// copy atoms keyed by a stable dotted id. copy(id) resolves an atom and THROWS on an
+// unknown id — exactly like posts.mjs interpolate({{token}}) — so a template can't
+// reference copy that isn't sourced, the verbal analogue of an undefined CSS variable.
+// Content that derives from the contracts (profile/presentation/site) is NOT duplicated
+// here; scripts/copy-gate.mjs proves every visible word on the homepage + résumé traces
+// to an atom.
+const copyAtoms = await validateContract("copy");
+const copy = (id) => {
+  if (!Object.prototype.hasOwnProperty.call(copyAtoms, id) || id === "_source") {
+    throw new Error(`copy: unknown atom id "${id}" — every user-facing string must be a copy atom in data/copy.json`);
+  }
+  return copyAtoms[id];
+};
+
 // JSON Resume field aliases — keep the templates readable (basics.* / work / etc.).
 const basics = canonical.basics ?? {};
 const name = basics.name, role = basics.label, headline = basics.headline, summary = basics.summary, email = basics.email;
@@ -134,7 +151,7 @@ const linksHtml = profile.links
   .join("\n        ");
 
 const proofHtml = proof.length
-  ? `<p class="proof">Proof — ${proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
+  ? `<p class="proof">${copy("proof.prefix")} ${proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
   : "";
 
 // Colophon — "built with": the upstream tools that produce + validate this site,
@@ -142,11 +159,11 @@ const proofHtml = proof.length
 // upstream. Lives at the foot of the page: discovered after the work, not before it.
 const colophonHtml = profile.colophon?.length
   ? `<section class="colophon">
-      <h2 class="bs-text-label eyebrow">Built with</h2>
+      <h2 class="bs-text-label eyebrow">${copy("colophon.eyebrow")}</h2>
       <ul class="colophon__list">
         ${profile.colophon.map((c) => `<li><a href="${esc(c.href)}"><span class="colophon__name">${esc(c.name)}</span>${c.role ? `<span class="colophon__role">${esc(c.role)}</span>` : ""}</a></li>`).join("\n        ")}
       </ul>
-      <p class="colophon__more">Hermetic Nix build · keyless-signed in-toto/SLSA provenance (Sigstore · Rekor · GHCR) — <a href="/provenance">full provenance</a></p>
+      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a></p>
     </section>`
   : "";
 
@@ -158,7 +175,7 @@ const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
 const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
 const commitHtml = COMMIT
   ? ` &middot; <a href="/provenance" title="build provenance report">${COMMIT.slice(0, 7)}</a>`
-  : ` &middot; <a href="/provenance">provenance</a>`;
+  : ` &middot; <a href="/provenance">${copy("footer.provenance")}</a>`;
 
 // Fingerprint CSS so it can be cached immutably: the URL changes when the content
 // changes, so there's nothing stale to serve. Covers the site's own stylesheet and
@@ -243,9 +260,9 @@ const edu = education;
 const backgroundHtml =
   exp.length || edu.length
     ? `<section class="bg">
-      <h2 class="bs-text-label eyebrow">Background</h2>
+      <h2 class="bs-text-label eyebrow">${copy("background.eyebrow")}</h2>
       ${exp.length ? `<ul class="entries">\n        ${exp.map(entry).join("\n        ")}\n      </ul>` : ""}
-      ${edu.length ? `<p class="bg__sub bs-text-label">Education</p>\n      <ul class="entries">\n        ${edu.map(eduEntry).join("\n        ")}\n      </ul>` : ""}
+      ${edu.length ? `<p class="bg__sub bs-text-label">${copy("background.education")}</p>\n      <ul class="entries">\n        ${edu.map(eduEntry).join("\n        ")}\n      </ul>` : ""}
     </section>`
     : "";
 
@@ -327,7 +344,7 @@ const card = (h) => {
   const topics = (h.topics || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
   return `<li class="proj">
           <a href="${esc(h.url)}">
-            <div class="proj__top"><span class="proj__name">${esc(h.name)}</span>${h.pinned ? '<span class="proj__pin">pinned</span>' : ""}</div>
+            <div class="proj__top"><span class="proj__name">${esc(h.name)}</span>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}</div>
             <p class="proj__desc">${esc(h.description)}</p>
             <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}${topics}</div>
           </a>
@@ -376,12 +393,12 @@ const html = `<!doctype html>
     ${backgroundHtml}
 
     <section class="corpus">
-      <h2 class="bs-text-label eyebrow">The corpus</h2>
+      <h2 class="bs-text-label eyebrow">${copy("corpus.eyebrow")}</h2>
       <div class="figures">
-        <div class="fig"><span class="fig__n">${stats.repos}</span><span class="fig__k">repositories</span></div>
-        <div class="fig"><span class="fig__n">${stats.public}</span><span class="fig__k">public</span></div>
-        <div class="fig"><span class="fig__n">${stats.sources}</span><span class="fig__k">sources</span></div>
-        <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">languages</span></div>
+        <div class="fig"><span class="fig__n">${stats.repos}</span><span class="fig__k">${copy("corpus.fig.repositories")}</span></div>
+        <div class="fig"><span class="fig__n">${stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></div>
+        <div class="fig"><span class="fig__n">${stats.sources}</span><span class="fig__k">${copy("corpus.fig.sources")}</span></div>
+        <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
       </div>
       <div class="bars">
         ${langBars}
@@ -390,14 +407,14 @@ const html = `<!doctype html>
         ${topicChips}
       </div>
       <p class="corpus__src">
-        Computed from <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
-        &middot; <a href="https://github.com/bdelanghe?tab=stars">starred work</a>
-        &middot; topics kept honest by <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
+        ${copy("corpus.source.computed")} <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
+        &middot; <a href="https://github.com/bdelanghe?tab=stars">${copy("corpus.source.starred")}</a>
+        &middot; ${copy("corpus.source.topics")} <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
       </p>
     </section>
 
     <section class="work">
-      <h2 class="bs-text-label eyebrow">Selected work — by tag</h2>
+      <h2 class="bs-text-label eyebrow">${copy("work.eyebrow")}</h2>
       ${workGroups}
     </section>
 
@@ -406,7 +423,7 @@ const html = `<!doctype html>
     <footer class="foot">
       <span>Robert DeLanghe &middot; Bounded Systems</span>
       ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
-      <span class="foot__meta">github.com/bdelanghe &middot; generated ${date}${commitHtml}</span>
+      <span class="foot__meta">github.com/bdelanghe &middot; ${copy("footer.generated")} ${date}${commitHtml}</span>
     </footer>
   </main>
   ${EMAIL_SCRIPT}
@@ -549,13 +566,13 @@ ${jsonLd}
     <h1>${esc(name)}</h1>
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline.replace(/\.$/, ""))}` : ""}</p>
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
-    <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">Download PDF&nbsp;&darr;</a>
+    <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
   </header>
   <p class="r-summary">${esc(summary)}</p>
-  ${rSkills ? `<h2>Skills</h2>${rSkills}` : ""}
-  <h2>Experience</h2>${rExp}
-  ${projects.length ? `<h2>Projects</h2>${rProjects}` : ""}
-  <h2>Education</h2>${rEdu}
+  ${rSkills ? `<h2>${copy("resume.section.skills")}</h2>${rSkills}` : ""}
+  <h2>${copy("resume.section.experience")}</h2>${rExp}
+  ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
+  <h2>${copy("resume.section.education")}</h2>${rEdu}
   </main>
   ${EMAIL_SCRIPT}
 </body>

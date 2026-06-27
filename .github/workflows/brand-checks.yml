@@ -22,6 +22,8 @@ jobs:
           node-version: "22"
       - name: Build dist/
         run: node build.mjs
+      - name: atomic-copy gate (every visible word on / + /resume is a copy atom)
+        run: node scripts/copy-gate.mjs --strict
       - name: No hardcoded colours (all colours are tokens)
         run: node brand/tools/coverage.mjs --colors --check dist
       - name: Content tokens (schema + Gherkin + lint)

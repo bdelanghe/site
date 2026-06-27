@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://robertdelanghe.dev/contract/copy.schema.json",
+  "title": "atomic-copy / UI copy contract",
+  "description": "data/copy.json — the site's user-facing UI chrome as copy atoms: the verbal counterpart to the brand design tokens (see docs/atomic-copy.md). Each property (other than _source) is a copy atom: a stable dotted id (e.g. corpus.eyebrow, work.eyebrow, colophon.eyebrow, proof.prefix, resume.section.skills) mapped to its exact rendered string. build.mjs resolves them via copy(id), which throws on an unknown id, so a template can't reference an atom that doesn't exist — the verbal analogue of an undefined CSS custom property. Holds only static chrome (eyebrows, section headings, figure labels, fixed prose connectors, button labels) — copy that derives from the content contracts (profile.json / presentation.json / site.json) is NOT duplicated here.",
+  "type": "object",
+  "additionalProperties": {
+    "type": "string",
+    "pattern": "\\S",
+    "description": "A copy atom — the exact, non-empty rendered string for its dotted id."
+  },
+  "properties": {
+    "_source": {
+      "type": "string",
+      "description": "Provenance note for human editors. Not a copy atom."
+    }
+  }
+}
