@@ -92,4 +92,3 @@ log(mismatches === 0, `${entries.length} files match the signed manifest${mismat
 
 console.log(failures ? `\n✗ verification FAILED (${failures})` : `\n✓ verified: served bytes match this build's signed provenance`);
 process.exit(failures ? 1 : 0);
-// tampered

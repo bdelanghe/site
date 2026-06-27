@@ -263,9 +263,15 @@ const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 // (pure — file hashes + the brand version, no git/network).
 const sha256File = async (p) => "sha256:" + createHash("sha256").update(await readFile(p)).digest("hex");
 const brandPkg = (await exists(join(brand, "package.json"))) ? await loadJson(join(brand, "package.json")) : {};
+// Pin the brand to the exact commit flake.lock locks (a real sha), not just its
+// version tag. flake.lock is a build input, so this stays hermetic.
+const flakeLock = (await exists(join(root, "flake.lock"))) ? await loadJson(join(root, "flake.lock")) : {};
+const brandRev = flakeLock?.nodes?.brand?.locked?.rev || "";
 const materials = [
-  { name: "git+github.com/bdelanghe/site", id: COMMIT ? COMMIT.slice(0, 7) : "(local)" },
-  { name: "@bounded-systems/brand", id: brandPkg.version ? `v${brandPkg.version}` : "(submodule)" },
+  // The source commit isn't known in the hermetic build; gen-attestation.mjs
+  // stamps @@COMMIT_SHORT@@ at deploy time (when GITHUB_SHA is set).
+  { name: "git+github.com/bdelanghe/site", id: "@@COMMIT_SHORT@@" },
+  { name: "@bounded-systems/brand", id: brandRev ? brandRev.slice(0, 9) : (brandPkg.version ? `v${brandPkg.version}` : "(submodule)") },
   { name: "data/profile.json", id: (await sha256File(join(root, "data", "profile.json"))).slice(0, 18) + "…" },
   { name: "data/presentation.json", id: (await sha256File(join(root, "data", "presentation.json"))).slice(0, 18) + "…" },
   { name: "data/site.json", id: (await sha256File(join(root, "data", "site.json"))).slice(0, 18) + "…" },
@@ -565,22 +571,15 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
         <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
         <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
         <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
-        <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandPkg.version ? ` v${brandPkg.version}` : ""}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
+        <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
             <p class="prov-seal__title">Subject — signed</p>
-            <p class="prov-seal__meta">commit ${COMMIT ? `<a href="https://github.com/bdelanghe/site/commit/${COMMIT}">${COMMIT.slice(0, 7)}</a>` : "(local)"} &middot; ${date} &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
+            <p class="prov-seal__meta">commit @@COMMIT@@ &middot; @@DATE@@ &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
             <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Real in-toto <code>Statement/v1</code> + SLSA provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via Sigstore — a one-build Fulcio certificate minted from this workflow's GitHub OIDC identity, logged in the public <a href="https://search.sigstore.dev/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to GHCR as a pullable, signed OCI artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact — not that the build was authorized.</p>
           </div>
         </li>
       </ol>
-    </section>
-    <section class="bg">
-      <h2 class="bs-text-label eyebrow">Claims &rarr; evidence</h2>
-      <p class="lead">Every hero claim points at the running code that backs it.</p>
-      <ul class="prov-evidence">
-        ${(proof ?? []).map((p) => `<li><a href="${esc(p.href)}">${esc(p.label)}&nbsp;&#8599;</a></li>`).join("\n        ")}
-      </ul>
     </section>
     <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">generated ${date}${commitHtml}</span></footer>
   </main>
