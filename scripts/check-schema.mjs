@@ -5,6 +5,7 @@
 //
 // - data/profile.json      → the canonical résumé, against the JSON Resume schema.
 // - data/presentation.json → the homepage render context, against its own schema.
+// - data/copy.json         → the atomic-copy UI atoms, against the copy contract.
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,6 +17,7 @@ const j = async (p) => JSON.parse(await readFile(join(root, p), "utf8"));
 const checks = [
   ["data/profile.json", "contract/jsonresume.schema.json"],
   ["data/presentation.json", "contract/presentation.schema.json"],
+  ["data/copy.json", "contract/copy.schema.json"],
 ];
 
 let bad = 0;

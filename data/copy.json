@@ -1,0 +1,33 @@
+{
+  "_source": "atomic-copy — the site's user-facing UI chrome as addressable copy atoms (the verbal counterpart to design tokens; see docs/atomic-copy.md). Every static, human-readable string in build.mjs's templates that is NOT sourced from the content contracts (data/profile.json identity/résumé copy, data/presentation.json render-context slugs, data/site.json corpus) lives here, keyed by a stable dotted id and referenced via copy(id) in build.mjs. An unknown id throws and fails the build (like posts.mjs {{token}} transclusion); scripts/copy-gate.mjs scans the rendered homepage + résumé for any visible word not traceable to an atom. Validated against contract/copy.schema.json.",
+
+  "proof.prefix": "Proof —",
+
+  "background.eyebrow": "Background",
+  "background.education": "Education",
+
+  "corpus.eyebrow": "The corpus",
+  "corpus.fig.repositories": "repositories",
+  "corpus.fig.public": "public",
+  "corpus.fig.sources": "sources",
+  "corpus.fig.languages": "languages",
+  "corpus.source.computed": "Computed from",
+  "corpus.source.starred": "starred work",
+  "corpus.source.topics": "topics kept honest by",
+
+  "work.eyebrow": "Selected work — by tag",
+  "work.pinned": "pinned",
+
+  "colophon.eyebrow": "Built with",
+  "colophon.more": "Hermetic Nix build · keyless-signed in-toto/SLSA provenance (Sigstore · Rekor · GHCR) —",
+  "colophon.provenance": "full provenance",
+
+  "footer.generated": "generated",
+  "footer.provenance": "provenance",
+
+  "resume.download": "Download PDF",
+  "resume.section.skills": "Skills",
+  "resume.section.experience": "Experience",
+  "resume.section.projects": "Projects",
+  "resume.section.education": "Education"
+}
