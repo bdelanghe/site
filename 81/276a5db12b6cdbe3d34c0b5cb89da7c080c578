@@ -1,0 +1,25 @@
+docs/atomic-copy.md
+  s_98e316d0b3248a::t_2e1c05a5a4246b 89,91-94,96
+  s_98e316d0b3248a::t_be3cc23d60fba8 163,169-173,175-238
+  s_98e316d0b3248a::t_58589d8cafa71c 111
+  s_98e316d0b3248a::t_f39654bf72e889 278,280-283,287-290,293-295,301-302,304,308-309,312-315,319-322
+  s_98e316d0b3248a::t_8dd7f827ff2879 8-11,13-39
+  s_98e316d0b3248a::t_01987644d3bcfb 58
+  s_98e316d0b3248a::t_84ed4b8fe65f1b 135
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "81276a5db12b6cdbe3d34c0b5cb89da7c080c578",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
