@@ -1,0 +1,55 @@
+build.mjs
+  s_98e316d0b3248a::t_3abaed5064c263 569
+  s_98e316d0b3248a::t_07ce08658724b1 572-575
+  s_98e316d0b3248a::t_a096938d0442e7 410-412
+  s_98e316d0b3248a::t_76f680b577cefe 62-78
+  s_98e316d0b3248a::t_6946ab389e5e30 347
+  s_98e316d0b3248a::t_32ddcfb35f056e 263
+  s_98e316d0b3248a::t_ec73d11aabcc40 178
+  s_98e316d0b3248a::t_3dda495a810989 417
+  s_98e316d0b3248a::t_e53caba802d023 265
+  s_98e316d0b3248a::t_5dc8f53d7b0afd 154
+  s_98e316d0b3248a::t_e51c835c255fb7 162,166
+  s_98e316d0b3248a::t_0dd1f53a533c17 396,398-401
+  s_98e316d0b3248a::t_0058fd465f419e 426
+scripts/check-schema.mjs
+  s_98e316d0b3248a::t_65a68cdf6240e8 20
+  s_98e316d0b3248a::t_4e16294d836912 8
+package.json
+  s_98e316d0b3248a::t_bdc23bded8310e 16
+data/copy.json
+  s_98e316d0b3248a::t_a4df76c8224ea9 22
+  s_98e316d0b3248a::t_89bbbc1507c9e2 19-21
+  s_98e316d0b3248a::t_993541bbdecd45 23-25
+  s_0de788b71c7d0b::t_7fd7aadd9c23bb 1-18,26-33
+.github/workflows/brand-checks.yml
+  s_98e316d0b3248a::t_8fdffa8b400009 25-26
+contract/copy.schema.json
+  s_0de788b71c7d0b::t_0521e45023ab50 1-18
+scripts/copy-gate.mjs
+  s_0de788b71c7d0b::t_42bd4c873012c0 1-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "86fd2ebbad465f05a30a857b5f6b0fd327adb8a7",
+  "prompts": {},
+  "sessions": {
+    "s_0de788b71c7d0b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a6c254c2f6668c752",
+        "model": "unknown"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    },
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
