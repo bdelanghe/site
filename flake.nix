@@ -50,6 +50,13 @@
           default = pkgs.mkShell {
             packages = [ pkgs.nodejs_22 pkgs.wrangler ];
           };
+          # Deploy shell: adds cosign (keyless signing) + oras (push the built
+          # site to GHCR as an OCI artifact). Used by .github/workflows/deploy.yml.
+          # Pinned here via flake.lock alongside wrangler — the deploy toolchain
+          # stays reproducible, no unpinned `nix run nixpkgs#…`.
+          deploy = pkgs.mkShell {
+            packages = [ pkgs.nodejs_22 pkgs.wrangler pkgs.cosign pkgs.oras ];
+          };
         });
     };
 }

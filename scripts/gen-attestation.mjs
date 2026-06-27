@@ -1,13 +1,18 @@
 #!/usr/bin/env node
-// Emit a real, verifiable in-toto / SLSA provenance attestation for the build —
-// DSSE-signed with ed25519, zero-dep (node:crypto), so the site stays dependency-free
-// and nix-clean. Runs AFTER build.mjs (operates on dist/). Writes:
-//   dist/attestation.json  — the signed DSSE envelope (hosted at /attestation.json)
-//   dist/attestation.pub   — the ed25519 public key (verify the envelope against it)
-// Key: $ATTEST_KEY (pkcs8 PEM) for a stable identity; else an ephemeral per-build key
-// (still self-verifiable — the matching pubkey is published alongside).
+// Emit a real in-toto / SLSA provenance STATEMENT for the build — the rich
+// predicate (hermetic subjects + content-addressed materials), zero-dep
+// (node:crypto for digests only). Runs AFTER build.mjs (operates on dist/),
+// BEFORE the non-deterministic resume.pdf, so its subjects stay reproducible.
+// Writes:
+//   dist/attestation.intoto.json — the unsigned in-toto Statement/v1
+//
+// It is NOT signed here. Signing is keyless, in CI: cosign sign-blob mints a
+// short-lived Fulcio cert from the GitHub Actions OIDC identity and logs the
+// signature in Rekor (dist/attestation.intoto.json.sigstore.json). That retires
+// the old self-managed ed25519 key — there is no key to hold, the signature is
+// bound to a verifiable identity, and forgeries are publicly monitorable.
 import { readFile, writeFile, access } from "node:fs/promises";
-import { createHash, generateKeyPairSync, sign, verify, createPrivateKey, createPublicKey } from "node:crypto";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -50,19 +55,8 @@ const statement = {
   },
 };
 
-// DSSE: sign the PAE of the payload, attach the signature
-const payloadType = "application/vnd.in-toto+json";
-const payload = Buffer.from(JSON.stringify(statement), "utf8");
-const pae = Buffer.concat([Buffer.from(`DSSEv1 ${Buffer.byteLength(payloadType)} ${payloadType} ${payload.length} `, "utf8"), payload]);
-
-let priv, pub;
-if (process.env.ATTEST_KEY) { priv = createPrivateKey(process.env.ATTEST_KEY); pub = createPublicKey(priv); }
-else { const kp = generateKeyPairSync("ed25519"); priv = kp.privateKey; pub = kp.publicKey; }
-const keyid = sha256(pub.export({ type: "spki", format: "der" })); // sha256 of SPKI DER
-const sig = sign(null, pae, priv); // ed25519
-if (!verify(null, pae, pub, sig)) { console.error("✗ attestation self-verify failed"); process.exit(1); } // fail-closed
-
-const envelope = { payloadType, payload: payload.toString("base64"), signatures: [{ keyid, sig: sig.toString("base64") }] };
-await writeFile(join(dist, "attestation.json"), JSON.stringify(envelope, null, 2) + "\n");
-await writeFile(join(dist, "attestation.pub"), pub.export({ type: "spki", format: "pem" }));
-console.log(`✓ attestation: ${subject.length} subjects · ${materials.length} materials · keyid ${keyid.slice(0, 12)}…${process.env.ATTEST_KEY ? "" : " (ephemeral key)"}`);
+// Write the unsigned in-toto Statement/v1. cosign keyless-signs this file in CI
+// (see .github/workflows/deploy.yml); the signature + Rekor proof live in the
+// sidecar bundle, bound to the GitHub Actions OIDC identity — no held key.
+await writeFile(join(dist, "attestation.intoto.json"), JSON.stringify(statement, null, 2) + "\n");
+console.log(`✓ attestation statement: ${subject.length} subjects · ${materials.length} materials → dist/attestation.intoto.json (keyless-signed in CI)`);

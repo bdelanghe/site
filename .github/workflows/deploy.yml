@@ -1,10 +1,14 @@
 name: deploy
 
-# Primary deploy: one repo-owned, hermetic pipeline. nix build (nodejs + brand
-# pinned by flake.lock) → sign a real in-toto/SLSA attestation → wrangler deploy.
-# The builder is THIS workflow (an honest SLSA builder id); ATTEST_KEY lives in one
-# place (GitHub secrets). Disconnect Cloudflare's Workers Builds Git App so the two
-# don't double-deploy.
+# Two-phase, promote-the-artifact pipeline:
+#   build   — hermetic nix build → keyless-sign the in-toto/SLSA statement and
+#             the whole-site manifest (Sigstore/Rekor, no held key) → publish a
+#             SIGNED, fully-deployable OCI artifact to GHCR.
+#   deploy  — pull THAT artifact, cosign-verify it, and wrangler-deploy exactly
+#             those bytes. Prod serves the signed artifact by construction.
+#             Fail-closed: a signing/verify failure blocks the deploy, and the
+#             edge check asserts the provenance reached prod. Disconnect
+#             Cloudflare's Workers Builds Git App so the two don't double-deploy.
 on:
   push:
     branches: [main]
@@ -12,14 +16,18 @@ on:
 
 permissions:
   contents: read
+  id-token: write # OIDC: lets cosign mint a keyless Fulcio cert for build provenance
+  packages: write # push the built site to GHCR as a signed OCI artifact
 
 concurrency:
   group: deploy
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      oci: ${{ steps.publish.outputs.oci }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -27,22 +35,29 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
       - name: Build (nix, reproducible)
         run: nix build .#site -L
-      - name: Stage dist for wrangler
+      - name: Stage dist
         run: cp -rL result dist && chmod -R u+w dist
-      - name: Sign provenance attestation
-        # The nix build is hermetic (no secret, no randomness), so signing happens
-        # here on the staged dist/ — with the stable key when ATTEST_KEY is set.
-        run: nix develop --command node scripts/gen-attestation.mjs
+
+      # In-toto/SLSA statement over the hermetic subjects, keyless-signed (cosign
+      # sign-blob → Fulcio cert from the Actions OIDC identity → Rekor). No stored
+      # key. BEFORE resume.pdf so the statement's subjects stay reproducible.
+      - name: Sign provenance statement (keyless Sigstore)
+        run: |
+          nix develop .#deploy --command bash -euo pipefail -c '
+            node scripts/gen-attestation.mjs
+            cosign sign-blob --yes \
+              --bundle dist/attestation.intoto.json.sigstore.json \
+              dist/attestation.intoto.json
+          '
         env:
-          ATTEST_KEY: ${{ secrets.ATTEST_KEY }}
           GITHUB_SHA: ${{ github.sha }}
+
       - name: Render static resume PDF (headless Chrome)
-        # Rendered from the built page AFTER attestation: Chrome output is
-        # non-deterministic + impure, so it stays out of the hermetic nix build
-        # and the signed attestation — same posture as cards.yml. Served as a
-        # static /resume.pdf, regenerated every deploy so it never drifts from
-        # the live page. Chrome is preinstalled on the runner; a tiny local
-        # server lets the page's absolute /brand asset paths resolve.
+        # Rendered from the built page AFTER the in-toto statement: Chrome output
+        # is non-deterministic + impure, so it stays out of the hermetic nix build
+        # and that statement. It IS covered by the whole-site manifest below (the
+        # honest record of the served bytes). Chrome is preinstalled on the runner;
+        # a tiny local server lets absolute /brand asset paths resolve.
         run: |
           python3 -m http.server 8099 --directory dist &
           srv=$!
@@ -52,7 +67,84 @@ jobs:
             --print-to-pdf=dist/resume.pdf http://127.0.0.1:8099/resume.html
           kill "$srv" 2>/dev/null || true
           ls -la dist/resume.pdf
+
+      # Content-address the whole served site (resume.pdf included), keyless-sign
+      # that manifest, write /provenance.json, then publish the WHOLE dist/ (site
+      # + provenance sidecars) to GHCR as one signed, deployable OCI artifact.
+      - name: Sign + publish the signed OCI artifact (keyless Sigstore → GHCR)
+        id: publish
+        env:
+          GHCR_REPO: ghcr.io/bdelanghe/robertdelanghe-dev
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_WORKFLOW_REF: ${{ github.workflow_ref }}
+        run: |
+          nix develop .#deploy --command bash -euo pipefail -c '
+            short=$(printf "%s" "$GITHUB_SHA" | cut -c1-7)
+            node scripts/gen-sitemanifest.mjs
+            cosign sign-blob --yes --bundle dist/site.sha256.sigstore.json dist/site.sha256
+            OCI_REF="$GHCR_REPO:$short" node scripts/gen-provenance.mjs
+            tar --sort=name --owner=0 --group=0 --numeric-owner --mtime=@0 -C dist -cf site.tar .
+            gzip -n -f site.tar
+            printf "%s" "$GITHUB_TOKEN" | oras login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            oras push "$GHCR_REPO:$short" \
+              --artifact-type application/vnd.robertdelanghe.site.v1+gzip \
+              site.tar.gz:application/gzip | tee oras-push.log
+            oras tag "$GHCR_REPO:$short" latest
+            digest=$(awk "/Digest:/ {print \$2}" oras-push.log)
+            printf "%s" "$GITHUB_TOKEN" | cosign login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            cosign sign --yes "$GHCR_REPO@$digest"
+            echo "oci=$GHCR_REPO@$digest" >> "$GITHUB_OUTPUT"
+          '
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && needs.build.outputs.oci != ''
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
+
+      # Promote: pull the SIGNED artifact, verify its keyless signature against
+      # this repo's identity, unpack exactly those bytes. Verify failure → no ship.
+      - name: Pull + verify the signed OCI artifact
+        env:
+          OCI: ${{ needs.build.outputs.oci }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          nix develop .#deploy --command bash -euo pipefail -c '
+            printf "%s" "$GITHUB_TOKEN" | cosign login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            cosign verify "$OCI" \
+              --certificate-identity-regexp "^https://github.com/bdelanghe/site/" \
+              --certificate-oidc-issuer https://token.actions.githubusercontent.com > /dev/null
+            printf "%s" "$GITHUB_TOKEN" | oras login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            rm -rf oci-out dist && mkdir -p oci-out dist
+            oras pull "$OCI" -o oci-out
+            tar -xzf oci-out/site.tar.gz -C dist
+          '
+
       - name: Deploy to Cloudflare Workers
-        run: nix develop --command wrangler deploy
+        run: nix develop .#deploy --command wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      # Assert the provenance reached prod (byte-identical manifest + provenance.json).
+      - name: Verify prod serves the signed provenance
+        run: |
+          expected=$(sha256sum dist/site.sha256 | cut -d' ' -f1)
+          echo "expected site.sha256=$expected"
+          for i in 1 2 3 4 5; do
+            live=$(curl -fsS https://robertdelanghe.dev/site.sha256 | sha256sum | cut -d' ' -f1) || live="(fetch failed)"
+            code=$(curl -fsS -o /dev/null -w '%{http_code}' https://robertdelanghe.dev/provenance.json) || code="000"
+            if [ "$live" = "$expected" ] && [ "$code" = "200" ]; then
+              echo "prod serves the freshly-signed whole-site manifest + provenance.json ✓"
+              exit 0
+            fi
+            echo "edge not fresh yet (attempt $i/5): manifest=$live provenance=$code"
+            sleep 10
+          done
+          echo "::error::prod is not serving the freshly-signed provenance (manifest or provenance.json)"
+          exit 1
