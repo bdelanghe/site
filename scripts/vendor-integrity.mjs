@@ -26,6 +26,10 @@ const FILES = [
   "structure-audit/audit.mjs",
   "structure-audit/package.json",
   "structure-audit/package-lock.json",
+  // verify tenant — the standalone sigstore-js verifier (its own deps).
+  "verify/verify.mjs",
+  "verify/package.json",
+  "verify/package-lock.json",
 ];
 const sha256 = (buf) => "sha256:" + createHash("sha256").update(buf).digest("hex");
 

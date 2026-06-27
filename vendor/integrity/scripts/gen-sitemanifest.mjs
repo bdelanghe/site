@@ -30,6 +30,13 @@ const EXCLUDE = new Set([
   "rekor/index.html",
   "attestation.intoto.json",
   "attestation.intoto.json.sigstore.json",
+  // Platform control files: consumed by the host (Cloudflare Pages), never served
+  // as content — so they don't belong in a manifest of SERVED bytes (a verifier
+  // re-hashing the live site 404s on them). Still covered by the OCI artifact
+  // signature, which packs the whole dist. bounded.tools has none; bd-site emits _headers.
+  "_headers",
+  "_redirects",
+  "_routes.json",
 ]);
 
 async function walk(dir) {
