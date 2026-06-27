@@ -1,6 +1,12 @@
 # RFC: css-token-purity — no color escapes the design system
 
-**Status:** Draft · **Owner:** Robert DeLanghe · **Scope:** robertdelanghe.dev (and the wider Bounded Systems sites)
+**Status:** Implemented (2026-06-27) · **Owner:** Robert DeLanghe · **Scope:** robertdelanghe.dev (and the wider Bounded Systems sites)
+
+> **Live.** `scripts/check-css.mjs` runs inside `build.mjs` (so `node build.mjs` — every
+> CI path — fails on a raw color), is exposed as `npm run check:css`, and its verdict is
+> recorded as a signed `css-token-purity` predicate in the build attestation (§7). The
+> §5 brand dependency is resolved: `baobab` shipped the `on-forest` token set and
+> `styles.css` is at **zero** raw color literals, so the gate demands zero — no allowlist.
 
 > The visual sibling of [atomic-copy](./atomic-copy.md). atomic-copy enforces *no
 > hardcoded string*; this enforces *no hardcoded visual value*. atomic-copy.md already
