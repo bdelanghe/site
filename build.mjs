@@ -572,7 +572,7 @@ if (jrErrors.length) {
 const resumeHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${name} — Résumé`, description: `Résumé — ${name}, ${role}.`, path: "/resume", appCss: false })}
+${head({ title: `${name} — ${copy("head.resume.label")}`, description: `${copy("head.resume.label")} — ${name}, ${role}.`, path: "/resume", appCss: false })}
 <link rel="alternate" type="application/json" href="/resume.json" title="JSON Résumé (machine-readable)">
 ${jsonLd}
 <style>
@@ -626,26 +626,26 @@ await writeFile(join(dist, "resume.json"), JSON.stringify(resumeDoc, null, 2) + 
 const provHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence.`, path: "/provenance" })}
+${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.provenance.desc"), path: "/provenance" })}
 </head>
 <body>
   <main class="wrap">
     <header class="intro">
-      <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;Home</a></p>
-      <h1>Provenance</h1>
-      <p class="lead">This site is built deterministically from versioned sources and validated at every boundary — the same discipline the work itself argues for. Here's what produced and checked this artifact.</p>
+      <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
+      <h1>${copy("prov.title")}</h1>
+      <p class="lead">${copy("prov.lede")}</p>
     </header>
     <section class="bg">
-      <h2 class="bs-text-label eyebrow">Provenance chain</h2>
-      <p class="lead">The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.</p>
+      <h2 class="bs-text-label eyebrow">${copy("prov.chain.eyebrow")}</h2>
+      <p class="lead">${copy("prov.chain.lede")}</p>
       <ol class="prov-chain">
-        <li class="prov-link"><span class="prov-link__name">Materials</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
-        <li class="prov-link"><span class="prov-link__name">Process &middot; contracts</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
-        <li class="prov-link"><span class="prov-link__name">Process &middot; gates</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
-        <li class="prov-link"><span class="prov-link__name">Builder</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
-            <p class="prov-seal__title">Subject — signed</p>
+            <p class="prov-seal__title">${copy("prov.seal.title")}</p>
             <p class="prov-seal__meta">commit @@COMMIT@@ &middot; @@DATE@@ &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
             <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Real in-toto <code>Statement/v1</code> + SLSA provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via Sigstore — a one-build Fulcio certificate minted from this workflow's GitHub OIDC identity, logged in the public <a href="https://search.sigstore.dev/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to GHCR as a pullable, signed OCI artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact — not that the build was authorized.</p>
             <p id="build-freshness" class="prov-seal__note" style="font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink-mono);" hidden></p>
@@ -653,7 +653,7 @@ ${head({ title: `Provenance — ${name}`, description: `How robertdelanghe.dev i
         </li>
       </ol>
     </section>
-    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">generated ${date}${commitHtml}</span></footer>
+    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">${copy("footer.generated")} ${date}${commitHtml}</span></footer>
   </main>
   ${FRESHNESS_SCRIPT}
 </body>
@@ -680,23 +680,23 @@ const blogIndex = posts.length
           <span class="post-list__desc p-summary">${esc(p.meta.description)}</span>
         </a></li>`).join("\n        ")}
       </ul>`
-  : `<p class="lead">Notes are landing soon.</p>`;
+  : `<p class="lead">${copy("blog.empty")}</p>`;
 
 const blogHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `Writing — ${name}`, description: `Writing by ${name} on capability security for agentic systems.`, path: "/blog" })}
+${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head.blog.desc.lead")} ${name} ${copy("head.blog.desc.tail")}`, path: "/blog" })}
 </head>
 <body>
   <main class="wrap">
     <header class="intro">
-      <p class="bs-text-label eyebrow">${esc(name)} &nbsp;&middot;&nbsp; Writing</p>
-      <h1>Writing</h1>
-      <p class="lead">On capability security for agentic systems — the thesis, graded against the running code.</p>
+      <p class="bs-text-label eyebrow">${esc(name)} &nbsp;&middot;&nbsp; ${copy("nav.writing")}</p>
+      <h1>${copy("nav.writing")}</h1>
+      <p class="lead">${copy("blog.lede")}</p>
       <nav class="links">
-        <a href="/">&larr;&nbsp;Home</a>
-        <a href="/feed.xml">RSS&nbsp;feed</a>
-        <a href="https://github.com/bounded-systems">GitHub&nbsp;&#8599;</a>
+        <a href="/">&larr;&nbsp;${copy("nav.home")}</a>
+        <a href="/feed.xml">${copy("blog.nav.rss")}</a>
+        <a href="https://github.com/bounded-systems">${copy("nav.github")}&nbsp;&#8599;</a>
       </nav>
     </header>
     <section class="posts">
@@ -734,16 +734,16 @@ ${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "a
   <main class="wrap">
     <article class="post h-entry">
       <header class="post__head">
-        <p class="bs-text-label eyebrow"><a href="/blog">&larr;&nbsp;Writing</a></p>
+        <p class="bs-text-label eyebrow"><a href="/blog">&larr;&nbsp;${copy("nav.writing")}</a></p>
         <h1 class="p-name">${esc(p.meta.title)}</h1>
         <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> &nbsp;&middot;&nbsp; <a class="p-author h-card" href="${SITE}">${esc(name)}</a>${tagsHtml ? ` &nbsp;&middot;&nbsp; ${tagsHtml}` : ""}</p>
       </header>
       <div class="post__body e-content">
       ${p.html}
       </div>
-      ${(p.meta.syndication && p.meta.syndication.length) ? `<p class="post__synd">Also on: ${p.meta.syndication.map((u) => `<a class="u-syndication" href="${esc(u)}">${esc(new URL(u).hostname.replace(/^www\./, ""))}</a>`).join(" &middot; ")}</p>` : ""}
+      ${(p.meta.syndication && p.meta.syndication.length) ? `<p class="post__synd">${copy("post.synd")} ${p.meta.syndication.map((u) => `<a class="u-syndication" href="${esc(u)}">${esc(new URL(u).hostname.replace(/^www\./, ""))}</a>`).join(" &middot; ")}</p>` : ""}
     </article>
-    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">RSS</a> &middot; <a href="/blog">all writing</a>${commitHtml}</span></footer>
+    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">${copy("post.foot.rss")}</a> &middot; <a href="/blog">${copy("post.foot.all")}</a>${commitHtml}</span></footer>
   </main>
 </body>
 </html>
@@ -809,12 +809,12 @@ ${summary}
 
 ${role}${place ? ` · ${place}` : ""}
 
-## Links
+## ${copy("llms.links")}
 ${profile.links.filter((l) => !l.href.startsWith("mailto:")).map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.href : l.href})`).join("\n")}
 
-## Selected work
+## ${copy("llms.work")}
 ${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
-${posts.length ? `\n## Writing\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}`;
+${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}`;
 await writeFile(join(dist, "llms.txt"), llms);
 
 // The typed-symbol catalog + grounding registry that the audit gate runs on are
