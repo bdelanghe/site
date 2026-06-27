@@ -1,0 +1,26 @@
+{
+  "name": "@bounded-systems/verify",
+  "version": "0.1.0",
+  "description": "Standalone out-of-page verifier: cryptographically verifies a deployed site's published Sigstore bundle offline (sigstore-js) and re-hashes the served bytes.",
+  "type": "module",
+  "bin": {
+    "bounded-verify": "./verify.mjs"
+  },
+  "files": [
+    "verify.mjs",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bounded-systems/site.git",
+    "directory": "integrity/verify"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "license": "MIT",
+  "dependencies": {
+    "sigstore": "^5.0.0"
+  }
+}

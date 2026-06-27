@@ -148,3 +148,12 @@ jobs:
           done
           echo "::error::prod is not serving the freshly-signed provenance (manifest or provenance.json)"
           exit 1
+
+      # Independent, cryptographic confirmation that prod serves verified bytes: the
+      # vendored standalone verifier (sigstore-js, in-process bundle verify — no
+      # cosign, no Rekor query API). Fail-closed; runs after the freshness wait so the
+      # edge has propagated.
+      - name: Cryptographically verify prod (standalone verifier)
+        run: |
+          npm ci --prefix vendor/integrity/verify
+          node vendor/integrity/verify/verify.mjs https://robertdelanghe.dev
