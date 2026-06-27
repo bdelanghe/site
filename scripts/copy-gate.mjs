@@ -23,10 +23,12 @@
 //   DEFERRED            : (a) other routes — /provenance, /blog, blog posts, 404 — are
 //                         not yet scanned (their chrome is not migrated); (b) <head>
 //                         content (titles, meta descriptions, og/twitter) on all pages;
-//                         (c) format-derived text — month abbreviations + "present" from
-//                         fmtRange, the generated ISO date, numeric figures/counts, and
-//                         the anti-scrape email obfuscation markers "[at]"/"[dot]" — all
-//                         derive deterministically from data, not free copy (see FORMAT_VOCAB).
+//                         (c) format-derived / build-provenance text — month abbreviations
+//                         + "present" from fmtRange, the generated ISO date, numeric
+//                         figures/counts, the short git commit SHA in the footer/provenance
+//                         link (COMMIT.slice(0,7), only set in CI), and the anti-scrape
+//                         email obfuscation markers "[at]"/"[dot]" — all derive
+//                         deterministically from data/the build, not free copy (see FORMAT_VOCAB).
 //   LIMITATION         : coverage is word-level, not segment-level — a newly inlined
 //                         phrase whose every word already appears in some atom would not
 //                         be caught. The gate catches genuinely-new vocabulary, which is
@@ -88,6 +90,7 @@ const FORMAT_VOCAB = new Set([...MONTHS, "present", "at", "dot"]); // "[at]"/"[d
 const isFormatToken = (t) =>
   /^[\p{N}]+$/u.test(t) ||              // bare numbers (figures, counts)
   /^\d{4}(-\d{2}){0,2}$/.test(t) ||     // ISO date / date fragment
+  /^[0-9a-f]{7,40}$/.test(t) ||         // git commit SHA — footer/provenance link renders COMMIT.slice(0,7) in CI
   FORMAT_VOCAB.has(t);
 
 const corpus = new Set();
