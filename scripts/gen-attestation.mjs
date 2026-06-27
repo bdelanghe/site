@@ -15,6 +15,7 @@ import { readFile, writeFile, access } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { checkCss } from "./check-css.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
@@ -56,6 +57,21 @@ for (const f of ["brand/tokens/tokens.json", "brand/tokens/tokens.css", "brand/c
   if (await exists(join(root, f))) materials.push({ uri: f, digest: { sha256: sha256(await readFile(join(root, f))) } });
 if (COMMIT) materials.push({ uri: "git+https://github.com/bdelanghe/site", digest: { sha1: COMMIT } });
 
+// Gate predicates — attest that the deterministic gates ran and passed, over the
+// exact inputs (by digest). build.mjs already fails the build on a violation, so
+// reaching here implies pass; re-running makes the claim self-contained (a verifier
+// reads the attestation, not the CI logs). Defensive: refuse to attest a fail.
+const purity = await checkCss({ root, brand: join(root, "brand") });
+if (!purity.ok) { console.error(`✗ css-token-purity failed at attestation (${purity.violations.length}) — refusing to sign`); process.exit(1); }
+const gates = {
+  "css-token-purity": {
+    passed: true,
+    spec: "https://robertdelanghe.dev/docs/css-token-purity",
+    subject: { uri: "styles.css", digest: { sha256: sha256(await readFile(join(root, "styles.css"))) } },
+    vocabulary: { uri: "brand/tokens/tokens.css", digest: { sha256: sha256(await readFile(join(root, "brand", "tokens", "tokens.css"))) }, tokens: purity.vocabSize },
+  },
+};
+
 // in-toto Statement/v1 carrying a SLSA provenance predicate
 const statement = {
   _type: "https://in-toto.io/Statement/v1",
@@ -71,6 +87,7 @@ const statement = {
       builder: { id: "https://github.com/bdelanghe/site/.github/workflows" },
       metadata: { invocationId: COMMIT || "local", finishedOn: new Date().toISOString() },
     },
+    gates,
   },
 };
 

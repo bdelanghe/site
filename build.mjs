@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { validateSchema } from "./schema-validate.mjs";
 import { loadPosts } from "./posts.mjs";
+import { checkCss } from "./scripts/check-css.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const dist = join(root, "dist");
@@ -32,6 +33,18 @@ const writeHtml = async (file, content) => {
 if (!(await exists(join(brand, "tokens", "tokens.css")))) {
   console.error("✗ brand/ is empty. Run: git submodule update --init --recursive");
   process.exit(1);
+}
+// css-token-purity gate: styles.css must speak only in brand tokens (no literal
+// color, every var(--bs-*) real). The visual counterpart to the copy gate — a raw
+// color can't ship, the way an untokenized string can't. See docs/css-token-purity.md.
+{
+  const { ok, violations, vocabSize } = await checkCss({ root, brand });
+  if (!ok) {
+    console.error(`✗ css-token-purity: ${violations.length} violation(s) in styles.css — every color must be a brand token (docs/css-token-purity.md):`);
+    for (const v of violations) console.error(`    styles.css:${v.line}  ${v.kind}: ${v.detail}`);
+    process.exit(1);
+  }
+  console.log(`✓ css-token-purity: 0 raw colors, all var(--bs-*) ∈ vocabulary (${vocabSize} tokens)`);
 }
 // Static analysis: validate both contracts against their JSON Schemas (not just
 // key-presence). Invalid content can't produce a build — invalid states made
