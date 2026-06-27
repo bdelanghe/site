@@ -15,7 +15,7 @@
 // Proves WHO built the site and that it is intact — not that the build was safe
 // or authorized. The signatures + Rekor entries are ground truth; this file is a
 // convenience view, and the `verify` recipes are how to confirm it independently.
-import { readFile, writeFile, access } from "node:fs/promises";
+import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -97,4 +97,32 @@ const provenance = {
 };
 
 await writeFile(join(dist, "provenance.json"), JSON.stringify(provenance, null, 2) + "\n");
-console.log(`✓ provenance: entire site (${fileCount} files) · manifest sha256:${manifestSha256.slice(0, 12)}… · rekor#${manifestIdx ?? "?"}${ociRef ? ` · oci ${ociRef}` : ""} → dist/provenance.json`);
+
+// /rekor — a stable, one-click redirect to THIS build's real Rekor entry (the
+// whole-site manifest signature). The signed HTML can't bake the per-version
+// logIndex without circularity, so this unsigned sidecar carries it. Excluded
+// from site.sha256. The target is the real search.sigstore.dev entry showing the
+// cert identity + artifact digest — a wrong index wouldn't match our digest, so
+// it degrades detectably.
+if (manifestIdx) {
+  const rekorUrl = `https://search.sigstore.dev/?logIndex=${manifestIdx}`;
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0;url=${rekorUrl}">
+<title>This build's Rekor entry</title>
+<script>location.replace(${JSON.stringify(rekorUrl)})</script>
+</head>
+<body style="font-family:system-ui,sans-serif;margin:2rem;line-height:1.5;">
+<p>Redirecting to this build's entry in the public Rekor transparency log…</p>
+<p><a href="${rekorUrl}">${rekorUrl}</a></p>
+</body>
+</html>
+`;
+  await mkdir(join(dist, "rekor"), { recursive: true });
+  await writeFile(join(dist, "rekor", "index.html"), html);
+}
+
+console.log(`✓ provenance: entire site (${fileCount} files) · manifest sha256:${manifestSha256.slice(0, 12)}… · rekor#${manifestIdx ?? "?"}${manifestIdx ? " · /rekor → entry" : ""}${ociRef ? ` · oci ${ociRef}` : ""} → dist/provenance.json`);
