@@ -17,7 +17,16 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const vendor = join(root, "vendor", "integrity");
 const provPath = join(vendor, "provenance.json");
-const FILES = ["scripts/gen-sitemanifest.mjs", "scripts/gen-provenance.mjs", "verify-site.mjs"];
+const FILES = [
+  "scripts/gen-sitemanifest.mjs",
+  "scripts/gen-provenance.mjs",
+  "verify-site.mjs",
+  // structure-audit tenant (run under Node with its own deps; baseline structure.json
+  // is a per-consumer product, generated locally — not hash-pinned here).
+  "structure-audit/audit.mjs",
+  "structure-audit/package.json",
+  "structure-audit/package-lock.json",
+];
 const sha256 = (buf) => "sha256:" + createHash("sha256").update(buf).digest("hex");
 
 const args = process.argv.slice(2);
@@ -53,11 +62,11 @@ const out = {
   note: "Vendored, hash-pinned copy of bounded-systems/site/integrity/. Re-vendor: npm run vendor:integrity. Verified against these hashes before use (npm run check runs --check).",
   files: {},
 };
-await mkdir(join(vendor, "scripts"), { recursive: true });
 for (const f of FILES) {
   const res = await fetch(`${base}/${f}`);
   if (!res.ok) { console.error(`✗ fetch ${f} → ${res.status}`); process.exit(2); }
   const buf = Buffer.from(await res.arrayBuffer());
+  await mkdir(dirname(join(vendor, f)), { recursive: true });
   await writeFile(join(vendor, f), buf);
   out.files[f] = sha256(buf);
 }

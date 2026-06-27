@@ -32,3 +32,9 @@ jobs:
         run: node brand/tools/meta.mjs --check dist
       - name: Accessibility (WCAG AA contrast + headings)
         run: node brand/tools/a11y.mjs --check dist
+      - name: Install structure-audit deps (vendored tenant)
+        run: npm ci --prefix vendor/integrity/structure-audit
+      - name: Whole-page structure gate (reader survivability + outline + links)
+        # /resume.pdf (print-to-pdf) and /attestation.intoto.json (gen-attestation)
+        # are produced at deploy, absent from this build — allowlisted as sidecars.
+        run: STRUCTURE_AUDIT_SIDECARS=/resume.pdf,/attestation.intoto.json node vendor/integrity/structure-audit/audit.mjs dist --check

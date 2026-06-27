@@ -1,0 +1,69 @@
+{
+  "404.html": {
+    "h1": "Page not found.",
+    "outline": "1",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/resume"
+    ]
+  },
+  "blog.html": {
+    "h1": "Writing",
+    "outline": "1",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/blog/agent-authored-code-drift",
+      "/feed.xml"
+    ]
+  },
+  "blog/agent-authored-code-drift.html": {
+    "h1": "How to keep agent-authored code from drifting",
+    "outline": "1222",
+    "mains": 1,
+    "readerOk": true,
+    "internalLinks": [
+      "/blog",
+      "/blog",
+      "/feed.xml",
+      "/provenance"
+    ]
+  },
+  "index.html": {
+    "h1": "AI agents ship code. I write the contracts that keep them in check.",
+    "outline": "122232",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/provenance",
+      "/provenance",
+      "/resume"
+    ]
+  },
+  "provenance.html": {
+    "h1": "Provenance",
+    "outline": "12",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/attestation.intoto.json",
+      "/provenance",
+      "/provenance.json",
+      "/rekor",
+      "/site.sha256"
+    ]
+  },
+  "resume.html": {
+    "h1": "Robert DeLanghe",
+    "outline": "12222",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/resume.pdf"
+    ]
+  }
+}

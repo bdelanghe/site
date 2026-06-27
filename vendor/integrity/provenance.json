@@ -1,13 +1,16 @@
 {
   "source": "https://github.com/bounded-systems/site",
   "path": "integrity/",
-  "ref": "d241f447b6ac90a5bcbadf2cac9f250d5f125941",
-  "commit": "d241f447b6ac90a5bcbadf2cac9f250d5f125941",
+  "ref": "a671d1143940e5c81ff5bd17fa394bc5ac04bce6",
+  "commit": "a671d1143940e5c81ff5bd17fa394bc5ac04bce6",
   "fetched": "2026-06-27",
   "note": "Vendored, hash-pinned copy of bounded-systems/site/integrity/. Re-vendor: npm run vendor:integrity. Verified against these hashes before use (npm run check runs --check).",
   "files": {
     "scripts/gen-provenance.mjs": "sha256:cc21275174c26132b94a32f547e6aa88cd89ecf9e78d29097a9d7cc60bfae002",
     "scripts/gen-sitemanifest.mjs": "sha256:72ca59ff41699854bf9d7cee484ab46da31ce8efb456e0fbabbf6b2a934e99e7",
+    "structure-audit/audit.mjs": "sha256:886fd2a3931493208b1f70fa565cfdacd2d9a15bfd8014b20d0697bf22cf978e",
+    "structure-audit/package-lock.json": "sha256:1ce2718d78fccf2ec14b3adef57acf9eb5f0fceb794861f84b95cb626d0a6ddc",
+    "structure-audit/package.json": "sha256:7a8c588c3e0315cd2a83d1c2bd68d780016ea26c80e4b7abc5d26a7049a1b1f7",
     "verify-site.mjs": "sha256:16925089824a6c2692e321a9c4e14255f036287ab026d9c469ca1f97ef526344"
   }
 }
