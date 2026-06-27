@@ -1,0 +1,13 @@
+{
+  "source": "https://github.com/bounded-systems/site",
+  "path": "integrity/",
+  "ref": "main",
+  "commit": "dff7d2bd0f5e2b7f3523a32759cf846c23aade43",
+  "fetched": "2026-06-27",
+  "note": "Vendored, hash-pinned copy of bounded-systems/site/integrity/ (the subtree-split-target provenance tooling). Re-vendor: npm run vendor:integrity. Verified against these hashes before use.",
+  "files": {
+    "scripts/gen-provenance.mjs": "sha256:6044b6574c8a44ddd284df50a6f84275f6e2084c227404aed09a879d7ceb6a63",
+    "scripts/gen-sitemanifest.mjs": "sha256:72ca59ff41699854bf9d7cee484ab46da31ce8efb456e0fbabbf6b2a934e99e7",
+    "verify-site.mjs": "sha256:4196ff1ddd194bb649e8b043d736ec75d5cc8689f31bf4e9a88eb2461a8cda24"
+  }
+}
