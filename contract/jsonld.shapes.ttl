@@ -1,0 +1,139 @@
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <https://schema.org/> .
+
+# SHACL shapes for the JSON-LD structured data emitted by build.mjs.
+#
+# Schema.org alone is flexible guidance; Schema.org + SHACL is an ENFORCEABLE contract.
+# These shapes are matched to WHAT THE SITE ACTUALLY EMITS (verified against built dist/):
+#   - schema:Person      on /  and /resume   (full profile)  + nested as BlogPosting author
+#   - schema:BlogPosting on /blog/<slug> posts
+#   - schema:Organization / schema:CreativeWork as nested nodes
+#
+# Stable schema.org IRIs (https://schema.org/<Term>). Default severity = sh:Violation, so any
+# non-conformance fails the build (scripts/shacl-gate.mjs exits 1 unless report.conforms).
+
+# Every Person (the homepage/résumé profile AND the BlogPosting author) must carry an
+# identity: a name and a resolvable URL. jobTitle/description are NOT required here because
+# the BlogPosting author legitimately omits them — see ProfilePersonShape for the full profile.
+schema:PersonShape
+  a sh:NodeShape ;
+  sh:targetClass schema:Person ;
+  sh:property [
+    sh:path schema:name ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "schema:Person requires a name." ;
+  ] ;
+  sh:property [
+    sh:path schema:url ;
+    sh:nodeKind sh:IRI ;
+    sh:minCount 1 ;
+    sh:message "schema:Person requires a url (IRI)." ;
+  ] .
+
+# The full profile Person — distinguished by carrying schema:knowsAbout (only the homepage/
+# résumé Person does; the nested BlogPosting author does not). Targeting via
+# sh:targetSubjectsOf cleanly applies the richer contract to the profile node ONLY.
+schema:ProfilePersonShape
+  a sh:NodeShape ;
+  sh:targetSubjectsOf schema:knowsAbout ;
+  sh:property [
+    sh:path schema:jobTitle ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "The profile Person requires a jobTitle." ;
+  ] ;
+  sh:property [
+    sh:path schema:description ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "The profile Person requires a description." ;
+  ] ;
+  sh:property [
+    sh:path schema:knowsAbout ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "The profile Person requires at least one knowsAbout topic." ;
+  ] .
+
+schema:BlogPostingShape
+  a sh:NodeShape ;
+  sh:targetClass schema:BlogPosting ;
+  sh:property [
+    sh:path schema:headline ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "schema:BlogPosting requires a headline." ;
+  ] ;
+  sh:property [
+    sh:path schema:description ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "schema:BlogPosting requires a description." ;
+  ] ;
+  sh:property [
+    sh:path schema:datePublished ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:pattern "^\\d{4}-\\d{2}-\\d{2}" ;
+    sh:message "schema:BlogPosting requires an ISO (YYYY-MM-DD) datePublished." ;
+  ] ;
+  sh:property [
+    sh:path schema:url ;
+    sh:nodeKind sh:IRI ;
+    sh:minCount 1 ;
+    sh:message "schema:BlogPosting requires a url (IRI)." ;
+  ] ;
+  sh:property [
+    sh:path schema:mainEntityOfPage ;
+    sh:nodeKind sh:IRI ;
+    sh:minCount 1 ;
+    sh:message "schema:BlogPosting requires mainEntityOfPage (IRI)." ;
+  ] ;
+  sh:property [
+    sh:path schema:inLanguage ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "schema:BlogPosting requires inLanguage." ;
+  ] ;
+  sh:property [
+    sh:path schema:author ;
+    sh:class schema:Person ;
+    sh:minCount 1 ;
+    sh:message "schema:BlogPosting requires an author (schema:Person)." ;
+  ] ;
+  sh:property [
+    sh:path schema:publisher ;
+    sh:class schema:Organization ;
+    sh:minCount 1 ;
+    sh:message "schema:BlogPosting requires a publisher (schema:Organization)." ;
+  ] .
+
+# Nested via alumniOf (homepage/résumé) and publisher (BlogPosting).
+schema:OrganizationShape
+  a sh:NodeShape ;
+  sh:targetClass schema:Organization ;
+  sh:property [
+    sh:path schema:name ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "schema:Organization requires a name." ;
+  ] .
+
+# Nested via subjectOf (homepage/résumé) and citation (BlogPosting): claim → evidence links.
+schema:CreativeWorkShape
+  a sh:NodeShape ;
+  sh:targetClass schema:CreativeWork ;
+  sh:property [
+    sh:path schema:name ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "schema:CreativeWork requires a name." ;
+  ] ;
+  sh:property [
+    sh:path schema:url ;
+    sh:nodeKind sh:IRI ;
+    sh:minCount 1 ;
+    sh:message "schema:CreativeWork requires a url (IRI)." ;
+  ] .

@@ -16,6 +16,7 @@
     "check:css": "node scripts/check-css.mjs",
     "gate:copy": "node scripts/copy-gate.mjs --strict",
     "check:integrity": "node scripts/vendor-integrity.mjs --check",
+    "check:shacl": "node scripts/shacl-gate.mjs",
     "vendor:integrity": "node scripts/vendor-integrity.mjs",
     "prebuild": "npm run check && npm run check:schema && npm run check:integrity && npm run check:css",
     "deploy": "wrangler deploy",
@@ -25,7 +26,11 @@
     "audit:vendor": "node scripts/vendor-audit.mjs"
   },
   "devDependencies": {
+    "@zazuko/env-node": "^2.1.5",
     "an-array-of-english-words": "^2.0.0",
+    "jsonld": "^8.3.2",
+    "n3": "^1.17.3",
+    "rdf-validate-shacl": "^0.5.10",
     "wrangler": "^4",
     "write-good": "^1.0.8"
   }

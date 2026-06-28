@@ -1,0 +1,42 @@
+name: shacl
+
+# SHACL gate — the SEMANTIC-DATA member of the contract family (content schemas + brand
+# design tokens + lone DOM semantics + this). Schema.org alone is flexible guidance;
+# Schema.org + SHACL is an ENFORCEABLE contract. Extracts every JSON-LD block from the built
+# HTML, expands it to RDF, and validates against contract/jsonld.shapes.ttl. Blocking: the
+# build fails unless the SHACL report says conforms: true. See docs/shacl-jsonld.md.
+#
+# The gate is offline/deterministic: a local document loader serves the schema.org context,
+# so it never touches the network (safe in hermetic CI, like build.mjs itself).
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "build.mjs"
+      - "posts/**"
+      - "data/**"
+      - "contract/jsonld.shapes.ttl"
+      - "scripts/shacl-gate.mjs"
+      - ".github/workflows/shacl.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shacl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Build site
+        run: node build.mjs
+      - name: SHACL gate — JSON-LD conforms to contract/jsonld.shapes.ttl
+        run: node scripts/shacl-gate.mjs
