@@ -1,0 +1,125 @@
+package.json
+  s_98e316d0b3248a::t_c26efce454150a 8
+  s_98e316d0b3248a::t_09b8b415db4507 22
+  s_98e316d0b3248a::t_4587988870f129 20-21,24
+scripts/gen-sbom.mjs
+  s_98e316d0b3248a::t_834af7fad51e4f 2-6,8-14,16-19
+scripts/vendor-integrity.mjs
+  s_98e316d0b3248a::t_feb0f8fbaa6f6c 2-6,10,15-20,27,29-31,33-57,63,75,78,83-108,110-111,118,120-121
+scripts/gen-sitemanifest.mjs
+  s_98e316d0b3248a::t_33fc55534861c3 2-8
+scripts/gen-api.mjs
+  s_98e316d0b3248a::t_d9d5660d6c956a 23,26-27,34-36
+  s_98e316d0b3248a::t_2803b5a53de1c4 252-256
+linkedin-check.mjs
+  s_98e316d0b3248a::t_62d7d333398c49 20
+scripts/gen-identity.mjs
+  s_98e316d0b3248a::t_9e3ee41270caa5 2-7,9-18
+docs/seo-gate.md
+  s_98e316d0b3248a::t_6779d16d121a19 5
+  s_98e316d0b3248a::t_92b95ba914710a 44
+.github/workflows/shacl.yml
+  s_98e316d0b3248a::t_6a76ce647c2cc5 42
+  s_98e316d0b3248a::t_ba3ac9d38deeb3 20
+scripts/check-sbom.mjs
+  s_98e316d0b3248a::t_c6b89e01088481 2-10
+contract/commonmark-fixtures.json
+  s_98e316d0b3248a::t_1715c22ade9be2 1-27
+.github/workflows/deploy.yml
+  s_98e316d0b3248a::t_7cb6b2ef698541 191-193
+  s_98e316d0b3248a::t_b09e28d0ee10f5 114
+  s_98e316d0b3248a::t_0a7020ec030281 183-184
+contract/http-probe.json
+  s_98e316d0b3248a::t_b59182283489be 1-13
+docs/http-probe.md
+  s_98e316d0b3248a::t_267649dc374308 14-16,18
+  s_98e316d0b3248a::t_c23574410b5074 38-44
+  s_98e316d0b3248a::t_689da87a8c240f 3
+scripts/check-schema.mjs
+  s_98e316d0b3248a::t_aeaf3d017a1d26 12
+.github/workflows/brand-checks.yml
+  s_98e316d0b3248a::t_c538a8812e5bbd 35-36,38-46
+docs/sbom.md
+  s_98e316d0b3248a::t_18088d0a599791 25
+.github/workflows/semantic.yml
+  s_98e316d0b3248a::t_44c6cfda7e111c 10
+  s_98e316d0b3248a::t_86b2c6364173b3 25-30,32
+scripts/readability-gate.mjs
+  s_98e316d0b3248a::t_0ced08e0c2f28b 2-7,12-15,18,23-24,32,34,36,40,61,64-78
+.github/workflows/seo.yml
+  s_98e316d0b3248a::t_7a183802e36d6f 42,44
+  s_98e316d0b3248a::t_0ad4f6e3074b18 18-20
+build.mjs
+  s_98e316d0b3248a::t_02173911bafecd 9
+  s_98e316d0b3248a::t_6a9fdc159bb26a 879-886,888
+  s_98e316d0b3248a::t_1258f52a9b15ec 963-966
+  s_98e316d0b3248a::t_004cf5a9aa786a 8
+  s_98e316d0b3248a::t_21b814fb5dc75d 891,893,895-896,898,903
+  s_98e316d0b3248a::t_802a789c80e431 220-222
+scripts/gen-provenance.mjs
+  s_98e316d0b3248a::t_03065fc894578e 2-7
+docs/commonmark-gate.md
+  s_98e316d0b3248a::t_3860254832d9db 5
+docs/shacl-jsonld.md
+  s_98e316d0b3248a::t_c694a498357a4b 8
+vendor/conformance-kit/LICENSE
+  s_98e316d0b3248a::t_24826634d9313d 1-21
+vendor/conformance-kit/README.md
+  s_98e316d0b3248a::t_5929fe78961ce2 1-102
+vendor/conformance-kit/emitters/index.mjs
+  s_98e316d0b3248a::t_fde6c34cf2b30a 1-68
+vendor/conformance-kit/gates/commonmark-runner.mjs
+  s_98e316d0b3248a::t_f208a2a1370ff1 2-4,6,8-14,16-23,25-28,30-36,38-62,65-78,95,98
+vendor/conformance-kit/gates/readability-gate.mjs
+  s_98e316d0b3248a::t_65ee0933708a20 1-134
+vendor/conformance-kit/gates/sbom/check-sbom.mjs
+  s_98e316d0b3248a::t_486525108f50b9 1-112
+vendor/conformance-kit/gates/sbom/gen-sbom.mjs
+  s_98e316d0b3248a::t_ddf5e91c4abe09 1-167
+vendor/conformance-kit/gates/semantic/gate.ts
+  s_98e316d0b3248a::t_c47b474389f75d 1-11,15-17,23,33
+vendor/conformance-kit/gates/seo-gate.mjs
+  s_98e316d0b3248a::t_818180122a35fe 6,8,14-15,21,23-30,34,37-41,81,86,103,142,145,151
+vendor/conformance-kit/gates/shacl-runner.mjs
+  s_98e316d0b3248a::t_b97a9fb131cdbd 2,4,6-23,26,33-40,42-49,58-59,61-63,65-66,68,71,77,84-89,91,94,96,106-108,113,118,151,154,158
+vendor/conformance-kit/generators/gen-cid.mjs
+  s_98e316d0b3248a::t_c6890f85780ad8 4-7,12-15,17-21,23,25-26,138
+vendor/conformance-kit/generators/gen-identity.mjs
+  s_98e316d0b3248a::t_162080b80b17c5 1-120
+vendor/conformance-kit/generators/openapi.mjs
+  s_98e316d0b3248a::t_a21a620c9bdc31 1-61
+vendor/conformance-kit/integrity/gen-provenance.mjs
+  s_98e316d0b3248a::t_82ef465a9e2c66 6,18-21,24,26-27
+vendor/conformance-kit/integrity/gen-sitemanifest.mjs
+  s_98e316d0b3248a::t_e90d4238d57114 10-12,14-19,22,24-25,34-37,41
+vendor/conformance-kit/integrity/http-probe.mjs
+  s_98e316d0b3248a::t_e63a3bed5d269a 4-5,9-11,15,19,22-32,36,41-58,74
+vendor/conformance-kit/integrity/structure-audit/audit.mjs
+  s_98e316d0b3248a::t_dcd8b101b989f4 6-8,11,22-33,41,45-47,108,111,135-136,138,144-148
+vendor/conformance-kit/integrity/verify/package.json
+  s_98e316d0b3248a::t_2d9bc053bee576 15
+vendor/conformance-kit/lib/config.mjs
+  s_98e316d0b3248a::t_aa0f171456b670 1-36
+vendor/conformance-kit/lib/schema-validate.mjs
+  s_98e316d0b3248a::t_90dec9e2fe960b 1-2,5-8
+vendor/conformance-kit/package.json
+  s_98e316d0b3248a::t_d13ae83394677f 1-38
+vendor/conformance-kit/provenance.json
+  s_98e316d0b3248a::t_cf71fa242a1e69 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "b9f79a9e99eec7b0c50b439f68db8f9b60fc7f64",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
