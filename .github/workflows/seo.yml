@@ -1,0 +1,43 @@
+name: seo
+
+# SEO + CommonMark build gates — the discoverability + content-render members of the
+# contract family. seo-gate validates the BUILT dist/ (one self-consistent canonical per
+# page, unique non-empty title + meta description, no accidental noindex, RFC 9309
+# robots.txt, every sitemap URL resolves, zero broken internal links). commonmark-gate
+# pins the posts markdown renderer (CommonMark subset + raw-HTML escaping). Both blocking:
+# the build fails on any violation. See docs/seo-gate.md + docs/commonmark-gate.md.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "build.mjs"
+      - "posts.mjs"
+      - "posts/**"
+      - "data/**"
+      - "scripts/seo-gate.mjs"
+      - "scripts/commonmark-gate.mjs"
+      - ".github/workflows/seo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Build site
+        run: node build.mjs
+      - name: CommonMark assertion — posts renderer is pinned + escapes raw HTML
+        run: node scripts/commonmark-gate.mjs
+      - name: SEO gate — canonical / title / description / robots / sitemap / links
+        run: node scripts/seo-gate.mjs
