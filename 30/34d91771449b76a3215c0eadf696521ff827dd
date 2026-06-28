@@ -1,0 +1,30 @@
+package.json
+  s_71a0aecf45d82c::t_508cb684e710a8 44-45
+  s_71a0aecf45d82c::t_c5f9ab96809140 21
+scripts/baseline-gate.mjs
+  s_71a0aecf45d82c::t_7654ce265e608b 1-74
+.github/workflows/conformance.yml
+  s_71a0aecf45d82c::t_9a8b0f4320a26c 38-39
+data/conformance-evidence.json
+  s_71a0aecf45d82c::t_19bfdcffe20847 32
+  s_71a0aecf45d82c::t_a198c93a4afe7d 2
+  s_71a0aecf45d82c::t_817a8437e15401 16-17
+package-lock.json
+  s_71a0aecf45d82c::t_1a541ae0b873c3 18-19,76-100,127-150,415-484,1512-1573,1944-1956,2377-2393,2405-2450,2499-2511,2537-2560,2580-2606,2628-2664,2679-2691,2765-2771,2785-2804,2877-2880,2882-2948,2962-3003,3032-3044,3062-3163,3177-3189,3221-3338,3359-3395,3447-3460,3536-3555,3605-3611,3619-3625,3639-3649,3657-3693,3736-3754,3812-3968,3971-3974,3978-3979,3981-3982,3985-3988,4012-4052,4222-4266,4366-4409,4441-4552,4566-4588,4596-4650,4671-4683,4756-4775,4862-4874,4932-4944
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "3034d91771449b76a3215c0eadf696521ff827dd",
+  "prompts": {},
+  "sessions": {
+    "s_71a0aecf45d82c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6f6e806-c9db-459c-ba56-79aa27861998",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
