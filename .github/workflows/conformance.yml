@@ -1,0 +1,31 @@
+name: conformance
+
+# Re-proving gates for the /conformance evidence that needs the build toolchain
+# installed (axe-core + jsdom today; Nu HTML Checker + Baseline next). Each gate
+# MEASURES a tier-1 external criterion over the freshly-built dist/ and BLOCKS on
+# regression, so data/conformance-evidence.json cannot drift above reality. The
+# vuln gate (lockfile-only, no node_modules) is re-proven separately in brand-checks.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install deps (axe-core + jsdom for the headless a11y scan)
+        run: npm ci --no-audit --no-fund
+      - name: Build dist/
+        run: node build.mjs
+      - name: axe serious/critical gate (axe-core in jsdom — color-contrast via lone)
+        run: node scripts/axe-gate.mjs --check
