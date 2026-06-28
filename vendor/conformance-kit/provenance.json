@@ -1,13 +1,14 @@
 {
   "source": "https://github.com/bounded-systems/conformance-kit",
-  "ref": "1919e84766cbd2bd30c7b1297449f1d093ba7acf",
-  "commit": "1919e84766cbd2bd30c7b1297449f1d093ba7acf",
+  "ref": "f53e87a06581fcf462f99e88c04e5e97aa704031",
+  "commit": "f53e87a06581fcf462f99e88c04e5e97aa704031",
   "fetched": "2026-06-28",
   "note": "Vendored, hash-pinned copy of bounded-systems/conformance-kit (the one shared build/gate/generator toolkit — subsumes the former vendor/integrity/). Re-vendor: npm run vendor:kit. Verified against these hashes before use (npm run check:integrity runs --check). Site-managed consumer artifacts (integrity/{verify,structure-audit}/package-lock.json, integrity/structure-audit/structure.json) are NOT pinned here.",
   "files": {
     "LICENSE": "sha256:559e93c466421832cdcfe7a000d0c19cdb2cec9d24bfb9b41f7c5bd9d448f65e",
     "README.md": "sha256:52c5ef0d5587cbbb9d6c6f6fc5e3c73e2f342439f1687d6e291f7ae2e8e4542b",
     "emitters/index.mjs": "sha256:1e45fa9122986d60a1c478438b077482b15c1c068d7ac8109902ca19a697cf8b",
+    "gates/axe-gate.mjs": "sha256:a8b19486e4e2379310112cad7390ac86abde885a162172e2ade9cb4d902ada79",
     "gates/commonmark-runner.mjs": "sha256:bbc05d54d426e9f56337fa1c9e958f452e5d32e60a0bd3a2ab60191a8ab7eab3",
     "gates/conformance-report.mjs": "sha256:bb7e494d3ced672b5b5ba500289f9e9d31bea201813824bd5aed81156020d66a",
     "gates/conformance/conformance.mjs": "sha256:5d17bea295458433860e9774728e06981bba3a947e969ab23ebb75dd26ecefbb",

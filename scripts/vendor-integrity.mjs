@@ -45,6 +45,7 @@ const FILES = [
   "gates/conformance/conformance.mjs",
   "gates/shacl-runner.mjs",
   "gates/seo-gate.mjs",
+  "gates/axe-gate.mjs",
   "gates/readability-gate.mjs",
   "gates/commonmark-runner.mjs",
   "gates/semantic/gate.ts",

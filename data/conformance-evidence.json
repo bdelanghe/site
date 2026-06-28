@@ -1,10 +1,11 @@
 {
-  "_source": "Conformance evidence — the gate verdicts this site GENUINELY verifies, fed into lone's conformance() model (the report at /conformance + dist/api/v1/conformance.json). Each entry below is RE-PROVEN on every build by a named gate that BLOCKS on failure, so this declaration cannot drift from reality without turning CI red — the same discipline as the structure-audit baseline and data/audit/*. build.mjs merges this contract UNDER its own in-process build-facts (content-digests / ai-readability / feeds, which it self-checks), and a deploy/CI step MAY override any field with a live-captured value via $CONFORMANCE_EVIDENCE / $CONFORMANCE_LONE_FINDINGS. HONEST BY CONSTRUCTION: the strong WCAG 2.2 AA / OWASP ASVS compact claim stays WITHHELD — the manual + external GATING criteria (manual WCAG audit, OWASP ASVS L2, full axe scan, Nu HTML Checker, Core Web Vitals p75 field data, Baseline, known-vuln scan, runtime reliability) are deliberately NOT asserted here, so they report not-assessed and the claim is partial.",
+  "_source": "Conformance evidence — the gate verdicts this site GENUINELY verifies, fed into lone's conformance() model (the report at /conformance + dist/api/v1/conformance.json). Each entry below is RE-PROVEN on every build by a named gate that BLOCKS on failure, so this declaration cannot drift from reality without turning CI red — the same discipline as the structure-audit baseline and data/audit/*. build.mjs merges this contract UNDER its own in-process build-facts (content-digests / ai-readability / feeds, which it self-checks), and a deploy/CI step MAY override any field with a live-captured value via $CONFORMANCE_EVIDENCE / $CONFORMANCE_LONE_FINDINGS. HONEST BY CONSTRUCTION: the strong WCAG 2.2 AA / OWASP ASVS compact claim stays WITHHELD — the remaining manual + external GATING criteria (manual WCAG audit, OWASP ASVS L2, Nu HTML Checker, Core Web Vitals p75 field data, Baseline, known-vuln scan, runtime reliability) are deliberately NOT asserted here, so they report not-assessed and the claim is partial. The automated axe-core serious/critical scan IS now asserted — gate-backed by axe.yml (see _gates.axe).",
 
   "_gates": {
     "loneFindings": "semantic.yml — `deno run gates/semantic/gate.ts` blesses each rendered DOM with lone; 0 error-severity findings (empty array) = the lone-measurable tier-1 criteria (HTML author / WAI-ARIA / WCAG-automatable) + the cognitive interface-complexity budget are met. The deploy/semantic job may inject the real findings via $CONFORMANCE_LONE_FINDINGS.",
     "jsonLdShacl": "shacl.yml / `npm run check:shacl` — shacl-runner reports conforms:true, 0 violating blocks.",
     "seoTechnical": "seo.yml / `npm run check:seo` — seo-gate passes: self-consistent canonicals, unique titles, RFC 9309 robots.txt, resolving sitemap, 0 broken internal links.",
+    "axe": "axe.yml / `npm run check:axe` — the vendored conformance-kit axe-gate runs axe-core (WCAG 2.x A/AA ruleset) over every built page in a real browser (Playwright/Chromium in CI) and BLOCKS on any serious/critical violation; { serious: 0, critical: 0 } below = a clean run across all pages.",
     "sbom": "`npm run check:sbom` — SPDX-2.3 well-formed + complete (pinned set ⊆ SBOM ⊆ pinned set); keyless-signed in deploy.yml (cosign sign-blob → Sigstore bundle).",
     "slsaProvenance": "gen-attestation.mjs emits the in-toto/SLSA statement; deploy.yml keyless-signs it and the post-deploy verify step (verify/verify.mjs + cosign verify-blob) verifies it against the served artifact.",
     "signedReleaseManifest": "gen-sitemanifest.mjs (deploy) content-addresses the whole site to site.sha256; deploy.yml keyless-signs it.",
@@ -18,6 +19,7 @@
   "evidence": {
     "jsonLdShacl": { "conforms": true, "blocks": 0 },
     "seoTechnical": { "canonicalOk": true, "titlesUnique": true, "robotsRfc9309Ok": true, "sitemapResolves": true, "brokenInternalLinks": 0 },
+    "axe": { "serious": 0, "critical": 0 },
     "aiReadability": { "llmsTxtPresent": true, "linksResolve": true, "markdownSiblings": true },
     "feeds": { "atomValid": true },
     "contentDigests": { "reprDigestHeaders": true },

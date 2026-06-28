@@ -1,0 +1,46 @@
+name: axe
+
+# axe-core accessibility gate — the automated a11y member of the contract family.
+# The vendored conformance-kit axe-gate runs axe-core (WCAG 2.x A/AA ruleset) over
+# every BUILT page in a real browser (Playwright's bundled Chromium) and BLOCKS on
+# any serious/critical violation. A clean run is what backs the `a11y.axe-serious-
+# critical` criterion asserted in data/conformance-evidence.json — so the assertion
+# at /conformance cannot drift from reality without turning this gate red.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "build.mjs"
+      - "posts.mjs"
+      - "posts/**"
+      - "data/**"
+      - "vendor/conformance-kit/gates/axe-gate.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/axe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  axe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Install Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+      - name: Build site
+        run: node build.mjs
+      - name: axe gate — 0 serious/critical across all built pages
+        run: node vendor/conformance-kit/gates/axe-gate.mjs dist
+        env:
+          AXE_RUNNER: playwright

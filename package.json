@@ -27,13 +27,17 @@
     "check:resume": "node resume-parse.mjs",
     "audit:catalog": "node audit-catalog.mjs",
     "audit": "node scripts/audit.mjs --strict",
-    "audit:vendor": "node scripts/vendor-audit.mjs"
+    "audit:vendor": "node scripts/vendor-audit.mjs",
+    "check:axe": "node vendor/conformance-kit/gates/axe-gate.mjs dist"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
     "@zazuko/env-node": "^2.1.5",
     "an-array-of-english-words": "^2.0.0",
+    "axe-core": "^4.10.0",
     "jsonld": "^8.3.2",
     "n3": "^1.17.3",
+    "playwright": "^1.48.0",
     "rdf-validate-shacl": "^0.5.10",
     "wrangler": "^4",
     "write-good": "^1.0.8"
