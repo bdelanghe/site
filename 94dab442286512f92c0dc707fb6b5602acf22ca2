@@ -1,0 +1,31 @@
+scripts/vendor-integrity.mjs
+  s_71a0aecf45d82c::t_e90e2d4a7380df 40
+vendor/conformance-kit/README.md
+  s_71a0aecf45d82c::t_f788a712d54644 93-108
+vendor/conformance-kit/gates/conformance-report.mjs
+  s_71a0aecf45d82c::t_2d68c87f25da51 80-81,87-91,98,107
+vendor/conformance-kit/gates/conformance/conformance.mjs
+  s_71a0aecf45d82c::t_b1178bc8d1ebb3 58-70,80-87,90
+vendor/conformance-kit/gates/conformance/web-build.mjs
+  s_71a0aecf45d82c::t_9fa0aa6b1949ce 442-444,450,454-457,464-467
+vendor/conformance-kit/integrity/verify/README.md
+  s_71a0aecf45d82c::t_ca2914e6278150 1-40
+vendor/conformance-kit/provenance.json
+  s_71a0aecf45d82c::t_6eee85b5fe9a29 3-4,9,12-14,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "94dab442286512f92c0dc707fb6b5602acf22ca2",
+  "prompts": {},
+  "sessions": {
+    "s_71a0aecf45d82c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6f6e806-c9db-459c-ba56-79aa27861998",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
