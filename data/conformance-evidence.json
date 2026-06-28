@@ -1,0 +1,30 @@
+{
+  "_source": "Conformance evidence — the gate verdicts this site GENUINELY verifies, fed into lone's conformance() model (the report at /conformance + dist/api/v1/conformance.json). Each entry below is RE-PROVEN on every build by a named gate that BLOCKS on failure, so this declaration cannot drift from reality without turning CI red — the same discipline as the structure-audit baseline and data/audit/*. build.mjs merges this contract UNDER its own in-process build-facts (content-digests / ai-readability / feeds, which it self-checks), and a deploy/CI step MAY override any field with a live-captured value via $CONFORMANCE_EVIDENCE / $CONFORMANCE_LONE_FINDINGS. HONEST BY CONSTRUCTION: the strong WCAG 2.2 AA / OWASP ASVS compact claim stays WITHHELD — the manual + external GATING criteria (manual WCAG audit, OWASP ASVS L2, full axe scan, Nu HTML Checker, Core Web Vitals p75 field data, Baseline, known-vuln scan, runtime reliability) are deliberately NOT asserted here, so they report not-assessed and the claim is partial.",
+
+  "_gates": {
+    "loneFindings": "semantic.yml — `deno run gates/semantic/gate.ts` blesses each rendered DOM with lone; 0 error-severity findings (empty array) = the lone-measurable tier-1 criteria (HTML author / WAI-ARIA / WCAG-automatable) + the cognitive interface-complexity budget are met. The deploy/semantic job may inject the real findings via $CONFORMANCE_LONE_FINDINGS.",
+    "jsonLdShacl": "shacl.yml / `npm run check:shacl` — shacl-runner reports conforms:true, 0 violating blocks.",
+    "seoTechnical": "seo.yml / `npm run check:seo` — seo-gate passes: self-consistent canonicals, unique titles, RFC 9309 robots.txt, resolving sitemap, 0 broken internal links.",
+    "sbom": "`npm run check:sbom` — SPDX-2.3 well-formed + complete (pinned set ⊆ SBOM ⊆ pinned set); keyless-signed in deploy.yml (cosign sign-blob → Sigstore bundle).",
+    "slsaProvenance": "gen-attestation.mjs emits the in-toto/SLSA statement; deploy.yml keyless-signs it and the post-deploy verify step (verify/verify.mjs + cosign verify-blob) verifies it against the served artifact.",
+    "signedReleaseManifest": "gen-sitemanifest.mjs (deploy) content-addresses the whole site to site.sha256; deploy.yml keyless-signs it.",
+    "ipfsCid": "generators/gen-cid.mjs records the CIDv1 of the served site in provenance.json (contentAddress.ipfs.cid).",
+    "contentDigests": "build.mjs writes RFC 9530 Repr-Digest headers into dist/_headers (also self-checked in-process).",
+    "reproducibleBuild": "build.mjs is a pure, hermetic function of the contracts + the flake.lock-pinned toolchain + brand submodule — same inputs, same bytes (nix build .#site)."
+  },
+
+  "loneFindings": [],
+
+  "evidence": {
+    "jsonLdShacl": { "conforms": true, "blocks": 0 },
+    "seoTechnical": { "canonicalOk": true, "titlesUnique": true, "robotsRfc9309Ok": true, "sitemapResolves": true, "brokenInternalLinks": 0 },
+    "aiReadability": { "llmsTxtPresent": true, "linksResolve": true, "markdownSiblings": true },
+    "feeds": { "atomValid": true },
+    "contentDigests": { "reprDigestHeaders": true },
+    "reproducibleBuild": { "reproducible": true },
+    "sbom": { "present": true, "valid": true, "complete": true, "signed": true },
+    "slsaProvenance": { "present": true, "signed": true, "verified": true },
+    "signedReleaseManifest": { "present": true, "signed": true },
+    "ipfsCid": { "cidRecorded": true }
+  }
+}

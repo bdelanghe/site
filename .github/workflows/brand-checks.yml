@@ -37,10 +37,17 @@ jobs:
       - name: Whole-page structure gate (reader survivability + outline + links)
         # The kit's structure-audit is site-agnostic: this site's committed baseline
         # (structure.json) is an INPUT, kept in the consumer via $STRUCTURE_BASELINE
-        # (so the hash-pinned kit copy isn't mutated by --check). /resume.pdf
-        # (print-to-pdf) and /attestation.intoto.json (gen-attestation) are produced
-        # at deploy, absent from this build — allowlisted as sidecars.
+        # (so the hash-pinned kit copy isn't mutated by --check). The link-checker's
+        # served-artifact allow-list is config-driven ($STRUCTURE_AUDIT_SIDECARS):
+        # these paths are deploy/later-step MACHINE artifacts, not navigational pages,
+        # absent from this plain `node build.mjs` — so /conformance's evidence links to
+        # them (and /resume.pdf) aren't flagged dead. /provenance.json + /site.sha256
+        # are in the kit's default allow-list; the rest are this site's evidence set:
+        #   /resume.pdf                         — print-to-pdf at deploy
+        #   /attestation.intoto.json(.sigstore) — in-toto/SLSA statement + Sigstore bundle
+        #   /sbom.spdx.json(.sigstore)          — SPDX SBOM + Sigstore bundle
+        #   /site.sha256.sigstore.json          — signed whole-site manifest bundle
         run: |
-          STRUCTURE_AUDIT_SIDECARS=/resume.pdf,/attestation.intoto.json \
+          STRUCTURE_AUDIT_SIDECARS=/resume.pdf,/attestation.intoto.json,/attestation.intoto.json.sigstore.json,/sbom.spdx.json,/sbom.spdx.json.sigstore.json,/site.sha256.sigstore.json \
           STRUCTURE_BASELINE=vendor/conformance-kit/integrity/structure-audit/structure.json \
           node vendor/conformance-kit/integrity/structure-audit/audit.mjs dist --check

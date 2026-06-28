@@ -32,12 +32,52 @@
       "/provenance"
     ]
   },
+  "conformance.html": {
+    "h1": "Conformance",
+    "outline": "12222222222",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/api/v1/conformance.json",
+      "/attestation.intoto.json",
+      "/feed.xml",
+      "/llms.txt",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance.json",
+      "/sbom.spdx.json",
+      "/site.sha256"
+    ]
+  },
   "index.html": {
     "h1": "AI agents ship code. I write the contracts that keep them in check.",
     "outline": "122232",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
+      "/conformance",
       "/provenance",
       "/provenance",
       "/resume"
@@ -51,6 +91,7 @@
     "internalLinks": [
       "/",
       "/attestation.intoto.json",
+      "/conformance",
       "/provenance",
       "/provenance.json",
       "/rekor",
