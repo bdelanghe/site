@@ -1,0 +1,51 @@
+.github/workflows/seo.yml
+  s_98e316d0b3248a::t_51d01c1b1a1f40 1-43
+scripts/readability-gate.mjs
+  s_98e316d0b3248a::t_00cc4f1073e2c1 1-35,37-148
+  s_98e316d0b3248a::t_01c23e382007f8 36
+scripts/commonmark-gate.mjs
+  s_98e316d0b3248a::t_078d3f3a920b43 1-80
+docs/readability-gate.md
+  s_98e316d0b3248a::t_17500de30dddce 1-42
+package.json
+  s_98e316d0b3248a::t_62364b10a4ce46 8
+  s_98e316d0b3248a::t_571f1cb4a4eca5 21-23,25
+.github/workflows/deploy.yml
+  s_98e316d0b3248a::t_eeb093b8c44781 185-191
+.github/workflows/readability.yml
+  s_98e316d0b3248a::t_2822feccf2c5a9 1-31
+scripts/seo-gate.mjs
+  s_98e316d0b3248a::t_afae100986751a 1-215
+docs/commonmark-gate.md
+  s_98e316d0b3248a::t_c105640e12c58c 1-33
+docs/http-probe.md
+  s_98e316d0b3248a::t_105ecf590b35b4 1-40
+docs/seo-gate.md
+  s_98e316d0b3248a::t_22786fb51f9647 1-44
+vendor/integrity/http-probe.mjs
+  s_8bfe0e8de6557c::t_408d37863f0ba9 1-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "9f36892fcbbedab0e6210055644c5a704d525415",
+  "prompts": {},
+  "sessions": {
+    "s_8bfe0e8de6557c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "159cecef-b114-4932-b219-6b198cbf9abd",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    },
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
