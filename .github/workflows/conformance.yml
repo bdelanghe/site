@@ -23,9 +23,15 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
-      - name: Install deps (axe-core + jsdom for the headless a11y scan)
+      - uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Install deps (axe-core + jsdom for a11y; vnu-jar for HTML validation)
         run: npm ci --no-audit --no-fund
       - name: Build dist/
         run: node build.mjs
       - name: axe serious/critical gate (axe-core in jsdom — color-contrast via lone)
         run: node scripts/axe-gate.mjs --check
+      - name: Nu HTML Checker gate (vnu jar — HTML Living Standard, errors-only)
+        run: node scripts/html-validator-gate.mjs --check
