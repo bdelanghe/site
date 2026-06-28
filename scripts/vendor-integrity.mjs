@@ -37,7 +37,7 @@ const FILES = [
   "integrity/structure-audit/audit.mjs",
   "integrity/structure-audit/package.json",
   "integrity/verify/verify.mjs",
-  "integrity/verify/package.json",
+  "integrity/verify/README.md",
   "gates/sbom/gen-sbom.mjs",
   "gates/sbom/check-sbom.mjs",
   "gates/conformance-report.mjs",

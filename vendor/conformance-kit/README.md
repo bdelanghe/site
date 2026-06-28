@@ -90,6 +90,22 @@ criteria are reported + summarised per area but never widen the headline claim.
 
 `import { reprDigest, securityTxt, securityTxtExpires, webManifest, markdownSiblingHeaders } from "…/emitters/index.mjs"` — pure helpers a site's own `build.mjs` calls to emit standards-compliant artifacts (RFC 9530 `Repr-Digest`, RFC 9116 `security.txt`, the W3C web app manifest, the `_headers` Content-Type rules for `.md` siblings). All values injected; the page **content** stays in the site.
 
+## `@bounded-systems/verify` (vendored here; published elsewhere)
+
+The in-process Sigstore verifier (`integrity/verify/verify.mjs`) is **vendored** in
+this kit so sites can pull it into a hermetic build. It is no longer **published**
+from here: the canonical home of the [`@bounded-systems/verify`](https://jsr.io/@bounded-systems/verify)
+JSR package is now its own repo,
+[`bounded-systems/verify`](https://github.com/bounded-systems/verify). That repo owns
+the package manifest (`deno.json`) and the keyless-OIDC release workflow; cut releases
+there. The copy here is kept byte-for-byte in sync with the published source.
+
+Consumers run it straight from JSR:
+
+```sh
+deno run -A jsr:@bounded-systems/verify https://your-site
+```
+
 ## Test
 
 ```
