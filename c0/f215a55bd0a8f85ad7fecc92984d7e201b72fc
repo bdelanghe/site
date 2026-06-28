@@ -1,0 +1,32 @@
+.github/workflows/deploy.yml
+  s_98e316d0b3248a::t_c358a82a08e2a3 52-56
+  s_98e316d0b3248a::t_0a2900b278fbed 106-109,111-114
+scripts/gen-api.mjs
+  s_98e316d0b3248a::t_d16a9157d46455 174-178
+  s_98e316d0b3248a::t_782ca180e0358f 207-210
+  s_98e316d0b3248a::t_bbf08246890768 140
+  s_98e316d0b3248a::t_e43a32ea9318be 267-269
+  s_98e316d0b3248a::t_1d33ac4350c91e 1-139,141-173,179-206,211-266,270-272
+scripts/gen-identity.mjs
+  s_98e316d0b3248a::t_4f90294199150d 1-112
+scripts/gen-cid.mjs
+  s_98e316d0b3248a::t_b46df33a44c0d7 1-141
+package.json
+  s_98e316d0b3248a::t_dd7dd057e86d6b 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "c0f215a55bd0a8f85ad7fecc92984d7e201b72fc",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
