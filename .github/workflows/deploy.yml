@@ -182,3 +182,10 @@ jobs:
         run: |
           npm ci --prefix vendor/integrity/verify
           node vendor/integrity/verify/verify.mjs https://robertdelanghe.dev
+
+      # RFC 9110 HTTP-correctness probe: verify-site.mjs (above) checks the signed BYTES;
+      # this checks the edge's HTTP SEMANTICS — status codes, Content-Type, HEAD parity,
+      # conditional requests (If-None-Match/304), 404 handling, and that redirects
+      # terminate. Post-deploy probe (needs a live URL), fail-closed. Dependency-free.
+      - name: HTTP correctness probe (RFC 9110)
+        run: node vendor/integrity/http-probe.mjs https://robertdelanghe.dev
