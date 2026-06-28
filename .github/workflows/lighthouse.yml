@@ -5,6 +5,12 @@ name: lighthouse
 # (staticDistDir) — no separate web server, no live network. Budgets live in
 # lighthouserc.json: accessibility is a hard error at a perfect 1.0; best-practices and
 # seo are blocking floors; performance is advisory (warn).
+#
+# IMPORTANT: a perfect Lighthouse accessibility score is a REGRESSION SIGNAL over a subset
+# of automatable checks — NOT WCAG conformance. Do not claim "Meets WCAG 2.2 AA" (or
+# "accessible") from this alone; that needs a full audit incl. manual testing. Report:
+# "Lighthouse accessibility 100/100; no serious/critical automated violations." See
+# docs/accessibility.md.
 on:
   pull_request:
   push:
