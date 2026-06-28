@@ -17,7 +17,7 @@
 import { readFile, access } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateSchema } from "./schema-validate.mjs";
+import { validateSchema } from "./vendor/conformance-kit/lib/schema-validate.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const lkDir = join(root, "data", "linkedin");

@@ -7,7 +7,7 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths: ["posts/**", "build.mjs", "posts.mjs", "semantic/**", ".github/workflows/semantic.yml"]
+    paths: ["posts/**", "build.mjs", "posts.mjs", "semantic/**", "vendor/conformance-kit/gates/semantic/**", ".github/workflows/semantic.yml"]
   workflow_dispatch:
 
 jobs:
@@ -22,8 +22,11 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      # lone comes from JSR (jsr:@bounded-systems/lone), pinned by deno.lock — no clone,
-      # no hand-managed sha. --frozen fails if the lock is stale, so the gate engine is
-      # reproducible at the exact version the committed lock records.
+      # lone comes from JSR (jsr:@bounded-systems/lone), pinned by semantic/deno.lock
+      # (the consumer's lock) — no clone, no hand-managed sha. --frozen fails if the
+      # lock is stale, so the gate engine is reproducible at the version the committed
+      # lock records. The runner itself is the vendored, hash-pinned conformance-kit
+      # gate; its import map (deno.json) ships with it. --allow-env: the kit gate reads
+      # $SEMANTIC_DIR / $SEMANTIC_SELECTOR (defaults match this site: dist/blog · article).
       - name: lone — bless rendered posts
-        run: deno run --frozen --allow-read --allow-net --config semantic/deno.json semantic/gate.ts
+        run: deno run --frozen --lock=semantic/deno.lock --allow-read --allow-net --allow-env --config vendor/conformance-kit/gates/semantic/deno.json vendor/conformance-kit/gates/semantic/gate.ts

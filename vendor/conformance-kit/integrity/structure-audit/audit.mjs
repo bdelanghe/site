@@ -3,13 +3,12 @@
 //
 //   node integrity/structure-audit/audit.mjs <distDir> [--check]
 //
-// Sibling to string-audit (copy) and lone (per-page DOM bless): this validates
-// the document STRUCTURE + reader survivability + the internal link graph, and —
-// like the copy catalog — extracts a content-addressed `structure.json` so the
-// page skeleton is a pure function of source (drift fails CI under --check).
+// Validates the document STRUCTURE + reader survivability + the internal link
+// graph, and extracts a content-addressed `structure.json` so the page skeleton is
+// a pure function of source (drift fails CI under --check).
 //
 // Checks (errors fail the gate):
-//   1. reader survivability (blog posts) — run Mozilla Readability (what Firefox
+//   1. reader survivability (articles) — run Mozilla Readability (what Firefox
 //      Reader runs); it must extract an article that still contains the <h1> and
 //      isn't mostly-empty. The free test of "do the semantics survive the CSS being
 //      stripped." Scoped to articles; list/error pages aren't reader targets.
@@ -20,6 +19,18 @@
 //      served page reachable from nothing is an orphan (warn).
 //
 // Deterministic: same dist → byte-identical structure.json (sorted, hashed).
+//
+// Site-agnostic injection points (all optional, neutral defaults):
+//   $STRUCTURE_AUDIT_SIDECARS  comma-separated deploy-time paths to treat as live
+//                              (e.g. /resume.pdf), beyond the built-in set.
+//   $STRUCTURE_ARTICLE_PREFIX  dir prefix whose pages are "articles" for the reader
+//                              check (default "blog/"); its own index is excluded.
+//   $STRUCTURE_ERROR_PAGE      the error page exempt from the <main>/orphan rules
+//                              (default "404.html").
+//   $STRUCTURE_BASELINE        path to the committed structure.json baseline
+//                              (default: structure.json next to this script — so a
+//                              vendored, hash-pinned copy keeps the baseline in the
+//                              CONSUMER, not in the kit file).
 import { readdir, readFile, writeFile, access } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { join, relative, dirname, resolve } from "node:path";
@@ -27,9 +38,12 @@ import { fileURLToPath } from "node:url";
 import { parseHTML } from "linkedom";
 import { Readability } from "@mozilla/readability";
 
-const dist = resolve(process.argv[2] || "dist");
+const dist = resolve(process.argv[2] || process.env.DIST || "dist");
 const CHECK = process.argv.includes("--check");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
+
+const ARTICLE_PREFIX = process.env.STRUCTURE_ARTICLE_PREFIX || "blog/";
+const ERROR_PAGE = process.env.STRUCTURE_ERROR_PAGE || "404.html";
 
 // Generated at deploy, so absent from a local build — treat as resolvable rather
 // than dead. (The post-deploy edge check verifies they serve.) Consumers add their
@@ -91,10 +105,10 @@ for (const pageAbs of pages) {
 
   const mains = document.querySelectorAll("main").length;
   if (mains > 1) err(`${rel}: ${mains} <main> (want at most 1)`);
-  else if (mains === 0 && rel !== "404.html") warn(`${rel}: no <main> landmark`);
+  else if (mains === 0 && rel !== ERROR_PAGE) warn(`${rel}: no <main> landmark`);
 
   // reader survivability — articles only
-  const isArticle = rel.startsWith("blog/") && rel !== "blog/index.html";
+  const isArticle = rel.startsWith(ARTICLE_PREFIX) && rel !== `${ARTICLE_PREFIX}index.html`;
   let readerOk = null;
   if (isArticle) {
     const h1text = (document.querySelector("h1")?.textContent || "").trim();
@@ -118,17 +132,20 @@ for (const pageAbs of pages) {
   structure[rel] = { h1: (document.querySelector("h1")?.textContent || "").trim().slice(0, 80), outline: hs.join(""), mains, readerOk, internalLinks: links.sort() };
 }
 
-// orphans — served pages reachable from nothing (home + 404 are legitimate roots)
+// orphans — served pages reachable from nothing (home + error page are legit roots)
+const errorKey = canon("/" + ERROR_PAGE);
 for (const key of servedCanon) {
-  if (key === "/" || key === "/404") continue;
+  if (key === "/" || key === errorKey) continue;
   if (!reachable.has(key)) warn(`orphan: ${key} is not linked from any page`);
 }
 
 const json = JSON.stringify(Object.fromEntries(Object.keys(structure).sort().map((k) => [k, structure[k]])), null, 2) + "\n";
 const digest = createHash("sha256").update(json).digest("hex").slice(0, 12);
-// Baseline lives next to the script, so the tool is portable wherever it's vendored
-// (bounded's integrity/structure-audit/ or bd-site's vendor/integrity/structure-audit/).
-const outPath = join(dirname(fileURLToPath(import.meta.url)), "structure.json");
+// Baseline lives in the CONSUMER (default: next to this script), so a vendored,
+// hash-pinned copy of the kit isn't mutated by --check. Override with $STRUCTURE_BASELINE.
+const outPath = process.env.STRUCTURE_BASELINE
+  ? resolve(process.env.STRUCTURE_BASELINE)
+  : join(dirname(fileURLToPath(import.meta.url)), "structure.json");
 
 if (CHECK) {
   const current = (await exists(outPath)) ? await readFile(outPath, "utf8") : "";

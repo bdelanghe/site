@@ -5,7 +5,8 @@ import { rm, mkdir, cp, access, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
-import { validateSchema } from "./schema-validate.mjs";
+import { validateSchema } from "./vendor/conformance-kit/lib/schema-validate.mjs";
+import { reprDigest, securityTxt, securityTxtExpires, webManifest, markdownSiblingHeaders } from "./vendor/conformance-kit/emitters/index.mjs";
 import { loadPosts } from "./posts.mjs";
 import { checkCss } from "./scripts/check-css.mjs";
 
@@ -216,10 +217,9 @@ const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
 // page already paints with: --bs-color-forest / --bs-color-paper) so they can't drift.
 const THEME_COLOR = "#0C5A42";   // --bs-color-forest
 const BG_COLOR = "#EDEAE1";      // --bs-color-paper (the body background)
-// RFC 9530 representation digest: sha-256 of a doc's exact served bytes, as a
-// structured-field byte sequence — `sha-256=:<base64>:`. Computed over the bytes
-// build.mjs itself writes (self-contained; not the later site.sha256), per canonical doc.
-const reprDigest = (buf) => "sha-256=:" + createHash("sha256").update(buf).digest("base64") + ":";
+// RFC 9530 representation digest (`sha-256=:<base64>:`), per canonical doc, over the
+// bytes build.mjs itself writes (self-contained; not the later site.sha256) —
+// reprDigest is imported from the conformance kit's emitters.
 // Build provenance: the commit this artifact was built from (Cloudflare/GitHub CI env).
 // The footer SHA links to /provenance — the report of what produced + validated this build.
 const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
@@ -876,29 +876,31 @@ await writeFile(join(dist, "resume.md"), resumeMd);
 // email ships obfuscation-free, by design (researchers need a real channel). Expires
 // is stamped a year out from the corpus build date (the weekly refresh rolls it forward,
 // so it never goes stale). Content-Type comes from the existing /*.txt rule.
-const securityExpires = (() => { const d = new Date(site.generatedAt); d.setUTCFullYear(d.getUTCFullYear() + 1); return d.toISOString(); })();
-const securityTxt = `Contact: mailto:${email}
-Expires: ${securityExpires}
-Canonical: ${SITE}/.well-known/security.txt
-Preferred-Languages: en
-`;
+// expires a year out from the corpus build date (the kit helper), so the weekly
+// refresh rolls it forward and it never goes stale.
+const securityTxtDoc = securityTxt({
+  contact: `mailto:${email}`,
+  expires: securityTxtExpires(site.generatedAt),
+  canonical: `${SITE}/.well-known/security.txt`,
+  preferredLanguages: ["en"],
+});
 await mkdir(join(dist, ".well-known"), { recursive: true });
-await writeFile(join(dist, ".well-known", "security.txt"), securityTxt);
+await writeFile(join(dist, ".well-known", "security.txt"), securityTxtDoc);
 
 // ---- Web App Manifest (from brand tokens; no service worker) ---------------------
-const webmanifest = {
+const webmanifest = webManifest({
   name: `${name} — ${role}`,
-  short_name: name.split(" ")[0], // ≤12-char home-screen label (PWA convention)
+  shortName: name.split(" ")[0], // ≤12-char home-screen label (PWA convention)
   description: headline,
-  theme_color: THEME_COLOR,
-  background_color: BG_COLOR,
+  themeColor: THEME_COLOR,
+  backgroundColor: BG_COLOR,
   display: "standalone",
-  start_url: "/",
+  startUrl: "/",
   icons: [
     { src: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
     { src: "/brand/mark/mark-forest.svg", sizes: "any", type: "image/svg+xml" },
   ],
-};
+});
 await writeFile(join(dist, "site.webmanifest"), JSON.stringify(webmanifest, null, 2) + "\n");
 
 // ---- agent + crawler affordances, from the same contract ----------------------
@@ -958,10 +960,10 @@ await writeFile(join(dist, "_headers"),
   `/brand/tokens/*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
   `/*.txt\n  Content-Type: text/plain; charset=utf-8\n` +
   `/*.pub\n  Content-Type: text/plain; charset=utf-8\n` +
-  // Markdown siblings + the web app manifest. /*.md greedily matches /blog/<slug>.md too;
-  // neither overlaps an existing Content-Type rule, so no double-header merge.
-  `/*.md\n  Content-Type: text/markdown; charset=utf-8\n` +
-  `/site.webmanifest\n  Content-Type: application/manifest+json; charset=utf-8\n`);
+  // Markdown siblings + the web app manifest Content-Type rules (kit emitter). /*.md
+  // greedily matches /blog/<slug>.md too; neither overlaps an existing Content-Type
+  // rule, so no double-header merge.
+  markdownSiblingHeaders());
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +

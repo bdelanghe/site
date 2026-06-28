@@ -1,0 +1,13 @@
+{
+  "_note": "RFC 9110 HTTP-correctness probe config consumed by the vendored conformance-kit integrity/http-probe.mjs (the routes are an INPUT — nothing is hardcoded in the kit). Used post-deploy in .github/workflows/deploy.yml against the live origin.",
+  "htmlRoutes": ["/", "/resume", "/blog", "/provenance", "/blog/agent-authored-code-drift"],
+  "typed": [
+    { "path": "/robots.txt", "type": "text/plain", "charset": true },
+    { "path": "/sitemap.xml", "type": "xml" },
+    { "path": "/feed.json", "type": "json" },
+    { "path": "/feed.xml", "type": "xml" },
+    { "path": "/site.webmanifest", "type": "json" },
+    { "path": "/styles", "type": null, "skip": true }
+  ],
+  "missing": "/this-path-should-never-exist-12345"
+}

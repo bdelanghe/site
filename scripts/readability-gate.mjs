@@ -1,42 +1,27 @@
 #!/usr/bin/env node
-// Readability SIGNAL gate — a zero-dep readability report over the site's curated copy.
+// Site config shim → the vendored, hash-pinned conformance-kit readability gate
+// (vendor/conformance-kit/gates/readability-gate.mjs). The kit gate scores a CORPUS
+// of prose (an input); THIS site assembles that corpus from its own contracts
+// (data/profile.json + data/presentation.json + data/copy.json) — which fields count
+// as prose, their ids, and the ≥6-word floor are site decisions — then delegates the
+// scoring (Flesch-Kincaid / Gunning Fog, long-sentence / passive / acronym flags).
 //
 //   node scripts/readability-gate.mjs            # report (WARN-only, exit 0)
 //   node scripts/readability-gate.mjs --strict   # escalate every WARN to an error (exit 1)
 //
-// HONEST FRAMING (read docs/readability-gate.md): this is a READABILITY SIGNAL, not a
-// "cognitive-load score". Flesch-Kincaid / Gunning Fog estimate a US reading grade from
-// surface features (sentence length, syllables-per-word). They do NOT measure how hard an
-// idea is to think about. The copy here is hand-curated and signed off (string-audit), so
-// the gate is WARN-by-default: it reports the signal and flags long sentences, long
-// paragraphs, passive voice, and unexplained acronyms — but it only fails the build on
-// EGREGIOUS thresholds (a runaway sentence or an absurd grade), or when run with --strict.
-//
-// Thresholds (documented, deliberately generous for terse technical marketing copy):
-//   reading grade   WARN > 14 (college) · EGREGIOUS (block) > 22
-//   sentence length WARN > 30 words      · EGREGIOUS (block) > 60 words
-//   paragraph length WARN > 90 words
-//   passive voice / unexplained acronym  WARN (per occurrence)
-import { readFile } from "node:fs/promises";
+// HONEST FRAMING (docs/readability-gate.md): a READABILITY SIGNAL, not a
+// "cognitive-load score". WARN-by-default; --strict blocks on warnings.
+import { readFile, writeFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { tmpdir } from "node:os";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const strict = process.argv.includes("--strict");
 const j = async (p) => JSON.parse(await readFile(join(root, p), "utf8"));
 
-// Thresholds.
-const T = { gradeWarn: 14, gradeBlock: 22, sentWarn: 30, sentBlock: 60, paraWarn: 90 };
-
-// Acronyms that are common/explained enough not to warn (domain vocabulary of this site).
-const KNOWN_ACRONYMS = new Set([
-  "AI", "CLI", "PR", "PRS", "CI", "AWS", "DOM", "HTML", "CSS", "JSON", "RDF", "URL", "RSS",
-  "SLSA", "PDF", "BA", "NY", "US", "OCI", "GHCR", "OIDC", "API", "SBOM", "CID", "IPFS",
-  "SPDX", "DNS", "MCP", "VC", "TS", "L2L", "AR", "SHA", "TDD", "SHACL", "RFC", "SEO",
-  "NYC", "ID",
-]);
-
-// ---- text utilities (zero-dep) --------------------------------------------------
+// strip markup so a reading-grade formula sees prose, not tags/entities (mirrors the
+// kit's own normalisation; pre-applying it here keeps the assembled ids stable).
 const stripMarkup = (s) =>
   String(s)
     .replace(/<[^>]+>/g, " ")
@@ -44,28 +29,15 @@ const stripMarkup = (s) =>
     .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/\s+/g, " ")
     .trim();
+const wordCount = (s) => (s.match(/[A-Za-z][A-Za-z'’-]*/g) || []).length;
 
-const words = (s) => (s.match(/[A-Za-z][A-Za-z'’-]*/g) || []);
-const sentences = (s) => s.split(/(?<=[.!?])\s+(?=[A-Z(])/).map((x) => x.trim()).filter(Boolean);
-
-// Vowel-group syllable estimate, with silent trailing-e correction; min 1.
-const syllables = (w) => {
-  w = w.toLowerCase().replace(/[^a-z]/g, "");
-  if (!w) return 0;
-  let groups = (w.match(/[aeiouy]+/g) || []).length;
-  if (/e$/.test(w) && !/[aeiouy]e$/.test(w) && groups > 1) groups--; // silent final e
-  return Math.max(1, groups);
-};
-
-const complex = (w) => syllables(w) >= 3; // Gunning Fog "complex word"
-
-// ---- collect the curated prose corpus -------------------------------------------
+// ---- assemble the curated prose corpus (the site-specific input) ----------------
 // Atoms/prose with sentence structure. Short labels (nav, eyebrows) are excluded — a
-// reading-grade formula is meaningless on a two-word button.
+// reading-grade formula is meaningless on a two-word button (the ≥6-word floor).
 const corpus = []; // { id, text }
 const add = (id, text) => {
   const t = stripMarkup(text);
-  if (t && words(t).length >= 6) corpus.push({ id, text: t });
+  if (t && wordCount(t) >= 6) corpus.push({ id, text: t });
 };
 
 const profile = await j("data/profile.json");
@@ -86,63 +58,21 @@ add("presentation.seeking.detail", pres.seeking?.detail);
 const copy = await j("data/copy.json");
 for (const [id, v] of Object.entries(copy)) {
   if (id.startsWith("_") || typeof v !== "string") continue;
-  add(`copy.${id}`, v); // add() filters to >= 6 words, so only the ledes/prose qualify
+  add(`copy.${id}`, v); // add() filters to ≥ 6 words, so only the ledes/prose qualify
 }
 
-// ---- score ----------------------------------------------------------------------
-let warns = 0, blocks = 0;
-const warn = (m) => { console.log(`  ⚠ ${m}`); warns++; };
-const block = (m) => { console.error(`  ✗ ${m}`); blocks++; };
+// ---- hand the corpus to the kit gate --------------------------------------------
+const corpusPath = join(tmpdir(), `readability-corpus-${process.pid}.json`);
+await writeFile(corpusPath, JSON.stringify(corpus));
 
-const PASSIVE = /\b(?:is|are|was|were|be|been|being|am)\b\s+(?:[a-z]+ly\s+)?(?:[a-z]+ed|written|built|made|done|shown|given|held|kept|driven|known|seen|taken|drawn|met|run|set|read|put|sent|brought|caught)\b/gi;
-
-let totW = 0, totS = 0, totSyl = 0, totComplex = 0;
-for (const { id, text } of corpus) {
-  const ws = words(text);
-  const ss = sentences(text);
-  const syl = ws.reduce((a, w) => a + syllables(w), 0);
-  const cx = ws.filter(complex).length;
-  totW += ws.length; totS += ss.length; totSyl += syl; totComplex += cx;
-
-  // long sentences
-  for (const s of ss) {
-    const n = words(s).length;
-    if (n > T.sentBlock) block(`${id}: sentence of ${n} words exceeds egregious cap (${T.sentBlock}) — "${s.slice(0, 70)}…"`);
-    else if (n > T.sentWarn) warn(`${id}: long sentence (${n} words) — "${s.slice(0, 70)}…"`);
-  }
-  // long paragraph (the atom as a whole)
-  if (ws.length > T.paraWarn) warn(`${id}: long paragraph (${ws.length} words)`);
-  // passive voice
-  for (const m of text.match(PASSIVE) || []) warn(`${id}: possible passive voice — "${m.trim()}"`);
-  // unexplained acronyms (all-caps token not in the known set and not expanded in-text)
-  for (const tok of text.match(/\b[A-Z][A-Z0-9]{1,6}s?\b/g) || []) {
-    const base = tok.replace(/s$/, "").toUpperCase();
-    if (!KNOWN_ACRONYMS.has(tok.toUpperCase()) && !KNOWN_ACRONYMS.has(base)) warn(`${id}: unexplained acronym "${tok}"`);
-  }
-}
-
-// aggregate reading grade
-const fk = 0.39 * (totW / totS) + 11.8 * (totSyl / totW) - 15.59;
-const fog = 0.4 * ((totW / totS) + 100 * (totComplex / totW));
-const grade = (fk + fog) / 2;
-const g = (x) => x.toFixed(1);
-
-console.log("");
-console.log(`readability signal (curated copy — ${corpus.length} prose atoms, ${totW} words, ${totS} sentences):`);
-console.log(`  Flesch-Kincaid grade ${g(fk)} · Gunning Fog ${g(fog)} · mean ${g(grade)}`);
-console.log(`  (a US reading-grade SIGNAL from sentence length + syllables — NOT a cognitive-load score; see docs/readability-gate.md)`);
-console.log("");
-
-if (grade > T.gradeBlock) block(`mean reading grade ${g(grade)} exceeds egregious cap (${T.gradeBlock})`);
-else if (grade > T.gradeWarn) warn(`mean reading grade ${g(grade)} above college level (${T.gradeWarn})`);
-
-console.log("");
-if (blocks) {
-  console.error(`✗ readability-gate: ${blocks} egregious finding(s), ${warns} warning(s).`);
-  process.exit(1);
-}
-if (strict && warns) {
-  console.error(`✗ readability-gate (--strict): ${warns} warning(s) escalated to errors.`);
-  process.exit(1);
-}
-console.log(`✓ readability-gate: signal reported — ${warns} warning(s), 0 egregious. (WARN-only; pass --strict to block on warnings.)`);
+const gate = join(root, "vendor", "conformance-kit", "gates", "readability-gate.mjs");
+const args = [gate, corpusPath, ...process.argv.slice(2)];
+const res = spawnSync(process.execPath, args, {
+  stdio: "inherit",
+  env: {
+    ...process.env,
+    // this site's domain acronyms beyond the kit's defaults (so they don't warn).
+    READABILITY_KNOWN_ACRONYMS: "BA,NY,L2L,AR,NYC",
+  },
+});
+process.exit(res.status ?? 1);

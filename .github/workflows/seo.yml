@@ -15,8 +15,9 @@ on:
       - "posts.mjs"
       - "posts/**"
       - "data/**"
-      - "scripts/seo-gate.mjs"
-      - "scripts/commonmark-gate.mjs"
+      - "contract/commonmark-fixtures.json"
+      - "vendor/conformance-kit/gates/seo-gate.mjs"
+      - "vendor/conformance-kit/gates/commonmark-runner.mjs"
       - ".github/workflows/seo.yml"
   workflow_dispatch:
 
@@ -38,6 +39,6 @@ jobs:
       - name: Build site
         run: node build.mjs
       - name: CommonMark assertion — posts renderer is pinned + escapes raw HTML
-        run: node scripts/commonmark-gate.mjs
+        run: npm run check:commonmark
       - name: SEO gate — canonical / title / description / robots / sitemap / links
-        run: node scripts/seo-gate.mjs
+        run: npm run check:seo

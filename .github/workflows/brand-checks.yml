@@ -32,9 +32,15 @@ jobs:
         run: node brand/tools/meta.mjs --check dist
       - name: Accessibility (WCAG AA contrast + headings)
         run: node brand/tools/a11y.mjs --check dist
-      - name: Install structure-audit deps (vendored tenant)
-        run: npm ci --prefix vendor/integrity/structure-audit
+      - name: Install structure-audit deps (vendored conformance-kit tenant)
+        run: npm ci --prefix vendor/conformance-kit/integrity/structure-audit
       - name: Whole-page structure gate (reader survivability + outline + links)
-        # /resume.pdf (print-to-pdf) and /attestation.intoto.json (gen-attestation)
-        # are produced at deploy, absent from this build — allowlisted as sidecars.
-        run: STRUCTURE_AUDIT_SIDECARS=/resume.pdf,/attestation.intoto.json node vendor/integrity/structure-audit/audit.mjs dist --check
+        # The kit's structure-audit is site-agnostic: this site's committed baseline
+        # (structure.json) is an INPUT, kept in the consumer via $STRUCTURE_BASELINE
+        # (so the hash-pinned kit copy isn't mutated by --check). /resume.pdf
+        # (print-to-pdf) and /attestation.intoto.json (gen-attestation) are produced
+        # at deploy, absent from this build — allowlisted as sidecars.
+        run: |
+          STRUCTURE_AUDIT_SIDECARS=/resume.pdf,/attestation.intoto.json \
+          STRUCTURE_BASELINE=vendor/conformance-kit/integrity/structure-audit/structure.json \
+          node vendor/conformance-kit/integrity/structure-audit/audit.mjs dist --check

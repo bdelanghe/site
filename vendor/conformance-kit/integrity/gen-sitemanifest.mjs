@@ -7,22 +7,23 @@
 // the deploy keyless-signs (cosign sign-blob), so provenance covers every asset.
 // A visitor verifies the signature on this manifest, then checks the live bytes.
 //
-//   node integrity/scripts/gen-sitemanifest.mjs      # uses ./dist
-//   DIST=out node integrity/scripts/gen-sitemanifest.mjs
+//   node integrity/gen-sitemanifest.mjs            # uses ./dist
+//   DIST=out node integrity/gen-sitemanifest.mjs
+//   MANIFEST_EXCLUDE=_worker.js,_extra node integrity/gen-sitemanifest.mjs
 //
-// Canonical home for both sites. Resolved from cwd (not the file's location) so
-// it runs identically whether invoked in-repo or vendored. The provenance
-// sidecars are excluded — they describe the site, they are not the site, and the
-// manifest can't hash its own signature. Keep EXCLUDE in sync with the tar
-// --exclude list (or whole-dist tar) in the deploy pipeline.
+// Site-agnostic: dist resolved from cwd (not the file's location), so it runs
+// identically whether invoked in-repo or vendored. The provenance sidecars are
+// excluded — they describe the site, they are not the site, and the manifest can't
+// hash its own signature. EXCLUDE is a superset of both reference sites' sidecars
+// (a name that doesn't exist in a given site is simply never matched); a consumer
+// adds platform control files of its own via $MANIFEST_EXCLUDE (comma-separated).
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { join, relative } from "node:path";
+import { join, relative, resolve } from "node:path";
 
-const dist = process.env.DIST ? join(process.cwd(), process.env.DIST) : join(process.cwd(), "dist");
+// $DIST may be absolute or relative-to-cwd (resolve handles both); default ./dist.
+const dist = resolve(process.cwd(), process.env.DIST || "dist");
 
-// Superset of both sites' sidecars (a name that doesn't exist in a given site is
-// simply never matched, so this is safe to share).
 const EXCLUDE = new Set([
   "site.sha256",
   "site.sha256.sigstore.json",
@@ -30,13 +31,14 @@ const EXCLUDE = new Set([
   "rekor/index.html",
   "attestation.intoto.json",
   "attestation.intoto.json.sigstore.json",
-  // Platform control files: consumed by the host (Cloudflare Pages), never served
-  // as content — so they don't belong in a manifest of SERVED bytes (a verifier
-  // re-hashing the live site 404s on them). Still covered by the OCI artifact
-  // signature, which packs the whole dist. bounded.tools has none; bd-site emits _headers.
+  // Platform control files: consumed by the host (e.g. Cloudflare Pages), never
+  // served as content — so they don't belong in a manifest of SERVED bytes (a
+  // verifier re-hashing the live site 404s on them). Still covered by the OCI
+  // artifact signature, which packs the whole dist.
   "_headers",
   "_redirects",
   "_routes.json",
+  ...(process.env.MANIFEST_EXCLUDE || "").split(",").map((s) => s.trim()).filter(Boolean),
 ]);
 
 async function walk(dir) {

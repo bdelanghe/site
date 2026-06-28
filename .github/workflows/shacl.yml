@@ -17,7 +17,7 @@ on:
       - "posts/**"
       - "data/**"
       - "contract/jsonld.shapes.ttl"
-      - "scripts/shacl-gate.mjs"
+      - "vendor/conformance-kit/gates/shacl-runner.mjs"
       - ".github/workflows/shacl.yml"
   workflow_dispatch:
 
@@ -39,4 +39,4 @@ jobs:
       - name: Build site
         run: node build.mjs
       - name: SHACL gate — JSON-LD conforms to contract/jsonld.shapes.ttl
-        run: node scripts/shacl-gate.mjs
+        run: npm run check:shacl
