@@ -22,6 +22,8 @@ jobs:
           node-version: "22"
       - name: Build dist/
         run: node build.mjs
+      - name: Known-vuln gate (conformance evidence — production deps, re-proven)
+        run: node scripts/vuln-gate.mjs --check
       - name: atomic-copy gate (every visible word on / + /resume is a copy atom)
         run: node scripts/copy-gate.mjs --strict
       - name: No hardcoded colours (all colours are tokens)
