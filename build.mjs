@@ -211,6 +211,15 @@ const colophonHtml = profile.colophon?.length
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
 const SITE = basics.url || "https://robertdelanghe.dev";
 const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
+// One source for the install/chrome colors: the <head> theme-color and the web app
+// manifest read the same literals (forest fill + paper surface — the brand tokens the
+// page already paints with: --bs-color-forest / --bs-color-paper) so they can't drift.
+const THEME_COLOR = "#0C5A42";   // --bs-color-forest
+const BG_COLOR = "#EDEAE1";      // --bs-color-paper (the body background)
+// RFC 9530 representation digest: sha-256 of a doc's exact served bytes, as a
+// structured-field byte sequence — `sha-256=:<base64>:`. Computed over the bytes
+// build.mjs itself writes (self-contained; not the later site.sha256), per canonical doc.
+const reprDigest = (buf) => "sha-256=:" + createHash("sha256").update(buf).digest("base64") + ":";
 // Build provenance: the commit this artifact was built from (Cloudflare/GitHub CI env).
 // The footer SHA links to /provenance — the report of what produced + validated this build.
 const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
@@ -237,16 +246,17 @@ const bFonts = await fpBrand("css/fonts.css");
 const bTokens = await fpBrand("tokens/tokens.css");
 const bBase = await fpBrand("css/base.css");
 
-const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType = "website", ogImage = OG_IMAGE }) => {
+const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType = "website", ogImage = OG_IMAGE, mdAlt }) => {
   const url = SITE + path, t = esc(title), d = esc(description), ot = esc(ogTitle ?? title), img = ogImage.startsWith("http") ? ogImage : SITE + ogImage;
   return `<meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${t}</title>
   <meta name="description" content="${d}">
   <link rel="canonical" href="${url}">
-  <meta name="theme-color" content="#0C5A42">
+  <meta name="theme-color" content="${THEME_COLOR}">
   <link rel="icon" type="image/png" href="/brand/favicon-32.png">
   <link rel="icon" type="image/svg+xml" href="/brand/mark/mark-forest.svg">
+  <link rel="manifest" href="/site.webmanifest">
   <meta property="og:type" content="${ogType}">
   <meta property="og:url" content="${url}">
   <meta property="og:title" content="${ot}">
@@ -262,7 +272,8 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <meta name="twitter:image" content="${img}">
   <meta name="twitter:image:alt" content="${ot}">
   <link rel="alternate" type="application/atom+xml" title="Robert DeLanghe — Writing" href="/feed.xml">
-  <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${social.map((s) => `
+  <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${mdAlt ? `
+  <link rel="alternate" type="text/markdown" href="${mdAlt}">` : ""}${social.map((s) => `
   <link rel="me" href="${esc(s.url)}">`).join("")}
   <link rel="stylesheet" href="${bFonts.href}">
   <link rel="stylesheet" href="${bTokens.href}">${appCss ? `
@@ -412,7 +423,7 @@ const homeOgImage = (await exists(join(root, "assets", "cards", "home.png"))) ? 
 const html = `<!doctype html>
 <html lang="en">
 <head>
-  ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/", ogImage: homeOgImage })}
+  ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/", ogImage: homeOgImage, mdAlt: "/index.md" })}
   ${jsonLd}
 </head>
 <body>
@@ -572,7 +583,7 @@ if (jrErrors.length) {
 const resumeHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${name} — ${copy("head.resume.label")}`, description: `${copy("head.resume.label")} — ${name}, ${role}.`, path: "/resume", appCss: false })}
+${head({ title: `${name} — ${copy("head.resume.label")}`, description: `${copy("head.resume.label")} — ${name}, ${role}.`, path: "/resume", appCss: false, mdAlt: "/resume.md" })}
 <link rel="alternate" type="application/json" href="/resume.json" title="JSON Résumé (machine-readable)">
 ${jsonLd}
 <style>
@@ -709,6 +720,7 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
 await writeFile(join(dist, "blog.html"), blogHtml);
 
 await mkdir(join(dist, "blog"), { recursive: true });
+const postReprs = []; // [route, Repr-Digest] for each post's canonical HTML doc
 for (const p of posts) {
   const url = SITE + postUrl(p);
   // Per-article social card (og:image) if one's been generated; else the brand default.
@@ -727,7 +739,7 @@ for (const p of posts) {
   const ph = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "article", description: p.meta.description, path: postUrl(p), ogImage })}
+${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "article", description: p.meta.description, path: postUrl(p), ogImage, mdAlt: `/blog/${p.slug}.md` })}
   <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>
 </head>
 <body>
@@ -749,6 +761,16 @@ ${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "a
 </html>
 `;
   await writeFile(join(dist, "blog", `${p.slug}.html`), ph);
+  postReprs.push([postUrl(p), reprDigest(ph)]);
+  // Markdown sibling — the post's frontmatter title/description + its already-interpolated
+  // body source, served as text/markdown at the sibling URL (advertised via head() mdAlt).
+  const postMd = `# ${p.meta.title}
+${p.meta.description ? `\n> ${p.meta.description}\n` : ""}
+${p.meta.date} · ${name}${(p.meta.tags || []).length ? ` · ${(p.meta.tags || []).join(", ")}` : ""}
+
+${p.text}
+`;
+  await writeFile(join(dist, "blog", `${p.slug}.md`), postMd);
 }
 
 // ---- feeds: Atom + JSON Feed, WebSub hub declared (rel=hub) for push -----------
@@ -784,7 +806,8 @@ const jsonFeed = {
   authors: [{ name: name, url: SITE }],
   items: posts.map((p) => ({ id: SITE + postUrl(p), url: SITE + postUrl(p), title: p.meta.title, summary: p.meta.description, date_published: iso(p.meta.date), tags: p.meta.tags || [] })),
 };
-await writeFile(join(dist, "feed.json"), JSON.stringify(jsonFeed, null, 2) + "\n");
+const jsonFeedStr = JSON.stringify(jsonFeed, null, 2) + "\n";
+await writeFile(join(dist, "feed.json"), jsonFeedStr);
 
 await writeFile(join(dist, stylesHref.slice(1)), stylesCss); // fingerprinted name (see stylesHref)
 await cp(join(root, "assets/logo.svg"), join(dist, "assets/logo.svg"));
@@ -801,6 +824,83 @@ for (const f of [bFonts, bTokens, bBase]) {
   await rm(join(dist, "brand", f.rel));
 }
 
+// ---- sibling-URL representations: Markdown twins of the rendered pages ----------
+// NOT header content-negotiation — plain sibling URLs (/index.md, /resume.md,
+// /blog/<slug>.md) served as text/markdown, advertised via <link rel="alternate"> in
+// each page's <head> and listed in llms.txt. A deterministic function of the same
+// contracts the HTML renders from. (Posts emit their .md inside the post loop above.)
+const mdLink = (label, href) => `[${label}](${href.startsWith("/") ? SITE + href : href})`;
+const indexMd = `# ${name} — ${role}
+
+> ${headline}
+${profile.intro ? `\n${profile.intro}\n` : ""}
+${summary}
+${place ? `\n${place}\n` : ""}${proof.length ? `\n## ${copy("proof.prefix").replace(/\s*[—-]\s*$/, "")}\n${proof.map((p) => `- ${mdLink(p.label, p.href)}`).join("\n")}\n` : ""}${s ? `\n## ${s.label || s.focus}\n${s.focus}${s.detail ? `\n\n${s.detail}` : ""}\n` : ""}
+## ${copy("background.eyebrow")}
+${work.map((w) => `- **${w.name}**${w.position ? ` · ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.summary ? ` — ${w.summary}` : ""}`).join("\n")}
+${education.length ? `\n### ${copy("background.education")}\n${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `- **${e.institution}**${d ? ` · ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n")}\n` : ""}
+## ${copy("work.eyebrow")}
+${highlights.map((h) => `- ${mdLink(h.name, h.url)}: ${h.description}`).join("\n")}
+
+## ${copy("llms.links")}
+${profile.links.map((l) => l.href.startsWith("mailto:") ? `- ${emailObf}` : `- ${mdLink(l.label, l.href)}`).join("\n")}
+`;
+await writeFile(join(dist, "index.md"), indexMd);
+
+const rLinksMd = social.map((sp) => mdLink(sp.network, sp.url)).join(" · ");
+const rContactMd = [rLocation, rLinksMd, emailObf].filter(Boolean).join(" · ");
+const resumeMd = `# ${name}
+
+${role}${headline ? ` · ${headline.replace(/\.$/, "")}` : ""}
+
+${rContactMd}
+
+${summary}
+${skills.length ? `\n## ${copy("resume.section.skills")}\n${skills.map((g) => g.keywords?.length ? `- **${g.name}**: ${g.keywords.join(", ")}` : `- ${g.name}`).join("\n")}\n` : ""}
+## ${copy("resume.section.experience")}
+${work.map((w) => `### ${w.name}${w.position ? ` — ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.location ? `\n${w.location}` : ""}${(w.highlights ?? (w.summary ? [w.summary] : [])).map((b) => `\n- ${b}`).join("")}`).join("\n\n")}
+${projects.length ? `\n## ${copy("resume.section.projects")}\n${projByEntity.map(({ entity, items }) => {
+  const roles = [...new Set(items.flatMap((p) => p.roles ?? []))].join(" · ");
+  const starts = items.map((p) => p.startDate).filter(Boolean).sort();
+  const when = starts.length ? `${starts[0].slice(0, 4)} – present` : "";
+  const bullets = items.map((p) => `- **${p.name}**${p.startDate ? ` · ${fmtDate(p.startDate)}` : ""}${p.description ? ` — ${p.description}` : ""}`).join("\n");
+  return `### ${entity}${when ? ` (${when})` : ""}${roles ? ` · ${roles}` : ""}\n${bullets}`;
+}).join("\n\n")}\n` : ""}
+## ${copy("resume.section.education")}
+${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `### ${e.institution}${d ? ` — ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n\n")}
+`;
+await writeFile(join(dist, "resume.md"), resumeMd);
+
+// ---- /.well-known/security.txt (RFC 9116) ---------------------------------------
+// A machine-readable security-contact channel — the one surface where the canonical
+// email ships obfuscation-free, by design (researchers need a real channel). Expires
+// is stamped a year out from the corpus build date (the weekly refresh rolls it forward,
+// so it never goes stale). Content-Type comes from the existing /*.txt rule.
+const securityExpires = (() => { const d = new Date(site.generatedAt); d.setUTCFullYear(d.getUTCFullYear() + 1); return d.toISOString(); })();
+const securityTxt = `Contact: mailto:${email}
+Expires: ${securityExpires}
+Canonical: ${SITE}/.well-known/security.txt
+Preferred-Languages: en
+`;
+await mkdir(join(dist, ".well-known"), { recursive: true });
+await writeFile(join(dist, ".well-known", "security.txt"), securityTxt);
+
+// ---- Web App Manifest (from brand tokens; no service worker) ---------------------
+const webmanifest = {
+  name: `${name} — ${role}`,
+  short_name: name,
+  description: headline,
+  theme_color: THEME_COLOR,
+  background_color: BG_COLOR,
+  display: "standalone",
+  start_url: "/",
+  icons: [
+    { src: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
+    { src: "/brand/mark/mark-forest.svg", sizes: "any", type: "image/svg+xml" },
+  ],
+};
+await writeFile(join(dist, "site.webmanifest"), JSON.stringify(webmanifest, null, 2) + "\n");
+
 // ---- agent + crawler affordances, from the same contract ----------------------
 const llms = `# ${name}
 > ${headline}
@@ -814,7 +914,11 @@ ${profile.links.filter((l) => !l.href.startsWith("mailto:")).map((l) => `- [${l.
 
 ## ${copy("llms.work")}
 ${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
-${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}`;
+${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}
+## ${copy("llms.md")}
+- [${name} — ${role}](${SITE}/index.md)
+- [${copy("head.resume.label")}](${SITE}/resume.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
+`;
 await writeFile(join(dist, "llms.txt"), llms);
 
 // The typed-symbol catalog + grounding registry that the audit gate runs on are
@@ -830,13 +934,34 @@ await writeFile(join(dist, "llms.txt"), llms);
 // rules, which would emit a malformed double Cache-Control. Plus UTF-8 on text
 // assets (Cloudflare otherwise sends text/plain with no charset → Latin-1 mojibake).
 const htmlRoutes = ["/", "/resume", "/blog", "/provenance", ...posts.map(postUrl)];
+// RFC 9530 Repr-Digest per canonical doc, computed over the exact bytes written above
+// (self-contained — not the later site.sha256). Scoped to the canonical documents, not
+// fingerprinted assets. /provenance is intentionally OMITTED: gen-attestation.mjs stamps
+// @@COMMIT@@/@@DATE@@ into provenance.html AFTER this build, so a build-time digest would
+// not match the served bytes. The digest is added in the SAME rule block as Cache-Control
+// (Cloudflare _headers merges overlapping rules — one block per route avoids duplication).
+const reprByRoute = {
+  "/": reprDigest(html),
+  "/resume": reprDigest(resumeHtml),
+  "/blog": reprDigest(blogHtml),
+  ...Object.fromEntries(postReprs),
+  "/feed.xml": reprDigest(atom),
+  "/feed.json": reprDigest(jsonFeedStr),
+};
+const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` : "");
 await writeFile(join(dist, "_headers"),
-  htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600`).join("\n") +
-  `\n/styles.*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
+  htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600${reprLine(r)}`).join("\n") +
+  `\n/feed.xml\n  Repr-Digest: ${reprByRoute["/feed.xml"]}\n` +
+  `/feed.json\n  Repr-Digest: ${reprByRoute["/feed.json"]}\n` +
+  `/styles.*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
   `/brand/css/*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
   `/brand/tokens/*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
   `/*.txt\n  Content-Type: text/plain; charset=utf-8\n` +
-  `/*.pub\n  Content-Type: text/plain; charset=utf-8\n`);
+  `/*.pub\n  Content-Type: text/plain; charset=utf-8\n` +
+  // Markdown siblings + the web app manifest. /*.md greedily matches /blog/<slug>.md too;
+  // neither overlaps an existing Content-Type rule, so no double-header merge.
+  `/*.md\n  Content-Type: text/markdown; charset=utf-8\n` +
+  `/site.webmanifest\n  Content-Type: application/manifest+json; charset=utf-8\n`);
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
