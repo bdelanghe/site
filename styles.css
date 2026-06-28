@@ -4,6 +4,10 @@
 
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: clamp(48px, 10vw, 112px) 28px 64px; }
 
+/* visible keyboard focus — non-color, brand-token ring (WCAG 2.4.7 / 2.4.11) */
+:focus-visible { outline: 2px solid var(--bs-color-forest); outline-offset: 2px; border-radius: 2px; }
+.seeking :focus-visible { outline-color: var(--bs-color-white); }
+
 .eyebrow { color: var(--bs-color-ink-mono); margin: 0 0 20px; }
 
 /* intro */
@@ -37,7 +41,7 @@
 .seeking__label { color: var(--bs-color-on-forest-soft); margin: 0 0 10px; }
 .seeking__focus { font-family: var(--bs-font-display); font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--bs-color-white); margin: 0 0 8px; }
 .seeking__detail { font-size: 15px; line-height: 1.55; color: var(--bs-color-on-forest); margin: 0 0 16px; max-width: 60ch; }
-.seeking__cta { font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-white); text-decoration: none; border-bottom: 1px solid var(--bs-color-on-forest-line); padding-bottom: 2px; }
+.seeking__cta { font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-white); text-decoration: none; border-bottom: 1px solid var(--bs-color-on-forest-soft); padding-bottom: 2px; }
 .seeking__cta:hover { border-color: var(--bs-color-white); }
 .links { display: flex; flex-wrap: wrap; gap: 22px; }
 .links a {
@@ -146,8 +150,8 @@
 .post .tag { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
 
 /* ---- social identity + POSSE syndication ----------------------------------- */
-.foot__social a { color: var(--bs-color-forest); text-decoration: none; }
-.foot__social a:hover { text-decoration: underline; }
+.foot__social a { color: var(--bs-color-forest); text-decoration: underline; text-underline-offset: 2px; }
+.foot__social a:hover { text-decoration-thickness: 2px; }
 .post__synd {
   margin-top: clamp(28px, 5vw, 40px); padding-top: 16px; border-top: 1px solid var(--bs-color-line);
   font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono);
@@ -162,7 +166,8 @@
 .prov-link__name { display: block; font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-forest); margin: 0 0 5px; }
 .prov-link__body { color: var(--bs-color-ink-soft); font-size: 15px; line-height: 1.55; max-width: 60ch; }
 .prov-link__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-forest-tint); padding: 1px 5px; border-radius: 4px; color: var(--bs-color-ink); }
-.prov-link__body a { text-decoration: none; }
+.prov-link__body a { color: var(--bs-color-forest); text-decoration: underline; text-underline-offset: 2px; }
+.prov-link__body a:has(code) { text-decoration: none; }
 .prov-link__body a code { color: var(--bs-color-forest); border-bottom: 1px solid var(--bs-color-line); }
 .prov-link__body a:hover code { border-color: var(--bs-color-forest); }
 /* the signed output — the seal that closes the chain */
