@@ -321,14 +321,14 @@ const backgroundHtml =
 
 const s = profile.seeking;
 const seekingHtml = s
-  ? `<section class="seeking">
+  ? `<div class="seeking">
       ${s.label ? `<p class="bs-text-label seeking__label">${esc(s.label)}</p>` : ""}
       <p class="seeking__focus">${esc(s.focus)}</p>
       ${s.detail ? `<p class="seeking__detail">${esc(s.detail)}</p>` : ""}
       ${s.href ? (s.href.startsWith("mailto:")
         ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta" })
         : `<a class="seeking__cta" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
-    </section>`
+    </div>`
   : "";
 
 const { stats, highlights } = site;
@@ -651,7 +651,7 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
       <h2 class="bs-text-label eyebrow">${copy("prov.chain.eyebrow")}</h2>
       <p class="lead">${copy("prov.chain.lede")}</p>
       <ol class="prov-chain">
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></div></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (JSON-LD 1.1) is validated against <code>SHACL</code> shapes; an <strong>SPDX SBOM</strong> is generated and completeness-checked; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed in-toto/SLSA attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong WCAG&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</span></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
@@ -711,9 +711,9 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
         <a href="https://github.com/bounded-systems">${copy("nav.github")}&nbsp;&#8599;</a>
       </nav>
     </header>
-    <section class="posts">
+    <div class="posts">
       ${blogIndex}
-    </section>
+    </div>
   </main>
 </body>
 </html>
