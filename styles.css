@@ -167,7 +167,12 @@
 .prov-link__body { color: var(--bs-color-ink-soft); font-size: 15px; line-height: 1.55; max-width: 60ch; }
 .prov-link__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-forest-tint); padding: 1px 5px; border-radius: 4px; color: var(--bs-color-ink); }
 .prov-link__body a { color: var(--bs-color-forest); text-decoration: underline; text-underline-offset: 2px; }
-.prov-link__body a:has(code) { text-decoration: none; }
+/* :has() is not yet Baseline Widely Available; guard it as a progressive
+   enhancement (the feature query is the tested fallback — without :has() the link
+   simply keeps its default underline). */
+@supports selector(:has(*)) {
+  .prov-link__body a:has(code) { text-decoration: none; }
+}
 .prov-link__body a code { color: var(--bs-color-forest); border-bottom: 1px solid var(--bs-color-line); }
 .prov-link__body a:hover code { border-color: var(--bs-color-forest); }
 /* the signed output — the seal that closes the chain */
