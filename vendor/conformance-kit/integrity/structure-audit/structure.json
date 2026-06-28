@@ -40,6 +40,7 @@
     "internalLinks": [
       "/",
       "/api/v1/conformance.json",
+      "/attestation.intoto.json",
       "/feed.xml",
       "/llms.txt",
       "/provenance",
@@ -65,10 +66,9 @@
       "/provenance",
       "/provenance",
       "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance"
+      "/provenance.json",
+      "/sbom.spdx.json",
+      "/site.sha256"
     ]
   },
   "index.html": {

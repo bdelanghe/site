@@ -937,32 +937,37 @@ await writeFile(join(dist, "llms.txt"), llms);
 // every tier-1 required criterion is met — so automation can never print "WCAG 2.2 AA"
 // or "ASVS conformant" on its own.
 //
-// What this pure render verifies in-process (no network, no clock):
-//   • integrity.content-digests — build.mjs writes RFC 9530 Repr-Digest headers into
-//     dist/_headers (unconditionally, below).
-//   • semantic.ai-readability   — llms.txt + the Markdown siblings (/index.md,
-//     /resume.md, /blog/<slug>.md) are emitted from the same contracts.
-//   • semantic.feeds            — a structurally-valid Atom 1.0 feed is emitted.
-// Everything else (lone's DOM blessing, SHACL, the SPDX SBOM, the signed in-toto
-// attestation, axe, the MANUAL WCAG/ASVS/Core-Web-Vitals/Baseline evidence) is
-// produced by DEDICATED gates/steps that run OUTSIDE this hermetic render — so it is
-// NOT readable here and reports `not-assessed`: honest, since this build has not
-// itself verified it. A deploy/CI step MAY widen the report by injecting the gate
-// results via $CONFORMANCE_EVIDENCE / $CONFORMANCE_LONE_FINDINGS (JSON file paths).
+// Evidence comes from three layers, in precedence order (last wins):
+//   1. data/conformance-evidence.json — the committed evidence CONTRACT: the gate
+//      verdicts this site genuinely verifies (SHACL conforms, seo clean, SBOM
+//      complete+signed, the signed+verified in-toto attestation, the signed site
+//      manifest, the recorded IPFS CID, lone's 0-error DOM blessing). Each entry is
+//      re-proven every build by a gate that BLOCKS on failure, so it can't drift from
+//      reality without turning CI red (see that file's _gates map).
+//   2. in-process build-facts — what THIS render self-checks and so asserts most
+//      directly: RFC 9530 Repr-Digest headers (written into dist/_headers below),
+//      llms.txt + the Markdown siblings, the Atom feed.
+//   3. $CONFORMANCE_EVIDENCE / $CONFORMANCE_LONE_FINDINGS — a deploy/CI step may
+//      override any field with a live-captured value (e.g. the real lone findings).
+// HONEST: the manual + external GATING criteria (manual WCAG audit, OWASP ASVS L2,
+// full axe scan, Nu HTML Checker, Core Web Vitals field data, Baseline, known-vuln
+// scan, runtime reliability) are NOT supplied by any layer → they report `not-assessed`
+// and the strong WCAG/ASVS compact claim stays withheld.
 const mdSiblingsOk =
   (await exists(join(dist, "index.md"))) && (await exists(join(dist, "resume.md"))) &&
   (await Promise.all(posts.map((p) => exists(join(dist, "blog", `${p.slug}.md`))))).every(Boolean);
 const llmsOk = llms.length > 0;
 const atomOk = /<feed[\s>]/.test(atom) && /<id>/.test(atom) && /<updated>/.test(atom) &&
   (posts.length === 0 || /<entry>/.test(atom));
-let confEvidence = {
+const buildFacts = {
   contentDigests: { reprDigestHeaders: true },
   aiReadability: { llmsTxtPresent: llmsOk, linksResolve: mdSiblingsOk, markdownSiblings: mdSiblingsOk },
   feeds: { atomValid: atomOk },
 };
-let confLoneFindings = null; // no DOM blessed in this pure render → lone criteria not-assessed
-// Optional deploy/CI injection: widen the published report with the gates that ran
-// after the pure build (the semantic Deno gate, check:shacl, gen-sbom, gen-attestation…).
+const evContract = (await exists(join(root, "data", "conformance-evidence.json")))
+  ? await loadJson(join(root, "data", "conformance-evidence.json")) : {};
+let confEvidence = { ...(evContract.evidence ?? {}), ...buildFacts };
+let confLoneFindings = Array.isArray(evContract.loneFindings) ? evContract.loneFindings : null;
 if (process.env.CONFORMANCE_EVIDENCE && await exists(process.env.CONFORMANCE_EVIDENCE))
   confEvidence = { ...confEvidence, ...await loadJson(process.env.CONFORMANCE_EVIDENCE) };
 if (process.env.CONFORMANCE_LONE_FINDINGS && await exists(process.env.CONFORMANCE_LONE_FINDINGS)) {
@@ -973,13 +978,19 @@ const confReport = buildConformanceReport({ loneFindings: confLoneFindings, evid
 await mkdir(join(dist, "api", "v1"), { recursive: true });
 await writeFile(join(dist, "api", "v1", "conformance.json"), JSON.stringify(confReport, null, 2) + "\n");
 
-// Per-criterion evidence links (consumer-injected; each must resolve at gate time —
-// all are emitted by this build before the seo/structure gates run).
-const confEvidenceHref = (c) => {
-  if (c.id === "semantic.ai-readability") return "/llms.txt";
-  if (c.id === "semantic.feeds") return "/feed.xml";
-  return "/provenance"; // the signed chain explains the gates behind every criterion
+// Per-criterion evidence links (consumer-injected). Each must resolve at gate time:
+// the served artifacts below are either emitted by this build or declared deploy
+// sidecars (SEO_DEPLOY_SIDECARS / STRUCTURE_AUDIT_SIDECARS); everything else points at
+// /provenance, the signed chain that explains the gate behind the criterion.
+const CONF_EVIDENCE_LINKS = {
+  "semantic.ai-readability": "/llms.txt",
+  "semantic.feeds": "/feed.xml",
+  "integrity.sbom": "/sbom.spdx.json",
+  "integrity.slsa-provenance": "/attestation.intoto.json",
+  "integrity.signed-release-manifest": "/site.sha256",
+  "integrity.ipfs-cid": "/provenance.json",
 };
+const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id] ?? "/provenance";
 const conformanceHtml = `<!doctype html>
 <html lang="en">
 <head>
