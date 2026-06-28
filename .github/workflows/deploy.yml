@@ -49,6 +49,11 @@ jobs:
       - name: Sign provenance statement + SBOM (keyless Sigstore)
         run: |
           nix develop .#deploy --command bash -euo pipefail -c '
+            # Static JSON API + OpenAPI and the did:web + résumé Verifiable Credential,
+            # emitted BEFORE the manifest so they are covered by site.sha256 like the
+            # rest of dist/ (the VC blob is signed after the manifest, below).
+            node scripts/gen-api.mjs
+            node scripts/gen-identity.mjs
             node scripts/gen-sbom.mjs
             node scripts/gen-attestation.mjs
             node scripts/check-sbom.mjs
@@ -98,7 +103,15 @@ jobs:
             # signature sidecar stays out of the manifest, matching the attestation +
             # manifest sidecars. Both ride inside the signed OCI artifact (it is in dist/).
             cosign sign-blob --yes --bundle dist/sbom.spdx.json.sigstore.json dist/sbom.spdx.json
+            # Keyless-sign the résumé Verifiable Credential the same way (enveloping
+            # Sigstore proof). AFTER the manifest, like the SBOM: resume.vc.json is
+            # covered by site.sha256, its signature sidecar stays out of the manifest.
+            cosign sign-blob --yes --bundle dist/api/v1/resume.vc.json.sigstore.json dist/api/v1/resume.vc.json
             OCI_REF="$GHCR_REPO:$short" node scripts/gen-provenance.mjs
+            # Content-address the served site as an IPFS UnixFS dir CID (no daemon) and
+            # record it in provenance.json alongside the manifest digest — AFTER
+            # gen-provenance writes that file. Uses the signed site.sha256 file set.
+            node scripts/gen-cid.mjs
             tar --sort=name --owner=0 --group=0 --numeric-owner --mtime=@0 -C dist -cf site.tar .
             gzip -n -f site.tar
             printf "%s" "$GITHUB_TOKEN" | oras login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
