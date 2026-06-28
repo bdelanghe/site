@@ -38,13 +38,20 @@ jobs:
       - name: Stage dist
         run: cp -rL result dist && chmod -R u+w dist
 
-      # In-toto/SLSA statement over the hermetic subjects, keyless-signed (cosign
-      # sign-blob → Fulcio cert from the Actions OIDC identity → Rekor). No stored
-      # key. BEFORE resume.pdf so the statement's subjects stay reproducible.
-      - name: Sign provenance statement (keyless Sigstore)
+      # SPDX 2.3 SBOM over the whole supply chain (npm + Nix + brand), then the
+      # in-toto/SLSA statement over the hermetic subjects — both keyless-signed
+      # (cosign sign-blob → Fulcio cert from the Actions OIDC identity → Rekor). No
+      # stored key. gen-sbom runs FIRST so the SBOM is an attestation subject;
+      # check-sbom is the fail-closed completeness gate (SBOM ↔ attestation). BEFORE
+      # resume.pdf so the statement's subjects stay reproducible. The SBOM blob is
+      # signed in the OCI step (after the manifest), so its sidecar stays out of the
+      # whole-site manifest like the other provenance sidecars.
+      - name: Sign provenance statement + SBOM (keyless Sigstore)
         run: |
           nix develop .#deploy --command bash -euo pipefail -c '
+            node scripts/gen-sbom.mjs
             node scripts/gen-attestation.mjs
+            node scripts/check-sbom.mjs
             cosign sign-blob --yes \
               --bundle dist/attestation.intoto.json.sigstore.json \
               dist/attestation.intoto.json
@@ -86,6 +93,11 @@ jobs:
             short=$(printf "%s" "$GITHUB_SHA" | cut -c1-7)
             node scripts/gen-sitemanifest.mjs
             cosign sign-blob --yes --bundle dist/site.sha256.sigstore.json dist/site.sha256
+            # Keyless-sign the SBOM blob (same Fulcio/Rekor identity). AFTER the
+            # manifest: dist/sbom.spdx.json is covered by site.sha256, while its
+            # signature sidecar stays out of the manifest, matching the attestation +
+            # manifest sidecars. Both ride inside the signed OCI artifact (it is in dist/).
+            cosign sign-blob --yes --bundle dist/sbom.spdx.json.sigstore.json dist/sbom.spdx.json
             OCI_REF="$GHCR_REPO:$short" node scripts/gen-provenance.mjs
             tar --sort=name --owner=0 --group=0 --numeric-owner --mtime=@0 -C dist -cf site.tar .
             gzip -n -f site.tar
