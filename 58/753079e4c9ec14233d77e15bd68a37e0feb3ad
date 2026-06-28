@@ -1,0 +1,26 @@
+data/conformance-evidence.json
+  s_98e316d0b3248a::t_a0c83c3f0158d9 1-30
+build.mjs
+  s_98e316d0b3248a::t_be1a4362d73c87 981-991,993
+  s_98e316d0b3248a::t_a789085d530688 940-955,962,967-970
+package.json
+  s_98e316d0b3248a::t_184c38be9ca0a4 8,21
+vendor/conformance-kit/integrity/structure-audit/structure.json
+  s_98e316d0b3248a::t_58668d1f316421 43,69-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "58753079e4c9ec14233d77e15bd68a37e0feb3ad",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
