@@ -1,8 +1,11 @@
-// Minimal, dependency-free JSON Schema validator — enough for the keywords our
-// vendored contracts use: type, properties, items, required, enum, pattern,
+// Minimal, dependency-free JSON Schema validator — enough for the keywords the
+// kit's contracts use: type, properties, items, required, enum, pattern,
 // additionalProperties (bool/schema), and $ref into #/definitions. `format` is
 // accepted but not enforced (advisory). Returns an array of error strings (empty
-// = valid). Matches the repo's no-dependency, hand-rolled-contract convention.
+// = valid). No-dependency, hand-rolled — usable in hermetic CI.
+//
+// Site-agnostic: a pure function (schema, data) → string[]. Extracted verbatim
+// from bdelanghe/site/schema-validate.mjs.
 
 const typeOk = (t, v) => {
   switch (t) {

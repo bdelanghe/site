@@ -5,7 +5,7 @@ engines and other consumers can read its structured data. **Schema.org alone is 
 guidance** — almost anything validates, and a typo or a dropped property fails silently. This
 gate makes the structured data an **enforceable contract**: *Schema.org + SHACL.*
 
-`scripts/shacl-gate.mjs` (`npm run check:shacl`) extracts every JSON-LD block from the **built**
+the vendored conformance-kit runner `vendor/conformance-kit/gates/shacl-runner.mjs`, given this site's `contract/jsonld.shapes.ttl` shapes + `dist/` (`npm run check:shacl`), extracts every JSON-LD block from the **built**
 HTML in `dist/`, expands it to RDF, and validates it against the SHACL shapes in
 `contract/jsonld.shapes.ttl`. **The build fails (exit 1) unless the SHACL report says
 `conforms: true`**, printing every violation. It runs in CI via `.github/workflows/shacl.yml`.

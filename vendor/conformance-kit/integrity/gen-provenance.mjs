@@ -3,7 +3,7 @@
 // for the ENTIRE site. Run at deploy time, after the keyless signing steps, with
 // the GitHub Actions OIDC env in scope.
 //
-//   node integrity/scripts/gen-provenance.mjs
+//   node integrity/gen-provenance.mjs
 //
 // Keyless attestations (GitHub Actions OIDC → Fulcio → Rekor, no stored key):
 //   1. site manifest     — cosign sign-blob over $DIST/site.sha256 (the whole
@@ -15,13 +15,16 @@
 // authorized. The signatures + Rekor entries are ground truth; this file is a
 // convenience view, and the `verify` recipes confirm it independently.
 //
-// Canonical home for both sites: dist resolved from cwd; the doc link in the
-// caveat is set via PROVENANCE_DOC_URL (optional).
+// Site-agnostic: every site value comes from the GitHub Actions env (GITHUB_*),
+// the OCI_* env, $PROVENANCE_DOC_URL (the caveat link), and $DIST. The emitted
+// builder.repository becomes the identity verify-site.mjs / verify.mjs enforce —
+// nothing is hardcoded.
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
-const dist = process.env.DIST ? join(process.cwd(), process.env.DIST) : join(process.cwd(), "dist");
+// $DIST may be absolute or relative-to-cwd (resolve handles both); default ./dist.
+const dist = resolve(process.cwd(), process.env.DIST || "dist");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
 
 const repo = process.env.GITHUB_REPOSITORY || "";

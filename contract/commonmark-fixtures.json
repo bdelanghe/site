@@ -1,0 +1,27 @@
+{
+  "_note": "CommonMark conformance fixtures for THIS site's markdown renderer (posts.mjs renderMarkdown), consumed by the vendored conformance-kit gates/commonmark-runner.mjs. The site's renderer is a deliberately small, SAFE subset that DEVIATES from strict CommonMark (e.g. it demotes a stray h1 '# Title' to <h2> because the page template owns the title, renders thematic break as the HTML5 void <hr>, drops the inner <p> in single-block blockquotes, and escapes all raw HTML). These fixtures pin those exact behaviours so the gate keeps full coverage of the renderer (the kit's neutral defaults omit the site-specific cases).",
+  "conformance": {
+    "## A heading": "<h2>A heading</h2>",
+    "### Sub heading": "<h3>Sub heading</h3>",
+    "# Title here": "<h2>Title here</h2>",
+    "This is *italic* and **bold** text.": "<p>This is <em>italic</em> and <strong>bold</strong> text.</p>",
+    "Use the `build.mjs` file.": "<p>Use the <code>build.mjs</code> file.</p>",
+    "See [the site](https://example.com).": "<p>See <a href=\"https://example.com\">the site</a>.</p>",
+    "- one\n- two\n- three": "<ul><li>one</li><li>two</li><li>three</li></ul>",
+    "* a\n* b": "<ul><li>a</li><li>b</li></ul>",
+    "Just a plain paragraph\nwith a soft break.": "<p>Just a plain paragraph with a soft break.</p>",
+    "Tom & Jerry < > test.": "<p>Tom &amp; Jerry &lt; &gt; test.</p>"
+  },
+  "subset": {
+    "---": "<hr>",
+    "> quoted line\n> second line": "<blockquote>quoted line second line</blockquote>"
+  },
+  "hostile": [
+    "<div onclick=\"x\">hi</div> and <script>alert(1)</script>",
+    "An <img src=x onerror=alert(1)> inline.",
+    "<a href=javascript:alert(1)>x</a>",
+    "<iframe src=//evil></iframe>"
+  ],
+  "allowedTags": ["p", "h2", "h3", "ul", "li", "blockquote", "hr", "code", "a", "strong", "em"],
+  "dangerous": "\\b(onclick|onerror|onload)\\b|javascript:"
+}

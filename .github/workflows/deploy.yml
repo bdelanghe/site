@@ -111,7 +111,7 @@ jobs:
             # Content-address the served site as an IPFS UnixFS dir CID (no daemon) and
             # record it in provenance.json alongside the manifest digest — AFTER
             # gen-provenance writes that file. Uses the signed site.sha256 file set.
-            node scripts/gen-cid.mjs
+            node vendor/conformance-kit/generators/gen-cid.mjs
             tar --sort=name --owner=0 --group=0 --numeric-owner --mtime=@0 -C dist -cf site.tar .
             gzip -n -f site.tar
             printf "%s" "$GITHUB_TOKEN" | oras login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
@@ -180,12 +180,14 @@ jobs:
       # edge has propagated.
       - name: Cryptographically verify prod (standalone verifier)
         run: |
-          npm ci --prefix vendor/integrity/verify
-          node vendor/integrity/verify/verify.mjs https://robertdelanghe.dev
+          npm ci --prefix vendor/conformance-kit/integrity/verify
+          node vendor/conformance-kit/integrity/verify/verify.mjs https://robertdelanghe.dev
 
       # RFC 9110 HTTP-correctness probe: verify-site.mjs (above) checks the signed BYTES;
       # this checks the edge's HTTP SEMANTICS — status codes, Content-Type, HEAD parity,
       # conditional requests (If-None-Match/304), 404 handling, and that redirects
       # terminate. Post-deploy probe (needs a live URL), fail-closed. Dependency-free.
       - name: HTTP correctness probe (RFC 9110)
-        run: node vendor/integrity/http-probe.mjs https://robertdelanghe.dev
+        # Routes are an INPUT to the vendored kit probe (nothing hardcoded) — supplied
+        # via this site's contract/http-probe.json.
+        run: PROBE_CONFIG=contract/http-probe.json node vendor/conformance-kit/integrity/http-probe.mjs https://robertdelanghe.dev

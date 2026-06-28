@@ -1,26 +1,29 @@
 #!/usr/bin/env node
 // gen-cid — content-address the served site as an IPFS UnixFS directory CID, with
 // NO daemon and NO new dependency, and record it in the build provenance alongside
-// the existing digests (the site.sha256 manifest hash, the in-toto subjects).
+// the existing digests (the site.sha256 manifest hash).
+//
+//   node generators/gen-cid.mjs            # uses ./dist
+//   DIST=out node generators/gen-cid.mjs
 //
 // Runs LAST, after every served byte exists. It builds the exact UnixFS dag-pb DAG
 // `ipfs add -r` would (classic layout: sha2-256, 256 KiB fixed chunker, no raw
 // leaves), so the reported CIDv1 re-derives from the served bytes by any IPFS
-// implementation — verified byte-for-byte against ipfs-unixfs-importer. The file
-// set is exactly the signed whole-site manifest (dist/site.sha256) when present, so
-// the CID and the manifest cover identical content; otherwise it walks dist/ with
-// the same sidecar exclusions. No pinning, no DNSLink — just a portable address.
+// implementation. The file set is exactly the signed whole-site manifest
+// ($DIST/site.sha256) when present, so the CID and the manifest cover identical
+// content; otherwise it walks $DIST with the same sidecar exclusions. No pinning,
+// no DNSLink — just a portable address.
 //
-// Recorded into dist/provenance.json (merged if gen-provenance already wrote it at
-// deploy; created minimally for a local build). provenance.json is excluded from
-// the manifest + the CID set, so there is no circularity.
-import { readFile, writeFile, readdir, access, stat } from "node:fs/promises";
+// Recorded into $DIST/provenance.json (merged if gen-provenance already wrote it;
+// created minimally for a local build). provenance.json is excluded from the
+// manifest + the CID set, so there is no circularity. Site-agnostic: the only knob
+// is $DIST.
+import { readFile, writeFile, readdir, access } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { dirname, join, relative } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, relative, resolve } from "node:path";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const dist = join(root, "dist");
+// $DIST may be absolute or relative-to-cwd (resolve handles both); default ./dist.
+const dist = resolve(process.cwd(), process.env.DIST || "dist");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
 
 const CHUNK = 262144;  // kubo default fixed chunker
@@ -132,7 +135,7 @@ provenance.contentAddress = {
     fileCount: rels.length,
     pinned: false,
     dnslink: false,
-    derivation: "scripts/gen-cid.mjs — zero-dep UnixFS v1 (dag-pb, sha2-256, 256 KiB fixed chunker, no raw leaves)",
+    derivation: "generators/gen-cid.mjs — zero-dep UnixFS v1 (dag-pb, sha2-256, 256 KiB fixed chunker, no raw leaves)",
     note: "IPFS UnixFS directory CID over the served site, computed with no daemon. Re-derives from the served bytes: `ipfs add -rQ --cid-version=1` over the same file set yields this CID (or `ipfs add -rQ` then `ipfs cid base32` from the v0 form).",
   },
 };

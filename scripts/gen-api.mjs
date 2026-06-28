@@ -20,24 +20,20 @@
 // also self-checks every emitted document against the schema the OpenAPI doc
 // advertises (so the contract can't drift from the bytes). Matches the repo's
 // hermetic, no-dependency validator style.
-import { readFile, writeFile, mkdir, access } from "node:fs/promises";
+import { readFile, access } from "node:fs/promises";
 import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateSchema } from "../schema-validate.mjs";
+import { validateSchema } from "../vendor/conformance-kit/lib/schema-validate.mjs";
+import { writeApiFile, embedSchema as embed, jsonResponse as jsonResp, validateOpenapi } from "../vendor/conformance-kit/generators/openapi.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
 const SITE = "https://robertdelanghe.dev";
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
 const readJson = async (p) => JSON.parse(await readFile(p, "utf8"));
-// Deterministic byte output: recursively sort object keys (arrays keep order).
-const sortKeys = (v) => Array.isArray(v) ? v.map(sortKeys)
-  : (v && typeof v === "object") ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortKeys(v[k])])) : v;
-const write = async (rel, obj, { sort = true } = {}) => {
-  const p = join(dist, "api", "v1", rel);
-  await mkdir(dirname(p), { recursive: true });
-  await writeFile(p, JSON.stringify(sort ? sortKeys(obj) : obj, null, 2) + "\n");
-};
+// Deterministic byte output (key-sorted, trailing newline) via the kit's writer.
+const apiDir = join(dist, "api", "v1");
+const write = (rel, obj, opts) => writeApiFile(apiDir, rel, obj, opts);
 
 // ---- inputs: the contracts + build.mjs's own dist output ----------------------
 const resume = await readJson(join(dist, "resume.json"));        // built canonical JSON Resume
@@ -175,8 +171,6 @@ const conformance = {
 // component's internal "#/…" refs resolve against the OpenAPI document root rather
 // than rebasing onto the component's own $id. JsonResume re-adds an $id below
 // because its draft-04 "#/definitions/…" pointers must resolve within that resource.
-const embed = (s) => { const { $schema, $id, ...rest } = s; return rest; };
-const jsonResp = (ref) => ({ description: "OK", content: { "application/json": { schema: { $ref: ref } } } });
 const openapi = {
   openapi: "3.2.0",
   jsonSchemaDialect: "https://json-schema.org/draft/2020-12/schema",
@@ -255,18 +249,12 @@ check("corpus.json", siteSchema, corpus);
 check("conformance.json", conformanceSchema, conformance);
 for (const it of items) check(`posts/${it.slug}.json`, postSchema, { ...it, content_html: extractBody(await readFile(join(dist, "blog", `${it.slug}.html`), "utf8")) });
 
-// OpenAPI well-formedness (3.2): version, info, at least one path, every operation
-// carries responses, and every local $ref resolves to a defined component.
-const oaErrs = [];
-if (!/^3\.[12]\.\d+$/.test(openapi.openapi)) oaErrs.push(`openapi version ${openapi.openapi} is not 3.1/3.2`);
-if (!openapi.info?.title || !openapi.info?.version) oaErrs.push("info.title/version missing");
-if (!openapi.paths || !Object.keys(openapi.paths).length) oaErrs.push("no paths");
+// OpenAPI 3.2 well-formedness via the kit core (version, info, ≥1 path, every
+// operation carries responses, every local "#/components/…" $ref resolves).
+const oaErrs = validateOpenapi(openapi);
+if (oaErrs.length) { console.error("✗ openapi.json is not well-formed OpenAPI 3.2:"); for (const e of oaErrs) console.error(`    ${e}`); process.exit(1); }
+// $ref count for the summary line below.
 const refs = new Set();
 JSON.stringify(openapi, (k, v) => { if (k === "$ref" && typeof v === "string" && v.startsWith("#/")) refs.add(v); return v; });
-for (const [p, ops] of Object.entries(openapi.paths)) for (const [m, op] of Object.entries(ops)) if (!op.responses) oaErrs.push(`${m.toUpperCase()} ${p} has no responses`);
-// Only OpenAPI-level component refs resolve against the document root; schema-internal
-// JSON-pointer refs (e.g. "#/definitions/…") resolve within their own $id'd resource.
-for (const ref of [...refs].filter((r) => r.startsWith("#/components/"))) { const node = ref.replace(/^#\//, "").split("/").reduce((o, seg) => o?.[seg], openapi); if (node == null) oaErrs.push(`dangling $ref ${ref}`); }
-if (oaErrs.length) { console.error("✗ openapi.json is not well-formed OpenAPI 3.2:"); for (const e of oaErrs) console.error(`    ${e}`); process.exit(1); }
 
 console.log(`✓ static API: profile · posts(${items.length}) · corpus · conformance + OpenAPI 3.2 (${Object.keys(openapi.paths).length} paths, ${refs.size} schema refs) → dist/api/v1/`);

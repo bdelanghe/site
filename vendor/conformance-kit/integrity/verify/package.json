@@ -12,12 +12,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bounded-systems/site.git",
+    "url": "git+https://github.com/bounded-systems/conformance-kit.git",
     "directory": "integrity/verify"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
   },
   "license": "MIT",
   "dependencies": {

@@ -2,7 +2,7 @@
 
 SEO advice is usually a checklist you *hope* you followed. This gate makes the site's
 technical discoverability an **enforceable contract** over the **built `dist/`**:
-`scripts/seo-gate.mjs` (`npm run check:seo`) reads only the built bytes and **fails the
+the vendored conformance-kit gate `vendor/conformance-kit/gates/seo-gate.mjs` (`npm run check:seo`) reads only the built bytes and **fails the
 build (exit 1)** on any violation. It runs in `npm run build` (right after `node build.mjs`)
 and in CI via `.github/workflows/seo.yml`.
 
@@ -41,4 +41,4 @@ the hermetic build, so a link to one is resolvable rather than dead. The logic i
 - **Ranking / keyword quality** — this is *technical* SEO (the machine-readable contract),
   not content strategy.
 - **Off-page signals** (backlinks, etc.) and **rendered-vs-source** parity at the edge —
-  the post-deploy HTTP probe (`vendor/integrity/http-probe.mjs`) covers edge behaviour.
+  the post-deploy HTTP probe (`vendor/conformance-kit/integrity/http-probe.mjs`) covers edge behaviour.

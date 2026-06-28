@@ -2,7 +2,7 @@
 
 `posts.mjs` (`renderMarkdown`) is a deliberately **small, safe subset** of
 [CommonMark](https://commonmark.org): no raw-HTML passthrough, no nested-block recursion.
-`scripts/commonmark-gate.mjs` (`npm run check:commonmark`) keeps that renderer honest. It
+The vendored conformance-kit runner `vendor/conformance-kit/gates/commonmark-runner.mjs`, fed this site's `contract/commonmark-fixtures.json` (`npm run check:commonmark`), keeps that renderer honest. It
 **fails the build (exit 1)** on drift or an HTML leak, runs in `prebuild`, and in CI via
 `.github/workflows/seo.yml`. It is pure (it imports the renderer and runs fixtures — no
 `dist/` needed).

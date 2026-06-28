@@ -3,39 +3,42 @@
 // check over the BUILT dist/. SEO "best practices" are usually advice you hope you
 // followed; this gate fails closed (exit 1) the moment the built bytes break one.
 //
-//   node scripts/seo-gate.mjs      # build gate (exit 1 on any violation)
+//   node gates/seo-gate.mjs [distDir]      # build gate (exit 1 on any violation)
 //
-// What it enforces (see docs/seo-gate.md):
+// What it enforces:
 //   1. canonical  — every indexable page has exactly one <link rel="canonical">, and
 //                   it is SELF-consistent: the canonical URL maps back to THIS file.
 //   2. title      — every indexable page has a non-empty <title>, unique across pages.
 //   3. description— every indexable page has a non-empty <meta name="description">,
 //                   unique across pages.
-//   4. noindex    — no indexable page carries an accidental robots `noindex` (the 404
-//                   page is the only place noindex is allowed, and is expected there).
+//   4. noindex    — no indexable page carries an accidental robots `noindex` (the
+//                   error page is the only place noindex is allowed/expected).
 //   5. robots.txt — parses per RFC 9309: groups start with user-agent line(s); rules
 //                   (allow/disallow) never precede a user-agent; Sitemap values are
 //                   absolute URLs; the advertised sitemap resolves to a built file.
 //   6. sitemap    — every <loc> in sitemap.xml resolves to a built page (canonicalised),
 //                   and every URL shares the site's single origin.
-//   7. links      — zero broken internal links across all pages (same resolve logic as
-//                   the vendored structure-audit: file / .html / index.html / sidecar).
+//   7. links      — zero broken internal links across all pages.
 //
-// Pure + offline: reads dist/ only, no network. Mirrors structure-audit's canon()/
-// resolveHref() link logic rather than importing it, to stay zero-dep (structure-audit
-// pulls linkedom + @mozilla/readability); the path semantics are kept identical.
+// Pure + offline: reads dist/ only, no network. Zero-dep.
+//
+// Site-agnostic injection (all optional, neutral defaults):
+//   argv[2] / $DIST       built output dir (default: "dist").
+//   $SEO_ERROR_PAGE       the page exempt from canonical/title/desc + required to be
+//                         noindex (default: "404.html").
+//   $SEO_DEPLOY_SIDECARS  comma list of deploy-time paths to treat as live links
+//                         (e.g. /rekor,/provenance.json,/resume.pdf).
 import { readFile, readdir, access } from "node:fs/promises";
 import { join, relative, dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const dist = join(root, "dist");
+const dist = resolve(process.argv[2] || process.env.DIST || "dist");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
 
-// Deploy-time sidecars: written by the deploy workflow (not the local/hermetic build),
-// so a link to one is resolvable rather than dead. Mirrors structure-audit's list plus
-// the artifacts this site links from its colophon/provenance pages.
-const DEPLOY_SIDECARS = ["/rekor", "/provenance.json", "/site.sha256", "/resume.pdf", "/attestation.intoto.json"];
+const ERROR_PAGE = process.env.SEO_ERROR_PAGE || "404.html";
+// Deploy-time sidecars: written by the deploy workflow (not the local/hermetic
+// build), so a link to one is resolvable rather than dead.
+const DEPLOY_SIDECARS = (process.env.SEO_DEPLOY_SIDECARS || "/rekor,/provenance.json,/site.sha256")
+  .split(",").map((s) => s.trim()).filter(Boolean);
 
 let errors = 0;
 const err = (m) => { console.error(`  ✗ ${m}`); errors++; };
@@ -73,17 +76,14 @@ async function resolveHref(pageAbs, href) {
 }
 
 const head = (html) => (html.match(/<head[\s\S]*?<\/head>/i) || [""])[0];
-const attr = (tag, name) => (tag.match(new RegExp(`${name}="([^"]*)"`, "i")) || [, null])[1];
 
 async function main() {
-  if (!(await exists(dist))) { console.error("✗ seo-gate: dist/ not found — run `node build.mjs` first."); process.exit(2); }
+  if (!(await exists(dist))) { console.error(`✗ seo-gate: ${dist} not found — build first.`); process.exit(2); }
 
   const pages = (await walk(dist)).sort();
   const servedCanon = new Set(pages.map((p) => canon("/" + relative(dist, p))));
 
-  // An "indexable" page is any built page that is not an error page. The 404 page is the
-  // only page allowed (and expected) to carry noindex / no canonical / no description.
-  const isIndexable = (rel) => rel !== "404.html";
+  const isIndexable = (rel) => rel !== ERROR_PAGE;
 
   const titles = new Map();        // title → first page (uniqueness)
   const descriptions = new Map();  // description → first page (uniqueness)
@@ -95,15 +95,13 @@ async function main() {
     const html = await readFile(pageAbs, "utf8");
     const h = head(html);
 
-    // robots noindex
     const robotsMetas = [...h.matchAll(/<meta\s+name="robots"\s+content="([^"]*)"\s*\/?>/gi)].map((m) => m[1]);
     const hasNoindex = robotsMetas.some((c) => /\bnoindex\b/i.test(c));
     if (isIndexable(rel) && hasNoindex) err(`${rel}: indexable page carries robots noindex`);
     if (!isIndexable(rel) && !hasNoindex) err(`${rel}: error page should be noindex (missing robots noindex)`);
 
-    if (!isIndexable(rel)) continue; // 404: no canonical/title/desc requirements
+    if (!isIndexable(rel)) continue;
 
-    // canonical — exactly one, self-consistent
     const canons = [...h.matchAll(/<link\s+rel="canonical"\s+href="([^"]*)"\s*\/?>/gi)].map((m) => m[1]);
     if (canons.length !== 1) {
       err(`${rel}: ${canons.length} <link rel="canonical"> (want exactly 1)`);
@@ -122,13 +120,11 @@ async function main() {
       }
     }
 
-    // title — non-empty + unique
     const title = (h.match(/<title>([\s\S]*?)<\/title>/i) || [, ""])[1].trim();
     if (!title) err(`${rel}: empty or missing <title>`);
     else if (titles.has(title)) err(`${rel}: duplicate <title> (also in ${titles.get(title)}): "${title}"`);
     else titles.set(title, rel);
 
-    // meta description — non-empty + unique
     let desc = null;
     for (const m of h.matchAll(/<meta\s+name="description"\s+content="([^"]*)"\s*\/?>/gi)) desc = m[1];
     if (desc == null || !desc.trim()) err(`${rel}: empty or missing <meta name="description">`);
@@ -143,17 +139,16 @@ async function main() {
   } else {
     const lines = (await readFile(robotsPath, "utf8")).split(/\r?\n/);
     let seenUserAgent = false;
-    let groupOpen = false;     // a user-agent line has opened a group not yet "closed" by a rule gap
-    let userAgentCount = 0;
+    let groupOpen = false;
     const sitemaps = [];
     lines.forEach((raw, i) => {
-      const line = raw.replace(/#.*$/, "").trim(); // strip comment
+      const line = raw.replace(/#.*$/, "").trim();
       if (!line) return;
       const m = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(line);
       if (!m) { err(`robots.txt:${i + 1}: not a "field: value" record — ${raw.trim()}`); return; }
       const field = m[1].toLowerCase();
       const value = m[2].trim();
-      if (field === "user-agent") { seenUserAgent = true; groupOpen = true; userAgentCount++; }
+      if (field === "user-agent") { seenUserAgent = true; groupOpen = true; }
       else if (field === "allow" || field === "disallow") {
         if (!groupOpen) err(`robots.txt:${i + 1}: ${field} rule before any user-agent (RFC 9309 groups start with user-agent)`);
         if (value && !value.startsWith("/") && !value.startsWith("*")) err(`robots.txt:${i + 1}: ${field} path should start with "/" — ${value}`);
@@ -165,7 +160,6 @@ async function main() {
       else { /* RFC 9309 §2.2.4: unrecognised fields are ignored, not an error */ }
     });
     if (!seenUserAgent) err("robots.txt: no user-agent group (RFC 9309 requires at least one group)");
-    // advertised sitemaps must resolve to a built file (when same-origin)
     for (const sm of sitemaps) {
       const u = new URL(sm);
       if (origin && u.origin === origin) {
@@ -201,7 +195,6 @@ async function main() {
       const href = a[1];
       if ((await resolveHref(pageAbs, href)) === "dead") err(`${rel}: dead internal link → ${href}`);
     }
-    // also check rel=canonical / og:url style internal hrefs already covered above
   }
 
   console.log("");

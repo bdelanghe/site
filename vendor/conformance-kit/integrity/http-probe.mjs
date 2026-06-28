@@ -1,57 +1,65 @@
 #!/usr/bin/env node
 // integrity · http-probe — a post-deploy RFC 9110 HTTP-correctness probe.
 //
-//   node vendor/integrity/http-probe.mjs https://robertdelanghe.dev
+//   node integrity/http-probe.mjs https://your-site.example
+//   PROBE_CONFIG=probe.json node integrity/http-probe.mjs https://your-site.example
 //
 // Sibling to verify-site.mjs (which checks the SIGNED BYTES) — this checks the EDGE'S
 // HTTP SEMANTICS: that the deployed origin speaks HTTP correctly per RFC 9110/9111.
-// It runs in the deploy workflow AFTER the site is live; it is a post-deploy probe, NOT
-// a build gate (it needs a live URL). Fail-closed: any wrong status / type / parity /
-// conditional behaviour exits 1. Dependency-free (node fetch only).
-//
-// NOTE ON PLACEMENT: this lives beside verify-site.mjs but is a consumer-local extension,
-// so it is NOT in the hash-pinned vendor/integrity FILES set (scripts/vendor-integrity.mjs)
-// — exactly like structure-audit's per-consumer structure.json baseline. The vendored
-// verify-site.mjs is a hash-pinned upstream copy and is deliberately left untouched (a
-// hand-edit would fail `npm run check:integrity` and be lost on the next re-vendor).
+// It runs AFTER the site is live; it is a post-deploy probe, NOT a build gate (it
+// needs a live URL). Fail-closed: any wrong status / type / parity / conditional
+// behaviour exits 1. Dependency-free (node fetch only).
 //
 // What it asserts (RFC 9110, and 9111 for conditional caching):
 //   1. status    — each indexable route returns 200; a known-missing path returns 404.
-//   2. type      — Content-Type is correct + carries a charset for text (HTML→text/html,
-//                  robots.txt→text/plain, sitemap.xml→xml, feed.json→json, …).
+//   2. type      — Content-Type is correct + carries a charset for text.
 //   3. HEAD parity — HEAD mirrors GET's status + Content-Type and returns no body (§9.3.2).
 //   4. conditional — when GET returns an ETag, a follow-up If-None-Match yields 304 with
 //                  no body (§13.1.2 / RFC 9111). Skipped (with a note) if no ETag is served.
-//   5. 404 page  — the unknown path serves the site's 404 document (Cloudflare 404-page).
+//   5. 404 page  — the unknown path serves the site's 404 document.
 //   6. redirects terminate — routes that 3xx must reach a terminal 2xx within a hop cap
 //                  (no loops); the canonical apex host must not itself redirect.
-import { argv, exit } from "node:process";
+//
+// Site-agnostic: the routes to probe come from a config (NO hardcoded paths). Supply
+// EITHER a JSON file via $PROBE_CONFIG / 2nd positional arg, OR the env vars
+// $PROBE_HTML_ROUTES + $PROBE_MISSING (comma lists). Config shape:
+//   { "htmlRoutes": ["/", "/about"],
+//     "typed": [ { "path": "/robots.txt", "type": "text/plain", "charset": true },
+//                { "path": "/sitemap.xml", "type": "xml" } ],
+//     "missing": "/this-should-404" }
+// With no config at all, only the apex (/) is probed (status + type + HEAD parity).
+import { argv, exit, env } from "node:process";
+import { readFile } from "node:fs/promises";
 
 const target = argv[2];
 if (!target || !/^https?:\/\//.test(target)) {
-  console.error("usage: http-probe <https://site>");
+  console.error("usage: http-probe <https://site> [config.json]");
   exit(2);
 }
 const base = target.replace(/\/$/, "");
 
+async function loadConfig() {
+  const path = argv[3] || env.PROBE_CONFIG;
+  if (path) {
+    try { return JSON.parse(await readFile(path, "utf8")); }
+    catch (e) { console.error(`✗ http-probe: cannot read config ${path}: ${e.message}`); exit(2); }
+  }
+  const list = (v) => (v || "").split(",").map((s) => s.trim()).filter(Boolean);
+  return {
+    htmlRoutes: list(env.PROBE_HTML_ROUTES).length ? list(env.PROBE_HTML_ROUTES) : ["/"],
+    typed: [],
+    missing: env.PROBE_MISSING || "/this-path-should-never-exist-12345",
+  };
+}
+const cfg = await loadConfig();
+const HTML_ROUTES = cfg.htmlRoutes || ["/"];
+const TYPED = cfg.typed || [];
+const MISSING = cfg.missing || "/this-path-should-never-exist-12345";
+
 let failures = 0;
 const ok = (cond, msg) => { console.log(`${cond ? "✓" : "✗"} ${msg}`); if (!cond) failures++; };
 const note = (msg) => console.log(`  · ${msg}`);
-
 const ct = (res) => (res.headers.get("content-type") || "").toLowerCase();
-
-// Routes that must serve a 200 HTML document.
-const HTML_ROUTES = ["/", "/resume", "/blog", "/provenance", "/blog/agent-authored-code-drift"];
-// Non-HTML assets with their expected Content-Type essence.
-const TYPED = [
-  { path: "/robots.txt", type: "text/plain", charset: true },
-  { path: "/sitemap.xml", type: "xml" },
-  { path: "/feed.json", type: "json" },
-  { path: "/feed.xml", type: "xml" },
-  { path: "/site.webmanifest", type: "json" }, // application/manifest+json
-  { path: "/styles", type: null, skip: true },
-];
-const MISSING = "/this-path-should-never-exist-12345";
 
 async function main() {
   console.log(`· http-probe: ${base} (RFC 9110 correctness)`);
@@ -63,7 +71,7 @@ async function main() {
     ok(get.status === 200, `GET ${path} → ${get.status} (want 200)`);
     ok(/text\/html/.test(ct(get)), `GET ${path} Content-Type ${ct(get) || "(none)"} (want text/html)`);
     // charset on HTML is RECOMMENDED, not required — HTML declares it in-band via
-    // <meta charset> and Cloudflare's asset edge omits it on text/html. Note, don't fail.
+    // <meta charset>, and some asset edges omit it on text/html. Note, don't fail.
     if (!/charset=/.test(ct(get))) note(`GET ${path}: no charset in Content-Type (HTML declares it via <meta charset>)`);
 
     // HEAD parity (§9.3.2): same status + Content-Type, empty body.
@@ -103,7 +111,6 @@ async function main() {
   const HOP_CAP = 5;
   const apex = await fetch(base + "/", { redirect: "manual" });
   ok(apex.status < 300 || apex.status >= 400, `apex / does not redirect (status ${apex.status})`);
-  // Walk any redirect chain manually from the apex with a cap to prove termination.
   let hops = 0, cur = base + "/", terminal = null;
   while (hops <= HOP_CAP) {
     const r = await fetch(cur, { redirect: "manual" });

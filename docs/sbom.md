@@ -22,7 +22,7 @@ wall clock):
 
 | Source | Read from | Each package carries |
 |---|---|---|
-| **npm** | `package-lock.json` + `vendor/integrity/verify/package-lock.json` + `vendor/integrity/structure-audit/package-lock.json` | `versionInfo`, `downloadLocation` (resolved registry tarball), a `pkg:npm` purl, and a checksum — the lockfile integrity SRI decoded from base64 to SPDX-legal hex |
+| **npm** | `package-lock.json` + `vendor/conformance-kit/integrity/verify/package-lock.json` + `vendor/conformance-kit/integrity/structure-audit/package-lock.json` | `versionInfo`, `downloadLocation` (resolved registry tarball), a `pkg:npm` purl, and a checksum — the lockfile integrity SRI decoded from base64 to SPDX-legal hex |
 | **Nix inputs** | `flake.lock` (nixpkgs + the `bounded-systems/brand` submodule) | the locked `rev` as `versionInfo`, a `git+https` `downloadLocation`, a `pkg:github` purl, and a SHA256 checksum decoded from the `narHash` SRI |
 
 Determinism: packages are sorted (Nix before npm, then name, then version), the
