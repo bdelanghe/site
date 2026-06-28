@@ -35,3 +35,5 @@ jobs:
         run: node scripts/axe-gate.mjs --check
       - name: Nu HTML Checker gate (vnu jar — HTML Living Standard, errors-only)
         run: node scripts/html-validator-gate.mjs --check
+      - name: Baseline gate (stylelint-plugin-use-baseline over shipped CSS — honest status)
+        run: node scripts/baseline-gate.mjs --check

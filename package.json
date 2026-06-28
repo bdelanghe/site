@@ -18,6 +18,7 @@
     "check:vulns": "node scripts/vuln-gate.mjs --check",
     "check:axe": "node scripts/axe-gate.mjs --check",
     "check:html": "node scripts/html-validator-gate.mjs --check",
+    "check:baseline": "node scripts/baseline-gate.mjs --check",
     "gate:copy": "node scripts/copy-gate.mjs --strict",
     "check:integrity": "node scripts/vendor-integrity.mjs --check",
     "check:shacl": "node vendor/conformance-kit/gates/shacl-runner.mjs contract/jsonld.shapes.ttl dist",
@@ -40,6 +41,8 @@
     "jsonld": "^8.3.2",
     "n3": "^1.17.3",
     "rdf-validate-shacl": "^0.5.10",
+    "stylelint": "^17.14.0",
+    "stylelint-plugin-use-baseline": "^1.4.4",
     "vnu-jar": "^26.6.24",
     "wrangler": "^4",
     "write-good": "^1.0.8"
