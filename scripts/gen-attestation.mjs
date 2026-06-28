@@ -38,8 +38,11 @@ if (await exists(provHtml)) {
   await writeFile(provHtml, html);
 }
 
-// subject — the built artifacts, by digest (what the attestation is ABOUT)
-const subjectFiles = ["index.html", "provenance.html", "resume.html", "blog.html"];
+// subject — the built artifacts, by digest (what the attestation is ABOUT). The
+// SPDX SBOM (dist/sbom.spdx.json, written by gen-sbom.mjs just before this) is a
+// subject too, so the statement vouches for the exact bill-of-materials bytes;
+// check-sbom.mjs then reconciles that SBOM against the resolvedDependencies below.
+const subjectFiles = ["index.html", "provenance.html", "resume.html", "blog.html", "sbom.spdx.json"];
 const subject = [];
 for (const f of subjectFiles) if (await exists(join(dist, f))) subject.push({ name: f, digest: { sha256: sha256(await readFile(join(dist, f))) } });
 
