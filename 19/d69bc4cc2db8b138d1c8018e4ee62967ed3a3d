@@ -1,0 +1,28 @@
+scripts/vuln-gate.mjs
+  s_71a0aecf45d82c::t_b51a8e381f9f77 1-65
+data/conformance-evidence.json
+  s_71a0aecf45d82c::t_3d36d4fbe4e2f9 13-14
+  s_71a0aecf45d82c::t_4a2fbfb2a1daef 2
+  s_71a0aecf45d82c::t_944b7f23133347 26
+.github/workflows/brand-checks.yml
+  s_71a0aecf45d82c::t_3a2c5f896ce0b8 25-26
+package.json
+  s_71a0aecf45d82c::t_05c1edba1fd474 26
+  s_71a0aecf45d82c::t_f88f164860cce8 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "19d69bc4cc2db8b138d1c8018e4ee62967ed3a3d",
+  "prompts": {},
+  "sessions": {
+    "s_71a0aecf45d82c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6f6e806-c9db-459c-ba56-79aa27861998",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
