@@ -21,6 +21,7 @@
   "colophon.eyebrow": "Built with",
   "colophon.more": "Hermetic Nix build · keyless-signed in-toto/SLSA provenance (Sigstore · Rekor · GHCR) —",
   "colophon.provenance": "full provenance",
+  "colophon.conformance": "conformance",
 
   "footer.generated": "generated",
   "footer.provenance": "provenance",
@@ -52,8 +53,14 @@
   "prov.step.builder": "Builder",
   "prov.seal.title": "Subject — signed",
 
+  "conf.title": "Conformance",
+  "conf.lede": "A live, computed conformance report — not a badge. The build folds its own evidence (the gates that ran, the artifacts it signs) through lone's web-build conformance model. The strong claim is withheld unless every required criterion is met; anything not yet assessed says so, plainly.",
+  "conf.machine": "Machine-readable report",
+  "conf.provenance": "How it's built",
+
   "head.resume.label": "Résumé",
   "head.provenance.desc": "How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence.",
+  "head.conformance.desc": "A computed, honest conformance report for robertdelanghe.dev — lone's web-build model over this build's evidence; unsupplied criteria are reported as not-assessed, never overclaimed.",
   "head.blog.desc.lead": "Writing by",
   "head.blog.desc.tail": "on capability security for agentic systems.",
 

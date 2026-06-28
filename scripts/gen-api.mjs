@@ -7,7 +7,9 @@
 //   posts.json            — writing index (JSON-Feed-shaped)
 //   posts/<slug>.json     — one resolved post (metadata + rendered body)
 //   corpus.json           — the curated GitHub corpus (data/site.json)
-//   conformance.json      — HONEST placeholder for lone's future DOM/a11y report
+//   conformance.json      — the REAL web-build conformance report (written by
+//                           build.mjs from lone's conformance() model); re-read here
+//                           to advertise + self-check it against its response schema
 //   openapi.json          — OpenAPI 3.2 doc; response schemas reuse the repo's
 //                           contract/*.schema.json (JSON Schema 2020-12) verbatim
 //   schemas/*.json        — the reused contract schemas, served so $id resolves
@@ -139,29 +141,28 @@ const postsIndexSchema = {
 const conformanceSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
   $id: `${SITE}/api/v1/schemas/conformance.schema.json`,
-  title: "DOM / a11y conformance report (placeholder)",
+  title: "web-build conformance report",
+  description: "lone's conformance() projection over this build's evidence (rendered at /conformance). The compact `claim` is emitted only when every tier-1 required criterion is `met`; unsupplied criteria are `not-assessed`, never overclaimed.",
   type: "object",
-  required: ["status", "generator", "summary", "pages"],
+  required: ["standard", "version", "results", "summary", "areaSummaries", "conformant", "claim"],
   additionalProperties: false,
   properties: {
-    status: { type: "string", enum: ["not-yet-evaluated", "pass", "fail"] },
-    generator: { type: "object", required: ["name", "ran"], additionalProperties: true, properties: { name: { type: "string" }, url: { type: "string" }, ran: { type: "boolean" } } },
-    spec: { type: "string" },
-    note: { type: "string" },
-    summary: { type: "object", required: ["pages", "checks", "passed", "failed"], additionalProperties: false, properties: { pages: { type: "integer" }, checks: { type: "integer" }, passed: { type: "integer" }, failed: { type: "integer" } } },
-    pages: { type: "array", items: { type: "object", additionalProperties: true } },
+    standard: { type: "string" },
+    version: { type: "string" },
+    conformant: { type: "boolean" },
+    claim: { type: "string" },
+    summary: { type: "object", required: ["met", "unmet", "notAssessed", "total"], additionalProperties: false, properties: { met: { type: "integer" }, unmet: { type: "integer" }, notAssessed: { type: "integer" }, total: { type: "integer" } } },
+    areaSummaries: { type: "array", items: { type: "object", required: ["area", "met", "unmet", "notAssessed", "total", "summary"], additionalProperties: false, properties: { area: { type: "string" }, met: { type: "integer" }, unmet: { type: "integer" }, notAssessed: { type: "integer" }, total: { type: "integer" }, summary: { type: "string" } } } },
+    results: { type: "array", items: { type: "object", required: ["id", "area", "label", "standard", "target", "level", "evidence", "required", "status", "detail"], additionalProperties: true, properties: { id: { type: "string" }, area: { type: "string" }, label: { type: "string" }, standard: { type: "string" }, target: { type: "string" }, level: { type: "string" }, evidence: { type: "string", enum: ["lone", "external"] }, required: { type: "boolean" }, status: { type: "string", enum: ["met", "unmet", "not-assessed"] }, detail: { type: "string" } } } },
   },
 };
 
-// ---- conformance.json — honest placeholder (lone's future output) -----------
-const conformance = {
-  status: "not-yet-evaluated",
-  generator: { name: "lone", url: "https://github.com/bounded-systems/lone", ran: false },
-  spec: `${SITE}/provenance`,
-  note: "Placeholder. lone blesses every rendered page's DOM (semantic HTML + a11y); this report will carry its per-page conformance results. Shape is stable; values are empty until lone runs in the build.",
-  summary: { pages: 0, checks: 0, passed: 0, failed: 0 },
-  pages: [],
-};
+// ---- conformance.json — the REAL report build.mjs already wrote --------------
+// build.mjs runs lone's conformance() over this build's evidence, writes the typed
+// report to dist/api/v1/conformance.json, and renders /conformance from it. gen-api
+// re-reads those bytes so the OpenAPI description advertises the exact document the
+// site serves, and self-checks it against the response schema below.
+const conformance = await readJson(join(dist, "api", "v1", "conformance.json"));
 
 // ---- the OpenAPI 3.2 document ------------------------------------------------
 // Embed the reused contract schemas verbatim (minus the $schema dialect key, which
@@ -188,7 +189,7 @@ const openapi = {
     "/posts.json": { get: { operationId: "listPosts", summary: "Writing index", tags: ["writing"], responses: { 200: jsonResp("#/components/schemas/PostsIndex") } } },
     "/posts/{slug}.json": { get: { operationId: "getPost", summary: "One resolved post", tags: ["writing"], parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string" } }], responses: { 200: jsonResp("#/components/schemas/Post"), 404: { description: "No such post" } } } },
     "/corpus.json": { get: { operationId: "getCorpus", summary: "Curated GitHub corpus", tags: ["corpus"], responses: { 200: jsonResp("#/components/schemas/Corpus") } } },
-    "/conformance.json": { get: { operationId: "getConformance", summary: "DOM/a11y conformance (placeholder)", tags: ["provenance"], responses: { 200: jsonResp("#/components/schemas/Conformance") } } },
+    "/conformance.json": { get: { operationId: "getConformance", summary: "Web-build conformance report", description: "lone's conformance() projection over this build's evidence (rendered at /conformance). The strong claim is emitted only when every tier-1 required criterion is met; unsupplied criteria are not-assessed.", tags: ["provenance"], responses: { 200: jsonResp("#/components/schemas/Conformance") } } },
     "/resume.vc.json": { get: { operationId: "getResumeCredential", summary: "Résumé as a W3C Verifiable Credential 2.0", description: "credentialSubject is the canonical JSON Resume; issuer is did:web:robertdelanghe.dev. The cryptographic proof is an enveloping Sigstore bundle served alongside as resume.vc.json.sigstore.json (keyless, bound to the GitHub Actions OIDC identity).", tags: ["identity"], responses: { 200: jsonResp("#/components/schemas/ResumeCredential") } } },
     "/openapi.json": { get: { operationId: "getOpenapi", summary: "This document", tags: ["meta"], responses: { 200: { description: "OK", content: { "application/json": { schema: { type: "object" } } } } } } },
   },
@@ -228,7 +229,7 @@ for (const it of items) {
   await write(join("posts", `${it.slug}.json`), { ...it, content_html: extractBody(html) });
 }
 await write("corpus.json", corpus);
-await write("conformance.json", conformance);
+// conformance.json is written by build.mjs (the REAL report) — not re-emitted here.
 // the reused contract schemas, served so the advertised $id URLs resolve
 await write(join("schemas", "jsonresume.schema.json"), jsonResumeSchema);
 await write(join("schemas", "site.schema.json"), siteSchema);

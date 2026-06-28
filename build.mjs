@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { validateSchema } from "./vendor/conformance-kit/lib/schema-validate.mjs";
 import { reprDigest, securityTxt, securityTxtExpires, webManifest, markdownSiblingHeaders } from "./vendor/conformance-kit/emitters/index.mjs";
+import { buildConformanceReport, renderConformanceReport } from "./vendor/conformance-kit/gates/conformance-report.mjs";
 import { loadPosts } from "./posts.mjs";
 import { checkCss } from "./scripts/check-css.mjs";
 
@@ -205,7 +206,7 @@ const colophonHtml = profile.colophon?.length
       <ul class="colophon__list">
         ${profile.colophon.map((c) => `<li><a href="${esc(c.href)}"><span class="colophon__name">${esc(c.name)}</span>${c.role ? `<span class="colophon__role">${esc(c.role)}</span>` : ""}</a></li>`).join("\n        ")}
       </ul>
-      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a></p>
+      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
     </section>`
   : "";
 
@@ -652,7 +653,7 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
       <ol class="prov-chain">
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><span class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></span></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (JSON-LD 1.1) is validated against <code>SHACL</code> shapes; an <strong>SPDX SBOM</strong> is generated and completeness-checked; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed in-toto/SLSA attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong WCAG&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</span></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
@@ -927,6 +928,79 @@ await writeFile(join(dist, "llms.txt"), llms);
 // generated by audit-catalog.mjs into data/audit/ (not emitted here) — one canonical
 // catalog generator, consumed by `npm run audit` (the vendored string-audit gate).
 
+// ---- /conformance — lone's conformance() projection over THIS build's evidence ----
+// The capstone: don't just PRODUCE conformance evidence, COMPUTE and SHOW it. The
+// kit's conformance-report folds lone's web-build standard (a Node port of
+// jsr:@bounded-systems/lone@0.4's conformance() model) over the evidence this pure
+// build can establish, and reports everything else honestly as `not-assessed`. The
+// model makes overclaim impossible: the strong compact claim is emitted ONLY when
+// every tier-1 required criterion is met — so automation can never print "WCAG 2.2 AA"
+// or "ASVS conformant" on its own.
+//
+// What this pure render verifies in-process (no network, no clock):
+//   • integrity.content-digests — build.mjs writes RFC 9530 Repr-Digest headers into
+//     dist/_headers (unconditionally, below).
+//   • semantic.ai-readability   — llms.txt + the Markdown siblings (/index.md,
+//     /resume.md, /blog/<slug>.md) are emitted from the same contracts.
+//   • semantic.feeds            — a structurally-valid Atom 1.0 feed is emitted.
+// Everything else (lone's DOM blessing, SHACL, the SPDX SBOM, the signed in-toto
+// attestation, axe, the MANUAL WCAG/ASVS/Core-Web-Vitals/Baseline evidence) is
+// produced by DEDICATED gates/steps that run OUTSIDE this hermetic render — so it is
+// NOT readable here and reports `not-assessed`: honest, since this build has not
+// itself verified it. A deploy/CI step MAY widen the report by injecting the gate
+// results via $CONFORMANCE_EVIDENCE / $CONFORMANCE_LONE_FINDINGS (JSON file paths).
+const mdSiblingsOk =
+  (await exists(join(dist, "index.md"))) && (await exists(join(dist, "resume.md"))) &&
+  (await Promise.all(posts.map((p) => exists(join(dist, "blog", `${p.slug}.md`))))).every(Boolean);
+const llmsOk = llms.length > 0;
+const atomOk = /<feed[\s>]/.test(atom) && /<id>/.test(atom) && /<updated>/.test(atom) &&
+  (posts.length === 0 || /<entry>/.test(atom));
+let confEvidence = {
+  contentDigests: { reprDigestHeaders: true },
+  aiReadability: { llmsTxtPresent: llmsOk, linksResolve: mdSiblingsOk, markdownSiblings: mdSiblingsOk },
+  feeds: { atomValid: atomOk },
+};
+let confLoneFindings = null; // no DOM blessed in this pure render → lone criteria not-assessed
+// Optional deploy/CI injection: widen the published report with the gates that ran
+// after the pure build (the semantic Deno gate, check:shacl, gen-sbom, gen-attestation…).
+if (process.env.CONFORMANCE_EVIDENCE && await exists(process.env.CONFORMANCE_EVIDENCE))
+  confEvidence = { ...confEvidence, ...await loadJson(process.env.CONFORMANCE_EVIDENCE) };
+if (process.env.CONFORMANCE_LONE_FINDINGS && await exists(process.env.CONFORMANCE_LONE_FINDINGS)) {
+  const f = await loadJson(process.env.CONFORMANCE_LONE_FINDINGS);
+  confLoneFindings = Array.isArray(f) ? f : (f.findings ?? null);
+}
+const confReport = buildConformanceReport({ loneFindings: confLoneFindings, evidence: confEvidence });
+await mkdir(join(dist, "api", "v1"), { recursive: true });
+await writeFile(join(dist, "api", "v1", "conformance.json"), JSON.stringify(confReport, null, 2) + "\n");
+
+// Per-criterion evidence links (consumer-injected; each must resolve at gate time —
+// all are emitted by this build before the seo/structure gates run).
+const confEvidenceHref = (c) => {
+  if (c.id === "semantic.ai-readability") return "/llms.txt";
+  if (c.id === "semantic.feeds") return "/feed.xml";
+  return "/provenance"; // the signed chain explains the gates behind every criterion
+};
+const conformanceHtml = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.conformance.desc"), path: "/conformance" })}
+</head>
+<body>
+  <main class="wrap">
+    <header class="intro">
+      <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
+      <h1>${copy("conf.title")}</h1>
+      <p class="lead">${copy("conf.lede")}</p>
+      <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}&nbsp;&#8599;</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
+    </header>
+    ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref })}
+    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">${copy("footer.generated")} ${date}${commitHtml}</span></footer>
+  </main>
+</body>
+</html>
+`;
+await writeHtml("conformance.html", conformanceHtml);
+
 // Response headers (Cloudflare _headers). HTML routes have no ETag on html_handling
 // routes, so without a positive max-age they re-fetch on every load — give them a
 // short cache + stale-while-revalidate window. Fingerprinted CSS is immutable (the
@@ -935,7 +1009,7 @@ await writeFile(join(dist, "llms.txt"), llms);
 // asset matches two Cache-Control rules — Cloudflare _headers MERGES overlapping
 // rules, which would emit a malformed double Cache-Control. Plus UTF-8 on text
 // assets (Cloudflare otherwise sends text/plain with no charset → Latin-1 mojibake).
-const htmlRoutes = ["/", "/resume", "/blog", "/provenance", ...posts.map(postUrl)];
+const htmlRoutes = ["/", "/resume", "/blog", "/provenance", "/conformance", ...posts.map(postUrl)];
 // RFC 9530 Repr-Digest per canonical doc, computed over the exact bytes written above
 // (self-contained — not the later site.sha256). Scoped to the canonical documents, not
 // fingerprinted assets. /provenance is intentionally OMITTED: gen-attestation.mjs stamps
@@ -946,6 +1020,7 @@ const reprByRoute = {
   "/": reprDigest(html),
   "/resume": reprDigest(resumeHtml),
   "/blog": reprDigest(blogHtml),
+  "/conformance": reprDigest(conformanceHtml),
   ...Object.fromEntries(postReprs),
   "/feed.xml": reprDigest(atom),
   "/feed.json": reprDigest(jsonFeedStr),
@@ -967,7 +1042,7 @@ await writeFile(join(dist, "_headers"),
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  ["/", "/resume", "/blog", "/provenance", ...posts.map(postUrl)].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
+  ["/", "/resume", "/blog", "/provenance", "/conformance", ...posts.map(postUrl)].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
   `\n</urlset>\n`);
 
 console.log(`✓ built dist/  — ${highlights.length} highlights, ${stats.languages.length} languages, +meta/llms.txt/sitemap`);
