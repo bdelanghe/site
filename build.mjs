@@ -888,7 +888,7 @@ await writeFile(join(dist, ".well-known", "security.txt"), securityTxt);
 // ---- Web App Manifest (from brand tokens; no service worker) ---------------------
 const webmanifest = {
   name: `${name} — ${role}`,
-  short_name: name,
+  short_name: name.split(" ")[0], // ≤12-char home-screen label (PWA convention)
   description: headline,
   theme_color: THEME_COLOR,
   background_color: BG_COLOR,
