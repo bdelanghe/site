@@ -34,7 +34,7 @@
   },
   "conformance.html": {
     "h1": "Conformance",
-    "outline": "123333333333",
+    "outline": "1233333333333",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
@@ -43,6 +43,11 @@
       "/attestation.intoto.json",
       "/feed.xml",
       "/llms.txt",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
+      "/provenance",
       "/provenance",
       "/provenance",
       "/provenance",

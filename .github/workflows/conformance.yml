@@ -44,3 +44,5 @@ jobs:
         run: node vendor/conformance-kit/gates/baseline-gate.mjs
       - name: AI-readability gate (vendored kit gate — llms.txt valid + links resolve + Markdown siblings)
         run: AIR_SIBLING_IGNORE=404 node vendor/conformance-kit/gates/ai-readability-gate.mjs dist
+      - name: Token-a11y gate (vendored kit suite — palette CVD/APCA + typography over the brand design tokens)
+        run: node vendor/conformance-kit/gates/token-a11y.mjs contract/token-a11y.json

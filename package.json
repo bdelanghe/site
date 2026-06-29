@@ -20,6 +20,7 @@
     "check:html": "node vendor/conformance-kit/gates/html-validator-gate.mjs dist",
     "check:baseline": "node vendor/conformance-kit/gates/baseline-gate.mjs",
     "check:ai-readability": "AIR_SIBLING_IGNORE=404 node vendor/conformance-kit/gates/ai-readability-gate.mjs dist",
+    "check:token-a11y": "node vendor/conformance-kit/gates/token-a11y.mjs contract/token-a11y.json",
     "gate:copy": "node scripts/copy-gate.mjs --strict",
     "check:integrity": "node scripts/vendor-integrity.mjs --check",
     "check:shacl": "node vendor/conformance-kit/gates/shacl-runner.mjs contract/jsonld.shapes.ttl dist",
