@@ -1,0 +1,41 @@
+scripts/vendor-integrity.mjs
+  s_71a0aecf45d82c::t_a5766c49232086 47-49
+package.json
+  s_71a0aecf45d82c::t_6d0526fd870b77 18,20-21
+.github/workflows/brand-checks.yml
+  s_71a0aecf45d82c::t_a523de521d692a 25-26
+.github/workflows/conformance.yml
+  s_71a0aecf45d82c::t_263e8aea24bae5 41-44
+data/conformance-evidence.json
+  s_71a0aecf45d82c::t_99e5db5550cee5 16-17
+  s_71a0aecf45d82c::t_b4e9086ca6b0d8 2
+  s_71a0aecf45d82c::t_0dc3d55ca7a918 14
+vendor/conformance-kit/README.md
+  s_71a0aecf45d82c::t_a0266474801a5f 15,17,70-72,91
+vendor/conformance-kit/gates/baseline-gate.mjs
+  s_71a0aecf45d82c::t_8e3a025f102ec8 2-9,11-16,18,20-23,25-42,44-54,56,58-59,61,68,72-80,83,85-91,93-106,109-112
+vendor/conformance-kit/gates/html-validator-gate.mjs
+  s_71a0aecf45d82c::t_0618764fce37c1 2-9,11,13-17,20-22,24-52,56,60,66-86,89,91-94,96-106,108-112,114,117-120
+vendor/conformance-kit/gates/vuln-gate.mjs
+  s_71a0aecf45d82c::t_9c6ae6b907d664 1-101
+vendor/conformance-kit/package.json
+  s_71a0aecf45d82c::t_27e8bb79ab5b05 3,22-24,28-29,34-57,62,66-70
+vendor/conformance-kit/provenance.json
+  s_71a0aecf45d82c::t_366f84048ffbe8 3-4,9,12,17,25,39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "788d2c9d13d16efef147719973e571983469f999",
+  "prompts": {},
+  "sessions": {
+    "s_71a0aecf45d82c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6f6e806-c9db-459c-ba56-79aa27861998",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
