@@ -1,0 +1,50 @@
+name: axe
+
+# axe-core accessibility gate — the REAL-RENDER a11y member of the contract family.
+# The vendored conformance-kit axe-gate runs axe-core (WCAG 2.x A/AA ruleset) over
+# every BUILT page in a real browser (Playwright's bundled Chromium) and BLOCKS on
+# any serious/critical violation — including the rendering-dependent rules (color-
+# contrast, target-size) that the browser-free jsdom pass in conformance.yml cannot
+# evaluate. A clean run is what backs `a11y.axe-serious-critical` at /conformance,
+# so this gate keeps that assertion honest: it cannot be claimed met unless green.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "build.mjs"
+      - "scripts/**"
+      - "posts/**"
+      - "posts.mjs"
+      - "contract/**"
+      - "data/**"
+      - "styles.css"
+      - "vendor/conformance-kit/gates/axe-gate.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/axe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  axe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Install Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+      - name: Build dist/
+        run: npm run build
+      - name: axe gate — 0 serious/critical across all built pages
+        run: node vendor/conformance-kit/gates/axe-gate.mjs dist
+        env:
+          AXE_RUNNER: playwright
