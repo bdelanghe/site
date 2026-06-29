@@ -255,10 +255,19 @@ jobs:
           exit 1
 
       # Independent, cryptographic confirmation that prod serves verified bytes.
+      # Retry: the signed bundle (site.sha256.sigstore.json) can reach the edge a few seconds after
+      # the manifest, so a verify right after promote may check a fresh manifest against a stale
+      # bundle ("signature verification failed"). Retry until the edge is consistent.
       - name: Cryptographically verify prod (standalone verifier)
         run: |
           npm ci --prefix vendor/conformance-kit/integrity/verify
-          node vendor/conformance-kit/integrity/verify/verify.mjs https://robertdelanghe.dev
+          for i in 1 2 3 4 5 6; do
+            if node vendor/conformance-kit/integrity/verify/verify.mjs https://robertdelanghe.dev; then exit 0; fi
+            echo "verifier not consistent yet (attempt $i/6) — edge may still be propagating the signed bundle; retrying in 12s"
+            sleep 12
+          done
+          echo "::error::standalone verifier failed after retries"
+          exit 1
 
       # RFC 9110 HTTP-correctness probe of the live edge.
       - name: HTTP correctness probe (RFC 9110)
