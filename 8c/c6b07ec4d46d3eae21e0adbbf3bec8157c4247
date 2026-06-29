@@ -1,0 +1,32 @@
+.github/workflows/conformance.yml
+  s_71a0aecf45d82c::t_edae987cc8c0a8 47-48
+data/conformance-evidence.json
+  s_71a0aecf45d82c::t_62cc741feb1169 30-32
+  s_71a0aecf45d82c::t_29a790d0cddd71 19
+package.json
+  s_71a0aecf45d82c::t_930002e21da77d 23
+brand
+  s_71a0aecf45d82c::t_8edb950e4e1fa9 1
+vendor/conformance-kit/gates/likeness-gate.mjs
+  s_71a0aecf45d82c::t_f68ddf7cc78a64 102-109,111,119-120,129-130,169-170
+vendor/conformance-kit/package.json
+  s_71a0aecf45d82c::t_2e08d737559c38 3
+vendor/conformance-kit/provenance.json
+  s_71a0aecf45d82c::t_fcca9e7b97ad23 3-4,19,47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "8cc6b07ec4d46d3eae21e0adbbf3bec8157c4247",
+  "prompts": {},
+  "sessions": {
+    "s_71a0aecf45d82c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6f6e806-c9db-459c-ba56-79aa27861998",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
