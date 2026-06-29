@@ -162,21 +162,25 @@ jobs:
       # version id (promoted later) + the preview URL (what you review before approving).
       # VERIFY: confirm `wrangler versions upload` output format + that it supports this
       # static-assets Worker, and the parsing below, on the first run.
+      # Run wrangler directly via nix (no inner bash -c), capture output, then parse in the OUTER
+      # shell where quoting is sane. NO_COLOR + an ANSI strip make the field extraction robust
+      # (wrangler colorizes the version id; the raw log carries escape codes the GH UI hides).
       - name: Upload preview version
         id: upload
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GITHUB_SHA: ${{ github.sha }}
+          NO_COLOR: "1"
+          FORCE_COLOR: "0"
         run: |
-          nix develop .#deploy --command bash -euo pipefail -c '
-            short=$(printf "%s" "$GITHUB_SHA" | cut -c1-7)
-            wrangler versions upload --tag "sha-$short" --message "preview $short" 2>&1 | tee upload.log
-            vid=$(grep -oiE "Worker Version ID:[[:space:]]*[0-9a-f]{8}-[0-9a-f-]+" upload.log | grep -oiE "[0-9a-f]{8}-[0-9a-f-]+" | head -1)
-            url=$(grep -oiE "https://[a-z0-9-]+\.workers\.dev[^[:space:]]*" upload.log | head -1)
-            [ -n "$vid" ] || { echo "::error::could not parse Worker Version ID from upload output"; exit 1; }
-            echo "version_id=$vid" >> "$GITHUB_OUTPUT"
-            echo "preview_url=$url" >> "$GITHUB_OUTPUT"
-          '
+          short=$(printf '%s' "$GITHUB_SHA" | cut -c1-7)
+          nix develop .#deploy --command wrangler versions upload --tag "sha-$short" --message "preview $short" 2>&1 | tee upload.log
+          strip='s/\x1b\[[0-9;]*[mGKH]//g'
+          vid=$(grep -F 'Worker Version ID:' upload.log | sed -E "$strip" | tail -1 | awk '{print $NF}')
+          url=$(grep -F 'Version Preview URL:' upload.log | sed -E "$strip" | tail -1 | awk '{print $NF}')
+          [ -n "$vid" ] || { echo "::error::could not parse Worker Version ID from upload output"; exit 1; }
+          echo "version_id=$vid" >> "$GITHUB_OUTPUT"
+          echo "preview_url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Preview summary
         run: |
@@ -229,10 +233,8 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           VERSION_ID: ${{ needs.preview.outputs.version_id }}
-        run: |
-          nix develop .#deploy --command bash -euo pipefail -c '
-            wrangler versions deploy "$VERSION_ID" --yes
-          '
+          NO_COLOR: "1"
+        run: nix develop .#deploy --command wrangler versions deploy "$VERSION_ID" --yes
 
       # Assert the provenance reached prod (byte-identical manifest + provenance.json).
       - name: Verify prod serves the signed provenance
