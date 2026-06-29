@@ -1,20 +1,22 @@
 {
   "source": "https://github.com/bounded-systems/conformance-kit",
-  "ref": "ca982b8",
-  "commit": "ca982b8",
+  "ref": "438675c",
+  "commit": "438675c",
   "fetched": "2026-06-29",
   "note": "Vendored, hash-pinned copy of bounded-systems/conformance-kit (the one shared build/gate/generator toolkit — subsumes the former vendor/integrity/). Re-vendor: npm run vendor:kit. Verified against these hashes before use (npm run check:integrity runs --check). Site-managed consumer artifacts (integrity/{verify,structure-audit}/package-lock.json, integrity/structure-audit/structure.json) are NOT pinned here.",
   "files": {
     "LICENSE": "sha256:559e93c466421832cdcfe7a000d0c19cdb2cec9d24bfb9b41f7c5bd9d448f65e",
     "README.md": "sha256:b6c278d8dda1ea8663e77e324ef4b9e2951d7cb0d93c02ff0cfec805d5a07f3c",
     "emitters/index.mjs": "sha256:1e45fa9122986d60a1c478438b077482b15c1c068d7ac8109902ca19a697cf8b",
+    "gates/a11y-heuristic-gate.mjs": "sha256:a5e29d859048864b8a80f1d5bf7bf60be5e1a8931cac6aee8ff65f95b5f7f510",
     "gates/ai-readability-gate.mjs": "sha256:d31c8fa391dadb547ce6b6f2656e4e9313ecb814265d923ac19ceef4130a4dc4",
     "gates/axe-gate.mjs": "sha256:a8b19486e4e2379310112cad7390ac86abde885a162172e2ade9cb4d902ada79",
     "gates/baseline-gate.mjs": "sha256:138e62c664487740e8825cc16df00cf35d975d9e84049b71c7d9ad209269ef8f",
+    "gates/cognitive/focus-budget-gate.mjs": "sha256:2727783740fd6ec805b3f1c31bbd447add698cb6e28f7a748f77971b86225c72",
     "gates/commonmark-runner.mjs": "sha256:bbc05d54d426e9f56337fa1c9e958f452e5d32e60a0bd3a2ab60191a8ab7eab3",
     "gates/conformance-report.mjs": "sha256:160ee7d32d811a15e38b2ae24ec242f7af9549b5104b973b137b70067a642b5a",
-    "gates/conformance/conformance.mjs": "sha256:6b7bc39774ff671a79b94665fe47c21b747f90fd9c64c28f99cfd681f91ee571",
-    "gates/conformance/web-build.mjs": "sha256:51701fa30ae63ddd3be47883bea38c8bc551d5dea0ec1b34a04988754cba809c",
+    "gates/conformance/conformance.mjs": "sha256:94dd956e3cc3444bd9205de64baccb168b14922130caf7052cd98ddd481adfe5",
+    "gates/conformance/web-build.mjs": "sha256:9391988af8e661aaf38a25427c82b02a36cf5c7ce8e6623fe7ed6922927b6a80",
     "gates/html-validator-gate.mjs": "sha256:66f26b1421a34a448aef0c549dd2cf7c289021358d65f39a353961ab0d962977",
     "gates/likeness-gate.mjs": "sha256:82e384c3079c397ad87a94608c43538d34d72a94de2b9990822f0f77917213aa",
     "gates/opacity-contrast-gate.mjs": "sha256:e086e9220e2a63a432a156dab59d7f73eda302ca907c70dc05d7f8b79f62503c",
@@ -44,6 +46,6 @@
     "integrity/verify/verify.mjs": "sha256:4e3ba56de1c7ebe2f062e4e1d19f48cfdb3ac8367dcdd6051acdd9dcc9835728",
     "lib/config.mjs": "sha256:17cb89afd2ba8599d4f288187abbacaf0ab2d9dc5b39ee23d9d2e11a8f952055",
     "lib/schema-validate.mjs": "sha256:888f75ec549073ea895118178cad46d287573b42017cf162b4a8adee0e58e4d0",
-    "package.json": "sha256:c41ef97a17abd4463aeec28ce8efbd43029de659427c21f39cae379117ef4f1d"
+    "package.json": "sha256:87c64ba9b79f6e6b408ff56a2804a276c7b3af60348573617f18b5c4134f561e"
   }
 }
