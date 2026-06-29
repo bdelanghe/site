@@ -1,0 +1,31 @@
+vendor/conformance-kit/integrity/verify/package-lock.json
+  s_4ccf8ec3ddcbc8::t_c1d0c55239d4a6 1-1207
+vendor/conformance-kit/integrity/verify/package.json
+  s_4ccf8ec3ddcbc8::t_cb8a035a3da614 1-10
+vendor/conformance-kit/integrity/verify/verify.mjs
+  s_0e0b4d6cd22542::t_f785ff3ee42ccc 25,80-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "59a789659e25cf931741af26093dca2a5321ccbf",
+  "prompts": {},
+  "sessions": {
+    "s_0e0b4d6cd22542": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "25ca02d8-0ea9-405f-8441-40cf7bf0ee57",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    },
+    "s_4ccf8ec3ddcbc8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "684a1b39-b25c-4f45-ac97-97af68184b7a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
