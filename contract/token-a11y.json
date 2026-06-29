@@ -1,0 +1,7 @@
+{
+  "$comment": "Design-token accessibility contract for bd-site — runs the vendored conformance-kit token-a11y suite over the @bounded-systems/brand tokens this site ships. The palette member uses the BRAND's own declared pairings (brand/tokens/palette.pairings.json — every real fg/bg combo, vetted in brand CI), so no extraction false-positives. Re-proves design.palette-contrast + design.typography for /conformance. Paths are relative to this file (contract/). target-size + opacity are N/A here (this content site has no sized controls / token opacity); token-likeness is deferred pending a brand dedup decision (3 near-duplicate token values are intentional semantic aliases — see /conformance _gates).",
+  "tokens": "../brand/tokens/tokens.css",
+  "palette": "../brand/tokens/palette.pairings.json",
+  "typography": { "tokens": "../brand/tokens/tokens.css", "body": ["body"] },
+  "likeness": { "categorical": [{ "name": "grades", "members": ["bs-grade-enforced", "bs-grade-partial", "bs-grade-aspirational"] }] }
+}

@@ -1,7 +1,7 @@
 {
   "source": "https://github.com/bounded-systems/conformance-kit",
-  "ref": "e8838ed",
-  "commit": "e8838ed",
+  "ref": "bb0ace7",
+  "commit": "bb0ace7",
   "fetched": "2026-06-29",
   "note": "Vendored, hash-pinned copy of bounded-systems/conformance-kit (the one shared build/gate/generator toolkit — subsumes the former vendor/integrity/). Re-vendor: npm run vendor:kit. Verified against these hashes before use (npm run check:integrity runs --check). Site-managed consumer artifacts (integrity/{verify,structure-audit}/package-lock.json, integrity/structure-audit/structure.json) are NOT pinned here.",
   "files": {
@@ -13,9 +13,13 @@
     "gates/baseline-gate.mjs": "sha256:138e62c664487740e8825cc16df00cf35d975d9e84049b71c7d9ad209269ef8f",
     "gates/commonmark-runner.mjs": "sha256:bbc05d54d426e9f56337fa1c9e958f452e5d32e60a0bd3a2ab60191a8ab7eab3",
     "gates/conformance-report.mjs": "sha256:160ee7d32d811a15e38b2ae24ec242f7af9549b5104b973b137b70067a642b5a",
-    "gates/conformance/conformance.mjs": "sha256:c42e0b4df2c1c0f7900b4816fe973fb474e3821b9d9ef8edc897d711f49d94b5",
-    "gates/conformance/web-build.mjs": "sha256:d63a87524f9e0f83297003b1c9f079a7ed34bcbc13b64e400c584135464f993f",
+    "gates/conformance/conformance.mjs": "sha256:6b7bc39774ff671a79b94665fe47c21b747f90fd9c64c28f99cfd681f91ee571",
+    "gates/conformance/web-build.mjs": "sha256:51701fa30ae63ddd3be47883bea38c8bc551d5dea0ec1b34a04988754cba809c",
     "gates/html-validator-gate.mjs": "sha256:66f26b1421a34a448aef0c549dd2cf7c289021358d65f39a353961ab0d962977",
+    "gates/likeness-gate.mjs": "sha256:b28bae04993564120efd44d17a0c7fdd218e580bf047bd16208d1a377b64d1c6",
+    "gates/opacity-contrast-gate.mjs": "sha256:e086e9220e2a63a432a156dab59d7f73eda302ca907c70dc05d7f8b79f62503c",
+    "gates/pairing-extractor.mjs": "sha256:cd6cb359c2ce74c5b15bdc4f371cbe60e07d6bb6f6091efe6ea64825e28c18dd",
+    "gates/palette-gate.mjs": "sha256:c0b4601a148ce445b256f69e0d32618691f364c1ba7804080aa84b9850da3c8c",
     "gates/readability-gate.mjs": "sha256:ff4216bc3acc0828197ed0d769c7c78fd152a3d9e450c1684b3e3ebc3c28599c",
     "gates/sbom/check-sbom.mjs": "sha256:c306ed0eeddd4d29513761903e99b1e04e81f58424aa98b36ac7abfb13b0ec63",
     "gates/sbom/gen-sbom.mjs": "sha256:426d2f09f77253c10d532fac009609d416d6882955e7b0c5ca0c168f0cd90b15",
@@ -23,6 +27,9 @@
     "gates/semantic/gate.ts": "sha256:5e32b8e4a30f65b920fe81f7363ba2520a98fe9c825f56a5f8cb9ef0bdf19a72",
     "gates/seo-gate.mjs": "sha256:71b85b07428ee4ba6d2acd36a7d12e31ee7be7d7ed9d6c06d7cab417eb52d3e5",
     "gates/shacl-runner.mjs": "sha256:bf41d44f1ea723814d6999a4ab5a2a6dc8933d8b82100254d893f7f52ad08287",
+    "gates/target-size-gate.mjs": "sha256:086b87789e5e5cb143f07c163cf19fd2eb7a889497fb0b87bac1f4bc9855fda9",
+    "gates/token-a11y.mjs": "sha256:cceb2c5f78b420a935805c361d3e0b2968c25d58d0736faca4630f32d1294933",
+    "gates/typography-gate.mjs": "sha256:5fec620a22a939660027c2df259f1c51c8d8d29047f2141bfe975529617e66d2",
     "gates/vuln-gate.mjs": "sha256:b2dafa8584fdb067279a57e69ddd2ed129c21b2104fb639ed11635abed69d500",
     "generators/gen-cid.mjs": "sha256:3b7cf2559edb6205059a1fbda6611ae5c5a31794509e53a0bbfb8b10f4cb80f1",
     "generators/gen-identity.mjs": "sha256:4e071b039ed097afa1a3f3daf656b57fd808ffca1977e9da798aac089f5f1c02",
@@ -37,6 +44,6 @@
     "integrity/verify/verify.mjs": "sha256:4e3ba56de1c7ebe2f062e4e1d19f48cfdb3ac8367dcdd6051acdd9dcc9835728",
     "lib/config.mjs": "sha256:17cb89afd2ba8599d4f288187abbacaf0ab2d9dc5b39ee23d9d2e11a8f952055",
     "lib/schema-validate.mjs": "sha256:888f75ec549073ea895118178cad46d287573b42017cf162b4a8adee0e58e4d0",
-    "package.json": "sha256:9225f6e9f8ab4354d3e406679e2cc04dfcad18a04515cfc3ed4dfc6080763acc"
+    "package.json": "sha256:06a3054e180f8c0fc36e24f99bc6ffaa9aef429caa8fbd4e883a90f13f2bb0b6"
   }
 }
