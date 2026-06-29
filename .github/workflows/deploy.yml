@@ -132,7 +132,7 @@ jobs:
   deploy:
     needs: build
     if: needs.build.outputs.oci != ''
-    uses: bounded-systems/.github/.github/workflows/site-deploy.yml@feat/canonical-site-deploy
+    uses: bounded-systems/.github/.github/workflows/site-deploy.yml@54f5856348dd2ccdd3828705145554c177cc40a8 # main
     with:
       oci: ${{ needs.build.outputs.oci }}
       domain: "https://robertdelanghe.dev"
