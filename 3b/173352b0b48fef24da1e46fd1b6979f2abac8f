@@ -1,0 +1,26 @@
+package.json
+  s_98e316d0b3248a::t_844a0ab77465b5 39,46
+.github/workflows/axe.yml
+  s_98e316d0b3248a::t_7757880cf40c32 1-50
+data/conformance-evidence.json
+  s_98e316d0b3248a::t_79f1e9d296241d 15
+  s_98e316d0b3248a::t_6e7f5b0caf0480 2
+package-lock.json
+  s_98e316d0b3248a::t_0b985cadc285ef 11,18,78-90,3930-3976
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "3b173352b0b48fef24da1e46fd1b6979f2abac8f",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
