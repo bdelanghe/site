@@ -222,15 +222,16 @@ jobs:
             tar -xzf oci-out/site.tar.gz -C dist
           '
 
-      # Promote the exact reviewed version to 100% production.
-      # VERIFY: confirm the `wrangler versions deploy` arg form on the first run.
+      # Promote the exact reviewed version to 100% production. A single version spec with no
+      # percentage gets all traffic ("omitted percentages share the remaining traffic", per
+      # `wrangler versions deploy --help`) — avoids @100 vs @100% ambiguity.
       - name: Promote reviewed version to production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           VERSION_ID: ${{ needs.preview.outputs.version_id }}
         run: |
           nix develop .#deploy --command bash -euo pipefail -c '
-            wrangler versions deploy "$VERSION_ID@100%" --yes
+            wrangler versions deploy "$VERSION_ID" --yes
           '
 
       # Assert the provenance reached prod (byte-identical manifest + provenance.json).
