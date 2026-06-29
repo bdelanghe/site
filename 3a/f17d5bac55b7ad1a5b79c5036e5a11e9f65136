@@ -1,0 +1,19 @@
+vendor/conformance-kit/gates/cognitive/focus-budget-gate.mjs
+  s_11b38b7b21408c::t_623475607a7043 184-186,198-202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "3af17d5bac55b7ad1a5b79c5036e5a11e9f65136",
+  "prompts": {},
+  "sessions": {
+    "s_11b38b7b21408c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aff0a7797842838f5",
+        "model": "unknown"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
