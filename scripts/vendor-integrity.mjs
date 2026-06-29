@@ -52,6 +52,8 @@ const FILES = [
   "gates/readability-gate.mjs",
   "gates/commonmark-runner.mjs",
   "gates/ai-readability-gate.mjs",
+  "gates/a11y-heuristic-gate.mjs",
+  "gates/cognitive/focus-budget-gate.mjs",
   "gates/token-a11y.mjs",
   "gates/palette-gate.mjs",
   "gates/typography-gate.mjs",

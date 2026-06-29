@@ -1,0 +1,67 @@
+name: a11y-heuristic
+
+# Agent/static heuristic accessibility review + COGA Obj-5 focus-budget gate.
+#
+# HONEST LABELING: both gates are AGENT/STATIC HEURISTICS, not AT-user testing.
+#   a11y-heuristic-gate — machine AT pass: landmarks, interactive names, heading
+#     hierarchy, image alts, skip-nav, tabindex, focus ring, invalid ARIA roles.
+#     Evidence type: "agent/static heuristic review — NOT AT-user testing"
+#   focus-budget-gate — COGA Obj-5 proxy: content density (reading grade, sentence
+#     length, jargon density) + DOM interaction patterns (autoplay, auto-dialog,
+#     animation motion guard, aria-current, competing CTAs).
+#     Evidence type: "agent/static interface-complexity proxy for COGA Obj-5 — NOT
+#     COGA usability testing"
+#
+# The heuristic gate BLOCKS on hard errors (missing names, missing lang, etc.).
+# The focus-budget gate reports not-yet-met on content density but only BLOCKS on
+# hard DOM errors (autoplay, auto-dialog, meta-refresh, focus ring removal).
+# Content density thresholds (grade ≤ 10, sentence ≤ 20) are exceeded — that is
+# HONEST REPORTING; editorial fix is the maintainer's call.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "build.mjs"
+      - "data/**"
+      - "styles.css"
+      - "posts/**"
+      - "vendor/conformance-kit/gates/a11y-heuristic-gate.mjs"
+      - "vendor/conformance-kit/gates/cognitive/focus-budget-gate.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/a11y-heuristic.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  a11y-heuristic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Build dist/
+        run: npm run build
+      - name: a11y heuristic gate (static runner — AGENT/STATIC HEURISTIC, NOT AT-user testing)
+        run: node vendor/conformance-kit/gates/a11y-heuristic-gate.mjs dist
+        env:
+          A11Y_RUNNER: static
+      - name: COGA Obj-5 focus budget gate (PROXY — NOT COGA usability testing)
+        # Note: --strict would fail on content density breaches; omitted because
+        # robertdelanghe.dev currently exceeds grade + sentence thresholds (honest
+        # reporting). The gate BLOCKS on DOM pattern errors only (autoplay, auto-dialog,
+        # meta-refresh, focus ring removal). Editorial fix is the maintainer's call.
+        run: node vendor/conformance-kit/gates/cognitive/focus-budget-gate.mjs dist
+        env:
+          FOCUS_GRADE_WARN: "10"
+          FOCUS_SENT_WARN: "20"
+          FOCUS_JARGON_PER_100: "0.5"
+          FOCUS_SECTION_WORD_MAX: "200"
