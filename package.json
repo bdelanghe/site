@@ -34,13 +34,12 @@
     "audit:vendor": "node scripts/vendor-audit.mjs"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.12.1",
     "@zazuko/env-node": "^2.1.5",
     "an-array-of-english-words": "^2.0.0",
     "axe-core": "^4.12.1",
+    "jsdom": "^29.1.1",
     "jsonld": "^8.3.2",
     "n3": "^1.17.3",
-    "playwright": "^1.61.1",
     "rdf-validate-shacl": "^0.5.10",
     "stylelint": "^17.14.0",
     "stylelint-plugin-use-baseline": "^1.4.4",
