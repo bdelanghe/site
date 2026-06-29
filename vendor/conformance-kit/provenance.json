@@ -1,17 +1,18 @@
 {
   "source": "https://github.com/bounded-systems/conformance-kit",
-  "ref": "18570e887f115814853ecf6bdafcf1ded5106757",
-  "commit": "18570e887f115814853ecf6bdafcf1ded5106757",
-  "fetched": "2026-06-28",
+  "ref": "dbc2c549ef39c205bcbfcd0177ece6cbdd10c874",
+  "commit": "dbc2c549ef39c205bcbfcd0177ece6cbdd10c874",
+  "fetched": "2026-06-29",
   "note": "Vendored, hash-pinned copy of bounded-systems/conformance-kit (the one shared build/gate/generator toolkit — subsumes the former vendor/integrity/). Re-vendor: npm run vendor:kit. Verified against these hashes before use (npm run check:integrity runs --check). Site-managed consumer artifacts (integrity/{verify,structure-audit}/package-lock.json, integrity/structure-audit/structure.json) are NOT pinned here.",
   "files": {
     "LICENSE": "sha256:559e93c466421832cdcfe7a000d0c19cdb2cec9d24bfb9b41f7c5bd9d448f65e",
-    "README.md": "sha256:215a6c602fd80051ba834ab295e52a93a2a58ac53a79ba5df7ebb6b54d8e2f00",
+    "README.md": "sha256:d5d4ab1795e9cfbfd848156916c8cb232caf0c29291320092a358518cbb16207",
     "emitters/index.mjs": "sha256:1e45fa9122986d60a1c478438b077482b15c1c068d7ac8109902ca19a697cf8b",
+    "gates/axe-gate.mjs": "sha256:a8b19486e4e2379310112cad7390ac86abde885a162172e2ade9cb4d902ada79",
     "gates/commonmark-runner.mjs": "sha256:bbc05d54d426e9f56337fa1c9e958f452e5d32e60a0bd3a2ab60191a8ab7eab3",
     "gates/conformance-report.mjs": "sha256:160ee7d32d811a15e38b2ae24ec242f7af9549b5104b973b137b70067a642b5a",
-    "gates/conformance/conformance.mjs": "sha256:aadb7c0802795a15a6cf217fd33d279d3e8a8606854dbf935d02f584b669c412",
-    "gates/conformance/web-build.mjs": "sha256:cfdbaa68bba2fc272ecea17b4c277a26118d68e676c554653d4ee4a29b852170",
+    "gates/conformance/conformance.mjs": "sha256:c42e0b4df2c1c0f7900b4816fe973fb474e3821b9d9ef8edc897d711f49d94b5",
+    "gates/conformance/web-build.mjs": "sha256:d63a87524f9e0f83297003b1c9f079a7ed34bcbc13b64e400c584135464f993f",
     "gates/readability-gate.mjs": "sha256:ff4216bc3acc0828197ed0d769c7c78fd152a3d9e450c1684b3e3ebc3c28599c",
     "gates/sbom/check-sbom.mjs": "sha256:c306ed0eeddd4d29513761903e99b1e04e81f58424aa98b36ac7abfb13b0ec63",
     "gates/sbom/gen-sbom.mjs": "sha256:426d2f09f77253c10d532fac009609d416d6882955e7b0c5ca0c168f0cd90b15",
@@ -32,6 +33,6 @@
     "integrity/verify/verify.mjs": "sha256:552630d0a9611488d8ecb60aad3bd17a3a2e7808985908c779b295738281d282",
     "lib/config.mjs": "sha256:17cb89afd2ba8599d4f288187abbacaf0ab2d9dc5b39ee23d9d2e11a8f952055",
     "lib/schema-validate.mjs": "sha256:888f75ec549073ea895118178cad46d287573b42017cf162b4a8adee0e58e4d0",
-    "package.json": "sha256:998e9c5f8ab1411408d2cbb35956caa2892117e4a37b1c718982fd4b6c115162"
+    "package.json": "sha256:070a410fa23df17b7f53fefa937e169ee8aac73ca59cd5cea3f6f2a17a9d3b19"
   }
 }

@@ -16,7 +16,7 @@
     "check:css": "node scripts/check-css.mjs",
     "check:sbom": "node scripts/check-sbom.mjs",
     "check:vulns": "node scripts/vuln-gate.mjs --check",
-    "check:axe": "node scripts/axe-gate.mjs --check",
+    "check:axe": "AXE_RUNNER=tezcatl node vendor/conformance-kit/gates/axe-gate.mjs dist",
     "check:html": "node scripts/html-validator-gate.mjs --check",
     "check:baseline": "node scripts/baseline-gate.mjs --check",
     "gate:copy": "node scripts/copy-gate.mjs --strict",
