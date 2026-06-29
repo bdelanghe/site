@@ -1,10 +1,11 @@
 name: conformance
 
 # Re-proving gates for the /conformance evidence that needs the build toolchain
-# installed (axe-core + jsdom today; Nu HTML Checker + Baseline next). Each gate
-# MEASURES a tier-1 external criterion over the freshly-built dist/ and BLOCKS on
-# regression, so data/conformance-evidence.json cannot drift above reality. The
-# vuln gate (lockfile-only, no node_modules) is re-proven separately in brand-checks.
+# installed (the vendored kit axe gate via a real browser, the Nu HTML Checker, and
+# Baseline). Each gate MEASURES a tier-1 external criterion over the freshly-built
+# dist/ and BLOCKS on regression, so data/conformance-evidence.json cannot drift
+# above reality. (Locally the axe gate runs via `tezcatl` — no Chromium download;
+# `npm run check:axe`.) The vuln gate (lockfile-only) is re-proven in brand-checks.
 on:
   push:
     branches: [main]
@@ -27,12 +28,14 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-      - name: Install deps (axe-core + jsdom for a11y; vnu-jar for HTML validation)
+      - name: Install deps (@axe-core/playwright for a11y; vnu-jar for HTML validation)
         run: npm ci --no-audit --no-fund
+      - name: Install Chromium for the axe gate (Playwright CI runner)
+        run: npx playwright install --with-deps chromium
       - name: Build dist/
         run: node build.mjs
-      - name: axe serious/critical gate (axe-core in jsdom — color-contrast via lone)
-        run: node scripts/axe-gate.mjs --check
+      - name: axe serious/critical gate (vendored kit gate — real browser, full WCAG 2.2 A/AA incl. contrast)
+        run: node vendor/conformance-kit/gates/axe-gate.mjs dist
       - name: Nu HTML Checker gate (vnu jar — HTML Living Standard, errors-only)
         run: node scripts/html-validator-gate.mjs --check
       - name: Baseline gate (stylelint-plugin-use-baseline over shipped CSS — honest status)
