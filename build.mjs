@@ -8,6 +8,7 @@ import { createHash } from "node:crypto";
 import { validateSchema } from "./vendor/conformance-kit/lib/schema-validate.mjs";
 import { reprDigest, securityTxt, securityTxtExpires, webManifest, markdownSiblingHeaders } from "./vendor/conformance-kit/emitters/index.mjs";
 import { buildConformanceReport, renderConformanceReport } from "./vendor/conformance-kit/gates/conformance-report.mjs";
+import { evaluateAiReadability } from "./vendor/conformance-kit/gates/ai-readability-gate.mjs";
 import { loadPosts } from "./posts.mjs";
 import { checkCss } from "./scripts/check-css.mjs";
 
@@ -638,7 +639,7 @@ await writeFile(join(dist, "resume.json"), JSON.stringify(resumeDoc, null, 2) + 
 const provHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.provenance.desc"), path: "/provenance" })}
+${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.provenance.desc"), path: "/provenance", mdAlt: "/provenance.md" })}
 </head>
 <body>
   <main class="wrap">
@@ -673,6 +674,40 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
 </html>
 `;
 await writeHtml("provenance.html", provHtml);
+
+// Markdown twin of /provenance — the same chain in clean prose for AI readers
+// (advertised via head() mdAlt, listed in llms.txt). @@COMMIT@@/@@DATE@@ are stamped
+// post-build by gen-attestation.mjs, exactly like provenance.html.
+const provMd = `# ${copy("prov.title")}
+
+> ${copy("prov.lede")}
+
+## ${copy("prov.chain.eyebrow")}
+
+${copy("prov.chain.lede")}
+
+### ${copy("prov.step.materials")}
+${materials.map((m) => `- \`${m.name}\` — ${m.id}`).join("\n")}
+
+${stats.repos} repos · ${stats.public} public · ${stats.sources} sources · ${stats.languages.length} languages — corpus figures computed over the corpus, not asserted.
+
+### ${copy("prov.step.contracts")}
+Contracts gate content before a byte renders: the canonical résumé \`data/profile.json\` against the JSON Resume schema, the render-context \`data/presentation.json\`, and every post's frontmatter against \`contract/posts.schema.json\` — a non-conforming change can't build. Facts transclude from canonical tokens; an unknown token fails the build, so no claim is unsourced.
+
+### ${copy("prov.step.gates")}
+Gates run on every build, each error-severity finding blocking it: \`lone\` blesses each rendered DOM (semantic HTML + a11y); \`copy-review\` flags overclaims; \`linkedin-check\` verifies résumé claims; \`string-audit\` runs copy hygiene; JSON-LD is SHACL-validated; an SPDX SBOM is generated + completeness-checked; brand tokens are drift-checked. Every result folds into one honest [conformance projection](${SITE}/conformance) — lone's \`conformance()\` model, which emits the strong WCAG 2.2 AA / OWASP ASVS claim only when every required criterion is met; manual and unsupplied criteria stay not-assessed.
+
+### ${copy("prov.step.builder")}
+Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bounded-systems/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs.
+
+## ${copy("prov.seal.title")}
+commit @@COMMIT@@ · @@DATE@@ · [bdelanghe/site](https://github.com/bdelanghe/site)
+
+Real in-toto \`Statement/v1\` + SLSA provenance ([attestation.intoto.json](${SITE}/attestation.intoto.json)), keyless-signed via Sigstore — a one-build Fulcio certificate minted from this workflow's GitHub OIDC identity, logged in the public [Rekor](https://search.sigstore.dev/) transparency log. The whole built site is content-addressed ([site.sha256](${SITE}/site.sha256)) and signed, and pushed to GHCR as a pullable, signed OCI artifact. See [provenance.json](${SITE}/provenance.json) for digests, Rekor entries, and verify/pull recipes.
+
+**Authorized.** Production is not deployed straight from a build: each version is uploaded as an un-served preview, reviewed, and promoted to production only on required human approval (the \`site-promote\` environment) — so the live site is not just intact, its promotion was authorized.
+`;
+await writeFile(join(dist, "provenance.md"), provMd);
 // 404.html is a static template; rewrite its stylesheet refs to the fingerprinted names.
 {
   let h404 = await readFile(join(root, "404.html"), "utf8");
@@ -698,7 +733,7 @@ const blogIndex = posts.length
 const blogHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head.blog.desc.lead")} ${name} ${copy("head.blog.desc.tail")}`, path: "/blog" })}
+${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head.blog.desc.lead")} ${name} ${copy("head.blog.desc.tail")}`, path: "/blog", mdAlt: "/blog.md" })}
 </head>
 <body>
   <main class="wrap">
@@ -720,6 +755,20 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
 </html>
 `;
 await writeFile(join(dist, "blog.html"), blogHtml);
+
+// Markdown twin of /blog — the post index in clean prose for AI readers.
+const blogMd = `# ${copy("nav.writing")} — ${name}
+
+> ${copy("blog.lede")}
+
+${posts.length
+  ? posts.map((p) => `## [${p.meta.title}](${SITE}${postUrl(p)})\n${p.meta.date} — ${p.meta.description}`).join("\n\n")
+  : copy("blog.empty")}
+
+---
+[← ${copy("nav.home")}](${SITE}/index.md) · [${copy("blog.nav.rss")}](${SITE}/feed.xml)
+`;
+await writeFile(join(dist, "blog.md"), blogMd);
 
 await mkdir(join(dist, "blog"), { recursive: true });
 const postReprs = []; // [route, Repr-Digest] for each post's canonical HTML doc
@@ -921,7 +970,10 @@ ${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
 ${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}
 ## ${copy("llms.md")}
 - [${name} — ${role}](${SITE}/index.md)
-- [${copy("head.resume.label")}](${SITE}/resume.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
+- [${copy("head.resume.label")}](${SITE}/resume.md)
+- [${copy("nav.writing")}](${SITE}/blog.md)
+- [${copy("conf.title")}](${SITE}/conformance.md)
+- [${copy("prov.title")}](${SITE}/provenance.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
 `;
 await writeFile(join(dist, "llms.txt"), llms);
 
@@ -954,15 +1006,17 @@ await writeFile(join(dist, "llms.txt"), llms);
 // full axe scan, Nu HTML Checker, Core Web Vitals field data, Baseline, known-vuln
 // scan, runtime reliability) are NOT supplied by any layer → they report `not-assessed`
 // and the strong WCAG/ASVS compact claim stays withheld.
-const mdSiblingsOk =
-  (await exists(join(dist, "index.md"))) && (await exists(join(dist, "resume.md"))) &&
-  (await Promise.all(posts.map((p) => exists(join(dist, "blog", `${p.slug}.md`))))).every(Boolean);
-const llmsOk = llms.length > 0;
+// AI-readability is proven by the vendored kit gate's own evaluator — one source of
+// truth, re-run as a BLOCKING check in conformance.yml (check:ai-readability), not a
+// bespoke self-check. It genuinely resolves llms.txt's links (the old in-process check
+// conflated linksResolve with sibling presence). EVERY content page now ships a Markdown
+// twin (index, resume, blog index + posts, conformance, provenance) — only 404 is exempt.
+const air = await evaluateAiReadability({ dist, siblingIgnore: ["404"] });
 const atomOk = /<feed[\s>]/.test(atom) && /<id>/.test(atom) && /<updated>/.test(atom) &&
   (posts.length === 0 || /<entry>/.test(atom));
 const buildFacts = {
   contentDigests: { reprDigestHeaders: true },
-  aiReadability: { llmsTxtPresent: llmsOk, linksResolve: mdSiblingsOk, markdownSiblings: mdSiblingsOk },
+  aiReadability: air.aiReadability,
   feeds: { atomValid: atomOk },
 };
 const evContract = (await exists(join(root, "data", "conformance-evidence.json")))
@@ -995,7 +1049,7 @@ const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id] ?? "/provenance";
 const conformanceHtml = `<!doctype html>
 <html lang="en">
 <head>
-${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.conformance.desc"), path: "/conformance" })}
+${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.conformance.desc"), path: "/conformance", mdAlt: "/conformance.md" })}
 </head>
 <body>
   <main class="wrap">
@@ -1012,6 +1066,26 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
 </html>
 `;
 await writeHtml("conformance.html", conformanceHtml);
+
+// Markdown twin of /conformance — the full projection (claim + per-area criteria with
+// status) in clean prose. The most analysis-friendly form of the report for AI readers,
+// a deterministic function of the same confReport the HTML renders from.
+const confMark = (s) => ({ met: "✓ met", unmet: "✗ unmet" })[s] ?? "— not-assessed";
+const confAreas = [...new Set(confReport.results.map((r) => r.area))];
+const conformanceMd = `# ${copy("conf.title")} — ${name}
+
+> ${copy("conf.lede")}
+
+**Claim:** ${confReport.claim}
+
+**Summary:** ${confReport.summary.met} met · ${confReport.summary.unmet} unmet · ${confReport.summary.notAssessed} not-assessed · ${confReport.summary.total} total.
+
+Machine-readable: [/api/v1/conformance.json](${SITE}/api/v1/conformance.json) · signed chain: [/provenance](${SITE}/provenance.md)
+
+${confAreas.map((area) => `## ${area}\n${confReport.results.filter((r) => r.area === area).map((r) =>
+  `- **${r.label}** (\`${r.id}\`) — ${confMark(r.status)}${r.required ? "" : " _(recommended)_"}${r.detail ? `: ${r.detail}` : ""}`).join("\n")}`).join("\n\n")}
+`;
+await writeFile(join(dist, "conformance.md"), conformanceMd);
 
 // Response headers (Cloudflare _headers). HTML routes have no ETag on html_handling
 // routes, so without a positive max-age they re-fetch on every load — give them a

@@ -42,3 +42,5 @@ jobs:
         run: node vendor/conformance-kit/gates/html-validator-gate.mjs dist
       - name: Baseline gate (vendored kit gate — web-features over shipped CSS)
         run: node vendor/conformance-kit/gates/baseline-gate.mjs
+      - name: AI-readability gate (vendored kit gate — llms.txt valid + links resolve + Markdown siblings)
+        run: AIR_SIBLING_IGNORE=404 node vendor/conformance-kit/gates/ai-readability-gate.mjs dist
