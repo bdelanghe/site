@@ -48,6 +48,8 @@ jobs:
           node-version: "22"
       - name: Install deps
         run: npm ci --no-audit --no-fund
+      - name: Install linkedom (required by a11y-heuristic-gate; not in site package.json)
+        run: npm install --no-save --no-audit --no-fund linkedom@^0.18.0
       - name: Build dist/
         run: npm run build
       - name: a11y heuristic gate (static runner — AGENT/STATIC HEURISTIC, NOT AT-user testing)
