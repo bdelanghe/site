@@ -19,7 +19,7 @@
   "work.pinned": "pinned",
 
   "colophon.eyebrow": "Built with",
-  "colophon.more": "Hermetic Nix build · keyless-signed in-toto/SLSA provenance (Sigstore · Rekor · GHCR) —",
+  "colophon.more": "Hermetic Nix build · keyless-signed <a href=\"https://in-toto.io\" rel=\"noopener\">in-toto</a>/<a href=\"https://slsa.dev\" rel=\"noopener\">SLSA</a> provenance (<a href=\"https://sigstore.dev\" rel=\"noopener\">Sigstore</a> · <a href=\"https://docs.sigstore.dev/rekor/overview/\" rel=\"noopener\">Rekor</a> · <a href=\"https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry\" rel=\"noopener\">GHCR</a>) —",
   "colophon.provenance": "full provenance",
   "colophon.conformance": "conformance",
 
@@ -46,7 +46,7 @@
   "prov.title": "Provenance",
   "prov.lede": "This site is built deterministically from versioned sources and validated at every boundary — the same discipline the work itself argues for. Here's what produced and checked this artifact.",
   "prov.chain.eyebrow": "Provenance chain",
-  "prov.chain.lede": "The build reads as an <strong>in-toto / SLSA-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.",
+  "prov.chain.lede": "The build reads as an <strong><a href=\"https://in-toto.io\" rel=\"noopener\">in-toto</a> / <a href=\"https://slsa.dev\" rel=\"noopener\">SLSA</a>-style</strong> provenance: declared <em>materials</em>, a checked build <em>process</em>, and a signed <em>subject</em>. Each link is verified; the last is the artifact itself.",
   "prov.step.materials": "Materials",
   "prov.step.contracts": "Process &middot; contracts",
   "prov.step.gates": "Process &middot; gates",
