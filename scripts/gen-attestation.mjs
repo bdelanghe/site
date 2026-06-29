@@ -38,6 +38,17 @@ if (await exists(provHtml)) {
   await writeFile(provHtml, html);
 }
 
+// Same stamp for the Markdown twin /provenance.md — but a Markdown commit link.
+const provMd = join(dist, "provenance.md");
+if (await exists(provMd)) {
+  const short = COMMIT ? COMMIT.slice(0, 7) : "(local)";
+  const commitMd = COMMIT ? `[${short}](https://github.com/bdelanghe/site/commit/${COMMIT})` : "(local)";
+  const stampDate = new Date().toISOString().slice(0, 10);
+  let md = await readFile(provMd, "utf8");
+  md = md.replaceAll("@@COMMIT@@", commitMd).replaceAll("@@COMMIT_SHORT@@", short).replaceAll("@@DATE@@", stampDate);
+  await writeFile(provMd, md);
+}
+
 // subject — the built artifacts, by digest (what the attestation is ABOUT). The
 // SPDX SBOM (dist/sbom.spdx.json, written by gen-sbom.mjs just before this) is a
 // subject too, so the statement vouches for the exact bill-of-materials bytes;

@@ -1,6 +1,6 @@
 {
   "name": "@bounded-systems/conformance-kit",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "description": "Standalone, site-agnostic web-conformance toolkit: integrity tooling + build gates + provenance generators, all parameterized so a site vendors one kit instead of duplicating scripts.",
   "type": "module",
   "license": "MIT",
@@ -9,24 +9,34 @@
     "url": "git+https://github.com/bounded-systems/conformance-kit.git"
   },
   "bin": {
-    "ck-gen-sitemanifest": "./integrity/gen-sitemanifest.mjs",
-    "ck-gen-provenance": "./integrity/gen-provenance.mjs",
-    "ck-verify-site": "./integrity/verify-site.mjs",
-    "ck-http-probe": "./integrity/http-probe.mjs",
-    "ck-structure-audit": "./integrity/structure-audit/audit.mjs",
-    "ck-gen-sbom": "./gates/sbom/gen-sbom.mjs",
-    "ck-check-sbom": "./gates/sbom/check-sbom.mjs",
-    "ck-shacl-runner": "./gates/shacl-runner.mjs",
-    "ck-seo-gate": "./gates/seo-gate.mjs",
-    "ck-axe-gate": "./gates/axe-gate.mjs",
-    "ck-vuln-gate": "./gates/vuln-gate.mjs",
-    "ck-html-validator-gate": "./gates/html-validator-gate.mjs",
-    "ck-baseline-gate": "./gates/baseline-gate.mjs",
-    "ck-readability-gate": "./gates/readability-gate.mjs",
-    "ck-commonmark-runner": "./gates/commonmark-runner.mjs",
-    "ck-gen-cid": "./generators/gen-cid.mjs",
-    "ck-gen-identity": "./generators/gen-identity.mjs",
-    "ck-gen-snapshots": "./generators/gen-snapshots.mjs"
+    "ck-gen-sitemanifest": "integrity/gen-sitemanifest.mjs",
+    "ck-gen-provenance": "integrity/gen-provenance.mjs",
+    "ck-verify-site": "integrity/verify-site.mjs",
+    "ck-http-probe": "integrity/http-probe.mjs",
+    "ck-structure-audit": "integrity/structure-audit/audit.mjs",
+    "ck-gen-sbom": "gates/sbom/gen-sbom.mjs",
+    "ck-check-sbom": "gates/sbom/check-sbom.mjs",
+    "ck-shacl-runner": "gates/shacl-runner.mjs",
+    "ck-seo-gate": "gates/seo-gate.mjs",
+    "ck-axe-gate": "gates/axe-gate.mjs",
+    "ck-vuln-gate": "gates/vuln-gate.mjs",
+    "ck-html-validator-gate": "gates/html-validator-gate.mjs",
+    "ck-baseline-gate": "gates/baseline-gate.mjs",
+    "ck-palette-gate": "gates/palette-gate.mjs",
+    "ck-typography-gate": "gates/typography-gate.mjs",
+    "ck-target-size-gate": "gates/target-size-gate.mjs",
+    "ck-opacity-contrast-gate": "gates/opacity-contrast-gate.mjs",
+    "ck-likeness-gate": "gates/likeness-gate.mjs",
+    "ck-pairing-extractor": "gates/pairing-extractor.mjs",
+    "ck-token-a11y": "gates/token-a11y.mjs",
+    "ck-jargon-gate": "gates/jargon-gate.mjs",
+    "ck-readability-gate": "gates/readability-gate.mjs",
+    "ck-ai-readability-gate": "gates/ai-readability-gate.mjs",
+    "ck-commonmark-runner": "gates/commonmark-runner.mjs",
+    "ck-gen-cid": "generators/gen-cid.mjs",
+    "ck-gen-identity": "generators/gen-identity.mjs",
+    "ck-gen-snapshots": "generators/gen-snapshots.mjs",
+    "ck-gen-print-snapshots": "generators/gen-print-snapshots.mjs"
   },
   "scripts": {
     "test": "node test/run.mjs"
@@ -52,12 +62,12 @@
     "./lib/*": "./lib/*"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "dependencies": {
     "@mozilla/readability": "^0.5.0",
     "@zazuko/env-node": "^2.1.5",
+    "an-array-of-english-words": "^2.0.0",
     "axe-core": "^4.10.0",
     "jsonld": "^9.0.0",
     "linkedom": "^0.18.0",

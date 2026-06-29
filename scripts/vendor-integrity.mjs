@@ -51,6 +51,7 @@ const FILES = [
   "gates/seo-gate.mjs",
   "gates/readability-gate.mjs",
   "gates/commonmark-runner.mjs",
+  "gates/ai-readability-gate.mjs",
   "gates/semantic/gate.ts",
   "gates/semantic/deno.json",
   "generators/gen-cid.mjs",
