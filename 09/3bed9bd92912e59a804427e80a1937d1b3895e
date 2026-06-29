@@ -1,0 +1,21 @@
+.github/workflows/a11y-heuristic.yml
+  s_98e316d0b3248a::t_33d1c5dabc2c31 51-52
+vendor/conformance-kit/integrity/structure-audit/structure.json
+  s_98e316d0b3248a::t_91f826c5f565b6 68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "093bed9bd92912e59a804427e80a1937d1b3895e",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
