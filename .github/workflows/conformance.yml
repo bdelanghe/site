@@ -38,7 +38,7 @@ jobs:
         run: node build.mjs
       - name: axe serious/critical gate (axe-core in jsdom — browser-free; color-contrast via lone)
         run: node scripts/axe-gate.mjs --check
-      - name: Nu HTML Checker gate (vnu jar — HTML Living Standard, errors-only)
-        run: node scripts/html-validator-gate.mjs --check
-      - name: Baseline gate (stylelint-plugin-use-baseline over shipped CSS — honest status)
-        run: node scripts/baseline-gate.mjs --check
+      - name: Nu HTML Checker gate (vendored kit gate — vnu jar, errors-only)
+        run: node vendor/conformance-kit/gates/html-validator-gate.mjs dist
+      - name: Baseline gate (vendored kit gate — web-features over shipped CSS)
+        run: node vendor/conformance-kit/gates/baseline-gate.mjs
