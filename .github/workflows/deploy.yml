@@ -1,14 +1,13 @@
 name: deploy
 
 # Two-phase, promote-the-artifact pipeline:
-#   build   — hermetic nix build → keyless-sign the in-toto/SLSA statement and
-#             the whole-site manifest (Sigstore/Rekor, no held key) → publish a
-#             SIGNED, fully-deployable OCI artifact to GHCR.
-#   deploy  — pull THAT artifact, cosign-verify it, and wrangler-deploy exactly
-#             those bytes. Prod serves the signed artifact by construction.
-#             Fail-closed: a signing/verify failure blocks the deploy, and the
-#             edge check asserts the provenance reached prod. Disconnect
-#             Cloudflare's Workers Builds Git App so the two don't double-deploy.
+#   build   — hermetic nix build → keyless-sign the in-toto/SLSA statement and the whole-site
+#             manifest (Sigstore/Rekor, no held key) → publish a SIGNED, fully-deployable OCI
+#             artifact to GHCR. Site-specific (résumé PDF, scripts) — stays here.
+#   deploy  — the CANONICAL reusable pipeline (bounded-systems/.github): pull + cosign-verify the
+#             artifact, upload an un-served preview version, cryptographically verify that version's
+#             own preview URL, then promote to prod behind the site-promote required-reviewers gate.
+#             Fail-closed by construction; one source of truth shared with bounded.tools.
 on:
   push:
     branches: [main]
@@ -125,150 +124,18 @@ jobs:
             echo "oci=$GHCR_REPO@$digest" >> "$GITHUB_OUTPUT"
           '
 
-  # PREVIEW: upload the signed bytes as a NEW Worker version — Cloudflare gives it a unique
-  # preview URL, but it is NOT served to production. This is the artifact you actually review.
-  # NOTE: for this gate to mean anything, Cloudflare's Workers Builds Git App must be
-  # DISCONNECTED (otherwise it auto-deploys every push to main, bypassing the approval).
-  preview:
+  # DEPLOY: hand the signed artifact to the CANONICAL reusable pipeline (preview → cryptographic
+  # verify of the version's preview URL → gated promote). The required-reviewers `site-promote`
+  # Environment lives in THIS repo, so the human approval gate is enforced here. One source of
+  # truth for the deploy machinery: bounded-systems/.github.
+  # (Pinned to the branch until bounded-systems/.github#38 merges; then -> @main / SHA.)
+  deploy:
     needs: build
-    runs-on: ubuntu-latest
     if: needs.build.outputs.oci != ''
-    outputs:
-      version_id: ${{ steps.upload.outputs.version_id }}
-      preview_url: ${{ steps.upload.outputs.preview_url }}
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
-
-      # Pull the SIGNED artifact, verify its keyless signature against this repo's identity,
-      # unpack exactly those bytes. Verify failure → no upload.
-      - name: Pull + verify the signed OCI artifact
-        env:
-          OCI: ${{ needs.build.outputs.oci }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          nix develop .#deploy --command bash -euo pipefail -c '
-            printf "%s" "$GITHUB_TOKEN" | cosign login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-            cosign verify "$OCI" \
-              --certificate-identity-regexp "^https://github.com/bdelanghe/site/" \
-              --certificate-oidc-issuer https://token.actions.githubusercontent.com > /dev/null
-            printf "%s" "$GITHUB_TOKEN" | oras login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-            rm -rf oci-out dist && mkdir -p oci-out dist
-            oras pull "$OCI" -o oci-out
-            tar -xzf oci-out/site.tar.gz -C dist
-          '
-
-      # Upload a version (preview only — does not change what production serves). Capture the
-      # version id (promoted later) + the preview URL (what you review before approving).
-      # VERIFY: confirm `wrangler versions upload` output format + that it supports this
-      # static-assets Worker, and the parsing below, on the first run.
-      # Run wrangler directly via nix (no inner bash -c), capture output, then parse in the OUTER
-      # shell where quoting is sane. NO_COLOR + an ANSI strip make the field extraction robust
-      # (wrangler colorizes the version id; the raw log carries escape codes the GH UI hides).
-      - name: Upload preview version
-        id: upload
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          GITHUB_SHA: ${{ github.sha }}
-          NO_COLOR: "1"
-          FORCE_COLOR: "0"
-        run: |
-          short=$(printf '%s' "$GITHUB_SHA" | cut -c1-7)
-          nix develop .#deploy --command wrangler versions upload --tag "sha-$short" --message "preview $short" 2>&1 | tee upload.log
-          strip='s/\x1b\[[0-9;]*[mGKH]//g'
-          vid=$(grep -F 'Worker Version ID:' upload.log | sed -E "$strip" | tail -1 | awk '{print $NF}')
-          url=$(grep -F 'Version Preview URL:' upload.log | sed -E "$strip" | tail -1 | awk '{print $NF}')
-          [ -n "$vid" ] || { echo "::error::could not parse Worker Version ID from upload output"; exit 1; }
-          echo "version_id=$vid" >> "$GITHUB_OUTPUT"
-          echo "preview_url=$url" >> "$GITHUB_OUTPUT"
-
-      - name: Preview summary
-        run: |
-          {
-            echo "### 🔍 Site preview ready — review before promoting"
-            echo ""
-            echo "Open the preview, then **approve the \`promote\` job** to ship it to robertdelanghe.dev."
-            echo ""
-            echo "- **Preview:** ${{ steps.upload.outputs.preview_url }}"
-            echo "- **Version:** \`${{ steps.upload.outputs.version_id }}\`"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-  # PROMOTE: gated behind a required-reviewers Environment. You review the preview above, then
-  # approve — only then does this run, deploying the SAME reviewed version to 100% production.
-  # The signed-provenance chain is intact because we promote the exact version that was previewed
-  # (and re-verify the artifact before promoting).
-  promote:
-    needs: [build, preview]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && needs.preview.outputs.version_id != ''
-    environment:
-      name: site-promote
-      url: https://robertdelanghe.dev
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
-
-      # Re-establish trust at promote time: pull + cosign-verify the signed artifact again, unpack
-      # (needed by the prod-provenance check below).
-      - name: Pull + verify the signed OCI artifact
-        env:
-          OCI: ${{ needs.build.outputs.oci }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          nix develop .#deploy --command bash -euo pipefail -c '
-            printf "%s" "$GITHUB_TOKEN" | cosign login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-            cosign verify "$OCI" \
-              --certificate-identity-regexp "^https://github.com/bdelanghe/site/" \
-              --certificate-oidc-issuer https://token.actions.githubusercontent.com > /dev/null
-            printf "%s" "$GITHUB_TOKEN" | oras login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-            rm -rf oci-out dist && mkdir -p oci-out dist
-            oras pull "$OCI" -o oci-out
-            tar -xzf oci-out/site.tar.gz -C dist
-          '
-
-      # Promote the exact reviewed version to 100% production. A single version spec with no
-      # percentage gets all traffic ("omitted percentages share the remaining traffic", per
-      # `wrangler versions deploy --help`) — avoids @100 vs @100% ambiguity.
-      - name: Promote reviewed version to production
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          VERSION_ID: ${{ needs.preview.outputs.version_id }}
-          NO_COLOR: "1"
-        run: nix develop .#deploy --command wrangler versions deploy "$VERSION_ID" --yes
-
-      # Assert the provenance reached prod (byte-identical manifest + provenance.json).
-      - name: Verify prod serves the signed provenance
-        run: |
-          expected=$(sha256sum dist/site.sha256 | cut -d' ' -f1)
-          echo "expected site.sha256=$expected"
-          for i in 1 2 3 4 5; do
-            live=$(curl -fsS https://robertdelanghe.dev/site.sha256 | sha256sum | cut -d' ' -f1) || live="(fetch failed)"
-            code=$(curl -fsS -o /dev/null -w '%{http_code}' https://robertdelanghe.dev/provenance.json) || code="000"
-            if [ "$live" = "$expected" ] && [ "$code" = "200" ]; then
-              echo "prod serves the freshly-signed whole-site manifest + provenance.json ✓"
-              exit 0
-            fi
-            echo "edge not fresh yet (attempt $i/5): manifest=$live provenance=$code"
-            sleep 10
-          done
-          echo "::error::prod is not serving the freshly-signed provenance (manifest or provenance.json)"
-          exit 1
-
-      # Independent, cryptographic confirmation that prod serves verified bytes.
-      # Retry: the signed bundle (site.sha256.sigstore.json) can reach the edge a few seconds after
-      # the manifest, so a verify right after promote may check a fresh manifest against a stale
-      # bundle ("signature verification failed"). Retry until the edge is consistent.
-      - name: Cryptographically verify prod (standalone verifier)
-        run: |
-          npm ci --prefix vendor/conformance-kit/integrity/verify
-          for i in 1 2 3 4 5 6; do
-            if node vendor/conformance-kit/integrity/verify/verify.mjs https://robertdelanghe.dev; then exit 0; fi
-            echo "verifier not consistent yet (attempt $i/6) — edge may still be propagating the signed bundle; retrying in 12s"
-            sleep 12
-          done
-          echo "::error::standalone verifier failed after retries"
-          exit 1
-
-      # RFC 9110 HTTP-correctness probe of the live edge.
-      - name: HTTP correctness probe (RFC 9110)
-        run: PROBE_CONFIG=contract/http-probe.json node vendor/conformance-kit/integrity/http-probe.mjs https://robertdelanghe.dev
+    uses: bounded-systems/.github/.github/workflows/site-deploy.yml@feat/canonical-site-deploy
+    with:
+      oci: ${{ needs.build.outputs.oci }}
+      domain: "https://robertdelanghe.dev"
+      identity_regexp: "^https://github.com/bdelanghe/site/"
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
