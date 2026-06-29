@@ -1,7 +1,7 @@
 {
   "source": "https://github.com/bounded-systems/conformance-kit",
-  "ref": "bb0ace7",
-  "commit": "bb0ace7",
+  "ref": "ca982b8",
+  "commit": "ca982b8",
   "fetched": "2026-06-29",
   "note": "Vendored, hash-pinned copy of bounded-systems/conformance-kit (the one shared build/gate/generator toolkit — subsumes the former vendor/integrity/). Re-vendor: npm run vendor:kit. Verified against these hashes before use (npm run check:integrity runs --check). Site-managed consumer artifacts (integrity/{verify,structure-audit}/package-lock.json, integrity/structure-audit/structure.json) are NOT pinned here.",
   "files": {
@@ -16,7 +16,7 @@
     "gates/conformance/conformance.mjs": "sha256:6b7bc39774ff671a79b94665fe47c21b747f90fd9c64c28f99cfd681f91ee571",
     "gates/conformance/web-build.mjs": "sha256:51701fa30ae63ddd3be47883bea38c8bc551d5dea0ec1b34a04988754cba809c",
     "gates/html-validator-gate.mjs": "sha256:66f26b1421a34a448aef0c549dd2cf7c289021358d65f39a353961ab0d962977",
-    "gates/likeness-gate.mjs": "sha256:b28bae04993564120efd44d17a0c7fdd218e580bf047bd16208d1a377b64d1c6",
+    "gates/likeness-gate.mjs": "sha256:82e384c3079c397ad87a94608c43538d34d72a94de2b9990822f0f77917213aa",
     "gates/opacity-contrast-gate.mjs": "sha256:e086e9220e2a63a432a156dab59d7f73eda302ca907c70dc05d7f8b79f62503c",
     "gates/pairing-extractor.mjs": "sha256:cd6cb359c2ce74c5b15bdc4f371cbe60e07d6bb6f6091efe6ea64825e28c18dd",
     "gates/palette-gate.mjs": "sha256:c0b4601a148ce445b256f69e0d32618691f364c1ba7804080aa84b9850da3c8c",
@@ -44,6 +44,6 @@
     "integrity/verify/verify.mjs": "sha256:4e3ba56de1c7ebe2f062e4e1d19f48cfdb3ac8367dcdd6051acdd9dcc9835728",
     "lib/config.mjs": "sha256:17cb89afd2ba8599d4f288187abbacaf0ab2d9dc5b39ee23d9d2e11a8f952055",
     "lib/schema-validate.mjs": "sha256:888f75ec549073ea895118178cad46d287573b42017cf162b4a8adee0e58e4d0",
-    "package.json": "sha256:06a3054e180f8c0fc36e24f99bc6ffaa9aef429caa8fbd4e883a90f13f2bb0b6"
+    "package.json": "sha256:c41ef97a17abd4463aeec28ce8efbd43029de659427c21f39cae379117ef4f1d"
   }
 }
