@@ -1,0 +1,29 @@
+vendor/conformance-kit/gates/a11y-heuristic-gate.mjs
+  s_98e316d0b3248a::t_f26a037a24f08d 351
+vendor/conformance-kit/provenance.json
+  s_e338dc2aaa8535::t_d6f1e083a5a050 3-4,11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "18247624d0f3c057573fd4c0d7baa340d3a94602",
+  "prompts": {},
+  "sessions": {
+    "s_98e316d0b3248a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db980ee-eb6b-4866-832b-f795cef7f33c",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    },
+    "s_e338dc2aaa8535": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a8bc92ed0bbf13bbb",
+        "model": "unknown"
+      },
+      "human_author": "Robert DeLanghe <1240090+bdelanghe@users.noreply.github.com>"
+    }
+  }
+}
