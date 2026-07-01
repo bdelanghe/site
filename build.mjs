@@ -582,6 +582,10 @@ if (jrErrors.length) {
   process.exit(1);
 }
 
+const googleDocsMeta = canonical.meta?.googleDocs ?? {};
+const publishedGoogleDocUrl = googleDocsMeta.publishedUrl ?? "";
+const workingHeadGoogleDocUrl = googleDocsMeta.workingHeadUrl ?? "";
+
 const resumeHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -608,7 +612,8 @@ ${jsonLd}
   .r-job ul { margin: 4px 0 0; padding-left: 16px; }
   .r-job li { margin: 0 0 3px; }
   .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
-  .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
+  .r-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 16px; }
+  .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 0; cursor: pointer; }
   .r-print:hover { border-color: var(--bs-color-forest); }
   .r-contact .r-fav { width: 12px; height: 12px; vertical-align: -2px; margin-right: 4px; fill: var(--bs-color-ink); }
   @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact .r-fav { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
@@ -620,7 +625,11 @@ ${jsonLd}
     <h1>${esc(name)}</h1>
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline.replace(/\.$/, ""))}` : ""}</p>
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
-    <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
+    <div class="r-actions">
+      <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
+      ${publishedGoogleDocUrl ? `<a class="r-print" href="${esc(publishedGoogleDocUrl)}">Google Doc ↗</a>` : ""}
+      ${workingHeadGoogleDocUrl ? `<a class="r-print" href="${esc(workingHeadGoogleDocUrl)}">Working head ↗</a>` : ""}
+    </div>
   </header>
   <p class="r-summary">${esc(summary)}</p>
   ${rSkills ? `<h2>${copy("resume.section.skills")}</h2>${rSkills}` : ""}
@@ -899,7 +908,7 @@ ${profile.links.map((l) => l.href.startsWith("mailto:") ? `- ${emailObf}` : `- $
 await writeFile(join(dist, "index.md"), indexMd);
 
 const rLinksMd = social.map((sp) => mdLink(sp.network, sp.url)).join(" · ");
-const rContactMd = [rLocation, rLinksMd, emailObf].filter(Boolean).join(" · ");
+const rContactMd = [rLocation, rLinksMd, email].filter(Boolean).join(" · ");
 const resumeMd = `# ${name}
 
 ${role}${headline ? ` · ${headline.replace(/\.$/, "")}` : ""}
