@@ -583,8 +583,9 @@ if (jrErrors.length) {
 }
 
 const googleDocsMeta = canonical.meta?.googleDocs ?? {};
+// The publish flow grants "anyone with the link" Commenter access, so this is
+// the one Google Doc link the résumé page needs.
 const publishedGoogleDocUrl = googleDocsMeta.publishedUrl ?? "";
-const workingHeadGoogleDocUrl = googleDocsMeta.workingHeadUrl ?? "";
 
 const resumeHtml = `<!doctype html>
 <html lang="en">
@@ -627,8 +628,7 @@ ${jsonLd}
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
     <div class="r-actions">
       <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
-      ${publishedGoogleDocUrl ? `<a class="r-print" href="${esc(publishedGoogleDocUrl)}">Google Doc ↗</a>` : ""}
-      ${workingHeadGoogleDocUrl ? `<a class="r-print" href="${esc(workingHeadGoogleDocUrl)}">Working head ↗</a>` : ""}
+      ${publishedGoogleDocUrl ? `<a class="r-print" href="${esc(publishedGoogleDocUrl)}">Comment on Google Docs ↗</a>` : ""}
     </div>
   </header>
   <p class="r-summary">${esc(summary)}</p>
