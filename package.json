@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs && SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json node vendor/conformance-kit/gates/seo-gate.mjs dist && node scripts/gen-api.mjs && node scripts/gen-identity.mjs && node scripts/gen-sbom.mjs && node scripts/gen-attestation.mjs && node scripts/check-sbom.mjs && node vendor/conformance-kit/generators/gen-cid.mjs",
-    "check": "node brand/tokens/build-tokens.mjs --check",
     "check:linkedin": "node linkedin-check.mjs",
     "check:copy": "node copy-review.mjs",
     "check:copy-fixtures": "node copy-review-fixtures.mjs",
@@ -20,7 +19,7 @@
     "check:html": "node vendor/conformance-kit/gates/html-validator-gate.mjs dist",
     "check:baseline": "node vendor/conformance-kit/gates/baseline-gate.mjs",
     "check:ai-readability": "AIR_SIBLING_IGNORE=404 node vendor/conformance-kit/gates/ai-readability-gate.mjs dist",
-    "check:token-a11y": "node vendor/conformance-kit/gates/token-a11y.mjs brand/tokens/token-a11y.json",
+    "check:token-a11y": "node vendor/conformance-kit/gates/token-a11y.mjs node_modules/@bounded-systems/brand/tokens/token-a11y.json",
     "gate:copy": "node scripts/copy-gate.mjs --strict",
     "check:integrity": "node scripts/vendor-integrity.mjs --check",
     "check:shacl": "node vendor/conformance-kit/gates/shacl-runner.mjs contract/jsonld.shapes.ttl dist",
@@ -30,12 +29,15 @@
     "check:a11y-heuristic": "node vendor/conformance-kit/gates/a11y-heuristic-gate.mjs dist",
     "check:focus-budget": "node vendor/conformance-kit/gates/cognitive/focus-budget-gate.mjs dist",
     "vendor:kit": "node scripts/vendor-integrity.mjs",
-    "prebuild": "npm run check && npm run check:schema && npm run check:integrity && npm run check:css && npm run check:commonmark && npm run check:vulns",
+    "prebuild": "npm run check:schema && npm run check:integrity && npm run check:css && npm run check:commonmark && npm run check:vulns",
     "deploy": "wrangler deploy",
     "check:resume": "node resume-parse.mjs",
     "audit:catalog": "node audit-catalog.mjs",
     "audit": "node scripts/audit.mjs --strict",
     "audit:vendor": "node scripts/vendor-audit.mjs"
+  },
+  "dependencies": {
+    "@bounded-systems/brand": "^1.4.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",

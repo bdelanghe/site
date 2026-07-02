@@ -95,7 +95,7 @@ export async function checkCss({ root, brand }) {
 // ---- CLI ----
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-  const { ok, violations, vocabSize } = await checkCss({ root, brand: join(root, "brand") });
+  const { ok, violations, vocabSize } = await checkCss({ root, brand: join(root, "node_modules", "@bounded-systems", "brand") });
   if (!ok) {
     console.error(`✗ css-token-purity: ${violations.length} violation(s) in styles.css — every color must be a brand token (docs/css-token-purity.md):`);
     for (const v of violations) console.error(`    styles.css:${v.line}  ${v.kind}: ${v.detail}`);

@@ -137,10 +137,10 @@ function watchDir(dir, recursive) {
 
 // ---- start ---------------------------------------------------------------------
 await rebuild(); // initial build (server still starts even if it failed)
-for (const d of ["data", "contract", "posts", "brand", "assets"]) watchDir(join(root, d), true);
+for (const d of ["data", "contract", "posts", "assets"]) watchDir(join(root, d), true);
 watchDir(root, false); // top-level *.mjs, styles.css, 404.html (non-recursive avoids dist/)
 server.listen(PORT, () => {
   console.log(`\n  dev server  →  http://localhost:${PORT}`);
-  console.log(`  watching    →  data/ contract/ posts/ brand/ assets/ + root *.mjs/styles.css/404.html`);
+  console.log(`  watching    →  data/ contract/ posts/ assets/ + root *.mjs/styles.css/404.html (brand is an npm dep — edit it in its own repo)`);
   console.log(`  live reload →  on (SSE); rebuilds on change, reloads the browser on success\n`);
 });

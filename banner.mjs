@@ -22,7 +22,7 @@ const profilePath = resolve(arg("--profile", join(here, "data", "profile.json"))
 // banner copy (tagline/stack) is render-context — it lives in presentation.json,
 // which decorates the canonical profile (name lives there). Merge the two like build.mjs.
 const presentationPath = resolve(arg("--presentation", join(here, "data", "presentation.json")));
-const tokensPath = resolve(arg("--tokens", join(here, "brand", "tokens", "tokens.json")));
+const tokensPath = resolve(arg("--tokens", join(here, "node_modules", "@bounded-systems", "brand", "tokens", "tokens.json")));
 const out = resolve(arg("--out", join(here, "dist")));
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
