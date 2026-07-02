@@ -1,0 +1,53 @@
+name: deploy-tokens
+
+# Deploy the spec-conformant token bundle (DTCG tokens.json + format projections
+# + manifest.json contract) to GitHub Pages. One source (tokens.json) projects to
+# many surfaces, deployed at a stable URL consumers can fetch and verify by hash.
+#
+# Requires Pages enabled: Settings → Pages → Source = GitHub Actions.
+# Cut a release tag to publish (matches publish.yml); workflow_dispatch for ad-hoc.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: deploy-tokens
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - run: npm ci
+
+      # Regenerate the curated web CSS + the native/Figma projections, then
+      # assemble the bundle. --check first so a non-conformant source fails loud.
+      - run: npm run build:css
+      - run: npm run build:sd
+      - run: node tools/build-tokens-dist.mjs --check
+      - run: node tools/build-tokens-dist.mjs # GITHUB_SHA is in env → manifest.commit
+
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: dist/tokens-site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

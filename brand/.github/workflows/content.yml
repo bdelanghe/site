@@ -1,0 +1,38 @@
+name: content
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - content/strings.json
+      - content/grounding.json
+      - .github/workflows/content.yml
+  pull_request:
+    paths:
+      - content/strings.json
+      - content/grounding.json
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: bounded-systems/string-audit
+          path: string-audit
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+
+      - name: Install string-audit deps
+        run: npm ci
+        working-directory: string-audit
+
+      - name: Audit content strings
+        env:
+          CATALOG: ${{ github.workspace }}/content/strings.json
+          GROUNDING: ${{ github.workspace }}/content/grounding.json
+        run: node string-audit/audit-gate.mjs --strict

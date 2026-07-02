@@ -1,0 +1,52 @@
+name: token-a11y
+
+# Token Accessibility suite over the brand design tokens. Vendored, hash-pinned copy
+# of bounded-systems/conformance-kit's Token Accessibility suite (PR #25, re-pinned
+# from main — supersedes the PR #19 palette-gate-only pin). One config
+# (tokens/token-a11y.json) drives every member over the generated tokens.css:
+#   · palette     — CVD-safe (Machado-2009 deutan/protan/tritan) + APCA + non-text (1.4.11)
+#   · pairing     — derives fg×bg pairings from the brand CSS ∪ the declared set (report-only superset)
+#   · typography  — body line-height ≥1.5 / overridable spacing / min size (1.4.12, 1.4.4, 1.4.8)
+#   · targetSize  — interactive-target tokens ≥24×24 (2.5.8 AA); ≥44 status (2.5.5 AAA)
+#   · opacity     — EFFECTIVE composited contrast of any translucent foreground (1.4.3 / 1.4.11)
+#   · likeness    — near-duplicate hygiene + categorical distinctness under normal + CVD (1.4.1)
+#
+# FAIL-CLOSED on ANY gated-member failure. NO exemptions: hairlines/dividers/separators
+# are declared `ui` and must clear 3:1; accessible for everyone. The runner first
+# verifies every vendored member file against its hash pin, then rebuilds tokens.css
+# from tokens.json (so the gates see the source of truth, never a stale artifact) and
+# runs the whole suite.
+
+on:
+  push:
+    paths:
+      - "tokens/**"
+      - "css/**"
+      - "resume/resume.css"
+      - "vendor/conformance-kit/**"
+      - "tools/token-a11y.mjs"
+      - ".github/workflows/token-a11y.yml"
+  pull_request:
+    paths:
+      - "tokens/**"
+      - "css/**"
+      - "resume/resume.css"
+      - "vendor/conformance-kit/**"
+      - "tools/token-a11y.mjs"
+      - ".github/workflows/token-a11y.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  token-a11y:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+      - name: Verify vendored Token Accessibility suite against hash pin
+        run: npm run token-a11y:verify
+      - name: Token Accessibility suite (palette · pairing · typography · target-size · opacity · likeness) — fail-closed, no exemptions
+        run: npm run token-a11y:check

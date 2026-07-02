@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bounded.tools/schema/tokens-manifest.json",
+  "title": "Bounded Systems token-bundle manifest",
+  "description": "The contract for a deployed brand token bundle. Canonical source is the DTCG tokens.json; the manifest declares every format projection with its media type and content hash, so a consumer can fetch, verify, and pick a format without guessing the layout. Content-addressed: integrity over freshness.",
+  "type": "object",
+  "required": ["name", "version", "spec", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "type": "string", "description": "Package the bundle is cut from." },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+",
+      "description": "SemVer of the brand package this bundle was built from."
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$",
+      "description": "Git commit the bundle was built from, when known (provenance)."
+    },
+    "spec": {
+      "type": "object",
+      "required": ["format", "source"],
+      "additionalProperties": false,
+      "description": "The standard the canonical source conforms to.",
+      "properties": {
+        "format": { "const": "DTCG", "description": "Design Tokens Community Group format." },
+        "ref": { "type": "string", "format": "uri", "description": "The spec the source conforms to." },
+        "source": { "type": "string", "description": "The canonical artifact path within the bundle." }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every published projection. Each is independently fetchable and verifiable.",
+      "items": {
+        "type": "object",
+        "required": ["path", "mediaType", "format", "bytes", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string", "description": "Path relative to the bundle root." },
+          "mediaType": { "type": "string", "description": "IANA media type served at this path." },
+          "format": {
+            "type": "string",
+            "description": "Logical format key (dtcg, css-variables, typescript, scss, js, json-flat, swift, android-xml)."
+          },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "SHA-256 of the file bytes — the integrity contract."
+          },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

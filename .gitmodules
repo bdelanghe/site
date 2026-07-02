@@ -1,4 +1,0 @@
-[submodule "brand"]
-	path = brand
-	url = https://github.com/bounded-systems/brand.git
-	branch = main

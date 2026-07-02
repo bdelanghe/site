@@ -1,0 +1,277 @@
+/* Bounded Systems — résumé layout + print stylesheet.
+   Built on the brand tokens (../tokens/tokens.css): colours come from the
+   design system, never hand-picked. Layout spacing is local to this surface.
+
+   Two jobs in one file:
+     · screen  — a clean, on-brand reading view on paper-warm background
+     · print   — Letter pages with controlled breaks; prints to a tidy PDF with
+                 no browser chrome (disable "Headers and footers" in the dialog).
+
+   A bounded document: it carries its own type, colour, and page rules — it does
+   not inherit them from whatever browser or printer it lands in. */
+
+:root {
+  /* local spacing scale — layout rhythm, not brand tokens */
+  --r-gap-section: 26px;
+  --r-gap-entry: 16px;
+  --r-gap-bullet: 6px;
+  --r-rule: 1px;
+  --r-page-pad: 44px;
+  --r-measure: 78ch;
+}
+
+html { background: var(--bs-color-paper); }
+
+body {
+  /* base.css already sets paper bg, ink colour, display font, smoothing */
+  line-height: 1.5;
+  padding: 40px 20px;
+}
+
+.resume {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--bs-color-card);
+  border: var(--r-rule) solid var(--bs-color-line);
+  border-radius: var(--bs-radius-lg);
+  overflow: hidden;
+}
+
+/* ── header ────────────────────────────────────────────────────────────── */
+.r-head {
+  background: var(--bs-color-forest);
+  color: var(--bs-color-white);
+  padding: var(--r-page-pad);
+}
+.r-id {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.r-mark { width: 34px; height: 34px; flex: none; display: block; }
+.r-name {
+  font-family: var(--bs-font-display);
+  font-size: var(--bs-text-h1);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--bs-color-white);
+}
+.r-role {
+  font-family: var(--bs-font-mono);
+  font-size: var(--bs-text-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bs-grade-enforced-on-dark);
+  margin: 16px 0 0;
+}
+.r-tagline {
+  font-family: var(--bs-font-display);
+  font-size: var(--bs-text-title);
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 10px 0 0;
+  max-width: 52ch;
+  color: var(--bs-color-white);
+}
+
+/* contact / affiliations row */
+.r-contact {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 0;
+  font-family: var(--bs-font-mono);
+  font-size: 12px;
+  color: var(--bs-grade-enforced-on-dark);
+}
+.r-contact li { display: inline-flex; align-items: center; }
+.r-contact li:not(:last-child)::after {
+  content: "·";
+  margin: 0 10px;
+  /* Solid token (5.28:1 on forest), not a dimmed foreground. `opacity: .6` here
+     used to composite the on-dark mint token down to 2.95:1 — below AA. The
+     opacity-contrast gate (Token Accessibility suite) flags exactly that
+     effective-contrast drop. */
+  color: var(--bs-grade-enforced-on-dark);
+}
+.r-contact a {
+  color: var(--bs-color-white);
+  text-decoration: none;
+  /* Translucent-white underline raised 40%→60% so the EFFECTIVE (composited)
+     contrast on forest clears the 3:1 non-text floor (WCAG 1.4.11): white@.40
+     composited to 2.66:1 (fail) → white@.60 ≈ 4.06:1 (pass). */
+  border-bottom: 1px solid color-mix(in srgb, var(--bs-color-white) 60%, transparent);
+}
+.r-contact a:hover { border-bottom-color: var(--bs-color-white); }
+
+/* ── body ──────────────────────────────────────────────────────────────── */
+.r-body { padding: var(--r-page-pad); }
+
+.r-summary { margin: 0 0 var(--r-gap-section); }
+.r-summary p {
+  font-size: var(--bs-text-body);
+  line-height: 1.6;
+  color: var(--bs-color-ink);
+  margin: 0 0 12px;
+  max-width: var(--r-measure);
+}
+.r-summary p:last-child { margin-bottom: 0; }
+
+.r-section { margin: 0 0 var(--r-gap-section); }
+.r-section:last-child { margin-bottom: 0; }
+
+.r-section-label {
+  font-family: var(--bs-font-mono);
+  font-size: var(--bs-text-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bs-color-ink-mono);
+  margin: 0 0 14px;
+  padding: 0 0 8px;
+  border-bottom: var(--r-rule) solid var(--bs-color-line);
+}
+
+/* skills — inline run of mono chips of text */
+.r-skills {
+  margin: 0;
+  font-size: var(--bs-text-body);
+  line-height: 1.9;
+  color: var(--bs-color-ink-soft);
+}
+.r-skills b {
+  color: var(--bs-color-ink);
+  font-weight: 500;
+}
+
+/* experience entries */
+.r-entry { margin: 0 0 var(--r-gap-entry); }
+.r-entry:last-child { margin-bottom: 0; }
+.r-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.r-org {
+  font-family: var(--bs-font-display);
+  font-size: var(--bs-text-title);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--bs-color-ink);
+  margin: 0;
+}
+.r-dates {
+  font-family: var(--bs-font-mono);
+  font-size: 12px;
+  color: var(--bs-color-ink-mono);
+  white-space: nowrap;
+  flex: none;
+}
+.r-meta {
+  font-family: var(--bs-font-mono);
+  font-size: 12px;
+  color: var(--bs-color-ink-soft);
+  margin: 3px 0 0;
+}
+.r-bullets {
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.r-bullets li {
+  position: relative;
+  padding-left: 18px;
+  margin: 0 0 var(--r-gap-bullet);
+  font-size: var(--bs-text-body);
+  line-height: 1.55;
+  color: var(--bs-color-ink);
+  max-width: var(--r-measure);
+}
+.r-bullets li:last-child { margin-bottom: 0; }
+.r-bullets li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 1.5px;
+  background: var(--bs-color-forest);
+}
+
+/* footer slug */
+.r-foot {
+  margin: var(--r-gap-section) 0 0;
+  padding: 16px 0 0;
+  border-top: var(--r-rule) solid var(--bs-color-line);
+  font-family: var(--bs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--bs-color-ink-mono);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.r-foot a { color: inherit; text-decoration: none; }
+
+/* ── responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  body { padding: 0; }
+  .resume { border: none; border-radius: 0; }
+  :root { --r-page-pad: 28px; }
+  .r-name { font-size: var(--bs-text-h2); }
+  .r-entry-head { flex-direction: column; gap: 2px; }
+}
+
+/* ── print ─────────────────────────────────────────────────────────────────
+   The whole reason a static asset beats browser-print of the live page:
+   here we own the page box. Letter, generous margins, accents preserved,
+   and nothing splits awkwardly across a page break. */
+@page {
+  size: Letter;
+  margin: 14mm 16mm;
+}
+
+@media print {
+  /* force background/accent colours to render in the PDF */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  html, body { background: var(--bs-color-card); }
+  body { padding: 0; }
+
+  .resume {
+    max-width: none;
+    border: none;
+    border-radius: 0;
+  }
+  /* tighter than screen — fit more per page without feeling cramped */
+  :root { --r-page-pad: 0px; --r-gap-section: 18px; }
+  .r-head {
+    border-radius: 0;
+    padding: 18px 22px;
+    margin: 0 0 22px;
+    /* let the forest bar bleed to the page margins */
+  }
+  .r-name { font-size: 34px; }
+  .r-tagline { font-size: 15px; }
+
+  /* keep an entry (org + role + its bullets) together on one page */
+  .r-entry, .r-section-label { break-inside: avoid; }
+  .r-section-label { break-after: avoid; }
+  .r-entry-head, .r-org { break-after: avoid; }
+  .r-bullets li { break-inside: avoid; }
+
+  /* the live page printed a clickable-URL footer per page; we don't need it */
+  .r-foot { break-inside: avoid; }
+
+  a { color: inherit; }
+  .r-contact a, .r-contact a:hover { border-bottom: none; }
+}

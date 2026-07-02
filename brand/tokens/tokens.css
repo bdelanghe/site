@@ -1,0 +1,93 @@
+/* AUTO-GENERATED from tokens.json by build-tokens.mjs — do not edit by hand. */
+:root {
+  /* color */
+  --bs-color-forest: #0C5A42;
+  --bs-color-forest-deep: #073D2C;
+  --bs-color-paper: #EDEAE1;
+  --bs-color-card: #FFFFFF;
+  --bs-color-card-alt: #EDEAE1;
+  --bs-color-ink: #16221C;
+  --bs-color-ink-soft: #5C6B63;
+  --bs-color-ink-mono: #5C6B63;
+  --bs-color-line: #888374;
+  --bs-color-white: #FFFFFF;
+  --bs-color-forest-tint: #E2EBE6;
+  --bs-color-forest-soft: #5F8971;
+  --bs-color-on-forest: #D2E0D8;
+  --bs-color-on-forest-soft: #BBD1CA;
+  --bs-color-on-forest-line: #58B196;
+  --bs-color-clay: #9F3E2B;
+  --bs-color-clay-tint: #F9EDE9;
+  --bs-color-amber: #8C5818;
+  --bs-color-amber-tint: #F3E8D6;
+  /* font family */
+  --bs-font-display: "Space Grotesk", sans-serif;
+  --bs-font-mono: "IBM Plex Mono", monospace;
+  /* size & radius */
+  --bs-text-h1: 46px;
+  --bs-text-h2: 26px;
+  --bs-text-title: 18px;
+  --bs-text-body: 16px;
+  --bs-text-label: 11px;
+  --bs-radius-lg: 18px;
+  --bs-radius-md: 12px;
+  /* interactive-target / control sizing (WCAG 2.5.8 AA ≥24px; 2.5.5 AAA ≥44px) */
+  --bs-control-min-tap-target: 24px;
+  --bs-control-sm: 36px;
+  --bs-control-md: 44px;
+  --bs-control-lg: 52px;
+  /* grade — base + derived bg/fg tints (deterministic) */
+  --bs-grade-enforced: #3FB984;
+  --bs-grade-enforced-bg: #E2F5ED;
+  --bs-grade-enforced-fg: #28664B;
+  --bs-grade-enforced-on-dark: #9FDCC2;
+  --bs-grade-enforced-on-dark-bg: #1C372B;
+  --bs-grade-partial: #C8902F;
+  --bs-grade-partial-bg: #F7EEE0;
+  --bs-grade-partial-fg: #665425;
+  --bs-grade-partial-on-dark: #E4C897;
+  --bs-grade-partial-on-dark-bg: #2F311F;
+  --bs-grade-aspirational: #7E8C83;
+  --bs-grade-aspirational-bg: #ECEEEC;
+  --bs-grade-aspirational-fg: #45524A;
+  --bs-grade-aspirational-on-dark: #BFC6C1;
+  --bs-grade-aspirational-on-dark-bg: #25312A;
+}
+
+/* Text styles — composite recipes built from the tokens above. */
+.bs-text-h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 46px;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+.bs-text-h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.bs-text-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.bs-text-body {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.bs-text-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}

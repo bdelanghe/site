@@ -1,0 +1,107 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Robert DeLanghe",
+  "jobTitle": "Senior Software Engineer",
+  "description": "I ship systems where agents write the code — and I built the tooling to trust them in production.",
+  "email": "mailto:cv@robertdelanghe.dev",
+  "url": "https://robertdelanghe.dev/resume",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Brooklyn",
+    "addressRegion": "NY",
+    "addressCountry": "US"
+  },
+  "sameAs": [
+    "https://github.com/bdelanghe",
+    "https://robertdelanghe.dev/blog",
+    "https://bounded.tools"
+  ],
+  "knowsAbout": [
+    "TypeScript",
+    "Systems architecture",
+    "Rust",
+    "Python",
+    "Node",
+    "Postgres",
+    "Docker",
+    "AWS",
+    "CI/CD & provenance",
+    "Nix",
+    "Agent-authored delivery",
+    "Capability-based security",
+    "Access control"
+  ],
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Aura"
+  },
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Bennington College"
+    },
+    {
+      "@type": "Organization",
+      "name": "Recurse Center"
+    }
+  ],
+  "hasOccupation": [
+    {
+      "@type": "Occupation",
+      "name": "Creator (Independent Project)",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "Brooklyn"
+      }
+    },
+    {
+      "@type": "Occupation",
+      "name": "Senior Software Engineer",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "Commerce · New York · Hybrid"
+      }
+    },
+    {
+      "@type": "Occupation",
+      "name": "Software Engineer",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "New York · Remote"
+      }
+    },
+    {
+      "@type": "Occupation",
+      "name": "Software Engineer (Contract)",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "Brooklyn"
+      }
+    },
+    {
+      "@type": "Occupation",
+      "name": "Software Engineer (Contract)",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "Brooklyn"
+      }
+    },
+    {
+      "@type": "Occupation",
+      "name": "Software Engineer (Contract)",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "Brooklyn"
+      }
+    },
+    {
+      "@type": "Occupation",
+      "name": "Participant",
+      "occupationLocation": {
+        "@type": "Place",
+        "name": "Brooklyn"
+      }
+    }
+  ]
+}

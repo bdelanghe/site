@@ -1,0 +1,34 @@
+/* Bounded Systems — base resets + element defaults built on the tokens.
+   Depends on tokens.css (CSS variables) being loaded first. */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bs-color-paper);
+  color: var(--bs-color-ink);
+  font-family: var(--bs-font-display);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: inherit; }
+
+pre, code { font-family: var(--bs-font-mono); font-size: inherit; }
+pre { margin: 0; white-space: pre; overflow-x: auto; }
+
+/* ::selection is not yet Baseline Widely Available; guard it as a progressive
+   enhancement so the feature query is the tested fallback (browsers without it
+   keep the native selection colors). */
+@supports selector(::selection) {
+  ::selection {
+    background: var(--bs-color-forest);
+    color: var(--bs-color-white);
+  }
+}

@@ -1,0 +1,202 @@
+[
+  {
+    "name": "color-forest",
+    "var": "--bs-color-forest",
+    "value": "#0C5A42"
+  },
+  {
+    "name": "color-forest-deep",
+    "var": "--bs-color-forest-deep",
+    "value": "#073D2C"
+  },
+  {
+    "name": "color-paper",
+    "var": "--bs-color-paper",
+    "value": "#EDEAE1"
+  },
+  {
+    "name": "color-card",
+    "var": "--bs-color-card",
+    "value": "#FFFFFF"
+  },
+  {
+    "name": "color-card-alt",
+    "var": "--bs-color-card-alt",
+    "value": "#F4F1EA"
+  },
+  {
+    "name": "color-ink",
+    "var": "--bs-color-ink",
+    "value": "#16221C"
+  },
+  {
+    "name": "color-ink-soft",
+    "var": "--bs-color-ink-soft",
+    "value": "#5C6B63"
+  },
+  {
+    "name": "color-ink-mono",
+    "var": "--bs-color-ink-mono",
+    "value": "#5E6B62"
+  },
+  {
+    "name": "color-line",
+    "var": "--bs-color-line",
+    "value": "#E4E0D4"
+  },
+  {
+    "name": "color-white",
+    "var": "--bs-color-white",
+    "value": "#FFFFFF"
+  },
+  {
+    "name": "color-forest-tint",
+    "var": "--bs-color-forest-tint",
+    "value": "#E2EBE6"
+  },
+  {
+    "name": "color-forest-soft",
+    "var": "--bs-color-forest-soft",
+    "value": "#D2E0D8"
+  },
+  {
+    "name": "color-clay",
+    "var": "--bs-color-clay",
+    "value": "#A6432F"
+  },
+  {
+    "name": "color-clay-tint",
+    "var": "--bs-color-clay-tint",
+    "value": "#F2DED8"
+  },
+  {
+    "name": "color-amber",
+    "var": "--bs-color-amber",
+    "value": "#B5762A"
+  },
+  {
+    "name": "color-amber-tint",
+    "var": "--bs-color-amber-tint",
+    "value": "#F3E8D6"
+  },
+  {
+    "name": "font-display",
+    "var": "--bs-font-display",
+    "value": "\"Space Grotesk\", sans-serif"
+  },
+  {
+    "name": "font-mono",
+    "var": "--bs-font-mono",
+    "value": "\"IBM Plex Mono\", monospace"
+  },
+  {
+    "name": "text-h1",
+    "var": "--bs-text-h1",
+    "value": "46px"
+  },
+  {
+    "name": "text-h2",
+    "var": "--bs-text-h2",
+    "value": "26px"
+  },
+  {
+    "name": "text-title",
+    "var": "--bs-text-title",
+    "value": "18px"
+  },
+  {
+    "name": "text-body",
+    "var": "--bs-text-body",
+    "value": "15px"
+  },
+  {
+    "name": "text-label",
+    "var": "--bs-text-label",
+    "value": "11px"
+  },
+  {
+    "name": "radius-lg",
+    "var": "--bs-radius-lg",
+    "value": "18px"
+  },
+  {
+    "name": "radius-md",
+    "var": "--bs-radius-md",
+    "value": "12px"
+  },
+  {
+    "name": "grade-enforced",
+    "var": "--bs-grade-enforced",
+    "value": "#3FB984"
+  },
+  {
+    "name": "grade-enforced-bg",
+    "var": "--bs-grade-enforced-bg",
+    "value": "#E2F5ED"
+  },
+  {
+    "name": "grade-enforced-fg",
+    "var": "--bs-grade-enforced-fg",
+    "value": "#28664B"
+  },
+  {
+    "name": "grade-enforced-on-dark",
+    "var": "--bs-grade-enforced-on-dark",
+    "value": "#9FDCC2"
+  },
+  {
+    "name": "grade-enforced-on-dark-bg",
+    "var": "--bs-grade-enforced-on-dark-bg",
+    "value": "color-mix(in srgb, #3FB984 14%, transparent)"
+  },
+  {
+    "name": "grade-partial",
+    "var": "--bs-grade-partial",
+    "value": "#C8902F"
+  },
+  {
+    "name": "grade-partial-bg",
+    "var": "--bs-grade-partial-bg",
+    "value": "#F7EEE0"
+  },
+  {
+    "name": "grade-partial-fg",
+    "var": "--bs-grade-partial-fg",
+    "value": "#665425"
+  },
+  {
+    "name": "grade-partial-on-dark",
+    "var": "--bs-grade-partial-on-dark",
+    "value": "#E4C897"
+  },
+  {
+    "name": "grade-partial-on-dark-bg",
+    "var": "--bs-grade-partial-on-dark-bg",
+    "value": "color-mix(in srgb, #C8902F 14%, transparent)"
+  },
+  {
+    "name": "grade-aspirational",
+    "var": "--bs-grade-aspirational",
+    "value": "#7E8C83"
+  },
+  {
+    "name": "grade-aspirational-bg",
+    "var": "--bs-grade-aspirational-bg",
+    "value": "#ECEEEC"
+  },
+  {
+    "name": "grade-aspirational-fg",
+    "var": "--bs-grade-aspirational-fg",
+    "value": "#45524A"
+  },
+  {
+    "name": "grade-aspirational-on-dark",
+    "var": "--bs-grade-aspirational-on-dark",
+    "value": "#BFC6C1"
+  },
+  {
+    "name": "grade-aspirational-on-dark-bg",
+    "var": "--bs-grade-aspirational-on-dark-bg",
+    "value": "color-mix(in srgb, #7E8C83 14%, transparent)"
+  }
+]

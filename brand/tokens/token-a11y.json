@@ -1,0 +1,49 @@
+{
+  "$comment": "Token Accessibility config for the Bounded Systems brand. One config drives the WHOLE suite (vendor/conformance-kit/gates/token-a11y.mjs, ck-token-a11y) over the generated tokens.css, and the runner FAILS CLOSED if any gated member fails. Members: palette (CVD-safe/APCA/non-text), pairing (coverage — derives fg×bg pairings from the brand CSS ∪ the declared set; report-only superset), typography (1.4.12/1.4.4/1.4.8), targetSize (2.5.8 AA ≥24px / 2.5.5 AAA), opacity (effective composited contrast — 1.4.3/1.4.11), likeness (near-duplicate hygiene + categorical distinctness, 1.4.1). Paths resolve relative to this file's dir (tokens/). NO exemptions: accessible for everyone.",
+  "tokens": "tokens.css",
+
+  "palette": "palette.pairings.json",
+
+  "pairing": {
+    "$comment": "Coverage engine. Derives the REAL fg×bg pairings from actual stylesheet usage across the brand surfaces, UNIONs the hand-declared palette.pairings.json in, and scores every pair. Report-only (gate:false): the extractor over-generates a reviewed superset, so it informs coverage without failing CI — the hand-declared palette member is the fail-closed gate.",
+    "css": ["../css/base.css", "../resume/resume.css"],
+    "declared": "palette.pairings.json",
+    "gate": false
+  },
+
+  "typography": {
+    "tokens": "tokens.css",
+    "body": ["body"]
+  },
+
+  "targetSize": {
+    "$comment": "Interactive-target size tokens the brand ships (mirrors tokens.json `control`). Every declared target ≥24×24 (2.5.8 AA); control-md/lg meet 2.5.5 (AAA, 44px).",
+    "tokens": {
+      "min-tap-target": "24px",
+      "control-sm": "36px",
+      "control-md": "44px",
+      "control-lg": "52px"
+    },
+    "targets": [
+      { "name": "min-tap-target", "size": "{min-tap-target}" },
+      { "name": "control-sm", "size": "{control-sm}" },
+      { "name": "control-md", "size": "{control-md}" },
+      { "name": "control-lg", "size": "{control-lg}" }
+    ],
+    "thresholds": { "minPx": 24, "aaaPx": 44 }
+  },
+
+  "opacity": {
+    "$comment": "The cross-cutting guard. Every place the brand reduces a foreground's opacity over a known backdrop, so the gate composites it and checks the EFFECTIVE contrast. These are the post-fix values (the three regressions the suite caught are fixed): the résumé contact separator no longer carries opacity (solid 5.28:1), and the contact-link underline is raised to 60% so its composited hairline clears the 3:1 non-text floor.",
+    "usages": [
+      { "name": "résumé contact separator · (solid; opacity removed)", "fg": "grade-enforced-on-dark", "bg": "forest", "opacity": 1, "kind": "text" },
+      { "name": "résumé contact-link underline (white@.60 on forest)", "fg": "white", "bg": "forest", "opacity": 0.6, "kind": "ui" }
+    ]
+  },
+
+  "likeness": {
+    "$comment": "Hygiene (near-duplicate tokens, ΔE<~2 → warn) + distinctness (categorical status colours must stay separable under normal AND deuteranopia/protanopia/tritanopia → error). Aliases are recognised STRUCTURALLY, not by a manual ignore list: the layered DTCG source maps several semantic names onto one primitive value — card≡white (#FFFFFF), card-alt≡paper (#EDEAE1), ink-mono≡ink-soft (#5C6B63) — and conformance-kit ≥0.8.0 treats any identical-value pair as an intentional alias (noRedundantTokens counts only NEAR-but-distinct definitions). So no allow-list is needed: collapse a near-dup to an exact alias in tokens.json and the gate stops flagging it, unambiguously. The grade trio must not collapse.",
+    "categorical": ["grade-enforced", "grade-partial", "grade-aspirational"],
+    "thresholds": { "dupSeverity": "warn" }
+  }
+}

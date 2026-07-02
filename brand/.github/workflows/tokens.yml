@@ -1,0 +1,41 @@
+name: tokens
+
+on:
+  push:
+    paths:
+      - "tokens/**"
+      - "tools/build-tokens-dist.mjs"
+      - "tools/build-tokens-ts.mjs"
+      - "tools/sd-format-tokens-ts.mjs"
+      - "style-dictionary.config.mjs"
+      - "deno.json"
+      - ".github/workflows/tokens.yml"
+  pull_request:
+    paths:
+      - "tokens/**"
+      - "tools/build-tokens-dist.mjs"
+      - "tools/build-tokens-ts.mjs"
+      - "tools/sd-format-tokens-ts.mjs"
+      - "style-dictionary.config.mjs"
+      - "deno.json"
+      - ".github/workflows/tokens.yml"
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Fail on tokens.css drift
+        run: node tokens/build-tokens.mjs --check
+      - name: Build native + typed projections
+        run: npm run build:sd
+      - name: Fail on typed tokens.ts drift
+        run: node tools/build-tokens-ts.mjs --check
+      - name: DTCG conformance + bundle contract
+        run: node tools/build-tokens-dist.mjs --check
+      - name: JSR manifest in sync (package.json == deno.json)
+        run: node tools/verify-versions.mjs

@@ -1,0 +1,56 @@
+{
+  "$comment": "Palette-gate contract for the Bounded Systems brand tokens. Declares EVERY real foreground/background pairing the semantic tokens are designed for, plus the categorical status set. The gate (vendor/conformance-kit/gates/palette-gate.mjs) resolves fg/bg against the generated tokens.css and FAILS CLOSED on any WCAG-AA, CVD-safe (deuteranopia/protanopia/tritanopia), APCA, or non-text (WCAG 1.4.11) violation. NO decorative exemptions: hairlines/dividers are declared as `ui` and must clear 3:1.",
+  "$apca": "kind=text uses the gate's APCA floor (minLcText, 60). The PRIMARY BODY pairings additionally declare size/weight, which invokes the gate's size-aware APCA COMFORT tier (Lc>=90 at 16px) — the body type was bumped 15px->16px precisely so primary body clears comfort, not just WCAG-2 AA. Secondary/label/accent roles are held to the APCA baseline floor (Lc>=60), which they clear.",
+  "thresholds": {
+    "minRatioText": 4.5,
+    "minRatioLarge": 3.0,
+    "minRatioUi": 3.0,
+    "minLcText": 60,
+    "minLcLarge": 45,
+    "collapseDeltaE": 10
+  },
+  "pairings": [
+    { "name": "body / ink on paper", "fg": "ink", "bg": "paper", "kind": "text", "size": 16, "weight": 400 },
+    { "name": "body / ink on card", "fg": "ink", "bg": "card", "kind": "text", "size": 16, "weight": 400 },
+
+    { "name": "secondary / ink-soft on paper", "fg": "ink-soft", "bg": "paper", "kind": "text" },
+    { "name": "mono label / ink-mono on paper", "fg": "ink-mono", "bg": "paper", "kind": "text" },
+    { "name": "link / forest on paper", "fg": "forest", "bg": "paper", "kind": "text" },
+    { "name": "link / forest on card", "fg": "forest", "bg": "card", "kind": "text" },
+    { "name": "chip|tag / forest on card-alt", "fg": "forest", "bg": "card-alt", "kind": "text" },
+    { "name": "conformance claim / forest-deep on forest-tint", "fg": "forest-deep", "bg": "forest-tint", "kind": "text" },
+
+    { "name": "on forest / white on forest", "fg": "white", "bg": "forest", "kind": "text" },
+    { "name": "on forest-deep / white on forest-deep", "fg": "white", "bg": "forest-deep", "kind": "text" },
+    { "name": "on forest / on-forest text", "fg": "on-forest", "bg": "forest", "kind": "text" },
+    { "name": "on forest / on-forest-soft eyebrow", "fg": "on-forest-soft", "bg": "forest", "kind": "text" },
+
+    { "name": "status unmet / clay on clay-tint", "fg": "clay", "bg": "clay-tint", "kind": "text" },
+    { "name": "clay on paper", "fg": "clay", "bg": "paper", "kind": "text" },
+    { "name": "caution / amber on amber-tint", "fg": "amber", "bg": "amber-tint", "kind": "text" },
+    { "name": "amber on paper", "fg": "amber", "bg": "paper", "kind": "text" },
+
+    { "name": "grade enforced fg/bg", "fg": "grade-enforced-fg", "bg": "grade-enforced-bg", "kind": "text" },
+    { "name": "grade partial fg/bg", "fg": "grade-partial-fg", "bg": "grade-partial-bg", "kind": "text" },
+    { "name": "grade aspirational fg/bg", "fg": "grade-aspirational-fg", "bg": "grade-aspirational-bg", "kind": "text" },
+    { "name": "grade enforced on-dark / on ink", "fg": "grade-enforced-on-dark", "bg": "ink", "kind": "text" },
+    { "name": "grade partial on-dark / on ink", "fg": "grade-partial-on-dark", "bg": "ink", "kind": "text" },
+    { "name": "grade aspirational on-dark / on ink", "fg": "grade-aspirational-on-dark", "bg": "ink", "kind": "text" },
+
+    { "name": "grade enforced on-dark / on chip", "fg": "grade-enforced-on-dark", "bg": "grade-enforced-on-dark-bg", "kind": "text" },
+    { "name": "grade partial on-dark / on chip", "fg": "grade-partial-on-dark", "bg": "grade-partial-on-dark-bg", "kind": "text" },
+    { "name": "grade aspirational on-dark / on chip", "fg": "grade-aspirational-on-dark", "bg": "grade-aspirational-on-dark-bg", "kind": "text" },
+
+    { "name": "divider / line on paper", "fg": "line", "bg": "paper", "kind": "ui" },
+    { "name": "border / line on card", "fg": "line", "bg": "card", "kind": "ui" },
+    { "name": "border / line on card-alt", "fg": "line", "bg": "card-alt", "kind": "ui" },
+    { "name": "hairline / on-forest-line on forest", "fg": "on-forest-line", "bg": "forest", "kind": "ui" },
+    { "name": "cta underline / on-forest-soft on forest", "fg": "on-forest-soft", "bg": "forest", "kind": "ui" },
+    { "name": "border / forest-soft on card", "fg": "forest-soft", "bg": "card", "kind": "ui" },
+    { "name": "blockquote bar / forest-soft on paper", "fg": "forest-soft", "bg": "paper", "kind": "ui" },
+    { "name": "card border / forest-soft on forest-tint", "fg": "forest-soft", "bg": "forest-tint", "kind": "ui" },
+    { "name": "focus ring / forest on paper", "fg": "forest", "bg": "paper", "kind": "ui" },
+    { "name": "focus ring / white on forest", "fg": "white", "bg": "forest", "kind": "ui" }
+  ],
+  "categorical": ["grade-enforced", "grade-partial", "grade-aspirational"]
+}

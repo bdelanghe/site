@@ -1,0 +1,65 @@
+# Robert DeLanghe
+**Senior Software Engineer**
+
+> I ship systems where agents write the code — and I built the tooling to trust them in production.
+
+Brooklyn · Aura · Recurse Center · Bennington · [GitHub](https://github.com/bdelanghe) · [Writing](https://robertdelanghe.dev/blog) · [bounded.tools](https://bounded.tools) · [cv@robertdelanghe.dev](mailto:cv@robertdelanghe.dev)
+
+At Aura I ship agent-authored delivery in production. The instinct behind it is old — make invalid states unrepresentable, push correctness into the type system until violations can't compile — and agents are just where it turned urgent: orgs want them shipping like senior engineers and give them none of the safety rails.
+
+So I built the rails — a contract-and-validation layer where every privileged effect is bound to a signed owner, enforced in CI. The harder, general version is out in the open, in prx and the bounded-systems libraries.
+
+## Skills
+
+TypeScript · Systems architecture · Rust · Python · Node · Postgres · Docker · AWS · CI/CD & provenance · Nix · Agent-authored delivery · Capability-based security · Access control
+
+## Experience
+
+### Bounded Systems — 2025 – present
+Creator (Independent Project) · Brooklyn
+
+- Designed a capability runtime — prx, guest-room, claude-box — where agents act only through the scoped door references they hold, every privileged effect is verified against its signed owner, and provenance is bound to an auditable chain (ocap-provenance).
+
+### Aura — Oct 2023 – present
+Senior Software Engineer · Commerce · New York · Hybrid
+
+- Architected the contract-and-validation layer replacing Aura's spreadsheet-driven supply plan (the system behind inventory-purchasing): a compile-and-publish model where one source of truth generates every downstream surface — schemas, docs, tests, agent context — CI drift-gated so nothing falls out of sync.
+- Made the pipeline auditable by construction — provenance and contract checks gating every generated output, sign-off bound to an owner-role enforced in CI rather than to individuals.
+- Drove it as agent-authored delivery: every change moves through one auditable pipeline to a reviewed PR, applying the same provenance-and-contract discipline to the agents' own output.
+
+### L2L — Apr 2021 – Sep 2023
+Software Engineer · New York · Remote
+
+- Built static-analysis gating into the PR pipeline — blocking defects before merge, cutting critical bugs 20% and high-priority issues 25% across a 20-engineer team.
+- Shipped the frontend platform behind it — a design system (↓30% task lead time), a dashboard framework (widget builds a week → a day), and pagination + perf work that brought First Contentful Paint under a second.
+
+### Pioneer Works — Nov 2018 – Feb 2021
+Software Engineer (Contract) · Brooklyn
+
+- A unified CRM + Square-API ETL — ↓80% payment-tracking time, P&L across 200+ events.
+
+### Kaleida Studio — Jun 2019 – Mar 2020
+Software Engineer (Contract) · Brooklyn
+
+- Just-in-time production workflows — eliminated edition-numbering errors (10/month → 0).
+
+### The Prepared — Oct 2018 – Feb 2019
+Software Engineer (Contract) · Brooklyn
+
+- A unified content pipeline — ↓70% curation time across 1000+ articles.
+
+### Recurse Center — Sep 2019 – Dec 2019
+Participant · Brooklyn
+
+- Algebraic data types, typeclasses, and type-driven design — the same instinct now applied to security seams: invalid states unrepresentable, sign-off unforgeable.
+
+## Education
+
+### Bennington College — Sep 2009 – Dec 2012
+BA, Architecture & Sculpture
+
+- Computational & parametric design — algorithmic design for digital fabrication.
+
+---
+
+[robertdelanghe.dev/resume](https://robertdelanghe.dev/resume)

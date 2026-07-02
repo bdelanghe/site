@@ -1,0 +1,35 @@
+MIT License
+
+Copyright (c) 2026 Bounded Systems
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+the design tokens and stylesheets in this package — the files under tokens/ and
+css/ and the artifacts generated from them (the "Software") — to deal in the
+Software without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+Brand identity artwork is NOT covered by the MIT license above and is NOT
+included in the published @bounded-systems/brand package. The Bounded Systems
+name, marks, logos, wordmark, avatar, and lockup artwork — including all files
+under mark/, avatar/, lockup/, and favicon-32.png in the source repository — are
+proprietary. All rights reserved. No license or right to use, reproduce, modify,
+or distribute these brand assets is granted except with prior written permission
+from Bounded Systems.
+
+Bundled fonts under css/fonts/*.woff2 — Space Grotesk and IBM Plex Mono — are
+licensed under the SIL Open Font License 1.1 by their respective authors and are
+redistributed under that license.

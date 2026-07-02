@@ -1,0 +1,56 @@
+name: resume
+
+# One source of truth (resume/resume.json) → every surface. This gates that the
+# generated HTML / Markdown / JSON-LD are in sync with the JSON, runs the asset
+# tests, then renders the PDF and validates it — uploaded as a build artifact.
+on:
+  push:
+    paths:
+      - "resume/**"
+      - "tools/build-resume.mjs"
+      - "tools/render-resume.mjs"
+      - "tools/resume-check.mjs"
+      - ".github/workflows/resume.yml"
+  pull_request:
+    paths:
+      - "resume/**"
+      - "tools/build-resume.mjs"
+      - "tools/render-resume.mjs"
+      - "tools/resume-check.mjs"
+      - ".github/workflows/resume.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      # Drift gate (generated files match resume.json) + the asset test suite.
+      - name: Résumé — no drift + asset tests
+        run: npm run resume:check
+
+  pdf:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      # google-chrome is preinstalled on the GitHub-hosted ubuntu image — no
+      # third-party action needed (keeps the pinned-actions surface minimal).
+      - name: Render PDF (headless Chrome, no print chrome)
+        run: CHROME_BIN=google-chrome node tools/render-resume.mjs
+      - name: Validate the rendered PDF
+        run: node tools/resume-check.mjs --pdf resume/resume.pdf --check
+      - name: Upload résumé PDF
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: resume-pdf
+          path: resume/resume.pdf
+          if-no-files-found: error

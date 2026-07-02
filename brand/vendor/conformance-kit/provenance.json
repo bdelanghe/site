@@ -1,0 +1,19 @@
+{
+  "source": "https://github.com/bounded-systems/conformance-kit",
+  "ref": "ca982b8d8412877daad019b3e94733464365c69c",
+  "commit": "ca982b8d8412877daad019b3e94733464365c69c",
+  "branch": "main",
+  "pr": "https://github.com/bounded-systems/conformance-kit/pull/29",
+  "fetched": "2026-06-29",
+  "note": "Vendored, hash-pinned copy of the WHOLE Token Accessibility suite from bounded-systems/conformance-kit main (v0.8.0, PR #29 — likeness now recognises identical-value tokens as intentional ALIASES, not redundancy, so no manual ignore list is needed). Verified before use via npm run token-a11y:verify.",
+  "files": {
+    "gates/palette-gate.mjs": "sha256:c0b4601a148ce445b256f69e0d32618691f364c1ba7804080aa84b9850da3c8c",
+    "gates/opacity-contrast-gate.mjs": "sha256:e086e9220e2a63a432a156dab59d7f73eda302ca907c70dc05d7f8b79f62503c",
+    "gates/target-size-gate.mjs": "sha256:086b87789e5e5cb143f07c163cf19fd2eb7a889497fb0b87bac1f4bc9855fda9",
+    "gates/likeness-gate.mjs": "sha256:82e384c3079c397ad87a94608c43538d34d72a94de2b9990822f0f77917213aa",
+    "gates/pairing-extractor.mjs": "sha256:cd6cb359c2ce74c5b15bdc4f371cbe60e07d6bb6f6091efe6ea64825e28c18dd",
+    "gates/typography-gate.mjs": "sha256:5fec620a22a939660027c2df259f1c51c8d8d29047f2141bfe975529617e66d2",
+    "gates/token-a11y.mjs": "sha256:cceb2c5f78b420a935805c361d3e0b2968c25d58d0736faca4630f32d1294933",
+    "LICENSE": "sha256:559e93c466421832cdcfe7a000d0c19cdb2cec9d24bfb9b41f7c5bd9d448f65e"
+  }
+}

@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+dist/
+
+# Rendered résumé PDF — a derived binary artifact (built by render-resume.mjs,
+# produced fresh in CI). The HTML/MD/JSON-LD are generated *and* committed
+# (drift-gated, like tokens.css); the PDF is not.
+resume/resume.pdf

@@ -1,0 +1,35 @@
+name: deploy-headers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - tokens/tokens.json
+      - content/strings.json
+      - tools/generate-headers.mjs
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+
+      - name: Generate header SVGs
+        run: bun tools/generate-headers.mjs --out dist/github-headers
+
+      - name: Push to bdelanghe/bdelanghe
+        env:
+          GH_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          git clone https://x-access-token:${GH_TOKEN}@github.com/bdelanghe/bdelanghe.git profile
+          cp dist/github-headers/header-dark.svg  profile/assets/header-dark.svg
+          cp dist/github-headers/header-light.svg profile/assets/header-light.svg
+          cd profile
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/header-dark.svg assets/header-light.svg
+          git diff --staged --quiet && echo "no change" || \
+            git commit -m "chore: regenerate github headers from brand tokens" && git push

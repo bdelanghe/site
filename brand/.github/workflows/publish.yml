@@ -1,0 +1,73 @@
+name: publish
+
+# Cut a release by pushing a tag: `npm version <patch|minor|major>` then
+# `git push --follow-tags`. This publishes @bounded-systems/brand to BOTH
+# registries from one tag:
+#   • npm — keyless trusted publishing + build provenance (OIDC)
+#   • JSR — keyless publish (OIDC), shipped with the typed tokens module
+# A shared `verify` gate proves package.json, deno.json, and the tag all agree
+# and the generated artifacts (tokens.css + typed tokens.ts) are not stale.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # npm provenance + JSR publish (OIDC, keyless)
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+
+      # Tag (when present) must equal package.json AND deno.json, or a publish is a lie.
+      - name: Versions agree (tag == package.json == deno.json)
+        run: node tools/verify-versions.mjs "${{ github.ref_type == 'tag' && github.ref_name || '' }}"
+
+      - run: npm ci
+      # Drift gates: the committed generated artifacts must match a fresh build.
+      - name: Token drift (tokens.css)
+        run: node tokens/build-tokens.mjs --check
+      - name: Build native + typed projections
+        run: npm run build:sd
+      - name: Typed-tokens drift (tokens.ts)
+        run: node tools/build-tokens-ts.mjs --check
+
+  npm:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci # install devDeps (style-dictionary) so prepack's build can run
+      - name: Publish to npm
+        # prepack (build:css + build:ts) regenerates tokens.css + tokens.ts into the tarball.
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  jsr:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282 # v2.0.4
+        with:
+          deno-version: v2.x
+      # tokens.ts is committed + drift-gated above; build it anyway so JSR always
+      # publishes bytes that match a fresh Style-Dictionary run.
+      - run: npm ci
+      - run: npm run build:ts
+      - name: Publish to JSR (keyless OIDC)
+        run: deno publish
