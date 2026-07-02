@@ -37,8 +37,6 @@ jobs:
       oci: ${{ steps.publish.outputs.oci }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          submodules: recursive
       - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
       - name: Build (nix, reproducible)
         run: nix build .#site -L
@@ -56,6 +54,10 @@ jobs:
       - name: Sign provenance statement + SBOM (keyless Sigstore)
         run: |
           nix develop .#deploy --command bash -euo pipefail -c '
+            # gen-attestation.mjs reads @bounded-systems/brand from node_modules
+            # (this step runs in the outer checkout, not nix build'\''s isolated
+            # sandbox where flake.nix materializes brand/ itself).
+            npm ci
             # Static JSON API + OpenAPI and the did:web + résumé Verifiable Credential,
             # emitted BEFORE the manifest so they are covered by site.sha256 like the
             # rest of dist/ (the VC blob is signed after the manifest, below).
