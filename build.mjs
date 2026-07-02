@@ -14,8 +14,14 @@ import { checkCss } from "./scripts/check-css.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const dist = join(root, "dist");
-const brand = join(root, "node_modules", "@bounded-systems", "brand");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
+// `nix build` materializes the flake-pinned brand source directly at brand/
+// (see flake.nix); everywhere else (npm run build, npm run dev, CI) it's the
+// @bounded-systems/brand npm dependency. Prefer brand/ when it's actually
+// populated so the same build.mjs works in both without an env-detection flag.
+const brand = (await exists(join(root, "brand", "tokens", "tokens.css")))
+  ? join(root, "brand")
+  : join(root, "node_modules", "@bounded-systems", "brand");
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // Boundary guard: a template that reads a field the data doesn't have interpolates
@@ -34,7 +40,7 @@ const writeHtml = async (file, content) => {
 };
 
 if (!(await exists(join(brand, "tokens", "tokens.css")))) {
-  console.error("✗ @bounded-systems/brand is missing. Run: npm install");
+  console.error("✗ brand/ and node_modules/@bounded-systems/brand are both missing. Run: npm install (or nix build, which materializes brand/ itself).");
   process.exit(1);
 }
 // css-token-purity gate: styles.css must speak only in brand tokens (no literal
