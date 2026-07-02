@@ -108,7 +108,7 @@ shrink.
 
 - `scripts/check-css.mjs` — PostCSS-based, deterministic, no network.
 - Wire into `package.json`: add `check:css`, and chain it into `prebuild`
-  (`npm run check && npm run check:schema && npm run check:css`) so a violation fails
+  (`npm run check:schema && npm run check:css`) so a violation fails
   **before** `nix build` and deploy — earlier and cheaper than the Lighthouse catch.
 - On failure: exit non-zero, print `styles.css:LINE` + the offending value, and (where
   inferable) the token that should replace it.

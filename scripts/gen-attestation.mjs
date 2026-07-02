@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import { checkCss } from "./check-css.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const brand = join(root, "node_modules", "@bounded-systems", "brand");
 const dist = join(root, "dist");
 const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
@@ -60,29 +61,29 @@ for (const f of subjectFiles) if (await exists(join(dist, f))) subject.push({ na
 // materials — the build inputs, content-addressed where computable
 const materials = [];
 for (const f of ["data/profile.json", "data/presentation.json", "data/site.json"]) if (await exists(join(root, f))) materials.push({ uri: f, digest: { sha256: sha256(await readFile(join(root, f))) } });
-const brandPkg = (await exists(join(root, "brand", "package.json"))) ? JSON.parse(await readFile(join(root, "brand", "package.json"), "utf8")) : {};
+const brandPkg = (await exists(join(brand, "package.json"))) ? JSON.parse(await readFile(join(brand, "package.json"), "utf8")) : {};
 // Pin the brand to the exact commit flake.lock locks (a real sha), not just its
 // version tag. flake.lock is a build input.
 const flakeLock = (await exists(join(root, "flake.lock"))) ? JSON.parse(await readFile(join(root, "flake.lock"), "utf8")) : {};
 const brandRev = flakeLock?.nodes?.brand?.locked?.rev || "";
 if (brandPkg.version || brandRev) materials.push({ uri: "pkg:jsr/@bounded-systems/brand", version: brandPkg.version, ...(brandRev ? { digest: { gitCommit: brandRev } } : {}) });
 // the design system itself — tokens (visual) + content strings (verbal), by digest
-for (const f of ["brand/tokens/tokens.json", "brand/tokens/tokens.css", "brand/content/strings.json", "brand/css/base.css", "brand/css/fonts.css"])
-  if (await exists(join(root, f))) materials.push({ uri: f, digest: { sha256: sha256(await readFile(join(root, f))) } });
+for (const f of ["tokens/tokens.json", "tokens/tokens.css", "content/strings.json", "css/base.css", "css/fonts.css"])
+  if (await exists(join(brand, f))) materials.push({ uri: `brand/${f}`, digest: { sha256: sha256(await readFile(join(brand, f))) } });
 if (COMMIT) materials.push({ uri: "git+https://github.com/bdelanghe/site", digest: { sha1: COMMIT } });
 
 // Gate predicates — attest that the deterministic gates ran and passed, over the
 // exact inputs (by digest). build.mjs already fails the build on a violation, so
 // reaching here implies pass; re-running makes the claim self-contained (a verifier
 // reads the attestation, not the CI logs). Defensive: refuse to attest a fail.
-const purity = await checkCss({ root, brand: join(root, "brand") });
+const purity = await checkCss({ root, brand });
 if (!purity.ok) { console.error(`✗ css-token-purity failed at attestation (${purity.violations.length}) — refusing to sign`); process.exit(1); }
 const gates = {
   "css-token-purity": {
     passed: true,
     spec: "https://robertdelanghe.dev/docs/css-token-purity",
     subject: { uri: "styles.css", digest: { sha256: sha256(await readFile(join(root, "styles.css"))) } },
-    vocabulary: { uri: "brand/tokens/tokens.css", digest: { sha256: sha256(await readFile(join(root, "brand", "tokens", "tokens.css"))) }, tokens: purity.vocabSize },
+    vocabulary: { uri: "brand/tokens/tokens.css", digest: { sha256: sha256(await readFile(join(brand, "tokens", "tokens.css"))) }, tokens: purity.vocabSize },
   },
 };
 

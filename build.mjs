@@ -14,7 +14,7 @@ import { checkCss } from "./scripts/check-css.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const dist = join(root, "dist");
-const brand = join(root, "brand");
+const brand = join(root, "node_modules", "@bounded-systems", "brand");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -34,7 +34,7 @@ const writeHtml = async (file, content) => {
 };
 
 if (!(await exists(join(brand, "tokens", "tokens.css")))) {
-  console.error("✗ brand/ is empty. Run: git submodule update --init --recursive");
+  console.error("✗ @bounded-systems/brand is missing. Run: npm install");
   process.exit(1);
 }
 // css-token-purity gate: styles.css must speak only in brand tokens (no literal
@@ -355,7 +355,7 @@ const materials = [
   // The source commit isn't known in the hermetic build; gen-attestation.mjs
   // stamps @@COMMIT_SHORT@@ at deploy time (when GITHUB_SHA is set).
   { name: "git+github.com/bdelanghe/site", id: "@@COMMIT_SHORT@@" },
-  { name: "@bounded-systems/brand", id: brandRev ? brandRev.slice(0, 9) : (brandPkg.version ? `v${brandPkg.version}` : "(submodule)") },
+  { name: "@bounded-systems/brand", id: brandRev ? brandRev.slice(0, 9) : (brandPkg.version ? `v${brandPkg.version}` : "(unpinned)") },
   { name: "data/profile.json", id: (await sha256File(join(root, "data", "profile.json"))).slice(0, 18) + "…" },
   { name: "data/presentation.json", id: (await sha256File(join(root, "data", "presentation.json"))).slice(0, 18) + "…" },
   { name: "data/site.json", id: (await sha256File(join(root, "data", "site.json"))).slice(0, 18) + "…" },
@@ -373,8 +373,8 @@ const dgLinkedin = await dg("linkedin-check.mjs");
 const dgBuild = await dg("build.mjs");
 // the design system — content-addressed, not just a version string. The tokens
 // (visual) + content strings (verbal) are real build inputs; attest them by digest.
-for (const f of ["brand/tokens/tokens.json", "brand/tokens/tokens.css", "brand/content/strings.json", "brand/css/base.css", "brand/css/fonts.css"]) {
-  if (await exists(join(root, f))) materials.push({ name: f, id: (await sha256File(join(root, f))).slice(0, 18) + "…" });
+for (const f of ["tokens/tokens.json", "tokens/tokens.css", "content/strings.json", "css/base.css", "css/fonts.css"]) {
+  if (await exists(join(brand, f))) materials.push({ name: `brand/${f}`, id: (await sha256File(join(brand, f))).slice(0, 18) + "…" });
 }
 
 // Bars scale to the leading language (relative, not share-of-total) so the

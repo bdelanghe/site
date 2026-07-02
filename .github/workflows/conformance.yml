@@ -23,8 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          submodules: recursive
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
@@ -34,6 +32,15 @@ jobs:
           java-version: "21"
       - name: Install deps (axe-core + jsdom for a11y; vnu-jar for HTML validation)
         run: npm ci --no-audit --no-fund
+      - name: Resolve installed brand version
+        id: brand-version
+        run: echo "version=$(node -p "require('./node_modules/@bounded-systems/brand/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Checkout brand's source (token-a11y.json fixture only — not published to npm)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: bounded-systems/brand
+          ref: v${{ steps.brand-version.outputs.version }}
+          path: brand
       - name: Build dist/
         run: node build.mjs
       - name: axe serious/critical gate (axe-core in jsdom — browser-free; color-contrast via lone)

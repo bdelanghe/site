@@ -1,7 +1,11 @@
 name: brand-checks
 
-# Gate the site against the shared design + content system (the brand submodule):
+# Gate the site against the shared design + content system (@bounded-systems/brand):
 # no hardcoded colours, content tokens, complete meta + agent-readiness, a11y contrast.
+# brand's own dev tooling (tools/*.mjs) isn't published to npm — it's CI-internal
+# analysis tooling, not a distributable asset — so this job checks out brand's
+# source at the same version site depends on, purely to run those scripts; build.mjs
+# itself still only reads the published npm package (node_modules/@bounded-systems/brand).
 on:
   push:
     branches: [main]
@@ -15,11 +19,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          submodules: recursive
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
+      - run: npm ci # installs @bounded-systems/brand (build.mjs reads it from node_modules)
+      - name: Resolve installed brand version
+        id: brand-version
+        run: echo "version=$(node -p "require('./node_modules/@bounded-systems/brand/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Checkout brand's source (dev tooling only — not published to npm)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: bounded-systems/brand
+          ref: v${{ steps.brand-version.outputs.version }}
+          path: brand
       - name: Build dist/
         run: node build.mjs
       - name: Known-vuln gate (vendored kit gate — production deps, re-proven)
