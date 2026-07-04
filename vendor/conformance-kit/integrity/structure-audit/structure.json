@@ -17,12 +17,25 @@
     "internalLinks": [
       "/",
       "/blog/agent-authored-code-drift",
+      "/blog/resume-pipeline-google-docs-incident",
       "/feed.xml"
     ]
   },
   "blog/agent-authored-code-drift.html": {
     "h1": "How to keep agent-authored code from drifting",
     "outline": "1222",
+    "mains": 1,
+    "readerOk": true,
+    "internalLinks": [
+      "/blog",
+      "/blog",
+      "/feed.xml",
+      "/provenance"
+    ]
+  },
+  "blog/resume-pipeline-google-docs-incident.html": {
+    "h1": "How I build my résumé — and how mapping it to Google Docs got my account disable",
+    "outline": "12222",
     "mains": 1,
     "readerOk": true,
     "internalLinks": [
