@@ -34,7 +34,7 @@ catch. The claim requires a full WCAG audit *including manual testing* (tracked 
 
 - **`lone`** blesses each rendered post's DOM (semantic HTML + a11y checks); error-severity
   findings block the build.
-- **`@bounded-systems/brand`** verifies design-token **contrast** ratios meet WCAG AA
+- **`@bdelanghe/brand`** verifies design-token **contrast** ratios meet WCAG AA
   (`brand/tools/a11y.mjs`) — once, in the design system.
 - **Lighthouse** is the runtime backstop on the composed page.
 

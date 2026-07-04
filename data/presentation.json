@@ -26,7 +26,7 @@
   ],
   "colophon": [
     { "name": "baobab", "role": "design-system structure — no defaults", "href": "https://github.com/bounded-systems/baobab" },
-    { "name": "brand", "role": "baobab's pinning — tokens, fonts, the mark", "href": "https://github.com/bounded-systems/brand" },
+    { "name": "brand", "role": "baobab's pinning — tokens, fonts, the mark", "href": "https://github.com/bdelanghe/brand" },
     { "name": "lone", "role": "blesses every rendered page's DOM — semantic HTML and a11y", "href": "https://github.com/bounded-systems/lone" },
     { "name": "string-audit", "role": "grounded copy-hygiene gate", "href": "https://github.com/bounded-systems/string-audit" },
     { "name": "synoptic-github", "role": "keeps repo topics honest — feeds the corpus", "href": "https://github.com/bdelanghe/synoptic-github" },

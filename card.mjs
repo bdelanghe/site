@@ -18,7 +18,7 @@ const sval = (x) => (x && typeof x === "object" && "$value" in x ? x.$value : x)
 
 const profile = JSON.parse(await readFile(arg("--profile", join(here, "data", "profile.json")), "utf8"));
 let strings = {}; try { strings = JSON.parse(await readFile(arg("--strings", join(here, "brand", "content", "strings.json")), "utf8")); } catch {}
-const org = sval(strings.name) || "Bounded Systems";
+const org = sval(strings.name) || "Robert DeLanghe";
 
 // Identity for the byline / home card. JSON Resume nests these under basics; fall
 // back to the flat shape so an older profile.json still renders a name, not "undefined".
@@ -35,26 +35,28 @@ if (!title && slug) title = (/(?:^|\n)title:\s*(.+)/.exec(await readFile(join(he
 title = (title || "Untitled").replace(/^["']|["']$/g, "");
 
 // brand design tokens (inline — the card is a standalone raster source)
-const C = { forest: "#0C5A42", forestDeep: "#073D2C", paper: "#EDEAE1", mint: "#D2E0D8", amber: "#B5762A", white: "#FFFFFF" };
+// accent/accentStrong/accentInkSoft/statusWarning/onAccent mirror
+// @bdelanghe/brand's tokens.json color.{accent,accent-strong,accent-ink-soft,status-warning,on-accent}.
+const C = { accent: "#943D2A", accentStrong: "#783022", paper: "#EDEAE1", accentInkSoft: "#F2DED8", statusWarning: "#7A4E17", onAccent: "#FFFFFF" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>
   *{margin:0;box-sizing:border-box}
   html,body{width:1200px;height:630px}
-  body{font-family:${FONT};background:linear-gradient(135deg,${C.forest},${C.forestDeep});color:${C.paper};
+  body{font-family:${FONT};background:linear-gradient(135deg,${C.accent},${C.accentStrong});color:${C.paper};
     padding:80px 72px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
-  .bar{position:absolute;top:0;left:0;width:10px;height:100%;background:linear-gradient(${C.forest},${C.amber})}
-  .eyebrow{font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:${C.mint};font-weight:600}
-  h1{font-size:66px;line-height:1.07;letter-spacing:-.02em;color:${C.white};font-weight:800;max-width:980px}
-  .role{margin-top:14px;font-size:32px;line-height:1.1;color:${C.mint};font-weight:600}
-  .foot{display:flex;align-items:center;gap:14px;font-size:25px;color:${C.mint};max-width:1000px}
-  .foot b{color:${C.white};font-weight:700}
+  .bar{position:absolute;top:0;left:0;width:10px;height:100%;background:linear-gradient(${C.accent},${C.statusWarning})}
+  .eyebrow{font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:${C.accentInkSoft};font-weight:600}
+  h1{font-size:66px;line-height:1.07;letter-spacing:-.02em;color:${C.onAccent};font-weight:800;max-width:980px}
+  .role{margin-top:14px;font-size:32px;line-height:1.1;color:${C.accentInkSoft};font-weight:600}
+  .foot{display:flex;align-items:center;gap:14px;font-size:25px;color:${C.accentInkSoft};max-width:1000px}
+  .foot b{color:${C.onAccent};font-weight:700}
   .door{position:absolute;right:72px;top:64px;width:92px;height:100px}
 </style></head><body>
   <div class="bar"></div>
-  <svg class="door" viewBox="0 0 132 140" fill="none" stroke="${C.mint}" stroke-width="3">
+  <svg class="door" viewBox="0 0 132 140" fill="none" stroke="${C.accentInkSoft}" stroke-width="3">
     <rect x="1" y="1" width="130" height="138" rx="10"/><rect x="41" y="44" width="50" height="95" rx="6"/>
-    <circle cx="80" cy="92" r="4.5" fill="${C.amber}" stroke="none"/></svg>
+    <circle cx="80" cy="92" r="4.5" fill="${C.statusWarning}" stroke="none"/></svg>
 ${home ? `  <div class="eyebrow">robertdelanghe.dev</div>
   <div><h1>${esc(personName)}</h1>${basics.label ? `<div class="role">${esc(basics.label)}</div>` : ""}</div>
   <div class="foot">${esc(basics.headline || "")}</div>`

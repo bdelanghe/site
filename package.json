@@ -2,7 +2,7 @@
   "name": "robertdelanghe-dev",
   "version": "0.1.0",
   "private": true,
-  "description": "robertdelanghe.dev — software-engineering portfolio, built on @bounded-systems/brand.",
+  "description": "robertdelanghe.dev — software-engineering portfolio, built on @bdelanghe/brand.",
   "type": "module",
   "scripts": {
     "build": "node build.mjs && SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json node vendor/conformance-kit/gates/seo-gate.mjs dist && node scripts/gen-api.mjs && node scripts/gen-identity.mjs && node scripts/gen-sbom.mjs && node scripts/gen-attestation.mjs && node scripts/check-sbom.mjs && node vendor/conformance-kit/generators/gen-cid.mjs",
@@ -20,7 +20,7 @@
     "check:html": "node vendor/conformance-kit/gates/html-validator-gate.mjs dist",
     "check:baseline": "node vendor/conformance-kit/gates/baseline-gate.mjs",
     "check:ai-readability": "AIR_SIBLING_IGNORE=404 node vendor/conformance-kit/gates/ai-readability-gate.mjs dist",
-    "check:token-a11y": "node vendor/conformance-kit/gates/token-a11y.mjs node_modules/@bounded-systems/brand/tokens/token-a11y.json",
+    "check:token-a11y": "node vendor/conformance-kit/gates/token-a11y.mjs node_modules/@bdelanghe/brand/tokens/token-a11y.json",
     "gate:copy": "node scripts/copy-gate.mjs --strict",
     "check:integrity": "node scripts/vendor-integrity.mjs --check",
     "check:shacl": "node vendor/conformance-kit/gates/shacl-runner.mjs contract/jsonld.shapes.ttl dist",
@@ -38,7 +38,7 @@
     "audit:vendor": "node scripts/vendor-audit.mjs"
   },
   "dependencies": {
-    "@bounded-systems/brand": "^1.4.0"
+    "@bdelanghe/brand": "github:bdelanghe/brand#main"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",

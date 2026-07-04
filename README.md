@@ -1,13 +1,16 @@
 # robertdelanghe.dev
 
 A focused software-engineering portfolio for **Robert DeLanghe**. Static HTML/CSS,
-no runtime, built on the [`@bounded-systems/brand`][brand] design system (fonts +
-tokens only — no product mark).
+no runtime, built on the [`@bdelanghe/brand`][brand] design system — a personal pinning
+of [`bounded-systems/baobab`][baobab] (tokens, self-hosted fonts, and the "r+d" mark).
 
 ## How it consumes the brand
 
-`brand/` is a git **submodule** pinned to a commit of [`bounded-systems/brand`][brand];
-the page links its tokens + fonts and never hard-codes brand values:
+`build.mjs` resolves the brand two ways: `npm run build`/`npm run dev`/CI install it as
+an ordinary (GitHub-sourced) npm dependency at `node_modules/@bdelanghe/brand`; `nix build`
+materializes the flake-pinned source directly at `brand/` instead (see `flake.nix`) —
+`build.mjs` prefers `brand/` when it's populated so the same code works in both. The page
+links its tokens + fonts and never hard-codes brand values:
 
 ```html
 <link rel="stylesheet" href="brand/css/fonts.css">     <!-- self-hosted woff2 -->
@@ -18,7 +21,8 @@ the page links its tokens + fonts and never hard-codes brand values:
 ## Build & preview
 
 ```bash
-git clone --recurse-submodules https://github.com/bdelanghe/site.git
+git clone https://github.com/bdelanghe/site.git
+npm install      # installs @bdelanghe/brand from node_modules
 npm run dev      # serve at http://localhost:8080
 npm run build    # assemble dist/  (prebuild runs the brand token-drift check)
 nix build .#site # hermetic build → ./result (nodejs + brand pinned by flake.lock)
@@ -38,6 +42,8 @@ Settings → Domains & Routes; DNS is already in Cloudflare.
 redeploys), so the corpus stays current. `flake.nix` still gives a hermetic local
 build (`nix build .#site`) for reproducible verification.
 
-When bumping the brand, update both the submodule and `nix flake update brand`.
+When bumping the brand, update both `package.json`'s dependency and
+`nix flake update brand`.
 
-[brand]: https://github.com/bounded-systems/brand
+[brand]: https://github.com/bdelanghe/brand
+[baobab]: https://github.com/bounded-systems/baobab

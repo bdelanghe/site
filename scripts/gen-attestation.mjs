@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 import { checkCss } from "./check-css.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const brand = join(root, "node_modules", "@bounded-systems", "brand");
+const brand = join(root, "node_modules", "@bdelanghe", "brand");
 const dist = join(root, "dist");
 const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
@@ -66,7 +66,7 @@ const brandPkg = (await exists(join(brand, "package.json"))) ? JSON.parse(await 
 // version tag. flake.lock is a build input.
 const flakeLock = (await exists(join(root, "flake.lock"))) ? JSON.parse(await readFile(join(root, "flake.lock"), "utf8")) : {};
 const brandRev = flakeLock?.nodes?.brand?.locked?.rev || "";
-if (brandPkg.version || brandRev) materials.push({ uri: "pkg:jsr/@bounded-systems/brand", version: brandPkg.version, ...(brandRev ? { digest: { gitCommit: brandRev } } : {}) });
+if (brandPkg.version || brandRev) materials.push({ uri: "pkg:github/bdelanghe/brand", version: brandPkg.version, ...(brandRev ? { digest: { gitCommit: brandRev } } : {}) });
 // the design system itself — tokens (visual) + content strings (verbal), by digest
 for (const f of ["tokens/tokens.json", "tokens/tokens.css", "content/strings.json", "css/base.css", "css/fonts.css"])
   if (await exists(join(brand, f))) materials.push({ uri: `brand/${f}`, digest: { sha256: sha256(await readFile(join(brand, f))) } });

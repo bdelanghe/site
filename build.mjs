@@ -17,11 +17,11 @@ const dist = join(root, "dist");
 const exists = async (p) => { try { await access(p); return true; } catch { return false; } };
 // `nix build` materializes the flake-pinned brand source directly at brand/
 // (see flake.nix); everywhere else (npm run build, npm run dev, CI) it's the
-// @bounded-systems/brand npm dependency. Prefer brand/ when it's actually
+// @bdelanghe/brand npm dependency. Prefer brand/ when it's actually
 // populated so the same build.mjs works in both without an env-detection flag.
 const brand = (await exists(join(root, "brand", "tokens", "tokens.css")))
   ? join(root, "brand")
-  : join(root, "node_modules", "@bounded-systems", "brand");
+  : join(root, "node_modules", "@bdelanghe", "brand");
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // Boundary guard: a template that reads a field the data doesn't have interpolates
@@ -40,7 +40,7 @@ const writeHtml = async (file, content) => {
 };
 
 if (!(await exists(join(brand, "tokens", "tokens.css")))) {
-  console.error("✗ brand/ and node_modules/@bounded-systems/brand are both missing. Run: npm install (or nix build, which materializes brand/ itself).");
+  console.error("✗ brand/ and node_modules/@bdelanghe/brand are both missing. Run: npm install (or nix build, which materializes brand/ itself).");
   process.exit(1);
 }
 // css-token-purity gate: styles.css must speak only in brand tokens (no literal
@@ -226,11 +226,11 @@ const colophonHtml = profile.colophon?.length
 
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
 const SITE = basics.url || "https://robertdelanghe.dev";
-const OG_IMAGE = `${SITE}/brand/lockup/lockup-forest-1200.png`;
+const OG_IMAGE = `${SITE}/brand/lockup/lockup-accent-1200.png`;
 // One source for the install/chrome colors: the <head> theme-color and the web app
-// manifest read the same literals (forest fill + paper surface — the brand tokens the
-// page already paints with: --bs-color-forest / --bs-color-paper) so they can't drift.
-const THEME_COLOR = "#0C5A42";   // --bs-color-forest
+// manifest read the same literals (accent fill + paper surface — the brand tokens the
+// page already paints with: --bs-color-accent / --bs-color-paper) so they can't drift.
+const THEME_COLOR = "#943D2A";   // --bs-color-accent
 const BG_COLOR = "#EDEAE1";      // --bs-color-paper (the body background)
 // RFC 9530 representation digest (`sha-256=:<base64>:`), per canonical doc, over the
 // bytes build.mjs itself writes (self-contained; not the later site.sha256) —
@@ -270,7 +270,7 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <link rel="canonical" href="${url}">
   <meta name="theme-color" content="${THEME_COLOR}">
   <link rel="icon" type="image/png" href="/brand/favicon-32.png">
-  <link rel="icon" type="image/svg+xml" href="/brand/mark/mark-forest.svg">
+  <link rel="icon" type="image/svg+xml" href="/brand/mark/mark-accent.svg">
   <link rel="manifest" href="/site.webmanifest">
   <meta property="og:type" content="${ogType}">
   <meta property="og:url" content="${url}">
@@ -368,7 +368,7 @@ const materials = [
   // The source commit isn't known in the hermetic build; gen-attestation.mjs
   // stamps @@COMMIT_SHORT@@ at deploy time (when GITHUB_SHA is set).
   { name: "git+github.com/bdelanghe/site", id: "@@COMMIT_SHORT@@" },
-  { name: "@bounded-systems/brand", id: brandRev ? brandRev.slice(0, 9) : (brandPkg.version ? `v${brandPkg.version}` : "(unpinned)") },
+  { name: "@bdelanghe/brand", id: brandRev ? brandRev.slice(0, 9) : (brandPkg.version ? `v${brandPkg.version}` : "(unpinned)") },
   { name: "data/profile.json", id: (await sha256File(join(root, "data", "profile.json"))).slice(0, 18) + "…" },
   { name: "data/presentation.json", id: (await sha256File(join(root, "data", "presentation.json"))).slice(0, 18) + "…" },
   { name: "data/site.json", id: (await sha256File(join(root, "data", "site.json"))).slice(0, 18) + "…" },
@@ -605,24 +605,24 @@ ${jsonLd}
   @page { margin: 14mm; }
   * { box-sizing: border-box; }
   body { font-family: var(--bs-font-display); color: var(--bs-color-ink); max-width: 760px; margin: 28px auto; padding: 0 24px; font-size: 13px; line-height: 1.5; }
-  a { color: var(--bs-color-forest); text-decoration: none; }
+  a { color: var(--bs-color-accent); text-decoration: none; }
   h1 { font-size: 26px; letter-spacing: -0.02em; margin: 0; }
-  .r-title { font-size: 14px; color: var(--bs-color-forest); font-weight: 600; margin: 4px 0 6px; }
+  .r-title { font-size: 14px; color: var(--bs-color-accent); font-weight: 600; margin: 4px 0 6px; }
   .r-contact { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-soft); margin: 0 0 14px; }
   .r-summary { margin: 0 0 16px; }
-  h2 { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bs-color-forest); border-bottom: 1px solid var(--bs-color-line); padding-bottom: 4px; margin: 18px 0 10px; }
+  h2 { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bs-color-accent); border-bottom: 1px solid var(--bs-color-line); padding-bottom: 4px; margin: 18px 0 10px; }
   .r-skills { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-skill-grp { margin: 0 0 4px; font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-job { margin: 0 0 12px; break-inside: avoid; }
   .r-job__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .r-job__org { font-weight: 600; font-size: 14px; }
   .r-job__when { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); white-space: nowrap; }
-  .r-job__role { font-size: 12px; color: var(--bs-color-forest); margin-bottom: 4px; }
+  .r-job__role { font-size: 12px; color: var(--bs-color-accent); margin-bottom: 4px; }
   .r-job ul { margin: 4px 0 0; padding-left: 16px; }
   .r-job li { margin: 0 0 3px; }
   .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
-  .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
-  .r-print:hover { border-color: var(--bs-color-forest); }
+  .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
+  .r-print:hover { border-color: var(--bs-color-accent); }
   .r-print + .r-print { margin-left: 8px; }
   .r-contact .r-fav { width: 12px; height: 12px; vertical-align: -2px; margin-right: 4px; fill: var(--bs-color-ink); }
   @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact .r-fav { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
@@ -669,15 +669,15 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
       <ol class="prov-chain">
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></div></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (<a href="https://json-ld.org" rel="noopener">JSON-LD</a> 1.1) is validated against <a href="https://www.w3.org/TR/shacl/" rel="noopener"><code>SHACL</code></a> shapes; an <strong><a href="https://spdx.dev" rel="noopener">SPDX</a> <a href="https://www.cisa.gov/sbom" rel="noopener">SBOM</a></strong> is generated and completeness-checked; and <code>@bounded-systems/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed <a href="https://in-toto.io" rel="noopener">in-toto</a>/<a href="https://slsa.dev" rel="noopener">SLSA</a> attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener">WCAG</a>&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</span></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bounded-systems/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (<a href="https://json-ld.org" rel="noopener">JSON-LD</a> 1.1) is validated against <a href="https://www.w3.org/TR/shacl/" rel="noopener"><code>SHACL</code></a> shapes; an <strong><a href="https://spdx.dev" rel="noopener">SPDX</a> <a href="https://www.cisa.gov/sbom" rel="noopener">SBOM</a></strong> is generated and completeness-checked; and <code>@bdelanghe/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed <a href="https://in-toto.io" rel="noopener">in-toto</a>/<a href="https://slsa.dev" rel="noopener">SLSA</a> attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener">WCAG</a>&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
             <p class="prov-seal__title">${copy("prov.seal.title")}</p>
             <p class="prov-seal__meta">commit @@COMMIT@@ &middot; @@DATE@@ &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
-            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);">Real <a href="https://in-toto.io" rel="noopener">in-toto</a> <code>Statement/v1</code> + <a href="https://slsa.dev" rel="noopener">SLSA</a> provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via <a href="https://sigstore.dev" rel="noopener">Sigstore</a> — a one-build <a href="https://docs.sigstore.dev/fulcio/overview/" rel="noopener">Fulcio</a> certificate minted from this workflow's GitHub <a href="https://openid.net/connect/" rel="noopener">OIDC</a> identity, logged in the public <a href="https://docs.sigstore.dev/rekor/overview/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry" rel="noopener">GHCR</a> as a pullable, signed <a href="https://opencontainers.org" rel="noopener">OCI</a> artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact.</p>
-            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink-mono);"><strong>Authorized.</strong> Production is not deployed straight from a build: each version is first uploaded as an un-served preview, reviewed, and <strong>promoted to production only on required human approval</strong> (the <code>site-promote</code> environment). The exact reviewed, signed version is what goes live — so the live site is not just intact, its promotion was authorized.</p>
-            <p id="build-freshness" class="prov-seal__note" style="font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink-mono);" hidden></p>
+            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);">Real <a href="https://in-toto.io" rel="noopener">in-toto</a> <code>Statement/v1</code> + <a href="https://slsa.dev" rel="noopener">SLSA</a> provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via <a href="https://sigstore.dev" rel="noopener">Sigstore</a> — a one-build <a href="https://docs.sigstore.dev/fulcio/overview/" rel="noopener">Fulcio</a> certificate minted from this workflow's GitHub <a href="https://openid.net/connect/" rel="noopener">OIDC</a> identity, logged in the public <a href="https://docs.sigstore.dev/rekor/overview/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry" rel="noopener">GHCR</a> as a pullable, signed <a href="https://opencontainers.org" rel="noopener">OCI</a> artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact.</p>
+            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);"><strong>Authorized.</strong> Production is not deployed straight from a build: each version is first uploaded as an un-served preview, reviewed, and <strong>promoted to production only on required human approval</strong> (the <code>site-promote</code> environment). The exact reviewed, signed version is what goes live — so the live site is not just intact, its promotion was authorized.</p>
+            <p id="build-freshness" class="prov-seal__note" style="font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink);" hidden></p>
           </div>
         </li>
       </ol>
@@ -713,7 +713,7 @@ Contracts gate content before a byte renders: the canonical résumé \`data/prof
 Gates run on every build, each error-severity finding blocking it: \`lone\` blesses each rendered DOM (semantic HTML + a11y); \`copy-review\` flags overclaims; \`linkedin-check\` verifies résumé claims; \`string-audit\` runs copy hygiene; JSON-LD is SHACL-validated; an SPDX SBOM is generated + completeness-checked; brand tokens are drift-checked. Every result folds into one honest [conformance projection](${SITE}/conformance) — lone's \`conformance()\` model, which emits the strong WCAG 2.2 AA / OWASP ASVS claim only when every required criterion is met; manual and unsupplied criteria stay not-assessed.
 
 ### ${copy("prov.step.builder")}
-Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bounded-systems/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs.
+Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bdelanghe/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs.
 
 ## ${copy("prov.seal.title")}
 commit @@COMMIT@@ · @@DATE@@ · [bdelanghe/site](https://github.com/bdelanghe/site)
@@ -964,7 +964,7 @@ const webmanifest = webManifest({
   startUrl: "/",
   icons: [
     { src: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
-    { src: "/brand/mark/mark-forest.svg", sizes: "any", type: "image/svg+xml" },
+    { src: "/brand/mark/mark-accent.svg", sizes: "any", type: "image/svg+xml" },
   ],
 });
 await writeFile(join(dist, "site.webmanifest"), JSON.stringify(webmanifest, null, 2) + "\n");

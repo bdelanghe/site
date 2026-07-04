@@ -142,9 +142,9 @@ for (const f of ["data/copy.json", "data/profile.json", "data/presentation.json"
 }
 // brand content strings are {$value, $description} — only the $value is shipped copy.
 try {
-  const strings = await j("node_modules/@bounded-systems/brand/content/strings.json");
+  const strings = await j("node_modules/@bdelanghe/brand/content/strings.json");
   for (const v of Object.values(strings)) if (v && typeof v === "object" && "$value" in v) atomStrings.push(v.$value);
-} catch { /* @bounded-systems/brand optional (not yet installed) */ }
+} catch { /* @bdelanghe/brand optional (not yet installed) */ }
 // post frontmatter — sourced copy (contract/posts.schema.json): title/description render
 // on /blog + the post <head>/<h1>; tags render as chips. (Body prose is region-exempt.)
 try {
