@@ -37,7 +37,7 @@ title = (title || "Untitled").replace(/^["']|["']$/g, "");
 // brand design tokens (inline — the card is a standalone raster source)
 // accent/accentStrong/accentInkSoft/statusWarning/onAccent mirror
 // @bdelanghe/brand's tokens.json color.{accent,accent-strong,accent-ink-soft,status-warning,on-accent}.
-const C = { accent: "#A6432F", accentStrong: "#783022", paper: "#EDEAE1", accentInkSoft: "#F2DED8", statusWarning: "#B5762A", onAccent: "#FFFFFF" };
+const C = { accent: "#943D2A", accentStrong: "#783022", paper: "#EDEAE1", accentInkSoft: "#F2DED8", statusWarning: "#7A4E17", onAccent: "#FFFFFF" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>

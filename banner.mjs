@@ -33,7 +33,7 @@ const tokens = JSON.parse(await readFile(tokensPath, "utf8"));
 
 // Resolve a design-token $value, following {tier.key} aliases through ANY tier
 // (the brand tokens alias color → primitive → hex, e.g. {color.accent} →
-// {primitive.clay-600} → "#A6432F"). Recurses until a literal value remains.
+// {primitive.clay-600} → "#943D2A"). Recurses until a literal value remains.
 const resolveRef = (v) => {
   const m = /^\{([\w-]+)\.([\w-]+)\}$/.exec(String(v));
   if (!m) return v;

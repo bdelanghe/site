@@ -230,7 +230,7 @@ const OG_IMAGE = `${SITE}/brand/lockup/lockup-accent-1200.png`;
 // One source for the install/chrome colors: the <head> theme-color and the web app
 // manifest read the same literals (accent fill + paper surface — the brand tokens the
 // page already paints with: --bs-color-accent / --bs-color-paper) so they can't drift.
-const THEME_COLOR = "#A6432F";   // --bs-color-accent
+const THEME_COLOR = "#943D2A";   // --bs-color-accent
 const BG_COLOR = "#EDEAE1";      // --bs-color-paper (the body background)
 // RFC 9530 representation digest (`sha-256=:<base64>:`), per canonical doc, over the
 // bytes build.mjs itself writes (self-contained; not the later site.sha256) —
