@@ -1,5 +1,8 @@
 dist/
 node_modules/
+# Nix build materializes the flake-pinned brand source here (see flake.nix); it's a
+# build artifact, not site content — same as node_modules/, never committed.
+brand/
 .wrangler/
 result
 result-*

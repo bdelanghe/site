@@ -14,13 +14,13 @@ data/site.json      ← the GitHub corpus (stats + curated highlights)   [genera
    dist/resume.html  print-optimized résumé + "Download PDF" (window.print)
    dist/resume.json  JSON Résumé (machine-readable, schema-valid) — for parsers/ATS
    dist/blog.html    writing (placeholder)
-   dist/brand/…      copied from the @bounded-systems/brand submodule
+   dist/brand/…      copied from the @bdelanghe/brand package
 ```
 
 - **Contracts** live in `data/`; **schemas** in `contract/*.schema.json`.
 - `profile.json` = content tokens ("slugs for copy"), curated by hand (e.g. from a LinkedIn webarchive). Never live-fetched.
 - `site.json` = the corpus, produced by `fetch.mjs` (has network), validated against `contract/site.schema.json`.
-- Visuals come from the `brand/` git submodule — never hard-code brand values.
+- Visuals come from the `@bdelanghe/brand` package (`brand/` when nix-materialized) — never hard-code brand values.
 
 ## Make a change (the common cases)
 

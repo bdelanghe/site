@@ -5,8 +5,12 @@
 > **Live.** `scripts/check-css.mjs` runs inside `build.mjs` (so `node build.mjs` — every
 > CI path — fails on a raw color), is exposed as `npm run check:css`, and its verdict is
 > recorded as a signed `css-token-purity` predicate in the build attestation (§7). The
-> §5 brand dependency is resolved: `baobab` shipped the `on-forest` token set and
-> `styles.css` is at **zero** raw color literals, so the gate demands zero — no allowlist.
+> §5 brand dependency is resolved: the brand package ships an "on-accent" text family
+> (`accent-ink` / `-soft` / `-line`, formerly `on-forest` under `@bounded-systems/brand`)
+> and `styles.css` is at **zero** raw color literals, so the gate demands zero — no
+> allowlist. (Migrated from `@bounded-systems/brand` to the personal `@bdelanghe/brand`
+> pinning — same invariant, same gate, new token names: `accent`/`status-negative`/
+> `status-warning` replace `forest`/`clay`/`amber`.)
 
 > The visual sibling of [atomic-copy](./atomic-copy.md). atomic-copy enforces *no
 > hardcoded string*; this enforces *no hardcoded visual value*. atomic-copy.md already
@@ -86,7 +90,7 @@ decidable invariant: the CSS may only *speak in tokens*, and only *real* tokens.
 Contrast depends on composition, so it is statically undecidable here. It is **not
 dropped — it is relocated** to where it *is* decidable:
 - **`baobab` / brand** verifies the palette meets WCAG **once**, in the design system —
-  including a missing **on-forest / on-dark** set (§5). Verified at the source, reused
+  including the **on-accent / on-dark** set (§5). Verified at the source, reused
   everywhere.
 - **Lighthouse** is the runtime backstop for the *composed* result (the existing a11y =
   1.0 gate).
@@ -94,15 +98,14 @@ dropped — it is relocated** to where it *is* decidable:
 Three rings, each owning what it can decide: the gate makes raw values *impossible*; the
 brand makes the *tokens* safe; Lighthouse catches *composition*.
 
-## 5. Brand dependency: the on-forest token set
+## 5. Brand dependency: the on-accent token set
 
-The three raw values exist because the brand's tokens are tuned for light backgrounds
-(ink-on-paper); the seeking callout is a dark forest panel with **no token to use**, so
-the site improvised translucent white. The gate **cannot demand zero raw values** until
-`baobab` ships `--bs-color-on-forest` / `-muted` / `-subtle` (contrast-verified against
-forest). Until then, `check:css` runs with a documented, shrinking allowlist containing
-exactly those three declarations — and the allowlist is itself a gate: it may only
-shrink.
+The three raw values existed because the brand's tokens were tuned for light backgrounds
+(ink-on-paper); the seeking callout is a dark accent panel with **no token to use**, so
+the site improvised translucent white. Resolved: the brand pinning ships
+`--bs-color-accent-ink` / `-soft` / `-line` (contrast-verified against `accent`) — the
+personal-pinning equivalent of what was `--bs-color-on-forest` / `-soft` / `-line` under
+`@bounded-systems/brand`. `check:css` runs with **zero** allowlist entries.
 
 ## 6. Implementation
 
@@ -145,5 +148,4 @@ the gate's verdict non-repudiable.)
   (Recommend yes; they are not palette decisions.)
 - **Where it lives long-term** — site repo, or promoted into `baobab` so every Bounded
   Systems surface inherits it (the way `string-audit` is shared)?
-- **Brand ownership** — who ships the on-forest token set, and when? It is the blocker
-  to demanding *zero* raw values (§5).
+- **Brand ownership** — resolved: `@bdelanghe/brand` ships the on-accent token set (§5).

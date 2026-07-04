@@ -23,7 +23,7 @@ wall clock):
 | Source | Read from | Each package carries |
 |---|---|---|
 | **npm** | `package-lock.json` + `vendor/conformance-kit/integrity/verify/package-lock.json` + `vendor/conformance-kit/integrity/structure-audit/package-lock.json` | `versionInfo`, `downloadLocation` (resolved registry tarball), a `pkg:npm` purl, and a checksum — the lockfile integrity SRI decoded from base64 to SPDX-legal hex |
-| **Nix inputs** | `flake.lock` (nixpkgs + the `bounded-systems/brand` submodule) | the locked `rev` as `versionInfo`, a `git+https` `downloadLocation`, a `pkg:github` purl, and a SHA256 checksum decoded from the `narHash` SRI |
+| **Nix inputs** | `flake.lock` (nixpkgs + the `bdelanghe/brand` flake input) | the locked `rev` as `versionInfo`, a `git+https` `downloadLocation`, a `pkg:github` purl, and a SHA256 checksum decoded from the `narHash` SRI |
 
 Determinism: packages are sorted (Nix before npm, then name, then version), the
 `documentNamespace` is a SHA256 of the package set, and `creationInfo.created` is derived from
@@ -41,7 +41,7 @@ order-free:
    package: `name`, `SPDXID`, `downloadLocation`; no malformed or duplicate `SPDXID`s).
 2. **Pinned set ⊆ SBOM** — every `flake.lock` input (nixpkgs + brand) appears as an SPDX
    package at the same rev, and any package-reference the attestation enumerates as a
-   `resolvedDependency` (the brand, `pkg:jsr/@bounded-systems/brand`) appears at the same rev.
+   `resolvedDependency` (the brand, `pkg:github/bdelanghe/brand`) appears at the same rev.
    File-path materials (`data/*.json`, `brand/*.css`) are content inputs, not redistributable
    packages, so they are intentionally out of SBOM scope.
 3. **SBOM ⊆ pinned set** — every Nix-sourced SPDX package (`pkg:github`) traces back to a real

@@ -54,7 +54,7 @@ jobs:
       - name: Sign provenance statement + SBOM (keyless Sigstore)
         run: |
           nix develop .#deploy --command bash -euo pipefail -c '
-            # gen-attestation.mjs reads @bounded-systems/brand from node_modules
+            # gen-attestation.mjs reads @bdelanghe/brand from node_modules
             # (this step runs in the outer checkout, not nix build'\''s isolated
             # sandbox where flake.nix materializes brand/ itself).
             npm ci

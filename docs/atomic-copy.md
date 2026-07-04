@@ -20,7 +20,7 @@ This is the exact analogue of the design-token rule, applied to copy:
 
 | `baobab` / brand (visual) | atomic-copy (verbal) |
 |---|---|
-| **No hardcoded colors.** A template may not write `#0C5A42`; it references `var(--bs-color-forest)`. | **No hardcoded strings.** A template may not write `The corpus`; it references a copy atom by id. |
+| **No hardcoded colors.** A template may not write `#A6432F`; it references `var(--bs-color-accent)`. | **No hardcoded strings.** A template may not write `The corpus`; it references a copy atom by id. |
 | Inline hex is a lint failure (tokens drift-checked vs `brand/tokens/tokens.css`). | Inline user-facing text is a gate failure (`@bounded-systems/string-audit`). |
 | One source of truth for the palette. | One source of truth for the words. |
 
@@ -43,7 +43,7 @@ audited* — the verbal counterpart to design tokens.
 
 | Property | Design tokens (`baobab`/brand) | atomic-copy (this RFC) |
 |---|---|---|
-| Atom | a visual primitive — `--bs-color-forest`, `--bs-font-mono` | a string — `hero.headline`, `exp.aura.b0` |
+| Atom | a visual primitive — `--bs-color-accent`, `--bs-font-mono` | a string — `hero.headline`, `exp.aura.b0` |
 | Addressable | CSS custom property | dotted key into a token bag / catalog symbol |
 | Typed | token group (color / type / space) | copy type (`headline` · `body` · `tagline` · `cta` · `claim`) |
 | Sourced | `brand/tokens/tokens.json` | `data/profile.json` + `data/presentation.json` |

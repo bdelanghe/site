@@ -1,12 +1,12 @@
 {
-  description = "robertdelanghe.dev — software-engineering portfolio, built on @bounded-systems/brand";
+  description = "robertdelanghe.dev — software-engineering portfolio, built on @bdelanghe/brand";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # Brand pinned here (flake.lock) for the hermetic build, independent of the
-    # @bounded-systems/brand npm dependency (kept only for non-Nix dev). Bump both together.
+    # @bdelanghe/brand npm dependency (kept only for non-Nix dev). Bump both together.
     brand = {
-      url = "github:bounded-systems/brand";
+      url = "github:bdelanghe/brand";
       flake = false;
     };
   };
