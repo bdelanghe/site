@@ -28,7 +28,8 @@
       "location": "New York · Hybrid",
       "url": "https://auraframes.com",
       "startDate": "2023-10",
-      "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing.",
+      "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems, running on a Ruby backend across fulfillment, accounting, and third-party integrations. I ship the automation backbone on AWS (ECS, RDS, S3, CloudFront) and built the contract-and-validation layer behind inventory-purchasing.",
+      "keywords": ["Ruby", "AWS", "Capability security", "Agent infrastructure"],
       "highlights": [
         "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to dozens of downstream schema contracts, each checked by hundreds of test scenarios.",
         "Investigated unreviewed agent-authored commits reaching main. Reconstructed each one's path across five log domains and wrote the post-mortem. Designed the controls that became Aura's policy for shipping AI-written code."
@@ -41,7 +42,8 @@
       "url": "https://l2l.com",
       "startDate": "2021-04",
       "endDate": "2023-09",
-      "summary": "Owned the quality gates and developer experience for a 20-engineer team: static-analysis CI, a design system, and frontend performance.",
+      "summary": "Owned the quality gates and developer experience for a 20-engineer team on a Python/Django backend, deployed single-tenant per customer (EC2/ECS, RDS, S3, Lambda). Drove static-analysis CI, a design system, and frontend performance.",
+      "keywords": ["Python", "AWS", "Static analysis", "Developer tooling"],
       "highlights": [
         "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
       ]
@@ -105,37 +107,13 @@
       "endDate": "2012-12"
     }
   ],
-  "skills": [
-    {
-      "name": "Languages",
-      "keywords": ["TypeScript", "Python", "Ruby", "Rust"]
-    },
-    {
-      "name": "Security & provenance",
-      "keywords": [
-        "Capability-based security",
-        "Supply-chain security",
-        "Sandboxing",
-        "Static analysis"
-      ]
-    },
-    {
-      "name": "Systems & infrastructure",
-      "keywords": [
-        "Systems architecture",
-        "Agent infrastructure",
-        "AWS",
-        "Developer tooling"
-      ]
-    }
-  ],
   "projects": [
     {
       "name": "prx",
       "startDate": "2026-05",
-      "description": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Evolved from hooksmith and moved to TypeScript when the key contracts proved to be between systems, not machine and kernel.",
+      "description": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Evolved from hooksmith, a Rust predecessor that still anchors Bounded Systems' lower-level, machine-facing contracts. Moved to TypeScript once the key contracts proved to be between systems, not machine and kernel.",
       "url": "https://github.com/bounded-systems/prx",
-      "keywords": ["Capability security", "AI agents", "TypeScript"],
+      "keywords": ["Capability security", "AI agents", "TypeScript", "Rust"],
       "roles": ["Creator"],
       "entity": "Bounded Systems"
     },
@@ -151,7 +129,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "a551e5175a5b0e2cc34a92f356fb8b613d41563aeb76a7f74be080348984a051",
+    "version": "b330e05aea9615794840ce96b8ca216dd60cbf22ca2f37d35c2d7716de1a1f93",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
