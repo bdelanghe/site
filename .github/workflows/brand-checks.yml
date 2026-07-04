@@ -25,6 +25,8 @@ jobs:
         with:
           node-version: "22"
       - run: npm ci # installs @bdelanghe/brand (build.mjs reads it from node_modules)
+      - name: Vendored conformance-kit hash-pin is intact (this workflow calls build.mjs directly, bypassing npm's prebuild hook)
+        run: npm run check:integrity
       - name: Checkout brand's source (dev tooling only — not published to npm)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
