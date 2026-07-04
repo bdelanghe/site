@@ -73,7 +73,7 @@ const j = async (p) => JSON.parse(await readFile(join(root, p), "utf8"));
 
 // Pages this gate enforces. dist/ must already be built (npm run build). Blog post
 // pages are discovered so a new post is covered without editing this list.
-const SCOPE = ["index.html", "resume.html", "provenance.html", "blog.html"];
+const SCOPE = ["index.html", "resume.html", "provenance.html", "blog.html", "colophon.html"];
 try {
   for (const f of (await readdir(join(root, "dist", "blog"))).filter((f) => f.endsWith(".html"))) SCOPE.push(`blog/${f}`);
 } catch { /* no posts yet */ }
