@@ -12,6 +12,7 @@
     "test:copy-review": "node copy-review-test.mjs",
     "dev": "node scripts/dev.mjs",
     "check:schema": "node scripts/check-schema.mjs",
+    "check:google-doc": "node scripts/check-google-doc.mjs",
     "check:css": "node scripts/check-css.mjs",
     "check:sbom": "node scripts/check-sbom.mjs",
     "check:vulns": "node vendor/conformance-kit/gates/vuln-gate.mjs",

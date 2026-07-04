@@ -130,10 +130,6 @@
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
     "version": "b330e05aea9615794840ce96b8ca216dd60cbf22ca2f37d35c2d7716de1a1f93",
-    "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site.",
-    "googleDocs": {
-      "publishedDocumentId": "1IRiC_oB4Xw-ySQPTfwR3GhK3WwSvEjGMCMz0IAg8qQM",
-      "publishedUrl": "https://docs.google.com/document/d/1IRiC_oB4Xw-ySQPTfwR3GhK3WwSvEjGMCMz0IAg8qQM/edit"
-    }
+    "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }

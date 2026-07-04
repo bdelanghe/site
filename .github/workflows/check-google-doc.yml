@@ -1,0 +1,31 @@
+name: check-google-doc
+
+# The /resume "Comment on Google Docs" button points at meta.googleDocs.publishedUrl.
+# That's an external Google-hosted link this repo doesn't control the uptime of — it
+# can go dark (Google abuse-detection block, unshared, deleted) with no code change
+# here at all, as happened in bdelanghe/site#186. So this runs on a schedule, not just
+# on PRs that touch profile.json, and fails loudly instead of leaving a dead public
+# link live and undetected.
+on:
+  schedule:
+    - cron: "17 13 * * *"
+  pull_request:
+    paths:
+      - "data/profile.json"
+      - "scripts/check-google-doc.mjs"
+      - ".github/workflows/check-google-doc.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-google-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Google Doc link reachability
+        run: node scripts/check-google-doc.mjs
