@@ -1048,17 +1048,51 @@ const confReport = buildConformanceReport({ loneFindings: confLoneFindings, evid
 await mkdir(join(dist, "api", "v1"), { recursive: true });
 await writeFile(join(dist, "api", "v1", "conformance.json"), JSON.stringify(confReport, null, 2) + "\n");
 
-// Per-criterion evidence links (consumer-injected). Each must resolve at gate time:
-// the served artifacts below are either emitted by this build or declared deploy
-// sidecars (SEO_DEPLOY_SIDECARS / STRUCTURE_AUDIT_SIDECARS); everything else points at
-// /provenance, the signed chain that explains the gate behind the criterion.
+// Per-criterion evidence links (consumer-injected). Each must resolve at gate time.
+// Preference order: (1) a real artifact THIS build emits/serves — most direct, no
+// indirection; (2) for a criterion with no servable artifact, the actual CI workflow
+// that runs its gate — a public, re-runnable log of the check happening, not just an
+// assertion about it; (3) only criteria with no better evidence at all fall through to
+// /provenance, the signed chain that explains the gate. Previously EVERY criterion not
+// in a 6-entry map fell through to /provenance regardless of whether better evidence
+// existed — a criterion reporting "met" should link to what makes it true, not a
+// general narrative page.
+const REPO = "https://github.com/bdelanghe/site";
+const BRAND_REPO = "https://github.com/bdelanghe/brand";
 const CONF_EVIDENCE_LINKS = {
+  // lone-derived: /api/v1/conformance.json embeds this exact criterion's real
+  // `findings` array (verified above — empty array, not a placeholder, when clean).
+  "html.dom-author-requirements": "/api/v1/conformance.json",
+  "a11y.aria-author": "/api/v1/conformance.json",
+  "a11y.wcag22-aa-auto": "/api/v1/conformance.json",
+  "cognitive.complexity-budget": "/api/v1/conformance.json",
+
+  // Real served artifacts this build emits.
   "semantic.ai-readability": "/llms.txt",
   "semantic.feeds": "/feed.xml",
+  "seo.technical": "/sitemap.xml",
   "integrity.sbom": "/sbom.spdx.json",
   "integrity.slsa-provenance": "/attestation.intoto.json",
   "integrity.signed-release-manifest": "/site.sha256",
   "integrity.ipfs-cid": "/provenance.json",
+  "integrity.reproducible-build": `${REPO}/blob/main/flake.lock`,
+
+  // Design tokens: the declared contract + results, at the source (a separate repo).
+  "design.palette-contrast": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.typography": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.target-size": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.opacity-contrast": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.token-likeness": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+
+  // Real CI gates with no servable data artifact — link the actual workflow run.
+  "html.validator-clean": `${REPO}/actions/workflows/conformance.yml`,
+  "compatibility.baseline": `${REPO}/actions/workflows/conformance.yml`,
+  "a11y.axe-serious-critical": `${REPO}/actions/workflows/axe.yml`,
+  "a11y.agent-heuristic-review": `${REPO}/actions/workflows/a11y-heuristic.yml`,
+  "cognitive.focus-budget": `${REPO}/actions/workflows/a11y-heuristic.yml`,
+  "security.no-critical-vulns": `${REPO}/actions/workflows/brand-checks.yml`,
+  "semantic.jsonld-shacl": `${REPO}/actions/workflows/shacl.yml`,
+  "semantic.commonmark": `${REPO}/actions/workflows/seo.yml`,
 };
 const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id] ?? "/provenance";
 const conformanceHtml = `<!doctype html>
