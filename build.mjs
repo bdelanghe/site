@@ -147,6 +147,12 @@ const FRESHNESS_SCRIPT = `<script>(async()=>{
 const education = canonical.education ?? [];
 const skills = canonical.skills ?? [];          // grouped: [{ name, keywords }]
 const projects = canonical.projects ?? [];
+// knowsAbout has no dedicated skills list to draw from — it's the same claim → evidence
+// rule as `proof` above: pull terms from the work/project entries that actually earned them.
+const knowsAbout = [...new Set([
+  ...work.flatMap((w) => w.keywords ?? []),
+  ...projects.flatMap((p) => p.keywords ?? []),
+])];
 const social = basics.profiles ?? [];           // [{ network, username, url }]
 const place = presentation.place ?? "";         // decorative hero line (render context)
 // Claim → evidence: the homepage proof line, token bag, and JSON-LD all derive from
@@ -293,7 +299,7 @@ const socialHtml = social.map((s) => `<a rel="me" href="${esc(s.url)}">${esc(s.n
 const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org", "@type": "Person",
   name, url: SITE, jobTitle: role, description: headline,
-  knowsAbout: skills.length ? skills.flatMap((g) => (g.keywords?.length ? g.keywords : [g.name])) : undefined,
+  knowsAbout: knowsAbout.length ? knowsAbout : undefined,
   alumniOf: education.map((e) => ({ "@type": "Organization", name: e.institution })),
   // claim → evidence: each hero claim points at the project repo that backs it.
   subjectOf: projects.map((p) => ({ "@type": "CreativeWork", name: p.name, url: p.url })),
