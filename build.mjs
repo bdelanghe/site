@@ -147,6 +147,7 @@ const FRESHNESS_SCRIPT = `<script>(async()=>{
 const education = canonical.education ?? [];
 const skills = canonical.skills ?? [];          // grouped: [{ name, keywords }]
 const projects = canonical.projects ?? [];
+const googleDocsUrl = canonical.meta?.googleDocs?.publishedUrl ?? null;
 // knowsAbout has no dedicated skills list to draw from — it's the same claim → evidence
 // rule as `proof` above: pull terms from the work/project entries that actually earned them.
 const knowsAbout = [...new Set([
@@ -622,6 +623,7 @@ ${jsonLd}
   .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-print { display: inline-block; font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-forest); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 6px; padding: 5px 10px; margin: 2px 0 16px; cursor: pointer; }
   .r-print:hover { border-color: var(--bs-color-forest); }
+  .r-print + .r-print { margin-left: 8px; }
   .r-contact .r-fav { width: 12px; height: 12px; vertical-align: -2px; margin-right: 4px; fill: var(--bs-color-ink); }
   @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact .r-fav { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style>
@@ -633,6 +635,7 @@ ${jsonLd}
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline.replace(/\.$/, ""))}` : ""}</p>
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
     <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
+    ${googleDocsUrl ? `<a class="r-print" href="${esc(googleDocsUrl)}" target="_blank" rel="noopener">${copy("resume.comment")}</a>` : ""}
   </header>
   <p class="r-summary">${esc(summary)}</p>
   ${rSkills ? `<h2>${copy("resume.section.skills")}</h2>${rSkills}` : ""}
