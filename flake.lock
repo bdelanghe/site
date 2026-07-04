@@ -3,11 +3,11 @@
     "brand": {
       "flake": false,
       "locked": {
-        "lastModified": 1783196260,
-        "narHash": "sha256-MPKq8lTDHfg2ccExfFoz9NBz3bOvEUpMFmytGiPefio=",
+        "lastModified": 1783200059,
+        "narHash": "sha256-UIemgiAx/fK0J3O6YZwqecDojveO68BCDr4/6oCwXPU=",
         "owner": "bdelanghe",
         "repo": "brand",
-        "rev": "b1c06e106e7845449bb166e8fb8e09c7eb0e2799",
+        "rev": "f86240588ba87b6e0af490bd402ca6c921076df5",
         "type": "github"
       },
       "original": {
