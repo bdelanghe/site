@@ -3,15 +3,15 @@
     "brand": {
       "flake": false,
       "locked": {
-        "lastModified": 1782708631,
-        "narHash": "sha256-L3bfIrNk9ufn69ctY1ZXXNdNBiraCQZvTVFqpmKm2wU=",
-        "owner": "bounded-systems",
+        "lastModified": 1783196260,
+        "narHash": "sha256-MPKq8lTDHfg2ccExfFoz9NBz3bOvEUpMFmytGiPefio=",
+        "owner": "bdelanghe",
         "repo": "brand",
-        "rev": "773b2f6614c51ff0ccf9a38bb999a0f8a5128599",
+        "rev": "b1c06e106e7845449bb166e8fb8e09c7eb0e2799",
         "type": "github"
       },
       "original": {
-        "owner": "bounded-systems",
+        "owner": "bdelanghe",
         "repo": "brand",
         "type": "github"
       }
