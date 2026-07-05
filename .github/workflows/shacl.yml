@@ -36,6 +36,8 @@ jobs:
           node-version: "22"
       - name: Install deps
         run: npm ci --no-audit --no-fund
+      - name: Vendored conformance-kit hash-pin is intact (this workflow calls build.mjs directly, bypassing npm's prebuild hook)
+        run: npm run check:integrity
       - name: Build site
         run: node build.mjs
       - name: SHACL gate — JSON-LD conforms to contract/jsonld.shapes.ttl

@@ -61,14 +61,7 @@ async function violationsAt(files, available) {
     files,
     config: {
       plugins: ["stylelint-plugin-use-baseline"],
-      // stylelint-plugin-use-baseline (confirmed on the latest release, 1.4.4) only
-      // recognizes @supports selector(...) / @supports (prop: value) as a "tested
-      // fallback" guard — @supports at-rule(...) isn't understood at all, so a
-      // correctly-guarded @property still gets flagged. @property itself already
-      // degrades gracefully by spec (an unsupported browser just ignores the unknown
-      // at-rule and keeps the plain custom-property declaration) — filed upstream:
-      // https://github.com/ryo-manba/stylelint-plugin-use-baseline/issues/153.
-      rules: { "plugin/use-baseline": [true, { available, ignoreAtRules: ["property"] }] },
+      rules: { "plugin/use-baseline": [true, { available }] },
     },
   });
   const feats = [];

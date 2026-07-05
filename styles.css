@@ -8,6 +8,28 @@
 :focus-visible { outline: 2px solid var(--bs-color-accent); outline-offset: 2px; border-radius: 2px; }
 .seeking :focus-visible { outline-color: var(--bs-color-on-accent); }
 
+/* Link-type indicators, derived from the href itself — not appended per callsite in
+   JS/template code (previously 3 inconsistent, hand-maintained occurrences of the
+   outbound arrow, and prose links in post bodies never got one at all). A link's own
+   href is the single source of truth for what kind of link it is, so the indicator
+   can't drift out of sync with where it actually points. Opt out with .no-link-icon
+   (e.g. a link that already carries its own directional arrow, like the seeking CTA). */
+a[href^="http"]:not(.no-link-icon)::after {
+  content: "\2197"; /* ↗ */
+  margin-left: 0.2em;
+  font-size: 0.85em;
+}
+a[href^="#"]:not(.no-link-icon)::after {
+  content: "\00a7"; /* § — jumps within this page, never leaves it */
+  margin-left: 0.2em;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+a[href^="mailto:"]:not(.no-link-icon)::before {
+  content: "\2709\00a0"; /* ✉ + a following space */
+  font-size: 0.9em;
+}
+
 .eyebrow { color: var(--bs-color-ink-mono); margin: 0 0 20px; }
 
 /* intro */
@@ -206,14 +228,15 @@
 .ck-area__count { font-size: 11px; color: var(--bs-color-ink-mono); letter-spacing: 0; text-transform: none; }
 .ck-area__summary { font-size: 13px; color: var(--bs-color-ink-mono); margin: 0 0 10px; }
 .ck-criteria { list-style: none; margin: 0; padding: 0; }
-.ck-criterion { display: grid; grid-template-columns: 116px 1fr; gap: 4px 14px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--bs-color-line); }
-.ck-criterion:last-child { border-bottom: 0; }
+.ck-criterion { display: grid; grid-template-columns: 116px 1fr; gap: 6px 14px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--bs-color-line); }
+.ck-criterion:first-child { padding-top: 0; }
+.ck-criterion:last-child { border-bottom: 0; padding-bottom: 0; }
 .ck-criterion__status { grid-row: span 3; align-self: start; justify-self: start; font-family: var(--bs-font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--bs-color-line); color: var(--bs-color-ink-mono); white-space: nowrap; }
 .ck-status--met { color: var(--bs-color-accent); border-color: var(--bs-color-accent-soft); background: var(--bs-color-accent-tint); }
 .ck-status--unmet { color: var(--bs-color-status-negative); border-color: var(--bs-color-status-negative); background: var(--bs-color-status-negative-tint); }
 .ck-status--not-assessed { color: var(--bs-color-ink-mono); border-color: var(--bs-color-line); background: var(--bs-color-card-alt); }
 .ck-criterion__label { font-size: 15px; color: var(--bs-color-ink); font-weight: 600; }
 .ck-criterion__standard { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
-.ck-criterion__detail { font-size: 13px; color: var(--bs-color-ink-soft); line-height: 1.5; max-width: 60ch; }
+.ck-criterion__detail { font-size: 13.5px; color: var(--bs-color-ink-soft); line-height: 1.65; max-width: 60ch; margin-bottom: 2px; }
 .ck-criterion__evidence { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-soft); }
 .ck-criterion__evidence:hover { border-color: var(--bs-color-accent); }

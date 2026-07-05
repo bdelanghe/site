@@ -32,6 +32,8 @@ jobs:
           java-version: "21"
       - name: Install deps (axe-core + jsdom for a11y; vnu-jar for HTML validation)
         run: npm ci --no-audit --no-fund
+      - name: Vendored conformance-kit hash-pin is intact (this workflow calls build.mjs directly, bypassing npm's prebuild hook)
+        run: npm run check:integrity
       - name: Checkout brand's source (token-a11y.json fixture only — not published to npm)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:

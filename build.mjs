@@ -204,7 +204,7 @@ for (const p of allPosts) if ((p.meta.target ?? "dev") !== "dev") console.log(`�
 const linksHtml = profile.links
   .map((l) => l.href.startsWith("mailto:")
     ? mailLink({})
-    : `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
+    : `<a href="${esc(l.href)}">${esc(l.label)}</a>`)
   .join("\n        ");
 
 const proofHtml = proof.length
@@ -213,15 +213,13 @@ const proofHtml = proof.length
 
 // Colophon — "built with": the upstream tools that produce + validate this site,
 // each a real build input or gate (see /provenance for the full signed chain), linked
-// upstream. Lives at the foot of the page: discovered after the work, not before it.
-const colophonHtml = profile.colophon?.length
-  ? `<section class="colophon">
-      <h2 class="bs-text-label eyebrow">${copy("colophon.eyebrow")}</h2>
-      <ul class="colophon__list">
+// upstream. Its own page now (/colophon) rather than a homepage section — every page's
+// shared footer (siteFooter, below) links to it, so it's reachable everywhere, not just
+// discovered after scrolling the homepage.
+const colophonListHtml = profile.colophon?.length
+  ? `<ul class="colophon__list">
         ${profile.colophon.map((c) => `<li><a href="${esc(c.href)}"><span class="colophon__name">${esc(c.name)}</span>${c.role ? `<span class="colophon__role">${esc(c.role)}</span>` : ""}</a></li>`).join("\n        ")}
-      </ul>
-      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
-    </section>`
+      </ul>`
   : "";
 
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
@@ -340,8 +338,8 @@ const seekingHtml = s
       <p class="seeking__focus">${esc(s.focus)}</p>
       ${s.detail ? `<p class="seeking__detail">${esc(s.detail)}</p>` : ""}
       ${s.href ? (s.href.startsWith("mailto:")
-        ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta" })
-        : `<a class="seeking__cta" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
+        ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta no-link-icon" })
+        : `<a class="seeking__cta no-link-icon" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
     </div>`
   : "";
 
@@ -355,6 +353,19 @@ for (const h of highlights) {
   if (highlightCopy[h.name]) h.description = highlightCopy[h.name];
 }
 const date = new Date(site.generatedAt).toISOString().slice(0, 10);
+
+// Sitewide footer — was hand-duplicated per page (four slightly different copies,
+// and missing entirely from blog.html/resume.html). One function now; `extra` is the
+// one real per-page variance (blog posts add RSS/all-writing links before the meta).
+// The compact "Hermetic Nix build · keyless-signed…" pointer used to live ONLY in the
+// homepage's inline colophon section — now every page carries it, plus a link to the
+// credits list's own page (moved off the homepage to /colophon).
+const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
+      <span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>
+      ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
+      <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
+      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a> &middot; <a href="/colophon">${copy("colophon.link")}</a></p>
+    </footer>`;
 
 // in-toto materials: the build inputs, content-addressed where computable
 // (pure — file hashes + the brand version, no git/network).
@@ -485,13 +496,7 @@ const html = `<!doctype html>
       ${workGroups}
     </section>
 
-    ${colophonHtml}
-
-    <footer class="foot">
-      <span>Robert DeLanghe &middot; Bounded Systems</span>
-      ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
-      <span class="foot__meta">github.com/bdelanghe &middot; ${copy("footer.generated")} ${date}${commitHtml}</span>
-    </footer>
+    ${siteFooter({ extra: "github.com/bdelanghe &middot; " })}
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -642,6 +647,7 @@ ${jsonLd}
   <h2>${copy("resume.section.experience")}</h2>${rExp}
   ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
   <h2>${copy("resume.section.education")}</h2>${rEdu}
+  ${siteFooter()}
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -682,7 +688,7 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
         </li>
       </ol>
     </section>
-    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">${copy("footer.generated")} ${date}${commitHtml}</span></footer>
+    ${siteFooter()}
   </main>
   ${FRESHNESS_SCRIPT}
 </body>
@@ -759,12 +765,13 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
       <nav class="links">
         <a href="/">&larr;&nbsp;${copy("nav.home")}</a>
         <a href="/feed.xml">${copy("blog.nav.rss")}</a>
-        <a href="https://github.com/bounded-systems">${copy("nav.github")}&nbsp;&#8599;</a>
+        <a href="https://github.com/bounded-systems">${copy("nav.github")}</a>
       </nav>
     </header>
     <div class="posts">
       ${blogIndex}
     </div>
+    ${siteFooter()}
   </main>
 </body>
 </html>
@@ -821,7 +828,7 @@ ${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "a
       </div>
       ${(p.meta.syndication && p.meta.syndication.length) ? `<p class="post__synd">${copy("post.synd")} ${p.meta.syndication.map((u) => `<a class="u-syndication" href="${esc(u)}">${esc(new URL(u).hostname.replace(/^www\./, ""))}</a>`).join(" &middot; ")}</p>` : ""}
     </article>
-    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta"><a href="/feed.xml">${copy("post.foot.rss")}</a> &middot; <a href="/blog">${copy("post.foot.all")}</a>${commitHtml}</span></footer>
+    ${siteFooter({ extra: `<a href="/feed.xml">${copy("post.foot.rss")}</a> &middot; <a href="/blog">${copy("post.foot.all")}</a> &middot; ` })}
   </main>
 </body>
 </html>
@@ -988,7 +995,8 @@ ${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.t
 - [${copy("head.resume.label")}](${SITE}/resume.md)
 - [${copy("nav.writing")}](${SITE}/blog.md)
 - [${copy("conf.title")}](${SITE}/conformance.md)
-- [${copy("prov.title")}](${SITE}/provenance.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
+- [${copy("prov.title")}](${SITE}/provenance.md)
+- [${copy("colophon.title")}](${SITE}/colophon.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
 `;
 await writeFile(join(dist, "llms.txt"), llms);
 
@@ -1048,19 +1056,68 @@ const confReport = buildConformanceReport({ loneFindings: confLoneFindings, evid
 await mkdir(join(dist, "api", "v1"), { recursive: true });
 await writeFile(join(dist, "api", "v1", "conformance.json"), JSON.stringify(confReport, null, 2) + "\n");
 
-// Per-criterion evidence links (consumer-injected). Each must resolve at gate time:
-// the served artifacts below are either emitted by this build or declared deploy
-// sidecars (SEO_DEPLOY_SIDECARS / STRUCTURE_AUDIT_SIDECARS); everything else points at
-// /provenance, the signed chain that explains the gate behind the criterion.
+// Per-criterion evidence links (consumer-injected). Each must resolve at gate time.
+// Preference order: (1) a real artifact THIS build emits/serves — most direct, no
+// indirection; (2) for a criterion with no servable artifact, the actual CI workflow
+// that runs its gate — a public, re-runnable log of the check happening, not just an
+// assertion about it; (3) only criteria with no better evidence at all fall through to
+// /provenance, the signed chain that explains the gate. Previously EVERY criterion not
+// in a 6-entry map fell through to /provenance regardless of whether better evidence
+// existed — a criterion reporting "met" should link to what makes it true, not a
+// general narrative page.
+const REPO = "https://github.com/bdelanghe/site";
+const BRAND_REPO = "https://github.com/bdelanghe/brand";
 const CONF_EVIDENCE_LINKS = {
+  // lone-derived: /api/v1/conformance.json embeds this exact criterion's real
+  // `findings` array (verified above — empty array, not a placeholder, when clean).
+  "html.dom-author-requirements": "/api/v1/conformance.json",
+  "a11y.aria-author": "/api/v1/conformance.json",
+  "a11y.wcag22-aa-auto": "/api/v1/conformance.json",
+  "cognitive.complexity-budget": "/api/v1/conformance.json",
+
+  // Real served artifacts this build emits.
   "semantic.ai-readability": "/llms.txt",
   "semantic.feeds": "/feed.xml",
+  "seo.technical": "/sitemap.xml",
   "integrity.sbom": "/sbom.spdx.json",
   "integrity.slsa-provenance": "/attestation.intoto.json",
   "integrity.signed-release-manifest": "/site.sha256",
   "integrity.ipfs-cid": "/provenance.json",
+  "integrity.reproducible-build": `${REPO}/blob/main/flake.lock`,
+
+  // Design tokens: the declared contract + results, at the source (a separate repo).
+  "design.palette-contrast": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.typography": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.target-size": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.opacity-contrast": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+  "design.token-likeness": `${BRAND_REPO}/blob/main/tokens/token-a11y.json`,
+
+  // Real CI gates with no servable data artifact — link the actual workflow run.
+  "html.validator-clean": `${REPO}/actions/workflows/conformance.yml`,
+  "compatibility.baseline": `${REPO}/actions/workflows/conformance.yml`,
+  "a11y.axe-serious-critical": `${REPO}/actions/workflows/axe.yml`,
+  "a11y.agent-heuristic-review": `${REPO}/actions/workflows/a11y-heuristic.yml`,
+  "cognitive.focus-budget": `${REPO}/actions/workflows/a11y-heuristic.yml`,
+  "security.no-critical-vulns": `${REPO}/actions/workflows/brand-checks.yml`,
+  "semantic.jsonld-shacl": `${REPO}/actions/workflows/shacl.yml`,
+  "semantic.commonmark": `${REPO}/actions/workflows/seo.yml`,
 };
 const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id] ?? "/provenance";
+// Derives the evidence link's visible text FROM the href itself (not a hand-maintained
+// parallel map that could drift out of sync with CONF_EVIDENCE_LINKS above) — a GitHub
+// Actions workflow link reads as the workflow file, a source-file link as
+// "owner/repo: path", everything else as its own path/filename. The outbound-link
+// arrow is NOT appended here — that's CSS's job (styles.css: a[href^="http"]::after),
+// automatic and keyed off the href, so it can't fall out of sync with what's actually
+// external vs. same-origin.
+const evidenceLabelFor = (href) => {
+  if (href.includes("/actions/workflows/")) return `workflow: ${href.split("/").pop()}`;
+  if (href.includes("/blob/")) {
+    const [owner, repo, , , ...path] = href.replace("https://github.com/", "").split("/");
+    return `${owner}/${repo}: ${path.join("/")}`;
+  }
+  return href.startsWith("/") ? href.slice(1) : href;
+};
 const conformanceHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -1072,10 +1129,10 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
       <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
       <h1>${copy("conf.title")}</h1>
       <p class="lead">${copy("conf.lede")}</p>
-      <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}&nbsp;&#8599;</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
+      <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
     </header>
-    ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref })}
-    <footer class="foot"><span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}<span class="foot__meta">${copy("footer.generated")} ${date}${commitHtml}</span></footer>
+    ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref, evidenceLabel: (c, href) => evidenceLabelFor(href) })}
+    ${siteFooter()}
   </main>
 </body>
 </html>
@@ -1102,6 +1159,39 @@ ${confAreas.map((area) => `## ${area}\n${confReport.results.filter((r) => r.area
 `;
 await writeFile(join(dist, "conformance.md"), conformanceMd);
 
+// ---- /colophon — "built with": the credits list moved off the homepage -----------
+// Was a homepage-only section; every page's shared footer now links here instead of
+// requiring a scroll to the bottom of "/" to find it.
+const colophonHtml = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `${copy("colophon.title")} — ${name}`, description: copy("head.colophon.desc"), path: "/colophon", mdAlt: "/colophon.md" })}
+</head>
+<body>
+  <main class="wrap">
+    <header class="intro">
+      <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
+      <h1>${copy("colophon.title")}</h1>
+      <p class="lead">${copy("colophon.lede")}</p>
+    </header>
+    <section class="colophon">
+      ${colophonListHtml}
+    </section>
+    ${siteFooter()}
+  </main>
+</body>
+</html>
+`;
+await writeHtml("colophon.html", colophonHtml);
+
+const colophonMd = `# ${copy("colophon.title")} — ${name}
+
+> ${copy("colophon.lede")}
+
+${profile.colophon.map((c) => `- ${mdLink(c.name, c.href)}${c.role ? ` — ${c.role}` : ""}`).join("\n")}
+`;
+await writeFile(join(dist, "colophon.md"), colophonMd);
+
 // Response headers (Cloudflare _headers). HTML routes have no ETag on html_handling
 // routes, so without a positive max-age they re-fetch on every load — give them a
 // short cache + stale-while-revalidate window. Fingerprinted CSS is immutable (the
@@ -1110,7 +1200,7 @@ await writeFile(join(dist, "conformance.md"), conformanceMd);
 // asset matches two Cache-Control rules — Cloudflare _headers MERGES overlapping
 // rules, which would emit a malformed double Cache-Control. Plus UTF-8 on text
 // assets (Cloudflare otherwise sends text/plain with no charset → Latin-1 mojibake).
-const htmlRoutes = ["/", "/resume", "/blog", "/provenance", "/conformance", ...posts.map(postUrl)];
+const htmlRoutes = ["/", "/resume", "/blog", "/provenance", "/conformance", "/colophon", ...posts.map(postUrl)];
 // RFC 9530 Repr-Digest per canonical doc, computed over the exact bytes written above
 // (self-contained — not the later site.sha256). Scoped to the canonical documents, not
 // fingerprinted assets. /provenance is intentionally OMITTED: gen-attestation.mjs stamps
@@ -1143,7 +1233,7 @@ await writeFile(join(dist, "_headers"),
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  ["/", "/resume", "/blog", "/provenance", "/conformance", ...posts.map(postUrl)].map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
+  htmlRoutes.map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
   `\n</urlset>\n`);
 
 console.log(`✓ built dist/  — ${highlights.length} highlights, ${stats.languages.length} languages, +meta/llms.txt/sitemap`);

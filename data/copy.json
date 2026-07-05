@@ -22,6 +22,9 @@
   "colophon.more": "Hermetic Nix build · keyless-signed <a href=\"https://in-toto.io\" rel=\"noopener\">in-toto</a>/<a href=\"https://slsa.dev\" rel=\"noopener\">SLSA</a> provenance (<a href=\"https://sigstore.dev\" rel=\"noopener\">Sigstore</a> · <a href=\"https://docs.sigstore.dev/rekor/overview/\" rel=\"noopener\">Rekor</a> · <a href=\"https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry\" rel=\"noopener\">GHCR</a>) —",
   "colophon.provenance": "full provenance",
   "colophon.conformance": "conformance",
+  "colophon.link": "colophon",
+  "colophon.title": "Colophon",
+  "colophon.lede": "The upstream tools that produce and validate this site — each a real build input or gate, not a credit list. See /provenance for the full signed chain.",
 
   "footer.generated": "generated",
   "footer.provenance": "provenance",
@@ -62,6 +65,7 @@
   "head.resume.label": "Résumé",
   "head.provenance.desc": "How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence.",
   "head.conformance.desc": "A computed, honest conformance report for robertdelanghe.dev — lone's web-build model over this build's evidence; unsupplied criteria are reported as not-assessed, never overclaimed.",
+  "head.colophon.desc": "The upstream tools that build and validate robertdelanghe.dev — each a real build input or gate.",
   "head.blog.desc.lead": "Writing by",
   "head.blog.desc.tail": "on capability security for agentic systems.",
 

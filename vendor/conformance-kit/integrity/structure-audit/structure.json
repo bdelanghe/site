@@ -18,7 +18,11 @@
       "/",
       "/blog/agent-authored-code-drift",
       "/blog/resume-pipeline-google-docs-incident",
-      "/feed.xml"
+      "/colophon",
+      "/conformance",
+      "/feed.xml",
+      "/provenance",
+      "/provenance"
     ]
   },
   "blog/agent-authored-code-drift.html": {
@@ -29,7 +33,10 @@
     "internalLinks": [
       "/blog",
       "/blog",
+      "/colophon",
+      "/conformance",
       "/feed.xml",
+      "/provenance",
       "/provenance"
     ]
   },
@@ -41,7 +48,23 @@
     "internalLinks": [
       "/blog",
       "/blog",
+      "/colophon",
+      "/conformance",
       "/feed.xml",
+      "/provenance",
+      "/provenance"
+    ]
+  },
+  "colophon.html": {
+    "h1": "Colophon",
+    "outline": "1",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/colophon",
+      "/conformance",
+      "/provenance",
       "/provenance"
     ]
   },
@@ -53,7 +76,13 @@
     "internalLinks": [
       "/",
       "/api/v1/conformance.json",
+      "/api/v1/conformance.json",
+      "/api/v1/conformance.json",
+      "/api/v1/conformance.json",
+      "/api/v1/conformance.json",
       "/attestation.intoto.json",
+      "/colophon",
+      "/conformance",
       "/feed.xml",
       "/llms.txt",
       "/provenance",
@@ -71,35 +100,19 @@
       "/provenance",
       "/provenance",
       "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
       "/provenance.json",
       "/sbom.spdx.json",
-      "/site.sha256"
+      "/site.sha256",
+      "/sitemap.xml"
     ]
   },
   "index.html": {
     "h1": "AI agents ship code. I write the contracts that keep them in check.",
-    "outline": "122232",
+    "outline": "12223",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
+      "/colophon",
       "/conformance",
       "/provenance",
       "/provenance",
@@ -114,7 +127,10 @@
     "internalLinks": [
       "/",
       "/attestation.intoto.json",
+      "/colophon",
       "/conformance",
+      "/conformance",
+      "/provenance",
       "/provenance",
       "/provenance.json",
       "/rekor",
@@ -127,6 +143,10 @@
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
+      "/colophon",
+      "/conformance",
+      "/provenance",
+      "/provenance",
       "/resume.pdf"
     ]
   }
