@@ -1,11 +1,18 @@
 name: synoptic
-# Prose validation via the shared synoptic engine (checks live there, not here) —
-# the SAME engine bounded.tools consumes, so neither site's layout drives it.
+# Layered validation via the shared engine — the SAME engine bounded.tools uses.
+# PRs: validate (report). Push to main: attest each check, cosign-sign it keyless
+# (OIDC → Fulcio → Rekor), then verify the bundles against this workflow's own
+# identity. Signed + verified per-check results, feeding /conformance + /provenance.
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
+  id-token: write # OIDC — cosign keyless
+env:
+  SIGNER_IDENTITY: https://github.com/bdelanghe/site/.github/workflows/synoptic.yml@refs/heads/main
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -18,4 +25,23 @@ jobs:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with: { node-version: "22" }
       - run: node .synoptic/generators/gen-prose-corpus.mjs
-      - run: CK_GATES="$PWD/.conformance-kit/gates" node .synoptic/validate.mjs
+      - name: validate (+ attest on main)
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            CK_GATES="$PWD/.conformance-kit/gates" node .synoptic/validate.mjs --attest attestations
+          else
+            CK_GATES="$PWD/.conformance-kit/gates" node .synoptic/validate.mjs
+          fi
+      - name: install cosign
+        if: github.event_name == 'push'
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.7.0
+      - name: sign each check attestation (keyless, OIDC)
+        if: github.event_name == 'push'
+        run: for f in attestations/*.intoto.json; do cosign sign-blob --yes --bundle "$f.sigstore.json" "$f"; done
+      - name: verify the checks (round-trip vs this workflow's identity)
+        if: github.event_name == 'push'
+        run: node .synoptic/verify.mjs attestations --identity "$SIGNER_IDENTITY"
+      - name: upload signed + verified check attestations
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with: { name: check-attestations, path: attestations/ }
