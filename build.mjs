@@ -6,7 +6,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { validateSchema } from "./vendor/conformance-kit/lib/schema-validate.mjs";
-import { reprDigest, securityTxt, securityTxtExpires, webManifest, markdownSiblingHeaders } from "./vendor/conformance-kit/emitters/index.mjs";
+import { reprDigest, securityTxt, securityTxtExpires, webManifest } from "./vendor/conformance-kit/emitters/index.mjs";
 import { buildConformanceReport, renderConformanceReport } from "./vendor/conformance-kit/gates/conformance-report.mjs";
 import { evaluateAiReadability } from "./vendor/conformance-kit/gates/ai-readability-gate.mjs";
 import { loadPosts } from "./posts.mjs";
@@ -936,6 +936,11 @@ ${highlights.map((h) => `- ${mdLink(h.name, h.url)}: ${h.description}`).join("\n
 ${profile.links.map((l) => l.href.startsWith("mailto:") ? `- ${emailObf}` : `- ${mdLink(l.label, l.href)}`).join("\n")}
 `;
 await writeFile(join(dist, "index.md"), indexMd);
+// Also at the bare "/.md" — every other page's twin is its clean path + ".md"
+// (/resume -> /resume.md); the homepage's clean path is "/", so the same pattern is
+// "/.md". /index.md stays too (the one already advertised via <head> and llms.txt) —
+// this is an addition, not a rename.
+await writeFile(join(dist, ".md"), indexMd);
 
 const rLinksMd = social.map((sp) => mdLink(sp.network, sp.url)).join(" · ");
 const rContactMd = [rLocation, rLinksMd, emailObf].filter(Boolean).join(" · ");
@@ -1237,6 +1242,14 @@ const reprByRoute = {
   "/feed.json": reprDigest(jsonFeedStr),
 };
 const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` : "");
+// Explicit Markdown routes, not the kit's default `/*.md` wildcard: a wildcard
+// Content-Type rule matches by PATH PATTERN, not by whether a file actually exists —
+// requesting a nonexistent/mistyped .md path (e.g. the bare "/.md" someone might try,
+// following the same "path + .md" convention every other page uses) falls through to
+// the 404 page, but Cloudflare still applies the wildcard's "Content-Type:
+// text/markdown" to that response, mislabeling real HTML content. An explicit route
+// list only ever matches the .md siblings that are genuinely written below.
+const mdRoutes = ["/.md", "/index.md", "/resume.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", ...posts.map((p) => `${postUrl(p)}.md`)];
 await writeFile(join(dist, "_headers"),
   htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600${reprLine(r)}`).join("\n") +
   `\n/feed.xml\n  Repr-Digest: ${reprByRoute["/feed.xml"]}\n` +
@@ -1246,10 +1259,8 @@ await writeFile(join(dist, "_headers"),
   `/brand/tokens/*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
   `/*.txt\n  Content-Type: text/plain; charset=utf-8\n` +
   `/*.pub\n  Content-Type: text/plain; charset=utf-8\n` +
-  // Markdown siblings + the web app manifest Content-Type rules (kit emitter). /*.md
-  // greedily matches /blog/<slug>.md too; neither overlaps an existing Content-Type
-  // rule, so no double-header merge.
-  markdownSiblingHeaders());
+  mdRoutes.map((r) => `${r}\n  Content-Type: text/markdown; charset=utf-8`).join("\n") + "\n" +
+  `/site.webmanifest\n  Content-Type: application/manifest+json; charset=utf-8\n`);
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
