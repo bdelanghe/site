@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with: { repository: bounded-systems/synoptic, ref: v0.6.2, path: .synoptic, persist-credentials: false }
+        with: { repository: bounded-systems/synoptic, ref: v0.8.0, path: .synoptic, persist-credentials: false }
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with: { node-version: "22" }
       - run: npm ci
@@ -26,6 +26,8 @@ jobs:
         run: node .synoptic/build-site.mjs --graph data/graph.json --out dist
       - name: publish /json.ld
         run: cp data/graph.json dist/json.ld
+      - name: secret-scan the projection (public — must be clean)
+        run: node .synoptic/secret-scan.mjs dist --allow email
       - name: summary — the chain
         run: |
           echo "graph: $(node -e 'console.log(require("./data/graph.json")["@graph"].length)') nodes · parse attestations: $(node -e 'console.log(require("./data/graph.provenance.json").length)')"
