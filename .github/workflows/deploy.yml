@@ -43,6 +43,25 @@ jobs:
       - name: Stage dist
         run: cp -rL result dist && chmod -R u+w dist
 
+      # Path B — the graph pipeline into the SIGNED dist. Runs after the hermetic
+      # build, before the whole-site manifest is signed, so the generated /json.ld,
+      # queried pages, and claims SBOM are covered by the same Sigstore signature.
+      # Secret-scanned before it can be signed or shipped.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with: { repository: bounded-systems/synoptic, ref: v0.8.0, path: .synoptic, persist-credentials: false }
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with: { node-version: "22" }
+      - name: Path B — graph -> queried pages + claims SBOM into dist (scanned)
+        run: |
+          node .synoptic/generators/gen-lattice.mjs || echo "lattice refresh skipped (no lattice or no token)"
+          node .synoptic/graph.mjs --out data/graph.json
+          mkdir -p dist/graph
+          node .synoptic/sbom.mjs --graph data/graph.json --out dist/graph/claims.sbom.spdx.json
+          node .synoptic/build-site.mjs --graph data/graph.json --out dist/graph
+          cp data/graph.json dist/graph/json.ld
+          cp data/graph.json dist/json.ld
+          node .synoptic/secret-scan.mjs dist/graph --allow email
+
       # SPDX 2.3 SBOM over the whole supply chain (npm + Nix + brand), then the
       # in-toto/SLSA statement over the hermetic subjects — both keyless-signed
       # (cosign sign-blob → Fulcio cert from the Actions OIDC identity → Rekor). No
