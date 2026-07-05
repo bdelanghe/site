@@ -374,14 +374,17 @@ const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 // Sitewide footer — was hand-duplicated per page (four slightly different copies,
 // and missing entirely from blog.html/resume.html). One function now; `extra` is the
 // one real per-page variance (blog posts add RSS/all-writing links before the meta).
-// The compact "Hermetic Nix build · keyless-signed…" pointer used to live ONLY in the
-// homepage's inline colophon section — now every page carries it, plus a link to the
-// credits list's own page (moved off the homepage to /colophon).
+// Kept to two links deliberately (full provenance · conformance) — colophon and a
+// "View as Markdown" link were both tried here and pulled back out: cognitive density
+// creep. The Markdown twin's correspondence is already verified (md-parity-gate) and
+// already discoverable (<head rel="alternate"> + llms.txt) without a footer link
+// repeating it, and /colophon is reachable from /provenance's own "Built with" prose
+// instead of a permanent global slot.
 const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
       <span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>
       ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
       <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
-      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a> &middot; <a href="/colophon">${copy("colophon.link")}</a></p>
+      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
     </footer>`;
 
 // in-toto materials: the build inputs, content-addressed where computable
@@ -628,6 +631,11 @@ ${jsonLd}
   * { box-sizing: border-box; }
   body { font-family: var(--bs-font-display); color: var(--bs-color-ink); max-width: 760px; margin: 28px auto; padding: 0 24px; font-size: 13px; line-height: 1.5; }
   a { color: var(--bs-color-accent); text-decoration: none; }
+  /* The footer's colophon__more paragraph is prose with links embedded IN the text
+     (not a standalone heading/label link like .r-job__org's company names) — axe's
+     link-in-text-block rule correctly flags those as color-only-distinguishable
+     without some other visual cue. Matches styles.css's own border-bottom pattern. */
+  .colophon__more a, .foot__social a { border-bottom: 1px solid var(--bs-color-line); }
   h1 { font-size: 26px; letter-spacing: -0.02em; margin: 0; }
   .r-title { font-size: 14px; color: var(--bs-color-accent); font-weight: 600; margin: 4px 0 6px; }
   .r-contact { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-soft); margin: 0 0 14px; }
@@ -693,7 +701,7 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></div></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (<a href="https://json-ld.org" rel="noopener">JSON-LD</a> 1.1) is validated against <a href="https://www.w3.org/TR/shacl/" rel="noopener"><code>SHACL</code></a> shapes; an <strong><a href="https://spdx.dev" rel="noopener">SPDX</a> <a href="https://www.cisa.gov/sbom" rel="noopener">SBOM</a></strong> is generated and completeness-checked; and <code>@bdelanghe/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed <a href="https://in-toto.io" rel="noopener">in-toto</a>/<a href="https://slsa.dev" rel="noopener">SLSA</a> attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener">WCAG</a>&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</span></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above. See the <a href="/colophon">${copy("colophon.title").toLowerCase()}</a> for what built and validated it.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
             <p class="prov-seal__title">${copy("prov.seal.title")}</p>
@@ -736,7 +744,7 @@ Contracts gate content before a byte renders: the canonical résumé \`data/prof
 Gates run on every build, each error-severity finding blocking it: \`lone\` blesses each rendered DOM (semantic HTML + a11y); \`copy-review\` flags overclaims; \`linkedin-check\` verifies résumé claims; \`string-audit\` runs copy hygiene; JSON-LD is SHACL-validated; an SPDX SBOM is generated + completeness-checked; brand tokens are drift-checked. Every result folds into one honest [conformance projection](${SITE}/conformance) — lone's \`conformance()\` model, which emits the strong WCAG 2.2 AA / OWASP ASVS claim only when every required criterion is met; manual and unsupplied criteria stay not-assessed.
 
 ### ${mdFromHtml(copy("prov.step.builder"))}
-Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bdelanghe/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs.
+Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bdelanghe/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs. See the [colophon](${SITE}/colophon.md) for what built and validated it.
 
 ## ${copy("prov.seal.title")}
 commit @@COMMIT@@ · @@DATE@@ · [bdelanghe/site](https://github.com/bdelanghe/site)
