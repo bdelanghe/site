@@ -9,7 +9,7 @@
   },
   "hero.summary": {
     "type": "body",
-    "value": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. Open-sourced the approach as prx: agent changes land as merged PRs through one signed flow, each git write checked against the capability that holds it."
+    "value": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx. Agent changes land as merged PRs through one signed flow. Each git write is checked against the capability that holds it."
   },
   "banner.tagline": {
     "type": "tagline",
@@ -25,27 +25,27 @@
   },
   "seeking.detail": {
     "type": "body",
-    "value": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy in production. Brooklyn · NYC · remote."
+    "value": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy. Brooklyn · NYC · remote."
   },
   "exp.aura.what": {
-    "type": "body",
-    "value": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems. I ship the integration and automation backbone, and built the contract-and-validation layer behind inventory-purchasing."
+    "type": "claim",
+    "value": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems, running on a Ruby backend across fulfillment, accounting, and third-party integrations. I ship the automation backbone on AWS (ECS, RDS, S3, CloudFront) and built the contract-and-validation layer behind inventory-purchasing."
   },
   "exp.aura.b0": {
     "type": "claim",
-    "value": "Wrote the orchestration CLI that replaced Aura's 9-tab spreadsheet supply plan with one source of truth, compiling into dozens of downstream schema contracts checked by hundreds of test scenarios."
+    "value": "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to dozens of downstream schema contracts, each checked by hundreds of test scenarios."
   },
   "exp.aura.b1": {
     "type": "body",
-    "value": "Investigated unreviewed agent-authored commits reaching main: reconstructed each one's entry path across five log domains, authored the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
+    "value": "Investigated unreviewed agent-authored commits reaching main. Reconstructed each one's path across five log domains and wrote the post-mortem. Designed the controls that became Aura's policy for shipping AI-written code."
   },
   "exp.l2l.what": {
     "type": "claim",
-    "value": "Owned the quality gates and developer experience for a 20-engineer team, spanning static-analysis CI, a design system, and frontend performance."
+    "value": "Owned the quality gates and developer experience for a 20-engineer team on a Python/Django backend, deployed single-tenant per customer (EC2/ECS, RDS, S3, Lambda). Drove static-analysis CI, a design system, and frontend performance."
   },
   "exp.l2l.b0": {
     "type": "claim",
-    "value": "Shipped static-analysis gating into the PR pipeline, blocking whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
+    "value": "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
   },
   "exp.pioneer-works.what": {
     "type": "body",
@@ -61,7 +61,7 @@
   },
   "exp.kaleida.b0": {
     "type": "body",
-    "value": "Eliminated edition-numbering errors with a database that issued serial edition IDs on request, making a duplicate impossible by construction."
+    "value": "Eliminated edition-numbering errors. A database issued serial edition IDs on request, making duplicates impossible by construction."
   },
   "exp.scope-of-work.what": {
     "type": "body",
@@ -73,19 +73,19 @@
   },
   "exp.recurse-center.what": {
     "type": "body",
-    "value": "Type theory in Haskell, using the type system to make invalid states unrepresentable. The intellectual root of the capability work: push correctness into the boundary so violations can't compile."
+    "value": "Type theory in Haskell, using the type system to make invalid states unrepresentable. It's the root of the capability work: push correctness to the boundary, and violations can't compile."
   },
   "exp.recurse-center.b0": {
     "type": "claim",
-    "value": "Completed a selective 12-week programming retreat researching Haskell type theory and how a well-constrained type narrows the space of possible implementations."
+    "value": "Completed a selective 12-week programming retreat. Researched how a tight type constraint narrows the space of valid implementations."
   },
   "proj.prx.desc": {
     "type": "body",
-    "value": "Agent-run pipeline that drives each work unit to a merged PR through one signed, content-addressed flow, with git-writes verified against the capability owner that holds them. Evolved from hooksmith; moved to Zod/TypeScript when the load-bearing contracts proved to be between systems, not machine and kernel."
+    "value": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Evolved from hooksmith, a Rust predecessor that still anchors Bounded Systems' lower-level, machine-facing contracts. Moved to TypeScript once the key contracts proved to be between systems, not machine and kernel."
   },
   "proj.ocap-provenance.desc": {
     "type": "body",
-    "value": "SLSA/in-toto provenance extended with object-capability semantics: each attestation records not just who produced an artifact but which capabilities the producer held and which were denied."
+    "value": "Provenance extended with object-capability semantics. Each attestation records who produced an artifact and which capabilities they held — and which were denied."
   },
   "work.prx": {
     "type": "body",
@@ -110,5 +110,241 @@
   "work.string-audit": {
     "type": "body",
     "value": "Cost-aware, grounded content auditor — typed string symbols, type-scoped audits, CAS-memoized LLM calls."
+  },
+  "copy.proof.prefix": {
+    "type": "body",
+    "value": "Proof —"
+  },
+  "copy.background.eyebrow": {
+    "type": "body",
+    "value": "Background"
+  },
+  "copy.background.education": {
+    "type": "body",
+    "value": "Education"
+  },
+  "copy.corpus.eyebrow": {
+    "type": "body",
+    "value": "The corpus"
+  },
+  "copy.corpus.fig.repositories": {
+    "type": "body",
+    "value": "repositories"
+  },
+  "copy.corpus.fig.public": {
+    "type": "body",
+    "value": "public"
+  },
+  "copy.corpus.fig.sources": {
+    "type": "body",
+    "value": "sources"
+  },
+  "copy.corpus.fig.languages": {
+    "type": "body",
+    "value": "languages"
+  },
+  "copy.corpus.source.computed": {
+    "type": "body",
+    "value": "Computed from"
+  },
+  "copy.corpus.source.starred": {
+    "type": "body",
+    "value": "starred work"
+  },
+  "copy.corpus.source.topics": {
+    "type": "body",
+    "value": "topics kept honest by"
+  },
+  "copy.work.eyebrow": {
+    "type": "body",
+    "value": "Selected work — by tag"
+  },
+  "copy.work.pinned": {
+    "type": "body",
+    "value": "pinned"
+  },
+  "copy.colophon.eyebrow": {
+    "type": "body",
+    "value": "Built with"
+  },
+  "copy.colophon.more": {
+    "type": "body",
+    "value": "Hermetic Nix build · keyless-signed in-toto/SLSA provenance (Sigstore · Rekor · GHCR) —"
+  },
+  "copy.colophon.provenance": {
+    "type": "body",
+    "value": "full provenance"
+  },
+  "copy.colophon.conformance": {
+    "type": "body",
+    "value": "conformance"
+  },
+  "copy.colophon.link": {
+    "type": "body",
+    "value": "colophon"
+  },
+  "copy.colophon.title": {
+    "type": "body",
+    "value": "Colophon"
+  },
+  "copy.colophon.lede": {
+    "type": "body",
+    "value": "The upstream tools that produce and validate this site — each a real build input or gate, not a credit list. See /provenance for the full signed chain."
+  },
+  "copy.footer.generated": {
+    "type": "body",
+    "value": "generated"
+  },
+  "copy.footer.provenance": {
+    "type": "body",
+    "value": "provenance"
+  },
+  "copy.resume.download": {
+    "type": "body",
+    "value": "Download PDF"
+  },
+  "copy.resume.comment": {
+    "type": "body",
+    "value": "Comment on Google Docs"
+  },
+  "copy.resume.section.skills": {
+    "type": "body",
+    "value": "Skills"
+  },
+  "copy.resume.section.experience": {
+    "type": "body",
+    "value": "Experience"
+  },
+  "copy.resume.section.projects": {
+    "type": "body",
+    "value": "Projects"
+  },
+  "copy.resume.section.education": {
+    "type": "body",
+    "value": "Education"
+  },
+  "copy.nav.home": {
+    "type": "body",
+    "value": "Home"
+  },
+  "copy.nav.writing": {
+    "type": "body",
+    "value": "Writing"
+  },
+  "copy.nav.github": {
+    "type": "body",
+    "value": "GitHub"
+  },
+  "copy.blog.lede": {
+    "type": "body",
+    "value": "On capability security for agentic systems — the thesis, graded against the running code."
+  },
+  "copy.blog.empty": {
+    "type": "body",
+    "value": "Notes are landing soon."
+  },
+  "copy.blog.nav.rss": {
+    "type": "body",
+    "value": "RSS feed"
+  },
+  "copy.post.synd": {
+    "type": "body",
+    "value": "Also on:"
+  },
+  "copy.post.foot.rss": {
+    "type": "body",
+    "value": "RSS"
+  },
+  "copy.post.foot.all": {
+    "type": "body",
+    "value": "all writing"
+  },
+  "copy.prov.title": {
+    "type": "body",
+    "value": "Provenance"
+  },
+  "copy.prov.lede": {
+    "type": "body",
+    "value": "This site is built deterministically from versioned sources and validated at every boundary — the same discipline the work itself argues for. Here's what produced and checked this artifact."
+  },
+  "copy.prov.chain.eyebrow": {
+    "type": "body",
+    "value": "Provenance chain"
+  },
+  "copy.prov.chain.lede": {
+    "type": "body",
+    "value": "The build reads as an in-toto / SLSA-style provenance: declared materials, a checked build process, and a signed subject. Each link is verified; the last is the artifact itself."
+  },
+  "copy.prov.step.materials": {
+    "type": "body",
+    "value": "Materials"
+  },
+  "copy.prov.step.contracts": {
+    "type": "body",
+    "value": "Process · contracts"
+  },
+  "copy.prov.step.gates": {
+    "type": "body",
+    "value": "Process · gates"
+  },
+  "copy.prov.step.builder": {
+    "type": "body",
+    "value": "Builder"
+  },
+  "copy.prov.seal.title": {
+    "type": "body",
+    "value": "Subject — signed"
+  },
+  "copy.conf.title": {
+    "type": "body",
+    "value": "Conformance"
+  },
+  "copy.conf.lede": {
+    "type": "body",
+    "value": "A live, computed conformance report — not a badge. The build folds its own evidence (the gates that ran, the artifacts it signs) through lone's web-build conformance model. The strong claim is withheld unless every required criterion is met; anything not yet assessed says so, plainly."
+  },
+  "copy.conf.machine": {
+    "type": "body",
+    "value": "Machine-readable report"
+  },
+  "copy.conf.provenance": {
+    "type": "body",
+    "value": "How it's built"
+  },
+  "copy.head.resume.label": {
+    "type": "body",
+    "value": "Résumé"
+  },
+  "copy.head.provenance.desc": {
+    "type": "body",
+    "value": "How robertdelanghe.dev is built and validated — contracts, gates, and claim-to-evidence."
+  },
+  "copy.head.conformance.desc": {
+    "type": "body",
+    "value": "A computed, honest conformance report for robertdelanghe.dev — lone's web-build model over this build's evidence; unsupplied criteria are reported as not-assessed, never overclaimed."
+  },
+  "copy.head.colophon.desc": {
+    "type": "body",
+    "value": "The upstream tools that build and validate robertdelanghe.dev — each a real build input or gate."
+  },
+  "copy.head.blog.desc.lead": {
+    "type": "body",
+    "value": "Writing by"
+  },
+  "copy.head.blog.desc.tail": {
+    "type": "body",
+    "value": "on capability security for agentic systems."
+  },
+  "copy.llms.links": {
+    "type": "body",
+    "value": "Links"
+  },
+  "copy.llms.work": {
+    "type": "body",
+    "value": "Selected work"
+  },
+  "copy.llms.md": {
+    "type": "body",
+    "value": "Markdown"
   }
 }
