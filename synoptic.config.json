@@ -5,7 +5,23 @@
     "markdown": {
       "proseCorpus": "prose-corpus.json",
       "docCorpus": "doc-corpus.json",
-      "source": { "docsDir": "posts", "pages": [] }
+      "source": {
+        "docsDir": "posts",
+        "pages": []
+      }
     }
+  },
+  "graph": {
+    "id": "https://robertdelanghe.dev/#person",
+    "plugins": [
+      "resume",
+      "palette"
+    ],
+    "bridge": [
+      {
+        "predicate": "affiliation",
+        "id": "https://bounded.tools/#org"
+      }
+    ]
   }
 }
