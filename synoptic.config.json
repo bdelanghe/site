@@ -1,0 +1,11 @@
+{
+  "site": "robertdelanghe.dev",
+  "_note": "Consumes the shared synoptic engine. Markdown = composed posts. Grounding lives in data/audit/grounding.json; the token-grounding layer waits on a flat claim-token source (follow-up).",
+  "layers": {
+    "markdown": {
+      "proseCorpus": "prose-corpus.json",
+      "docCorpus": "doc-corpus.json",
+      "source": { "docsDir": "posts", "pages": [] }
+    }
+  }
+}
