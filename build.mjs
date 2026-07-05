@@ -204,7 +204,7 @@ for (const p of allPosts) if ((p.meta.target ?? "dev") !== "dev") console.log(`�
 const linksHtml = profile.links
   .map((l) => l.href.startsWith("mailto:")
     ? mailLink({})
-    : `<a href="${esc(l.href)}">${esc(l.label)}${l.href.startsWith("http") ? "&nbsp;&#8599;" : ""}</a>`)
+    : `<a href="${esc(l.href)}">${esc(l.label)}</a>`)
   .join("\n        ");
 
 const proofHtml = proof.length
@@ -338,8 +338,8 @@ const seekingHtml = s
       <p class="seeking__focus">${esc(s.focus)}</p>
       ${s.detail ? `<p class="seeking__detail">${esc(s.detail)}</p>` : ""}
       ${s.href ? (s.href.startsWith("mailto:")
-        ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta" })
-        : `<a class="seeking__cta" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
+        ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta no-link-icon" })
+        : `<a class="seeking__cta no-link-icon" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
     </div>`
   : "";
 
@@ -765,7 +765,7 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
       <nav class="links">
         <a href="/">&larr;&nbsp;${copy("nav.home")}</a>
         <a href="/feed.xml">${copy("blog.nav.rss")}</a>
-        <a href="https://github.com/bounded-systems">${copy("nav.github")}&nbsp;&#8599;</a>
+        <a href="https://github.com/bounded-systems">${copy("nav.github")}</a>
       </nav>
     </header>
     <div class="posts">
@@ -1103,6 +1103,21 @@ const CONF_EVIDENCE_LINKS = {
   "semantic.commonmark": `${REPO}/actions/workflows/seo.yml`,
 };
 const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id] ?? "/provenance";
+// Derives the evidence link's visible text FROM the href itself (not a hand-maintained
+// parallel map that could drift out of sync with CONF_EVIDENCE_LINKS above) — a GitHub
+// Actions workflow link reads as the workflow file, a source-file link as
+// "owner/repo: path", everything else as its own path/filename. The outbound-link
+// arrow is NOT appended here — that's CSS's job (styles.css: a[href^="http"]::after),
+// automatic and keyed off the href, so it can't fall out of sync with what's actually
+// external vs. same-origin.
+const evidenceLabelFor = (href) => {
+  if (href.includes("/actions/workflows/")) return `workflow: ${href.split("/").pop()}`;
+  if (href.includes("/blob/")) {
+    const [owner, repo, , , ...path] = href.replace("https://github.com/", "").split("/");
+    return `${owner}/${repo}: ${path.join("/")}`;
+  }
+  return href.startsWith("/") ? href.slice(1) : href;
+};
 const conformanceHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -1114,9 +1129,9 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
       <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
       <h1>${copy("conf.title")}</h1>
       <p class="lead">${copy("conf.lede")}</p>
-      <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}&nbsp;&#8599;</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
+      <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
     </header>
-    ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref })}
+    ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref, evidenceLabel: (c, href) => evidenceLabelFor(href) })}
     ${siteFooter()}
   </main>
 </body>
