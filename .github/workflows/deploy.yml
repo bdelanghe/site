@@ -48,19 +48,18 @@ jobs:
       # queried pages, and claims SBOM are covered by the same Sigstore signature.
       # Secret-scanned before it can be signed or shipped.
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with: { repository: bounded-systems/synoptic, ref: v0.8.0, path: .synoptic, persist-credentials: false }
+        with: { repository: bounded-systems/synoptic, ref: v0.9.3, path: .synoptic, persist-credentials: false }
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with: { node-version: "22" }
-      - name: Path B — graph -> queried pages + claims SBOM into dist (scanned)
+      - name: Path B — graph -> the real /who page + /json.ld + SBOM (scanned + PROVEN)
         run: |
-          node .synoptic/generators/gen-lattice.mjs || echo "lattice refresh skipped (no lattice or no token)"
           node .synoptic/graph.mjs --out data/graph.json
-          mkdir -p dist/graph
-          node .synoptic/sbom.mjs --graph data/graph.json --out dist/graph/claims.sbom.spdx.json
-          node .synoptic/build-site.mjs --graph data/graph.json --out dist/graph
-          cp data/graph.json dist/graph/json.ld
+          node .synoptic/build-site.mjs --graph data/graph.json --out dist
+          node .synoptic/sbom.mjs --graph data/graph.json --out dist/claims.sbom.spdx.json --namespace https://robertdelanghe.dev
           cp data/graph.json dist/json.ld
-          node .synoptic/secret-scan.mjs dist/graph --allow email
+          node .synoptic/secret-scan.mjs dist/who --allow email
+          node .synoptic/secret-scan.mjs dist/cas --allow email
+          node .synoptic/verify-artifact.mjs dist
 
       # SPDX 2.3 SBOM over the whole supply chain (npm + Nix + brand), then the
       # in-toto/SLSA statement over the hermetic subjects — both keyless-signed

@@ -23,5 +23,36 @@
         "id": "https://bounded.tools/#org"
       }
     ]
+  },
+  "build": {
+    "theme": {
+      "text": "--color-ink",
+      "surface": "--color-paper",
+      "accent": "--color-forest",
+      "border": "--color-line",
+      "font": "--font-display",
+      "mono": "--font-mono"
+    },
+    "pages": [
+      {
+        "id": "who",
+        "route": "who",
+        "title": "Robert Delanghe",
+        "sections": [
+          {
+            "title": "Profile",
+            "query": {
+              "type": "Person"
+            }
+          },
+          {
+            "title": "Work",
+            "query": {
+              "type": "Organization"
+            }
+          }
+        ]
+      }
+    ]
   }
 }
