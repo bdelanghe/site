@@ -15,18 +15,22 @@
    can't drift out of sync with where it actually points. Opt out with .no-link-icon
    (e.g. a link that already carries its own directional arrow, like the seeking CTA). */
 a[href^="http"]:not(.no-link-icon)::after {
-  content: "\2197"; /* ↗ */
+  /* Same arrow as the seeking CTA's literal "&rarr;" (U+2192) — not U+2197, which
+     iOS/Safari renders as a full-color emoji glyph, not a plain text arrow. U+FE0E
+     (text-presentation selector) belt-and-suspenders forces text rendering even for
+     codepoints a platform might otherwise emoji-ify. */
+  content: "\2192\FE0E";
   margin-left: 0.2em;
   font-size: 0.85em;
 }
 a[href^="#"]:not(.no-link-icon)::after {
-  content: "\00a7"; /* § — jumps within this page, never leaves it */
+  content: "\00a7\FE0E"; /* § — jumps within this page, never leaves it */
   margin-left: 0.2em;
   font-size: 0.85em;
   opacity: 0.7;
 }
 a[href^="mailto:"]:not(.no-link-icon)::before {
-  content: "\2709\00a0"; /* ✉ + a following space */
+  content: "\2709\FE0E\00a0"; /* envelope + a following space */
   font-size: 0.9em;
 }
 
