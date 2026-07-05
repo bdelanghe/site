@@ -24,6 +24,23 @@ const brand = (await exists(join(root, "brand", "tokens", "tokens.css")))
   : join(root, "node_modules", "@bdelanghe", "brand");
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// A handful of data/copy.json atoms carry inline emphasis markup or an HTML entity
+// (see that file's own "_source" note) — fine for the HTML templates that emit them
+// as-is, but a Markdown twin needs Markdown, not leaked "<strong>"/"&middot;" — a
+// reader (human or the AI-readability llms.txt audience these twins exist for) would
+// see the raw tag/entity as literal text. Converts the specific, small vocabulary
+// these atoms actually use (a/strong/em + entities) to Markdown equivalents rather
+// than stripping — an <a> becomes a real [text](href) link, not lost context.
+const MD_ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", middot: "·", rarr: "→", larr: "←", darr: "↓", uarr: "↑", eacute: "é", mdash: "—", ndash: "–" };
+const mdFromHtml = (s) => String(s)
+  .replace(/<a\s+href="([^"]+)"[^>]*>(.*?)<\/a>/g, "[$2]($1)")
+  .replace(/<strong>(.*?)<\/strong>/g, "**$1**")
+  .replace(/<em>(.*?)<\/em>/g, "_$1_")
+  .replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, (m, e) => {
+    if (e[0] === "#") { const n = e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10); return Number.isFinite(n) ? String.fromCodePoint(n) : m; }
+    return MD_ENTITIES[e] ?? m;
+  });
+
 // Boundary guard: a template that reads a field the data doesn't have interpolates
 // the literal string "undefined" into the page (e.g. a work-shaped mapper run over an
 // education record). Fail the build instead of shipping it. Matches only complete
@@ -705,20 +722,20 @@ const provMd = `# ${copy("prov.title")}
 
 ## ${copy("prov.chain.eyebrow")}
 
-${copy("prov.chain.lede")}
+${mdFromHtml(copy("prov.chain.lede"))}
 
-### ${copy("prov.step.materials")}
+### ${mdFromHtml(copy("prov.step.materials"))}
 ${materials.map((m) => `- \`${m.name}\` — ${m.id}`).join("\n")}
 
 ${stats.repos} repos · ${stats.public} public · ${stats.sources} sources · ${stats.languages.length} languages — corpus figures computed over the corpus, not asserted.
 
-### ${copy("prov.step.contracts")}
+### ${mdFromHtml(copy("prov.step.contracts"))}
 Contracts gate content before a byte renders: the canonical résumé \`data/profile.json\` against the JSON Resume schema, the render-context \`data/presentation.json\`, and every post's frontmatter against \`contract/posts.schema.json\` — a non-conforming change can't build. Facts transclude from canonical tokens; an unknown token fails the build, so no claim is unsourced.
 
-### ${copy("prov.step.gates")}
+### ${mdFromHtml(copy("prov.step.gates"))}
 Gates run on every build, each error-severity finding blocking it: \`lone\` blesses each rendered DOM (semantic HTML + a11y); \`copy-review\` flags overclaims; \`linkedin-check\` verifies résumé claims; \`string-audit\` runs copy hygiene; JSON-LD is SHACL-validated; an SPDX SBOM is generated + completeness-checked; brand tokens are drift-checked. Every result folds into one honest [conformance projection](${SITE}/conformance) — lone's \`conformance()\` model, which emits the strong WCAG 2.2 AA / OWASP ASVS claim only when every required criterion is met; manual and unsupplied criteria stay not-assessed.
 
-### ${copy("prov.step.builder")}
+### ${mdFromHtml(copy("prov.step.builder"))}
 Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bdelanghe/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs.
 
 ## ${copy("prov.seal.title")}
@@ -788,7 +805,7 @@ ${posts.length
   : copy("blog.empty")}
 
 ---
-[← ${copy("nav.home")}](${SITE}/index.md) · [${copy("blog.nav.rss")}](${SITE}/feed.xml)
+[← ${copy("nav.home")}](${SITE}/index.md) · [${mdFromHtml(copy("blog.nav.rss"))}](${SITE}/feed.xml)
 `;
 await writeFile(join(dist, "blog.md"), blogMd);
 
@@ -1154,8 +1171,11 @@ const conformanceMd = `# ${copy("conf.title")} — ${name}
 
 Machine-readable: [/api/v1/conformance.json](${SITE}/api/v1/conformance.json) · signed chain: [/provenance](${SITE}/provenance.md)
 
-${confAreas.map((area) => `## ${area}\n${confReport.results.filter((r) => r.area === area).map((r) =>
-  `- **${r.label}** (\`${r.id}\`) — ${confMark(r.status)}${r.required ? "" : " _(recommended)_"}${r.detail ? `: ${r.detail}` : ""}`).join("\n")}`).join("\n\n")}
+${confAreas.map((area) => `## ${area}\n${confReport.results.filter((r) => r.area === area).map((r) => {
+  const href = confEvidenceHref(r);
+  const evidence = href ? ` — [${evidenceLabelFor(href)}](${href.startsWith("/") ? SITE + href : href})` : "";
+  return `- **${r.label}** (\`${r.id}\`) — ${confMark(r.status)}${r.required ? "" : " _(recommended)_"}${r.detail ? `: ${r.detail}` : ""}${evidence}`;
+}).join("\n")}`).join("\n\n")}
 `;
 await writeFile(join(dist, "conformance.md"), conformanceMd);
 
