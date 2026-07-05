@@ -8,3 +8,6 @@ result
 result-*
 .DS_Store
 copy-review.md
+
+prose-corpus.json
+doc-corpus.json

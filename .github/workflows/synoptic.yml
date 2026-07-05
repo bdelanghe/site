@@ -1,0 +1,21 @@
+name: synoptic
+# Prose validation via the shared synoptic engine (checks live there, not here) —
+# the SAME engine bounded.tools consumes, so neither site's layout drives it.
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with: { repository: bounded-systems/synoptic, path: .synoptic, persist-credentials: false }
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with: { repository: bounded-systems/conformance-kit, ref: v0.12.0, path: .conformance-kit, persist-credentials: false }
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with: { node-version: "22" }
+      - run: node .synoptic/generators/gen-prose-corpus.mjs
+      - run: CK_GATES="$PWD/.conformance-kit/gates" node .synoptic/validate.mjs
