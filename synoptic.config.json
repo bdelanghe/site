@@ -43,7 +43,8 @@
             "title": "Profile",
             "query": {
               "type": "Person"
-            }
+            },
+            "render": "hero"
           },
           {
             "title": "Work",
