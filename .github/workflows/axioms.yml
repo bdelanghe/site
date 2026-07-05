@@ -1,0 +1,35 @@
+name: axioms
+# Human-authorized axiom signing — the accountability floor. Triggers ONLY when the
+# axiom set changes (path filter = sign-on-change; an unchanged axiom keeps its
+# still-valid signature, no temporal drift). Requires approval through the `axioms`
+# Environment: a HUMAN vouches for the starting truth before it is signed. Mirrors
+# the deployment gate — authority for a truth is drawn at the door, by a person.
+on:
+  push:
+    branches: [main]
+    paths: ["data/audit/grounding.json"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write # OIDC — cosign keyless
+jobs:
+  authorize-and-sign:
+    # Create an `axioms` Environment with yourself as a required reviewer (same as
+    # the deploy Environment). This job WAITS for your approval before it runs.
+    environment: axioms
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with: { repository: bounded-systems/synoptic, path: .synoptic, persist-credentials: false }
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with: { node-version: "22" }
+      - name: axiom budget + digest (minimization goal)
+        run: node .synoptic/axioms.mjs data/audit/grounding.json --max 20
+      - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.7.0
+      - name: sign the axiom set — human-authorized via the gate
+        run: cosign sign-blob --yes --bundle grounding.sigstore.json data/audit/grounding.json
+      - name: record who authorized (the accountability floor)
+        run: echo "axiom set signed after human approval of the 'axioms' environment (approver logged by GitHub)."
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with: { name: axiom-signature, path: grounding.sigstore.json }
