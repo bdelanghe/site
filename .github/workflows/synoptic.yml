@@ -1,7 +1,5 @@
 name: synoptic
 # The whole site CI lives in synoptic (site-ci.yml). This repo just calls it + config.
-# Signing is off (sign defaults false in v0.5.0) — routine checks re-prove themselves;
-# only axioms get a human signature at the gate.
 on:
   pull_request:
   push:
@@ -11,6 +9,6 @@ permissions:
   contents: read
 jobs:
   site:
-    uses: bounded-systems/synoptic/.github/workflows/site-ci.yml@v0.5.0
+    uses: bounded-systems/synoptic/.github/workflows/site-ci.yml@v0.5.1
     permissions:
       contents: read
