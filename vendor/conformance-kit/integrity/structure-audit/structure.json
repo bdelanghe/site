@@ -16,6 +16,7 @@
     "readerOk": null,
     "internalLinks": [
       "/",
+      "/blog.md",
       "/blog/agent-authored-code-drift",
       "/blog/resume-pipeline-google-docs-incident",
       "/colophon",
@@ -33,6 +34,7 @@
     "internalLinks": [
       "/blog",
       "/blog",
+      "/blog/agent-authored-code-drift.md",
       "/colophon",
       "/conformance",
       "/feed.xml",
@@ -48,6 +50,7 @@
     "internalLinks": [
       "/blog",
       "/blog",
+      "/blog/resume-pipeline-google-docs-incident.md",
       "/colophon",
       "/conformance",
       "/feed.xml",
@@ -63,6 +66,7 @@
     "internalLinks": [
       "/",
       "/colophon",
+      "/colophon.md",
       "/conformance",
       "/provenance",
       "/provenance"
@@ -83,6 +87,7 @@
       "/attestation.intoto.json",
       "/colophon",
       "/conformance",
+      "/conformance.md",
       "/feed.xml",
       "/llms.txt",
       "/provenance",
@@ -114,6 +119,7 @@
     "internalLinks": [
       "/colophon",
       "/conformance",
+      "/index.md",
       "/provenance",
       "/provenance",
       "/resume"
@@ -133,6 +139,7 @@
       "/provenance",
       "/provenance",
       "/provenance.json",
+      "/provenance.md",
       "/rekor",
       "/site.sha256"
     ]
@@ -147,6 +154,7 @@
       "/conformance",
       "/provenance",
       "/provenance",
+      "/resume.md",
       "/resume.pdf"
     ]
   }

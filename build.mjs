@@ -377,11 +377,16 @@ const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 // The compact "Hermetic Nix build · keyless-signed…" pointer used to live ONLY in the
 // homepage's inline colophon section — now every page carries it, plus a link to the
 // credits list's own page (moved off the homepage to /colophon).
-const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
+// `mdPath` is THIS page's own Markdown twin (each call site passes its own — there's
+// no single sitewide value) — extends the /conformance page's existing "Machine-
+// readable report" link precedent to every page, rather than a bespoke JS toggle
+// (a plain link matches the site's near-zero-JS approach; a real in-place swap would
+// need to own state — scroll position, back/forward — that navigation gets for free).
+const siteFooter = ({ extra = "", mdPath } = {}) => `<footer class="foot">
       <span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>
       ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
       <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
-      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a> &middot; <a href="/colophon">${copy("colophon.link")}</a></p>
+      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a> &middot; <a href="/colophon">${copy("colophon.link")}</a>${mdPath ? ` &middot; <a href="${mdPath}">${copy("footer.md-view")}</a>` : ""}</p>
     </footer>`;
 
 // in-toto materials: the build inputs, content-addressed where computable
@@ -513,7 +518,7 @@ const html = `<!doctype html>
       ${workGroups}
     </section>
 
-    ${siteFooter({ extra: "github.com/bdelanghe &middot; " })}
+    ${siteFooter({ extra: "github.com/bdelanghe &middot; ", mdPath: "/index.md" })}
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -664,7 +669,7 @@ ${jsonLd}
   <h2>${copy("resume.section.experience")}</h2>${rExp}
   ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
   <h2>${copy("resume.section.education")}</h2>${rEdu}
-  ${siteFooter()}
+  ${siteFooter({ mdPath: "/resume.md" })}
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -705,7 +710,7 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
         </li>
       </ol>
     </section>
-    ${siteFooter()}
+    ${siteFooter({ mdPath: "/provenance.md" })}
   </main>
   ${FRESHNESS_SCRIPT}
 </body>
@@ -788,7 +793,7 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
     <div class="posts">
       ${blogIndex}
     </div>
-    ${siteFooter()}
+    ${siteFooter({ mdPath: "/blog.md" })}
   </main>
 </body>
 </html>
@@ -845,7 +850,7 @@ ${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "a
       </div>
       ${(p.meta.syndication && p.meta.syndication.length) ? `<p class="post__synd">${copy("post.synd")} ${p.meta.syndication.map((u) => `<a class="u-syndication" href="${esc(u)}">${esc(new URL(u).hostname.replace(/^www\./, ""))}</a>`).join(" &middot; ")}</p>` : ""}
     </article>
-    ${siteFooter({ extra: `<a href="/feed.xml">${copy("post.foot.rss")}</a> &middot; <a href="/blog">${copy("post.foot.all")}</a> &middot; ` })}
+    ${siteFooter({ extra: `<a href="/feed.xml">${copy("post.foot.rss")}</a> &middot; <a href="/blog">${copy("post.foot.all")}</a> &middot; `, mdPath: `${postUrl(p)}.md` })}
   </main>
 </body>
 </html>
@@ -1149,7 +1154,7 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
       <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
     </header>
     ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref, evidenceLabel: (c, href) => evidenceLabelFor(href) })}
-    ${siteFooter()}
+    ${siteFooter({ mdPath: "/conformance.md" })}
   </main>
 </body>
 </html>
@@ -1197,7 +1202,7 @@ ${head({ title: `${copy("colophon.title")} — ${name}`, description: copy("head
     <section class="colophon">
       ${colophonListHtml}
     </section>
-    ${siteFooter()}
+    ${siteFooter({ mdPath: "/colophon.md" })}
   </main>
 </body>
 </html>
