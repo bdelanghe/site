@@ -55,9 +55,9 @@
       "url": "https://pioneerworks.org",
       "startDate": "2018-11",
       "endDate": "2021-02",
-      "summary": "Delivered the event-planning platform for a major Brooklyn arts center.",
+      "summary": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, integrating Square POS over webhooks.",
       "highlights": [
-        "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
+        "Labeled event-state transitions by the department that emitted each POS event, not a human-set flag, across the venue's large concerts."
       ]
     },
     {
@@ -67,7 +67,7 @@
       "url": "https://kaleida.studio",
       "startDate": "2019-06",
       "endDate": "2020-03",
-      "summary": "Automated just-in-time production for an AR and print-making studio.",
+      "summary": "Built the just-in-time production automation for an AR and print-making studio on Postgres, with heavy third-party API integration.",
       "highlights": [
         "Eliminated edition-numbering errors. A database issued serial edition IDs on request, making duplicates impossible by construction."
       ]
@@ -79,7 +79,7 @@
       "url": "https://scopeofwork.net",
       "startDate": "2018-10",
       "endDate": "2019-02",
-      "summary": "Engineered the contact-management system for the manufacturing publication.",
+      "summary": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs.",
       "highlights": [
         "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
       ]
@@ -120,7 +120,7 @@
     {
       "name": "ocap-provenance",
       "startDate": "2026-06",
-      "description": "Provenance extended with object-capability semantics. Each attestation records who produced an artifact and which capabilities they held — and which were denied.",
+      "description": "Provenance extended with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied.",
       "url": "https://github.com/bounded-systems/ocap-provenance",
       "keywords": ["Supply-chain security", "in-toto", "SLSA", "TypeScript"],
       "roles": ["Creator"],

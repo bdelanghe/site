@@ -49,15 +49,15 @@
   },
   "exp.pioneer-works.what": {
     "type": "body",
-    "value": "Delivered the event-planning platform for a major Brooklyn arts center."
+    "value": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, integrating Square POS over webhooks."
   },
   "exp.pioneer-works.b0": {
     "type": "body",
-    "value": "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
+    "value": "Labeled event-state transitions by the department that emitted each POS event, not a human-set flag, across the venue's large concerts."
   },
   "exp.kaleida.what": {
     "type": "body",
-    "value": "Automated just-in-time production for an AR and print-making studio."
+    "value": "Built the just-in-time production automation for an AR and print-making studio on Postgres, with heavy third-party API integration."
   },
   "exp.kaleida.b0": {
     "type": "body",
@@ -65,7 +65,7 @@
   },
   "exp.scope-of-work.what": {
     "type": "body",
-    "value": "Engineered the contact-management system for the manufacturing publication."
+    "value": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs."
   },
   "exp.scope-of-work.b0": {
     "type": "body",
@@ -85,7 +85,7 @@
   },
   "proj.ocap-provenance.desc": {
     "type": "body",
-    "value": "Provenance extended with object-capability semantics. Each attestation records who produced an artifact and which capabilities they held — and which were denied."
+    "value": "Provenance extended with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied."
   },
   "work.prx": {
     "type": "body",

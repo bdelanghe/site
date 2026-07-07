@@ -559,7 +559,8 @@ const rExp = work.map((w) => `
       <div class="r-job">
         <div class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span><span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></div>
         <div class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</div>
-        <ul>${(w.highlights ?? (w.summary ? [w.summary] : [])).map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
+        ${w.summary ? `<p class="r-job__summary">${esc(w.summary)}</p>` : ""}
+        ${w.highlights?.length ? `<ul>${w.highlights.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
       </div>`).join("");
 // Projects bind into one system: render a single block per entity (the umbrella) instead
 // of repeating "Creator · Bounded Systems" on every repo. Each repo is a dated bullet.
@@ -607,7 +608,10 @@ const resumeDoc = {
   // URL, i.e. prime scrape bait. The address still reaches humans on the rendered page
   // (obfuscated + JS-assembled). email is optional in JSON Resume, so this stays valid.
   basics: (({ email: _drop, ...rest }) => rest)(canonical.basics ?? {}),
-  meta: { ...(canonical.meta ?? {}), lastModified: new Date(site.generatedAt).toISOString() },
+  // Drop the internal worklog pointer — it references the private evidence base
+  // (bdelanghe/worklog) and must never reach the public /resume.json. Kept in the
+  // canonical doc for authoring; stripped here at the publish boundary.
+  meta: (({ _worklog: _wl, ...m }) => ({ ...m, lastModified: new Date(site.generatedAt).toISOString() }))(canonical.meta ?? {}),
 };
 const jsonResumeSchema = await loadJson(join(root, "contract", "jsonresume.schema.json"));
 const jrErrors = validateSchema(jsonResumeSchema, resumeDoc);
@@ -640,6 +644,7 @@ ${jsonLd}
   .r-job__org { font-weight: 600; font-size: 14px; }
   .r-job__when { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); white-space: nowrap; }
   .r-job__role { font-size: 12px; color: var(--bs-color-accent); margin-bottom: 4px; }
+  .r-job__summary { margin: 0 0 4px; }
   .r-job ul { margin: 4px 0 0; padding-left: 16px; }
   .r-job li { margin: 0 0 3px; }
   .r-edu { font-size: 12px; color: var(--bs-color-ink-soft); }
@@ -664,7 +669,6 @@ ${jsonLd}
   <h2>${copy("resume.section.experience")}</h2>${rExp}
   ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
   <h2>${copy("resume.section.education")}</h2>${rEdu}
-  ${siteFooter()}
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -948,7 +952,7 @@ ${rContactMd}
 ${summary}
 ${skills.length ? `\n## ${copy("resume.section.skills")}\n${skills.map((g) => g.keywords?.length ? `- **${g.name}**: ${g.keywords.join(", ")}` : `- ${g.name}`).join("\n")}\n` : ""}
 ## ${copy("resume.section.experience")}
-${work.map((w) => `### ${w.name}${w.position ? ` — ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.location ? `\n${w.location}` : ""}${(w.highlights ?? (w.summary ? [w.summary] : [])).map((b) => `\n- ${b}`).join("")}`).join("\n\n")}
+${work.map((w) => `### ${w.name}${w.position ? ` — ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.location ? `\n${w.location}` : ""}${w.summary ? `\n\n${w.summary}` : ""}${(w.highlights?.length ? w.highlights : []).map((b) => `\n- ${b}`).join("")}`).join("\n\n")}
 ${projects.length ? `\n## ${copy("resume.section.projects")}\n${projByEntity.map(({ entity, items }) => {
   const roles = [...new Set(items.flatMap((p) => p.roles ?? []))].join(" · ");
   const starts = items.map((p) => p.startDate).filter(Boolean).sort();
