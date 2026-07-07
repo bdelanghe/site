@@ -22,12 +22,17 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
 
-      # GH_CORPUS_TOKEN (a PAT that can read your private repos) gives full counts;
-      # without it, the default token sees public repos only.
+      # GH_CORPUS_TOKEN (fine-grained PAT, resource owner bdelanghe, ≤366 days)
+      # gives full private counts for the user's repos. GH_ORG_TOKEN (fine-grained
+      # PAT, resource owner bounded-systems, ≤366 days — the org rejects longer
+      # lifetimes) adds the org's private repos. Both optional: fetch.mjs degrades
+      # to public-only listings instead of failing, and hard-allowlists owners so
+      # employer repos can never enter the corpus.
       - name: Re-ingest corpus → data/site.json
         run: nix develop --command node fetch.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GH_CORPUS_TOKEN || github.token }}
+          GH_ORG_TOKEN: ${{ secrets.GH_ORG_TOKEN }}
 
       - name: Commit if changed
         run: |

@@ -9,6 +9,12 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 if (!TOKEN) { console.error("✗ set GITHUB_TOKEN"); process.exit(1); }
+// A fine-grained PAT is scoped to ONE resource owner, so the user PAT that
+// reads bdelanghe's private repos cannot see bounded-systems' private repos.
+// GH_ORG_TOKEN (optional, resource owner = the org) covers the org listing so
+// org-private work counts in the whole-corpus stats; without it the org
+// listing uses the main token and sees public org repos only.
+const ORG_TOKEN = process.env.GH_ORG_TOKEN || TOKEN;
 
 const OWNER = "bdelanghe";
 const ORGS = ["bounded-systems"];
@@ -27,11 +33,11 @@ const MAX_HIGHLIGHTS = 12;
 // tags surfaced filler and missed gems. "Real" is the floor; "interesting and
 // on-thesis" is the bar. Breadth still lives in the corpus stats.
 
-async function ghAll(path, { auth = true } = {}) {
+async function ghAll(path, { auth = true, token = TOKEN } = {}) {
   const out = [];
   for (let page = 1; ; page++) {
     const res = await fetch(`https://api.github.com${path}${path.includes("?") ? "&" : "?"}per_page=100&page=${page}`, {
-      headers: { ...(auth ? { Authorization: `Bearer ${TOKEN}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "robertdelanghe.dev-fetch" },
+      headers: { ...(auth ? { Authorization: `Bearer ${token}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "robertdelanghe.dev-fetch" },
     });
     if (!res.ok) throw new Error(`${path} → ${res.status} ${await res.text()}`);
     const batch = await res.json();
@@ -56,7 +62,7 @@ const ownRepos = await ghAll("/user/repos?affiliation=owner").catch((e) => {
 // slice never needs auth, so retry unauthenticated instead of dying: private
 // org repos drop out, the refresh still lands.
 const orgRepos = (await Promise.all(ORGS.map((o) =>
-  ghAll(`/orgs/${o}/repos`).catch((e) => {
+  ghAll(`/orgs/${o}/repos`, { token: ORG_TOKEN }).catch((e) => {
     if (!/→ 403 /.test(e.message)) throw e;
     console.warn(`⚠ /orgs/${o}/repos → 403 (org token policy) — retrying unauthenticated (public repos only)`);
     return ghAll(`/orgs/${o}/repos`, { auth: false });
@@ -67,7 +73,12 @@ const raw = [
 ];
 // de-dupe by full_name
 const byName = new Map(raw.map((r) => [r.full_name, r]));
-const repos = [...byName.values()];
+// Hard owner allowlist: the corpus is OWNER + ORGS, nothing else. Employer or
+// third-party repos (e.g. pushd) must never enter the stats, whatever a broad
+// token happens to see — affiliation/org query params are trusted-by-default,
+// this line isn't.
+const ALLOWED = new Set([OWNER.toLowerCase(), ...ORGS.map((o) => o.toLowerCase())]);
+const repos = [...byName.values()].filter((r) => ALLOWED.has(r.full_name.split("/")[0].toLowerCase()));
 
 const sources = repos.filter((r) => !r.fork);
 const publicSources = sources.filter((r) => !r.private);
