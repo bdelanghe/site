@@ -68,7 +68,10 @@ const tally = (arr) =>
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
 
-const languages = tally(sources.map((r) => r.language || "other"));
+// Public sources only: the homepage "Public record" section renders these as
+// receipt-links to the live GitHub queries that reproduce them, so every count
+// must be independently verifiable — private repos can't be receipts.
+const languages = tally(publicSources.map((r) => r.language || "other"));
 const topics = tally(publicSources.flatMap(topicsOf));
 
 const stats = {
@@ -76,6 +79,7 @@ const stats = {
   public: repos.filter((r) => !r.private).length,
   private: repos.filter((r) => r.private).length,
   sources: sources.length,
+  publicSources: publicSources.length,
   forks: repos.filter((r) => r.fork).length,
   tagged: publicSources.filter((r) => topicsOf(r).length > 0).length,
   languages,

@@ -4,55 +4,111 @@
   "title": "robertdelanghe.dev site data contract",
   "description": "The single source of truth the site renders from. fetch.mjs produces it (network); build.mjs consumes it (pure). Drift from this shape fails the build.",
   "type": "object",
-  "required": ["generatedAt", "owner", "stats", "highlights"],
+  "required": [
+    "generatedAt",
+    "owner",
+    "stats",
+    "highlights"
+  ],
   "additionalProperties": false,
   "properties": {
-    "generatedAt": { "type": "string", "format": "date-time" },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
     "owner": {
       "type": "object",
-      "required": ["login", "name"],
+      "required": [
+        "login",
+        "name"
+      ],
       "additionalProperties": true,
       "properties": {
-        "login": { "type": "string" },
-        "name": { "type": "string" }
+        "login": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
       }
     },
     "stats": {
       "type": "object",
       "description": "Aggregate meta-analysis over the WHOLE corpus (public + private). No private names ever appear here.",
-      "required": ["repos", "public", "private", "sources", "forks", "languages", "tagged", "topics"],
+      "required": [
+        "repos",
+        "public",
+        "private",
+        "sources",
+        "forks",
+        "languages",
+        "tagged",
+        "topics"
+      ],
       "additionalProperties": false,
       "properties": {
-        "repos": { "type": "integer" },
-        "public": { "type": "integer" },
-        "private": { "type": "integer" },
-        "sources": { "type": "integer" },
-        "forks": { "type": "integer" },
-        "tagged": { "type": "integer", "description": "public source repos with >= 1 topic" },
+        "repos": {
+          "type": "integer"
+        },
+        "public": {
+          "type": "integer"
+        },
+        "private": {
+          "type": "integer"
+        },
+        "sources": {
+          "type": "integer"
+        },
+        "forks": {
+          "type": "integer"
+        },
+        "tagged": {
+          "type": "integer",
+          "description": "public source repos with >= 1 topic"
+        },
         "languages": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "count"],
+            "required": [
+              "name",
+              "count"
+            ],
             "additionalProperties": false,
             "properties": {
-              "name": { "type": "string" },
-              "count": { "type": "integer" }
+              "name": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              }
             }
-          }
+          },
+          "description": "primary-language tally over PUBLIC sources only — rendered as receipt-links, so each count must be reproducible by a public GitHub query"
         },
         "topics": {
           "type": "array",
           "description": "topic vocabulary in use across public repos, with counts",
           "items": {
             "type": "object",
-            "required": ["name", "count"],
+            "required": [
+              "name",
+              "count"
+            ],
             "additionalProperties": false,
             "properties": {
-              "name": { "type": "string" },
-              "count": { "type": "integer" }
+              "name": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              }
             }
           }
+        },
+        "publicSources": {
+          "type": "integer",
+          "description": "public, non-fork repos — the verifiable slice the homepage Public record section renders (optional until the first post-change refresh lands)"
         }
       }
     },
@@ -61,17 +117,45 @@
       "description": "Curated, PUBLIC, non-fork projects to show. Clean subset, not everything.",
       "items": {
         "type": "object",
-        "required": ["name", "fullName", "url", "description"],
+        "required": [
+          "name",
+          "fullName",
+          "url",
+          "description"
+        ],
         "additionalProperties": false,
         "properties": {
-          "name": { "type": "string" },
-          "fullName": { "type": "string" },
-          "url": { "type": "string", "format": "uri" },
-          "description": { "type": "string" },
-          "language": { "type": ["string", "null"] },
-          "stars": { "type": "integer" },
-          "pinned": { "type": "boolean" },
-          "topics": { "type": "array", "items": { "type": "string" } }
+          "name": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stars": {
+            "type": "integer"
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       }
     }

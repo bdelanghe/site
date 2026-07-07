@@ -129,19 +129,15 @@
   },
   "copy.corpus.eyebrow": {
     "type": "body",
-    "value": "The corpus"
-  },
-  "copy.corpus.fig.repositories": {
-    "type": "body",
-    "value": "repositories"
+    "value": "Public record"
   },
   "copy.corpus.fig.public": {
     "type": "body",
-    "value": "public"
+    "value": "public repositories"
   },
   "copy.corpus.fig.sources": {
     "type": "body",
-    "value": "sources"
+    "value": "public sources"
   },
   "copy.corpus.fig.languages": {
     "type": "body",

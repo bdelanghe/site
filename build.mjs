@@ -421,15 +421,24 @@ for (const f of ["tokens/tokens.json", "tokens/tokens.css", "content/strings.jso
 // Bars scale to the leading language (relative, not share-of-total) so the
 // shape reads as rank — the top bar fills the track, the rest are proportional
 // to it. (Share-of-total made every bar look stunted: 26/115 ≈ 22% full.)
+// Every Public-record figure is a receipt: it links to the live GitHub query
+// that reproduces the number — interactivity without runtime, and the same
+// receipts-first bar the résumé copy is held to. Scope mirrors fetch.mjs's
+// OWNER + ORGS. (GitHub repo search excludes forks unless fork:true, so the
+// bare query IS the public-sources receipt.)
+const ghQuery = (extra) => `https://github.com/search?q=${encodeURIComponent(`user:bdelanghe user:bounded-systems${extra ? ` ${extra}` : ""}`)}&type=repositories`;
+
 const shownLangs = stats.languages.slice(0, 6);
 const langMax = Math.max(...shownLangs.map((l) => l.count), 1);
 const langBars = shownLangs.map((l) =>
-  `<div class="bar"><span class="bar__k">${esc(l.name)}</span>` +
+  `<div class="bar">${l.name === "other"
+    ? `<span class="bar__k">${esc(l.name)}</span>`
+    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
   `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`).join("\n        ");
 
 const topicChips = stats.topics.length
-  ? stats.topics.slice(0, 16).map((t) => `<span class="chip">${esc(t.name)} <em>${t.count}</em></span>`).join("\n        ")
+  ? stats.topics.slice(0, 16).map((t) => `<a class="chip" href="${ghQuery(`topic:${t.name}`)}">${esc(t.name)} <em>${t.count}</em></a>`).join("\n        ")
   : `<span class="chip chip--muted">topics: ${stats.tagged}/${stats.public} tagged — self-labeling in progress</span>`;
 
 // Selected work, broken out by tag — thesis tags first, the rest after.
@@ -490,9 +499,8 @@ const html = `<!doctype html>
     <section class="corpus">
       <h2 class="bs-text-label eyebrow">${copy("corpus.eyebrow")}</h2>
       <div class="figures">
-        <div class="fig"><span class="fig__n">${stats.repos}</span><span class="fig__k">${copy("corpus.fig.repositories")}</span></div>
-        <div class="fig"><span class="fig__n">${stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></div>
-        <div class="fig"><span class="fig__n">${stats.sources}</span><span class="fig__k">${copy("corpus.fig.sources")}</span></div>
+        <a class="fig" href="${ghQuery("fork:true")}"><span class="fig__n">${stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
+        ${stats.publicSources != null ? `<a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources}</span><span class="fig__k">${copy("corpus.fig.sources")}</span></a>` : ""}
         <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
       </div>
       <div class="bars">

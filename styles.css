@@ -114,6 +114,15 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .chip em { color: var(--bs-color-ink-mono); font-style: normal; }
 .chip--muted { color: var(--bs-color-ink-mono); }
 
+/* Receipt-links — figures, bars, and chips link to the live GitHub query that
+   reproduces the number. Quiet at rest (the number is the content), accent on
+   hover/focus. */
+a.fig, a.bar__k, a.chip { text-decoration: none; }
+a.fig .fig__n { color: var(--bs-color-accent); }
+a.fig:hover .fig__k, a.fig:focus-visible .fig__k { color: var(--bs-color-accent); }
+a.bar__k:hover, a.bar__k:focus-visible { color: var(--bs-color-accent); }
+a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
+
 .corpus__src { font-family: var(--bs-font-mono); font-size: 11px; line-height: 1.7; color: var(--bs-color-ink-mono); margin: 18px 0 0; }
 .corpus__src a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); }
 .corpus__src a:hover { border-color: var(--bs-color-accent); }
