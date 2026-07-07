@@ -608,7 +608,10 @@ const resumeDoc = {
   // URL, i.e. prime scrape bait. The address still reaches humans on the rendered page
   // (obfuscated + JS-assembled). email is optional in JSON Resume, so this stays valid.
   basics: (({ email: _drop, ...rest }) => rest)(canonical.basics ?? {}),
-  meta: { ...(canonical.meta ?? {}), lastModified: new Date(site.generatedAt).toISOString() },
+  // Drop the internal worklog pointer — it references the private evidence base
+  // (bdelanghe/worklog) and must never reach the public /resume.json. Kept in the
+  // canonical doc for authoring; stripped here at the publish boundary.
+  meta: (({ _worklog: _wl, ...m }) => ({ ...m, lastModified: new Date(site.generatedAt).toISOString() }))(canonical.meta ?? {}),
 };
 const jsonResumeSchema = await loadJson(join(root, "contract", "jsonresume.schema.json"));
 const jrErrors = validateSchema(jsonResumeSchema, resumeDoc);
