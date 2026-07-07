@@ -580,6 +580,14 @@ for (const p of projects) {
   g.items.push(p);
 }
 const rProjects = projByEntity.map(({ entity, items }) => {
+  // Link the entity heading to its GitHub org so it renders in the accent like the
+  // linked work-org names (a plain span stayed ink — the lone black heading among
+  // terracotta ones on the page; in print all links go ink, so the PDF was uniform).
+  const entityUrl = (() => {
+    const u = items.map((p) => p.url).find(Boolean);
+    const m = u && u.match(/^(https?:\/\/github\.com\/[^/]+)/);
+    return m ? m[1] : null;
+  })();
   const roles = [...new Set(items.flatMap((p) => p.roles ?? []))].join(" · ");
   const starts = items.map((p) => p.startDate).filter(Boolean).sort();
   const when = starts.length ? `${starts[0].slice(0, 4)} – present` : "";
@@ -589,7 +597,7 @@ const rProjects = projByEntity.map(({ entity, items }) => {
   }).join("");
   return `
       <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${esc(entity)}</span>${when ? `<span class="r-job__when">${esc(when)}</span>` : ""}</div>
+        <div class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? `<span class="r-job__when">${esc(when)}</span>` : ""}</div>
         ${roles ? `<div class="r-job__role">${esc(roles)}</div>` : ""}
         <ul>${bullets}</ul>
       </div>`;
