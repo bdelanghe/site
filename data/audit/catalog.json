@@ -33,15 +33,15 @@
   },
   "exp.aura.b0": {
     "type": "claim",
-    "value": "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to 61 downstream schema contracts, checked by 173 test scenarios."
+    "value": "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the cash peak tied up in inventory."
   },
   "exp.aura.b1": {
     "type": "claim",
-    "value": "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — replacing manual coordination with schema-structured pipelines."
+    "value": "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — retiring the manual coordination that used to gate every shipment."
   },
   "exp.aura.b2": {
     "type": "body",
-    "value": "Investigated unreviewed agent-authored commits reaching main. Reconstructed each one's path across five log domains and wrote the post-mortem. Designed the controls that became Aura's policy for shipping AI-written code."
+    "value": "Traced each unreviewed agent commit back through five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
   },
   "exp.l2l.what": {
     "type": "claim",
@@ -57,7 +57,7 @@
   },
   "exp.pioneer-works.b0": {
     "type": "body",
-    "value": "Labeled event-state transitions by the department that emitted each POS event, not a human-set flag, across the venue's large concerts."
+    "value": "Replaced hand-set event-status flags with state derived from each department's POS activity, so status stayed correct across the venue's large concerts without manual updates."
   },
   "exp.kaleida.what": {
     "type": "body",
@@ -67,14 +67,6 @@
     "type": "body",
     "value": "Eliminated edition-numbering errors. A database issued serial edition IDs on request, making duplicates impossible by construction."
   },
-  "exp.scope-of-work.what": {
-    "type": "body",
-    "value": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs."
-  },
-  "exp.scope-of-work.b0": {
-    "type": "body",
-    "value": "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
-  },
   "exp.recurse-center.what": {
     "type": "body",
     "value": "Type theory in Haskell, using the type system to make invalid states unrepresentable. It's the root of the capability work: push correctness to the boundary, and violations can't compile."
@@ -83,9 +75,17 @@
     "type": "claim",
     "value": "Completed a selective 12-week programming retreat. Researched how a tight type constraint narrows the space of valid implementations."
   },
+  "exp.scope-of-work.what": {
+    "type": "body",
+    "value": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs."
+  },
+  "exp.scope-of-work.b0": {
+    "type": "body",
+    "value": "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
+  },
   "proj.prx.desc": {
     "type": "body",
-    "value": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Evolved from hooksmith, a Rust predecessor that still anchors Bounded Systems' lower-level, machine-facing contracts. Moved to TypeScript once the key contracts proved to be between systems, not machine and kernel."
+    "value": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Moved from a Rust predecessor to TypeScript once the key contracts proved to be between systems, not machine and kernel."
   },
   "proj.ocap-provenance.desc": {
     "type": "body",

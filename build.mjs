@@ -378,10 +378,14 @@ const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 // homepage's inline colophon section — now every page carries it, plus a link to the
 // credits list's own page (moved off the homepage to /colophon).
 const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
-      <span>${esc(name)} &middot; ${esc(copy("footer.org"))}</span>
-      ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
-      <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
-      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
+      <div class="foot__id">
+        <span class="foot__name">${esc(name)} &middot; ${esc(copy("footer.org"))}</span>
+        ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
+      </div>
+      <div class="foot__prov">
+        <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
+        <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
+      </div>
     </footer>`;
 
 // in-toto materials: the build inputs, content-addressed where computable
