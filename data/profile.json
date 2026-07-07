@@ -55,9 +55,9 @@
       "url": "https://pioneerworks.org",
       "startDate": "2018-11",
       "endDate": "2021-02",
-      "summary": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, wiring webhooks into event workflows.",
+      "summary": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, integrating Square POS over webhooks.",
       "highlights": [
-        "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
+        "Labeled event-state transitions by the department that emitted each POS event, not a human-set flag, across the venue's large concerts."
       ]
     },
     {

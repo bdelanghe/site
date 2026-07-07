@@ -49,11 +49,11 @@
   },
   "exp.pioneer-works.what": {
     "type": "body",
-    "value": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, wiring webhooks into event workflows."
+    "value": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, integrating Square POS over webhooks."
   },
   "exp.pioneer-works.b0": {
     "type": "body",
-    "value": "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
+    "value": "Labeled event-state transitions by the department that emitted each POS event, not a human-set flag, across the venue's large concerts."
   },
   "exp.kaleida.what": {
     "type": "body",
