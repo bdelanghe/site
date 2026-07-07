@@ -40,8 +40,19 @@ async function ghAll(path) {
   }
 }
 
+// /user/repos requires a user-identity token (the GH_CORPUS_TOKEN PAT). The
+// workflow's fallback — the Actions installation token — has no user, so GitHub
+// answers 403 "Resource not accessible by integration", which killed every
+// scheduled refresh and froze the corpus. Degrade to the public listing instead
+// (public repos only, exactly what the workflow comment promises); a 401 (bad
+// token) still fails loudly.
+const ownRepos = await ghAll("/user/repos?affiliation=owner").catch((e) => {
+  if (!/→ 403 /.test(e.message)) throw e;
+  console.warn(`⚠ /user/repos → 403 (no user identity on this token) — public listing only; set GH_CORPUS_TOKEN for full counts`);
+  return ghAll(`/users/${OWNER}/repos?type=owner`);
+});
 const raw = [
-  ...(await ghAll("/user/repos?affiliation=owner")),
+  ...ownRepos,
   ...(await Promise.all(ORGS.map((o) => ghAll(`/orgs/${o}/repos`)))).flat(),
 ];
 // de-dupe by full_name
