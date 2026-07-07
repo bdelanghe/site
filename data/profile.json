@@ -55,7 +55,7 @@
       "url": "https://pioneerworks.org",
       "startDate": "2018-11",
       "endDate": "2021-02",
-      "summary": "Built the event-planning platform's backend for a major Brooklyn arts center.",
+      "summary": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda, with webhook-driven workflows.",
       "highlights": [
         "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
       ]
@@ -120,7 +120,7 @@
     {
       "name": "ocap-provenance",
       "startDate": "2026-06",
-      "description": "Provenance extended with object-capability semantics. Each attestation records who produced an artifact and which capabilities they held — and which were denied.",
+      "description": "Provenance extended with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied.",
       "url": "https://github.com/bounded-systems/ocap-provenance",
       "keywords": ["Supply-chain security", "in-toto", "SLSA", "TypeScript"],
       "roles": ["Creator"],

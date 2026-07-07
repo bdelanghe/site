@@ -49,7 +49,7 @@
   },
   "exp.pioneer-works.what": {
     "type": "body",
-    "value": "Built the event-planning platform's backend for a major Brooklyn arts center."
+    "value": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda, with webhook-driven workflows."
   },
   "exp.pioneer-works.b0": {
     "type": "body",
@@ -85,7 +85,7 @@
   },
   "proj.ocap-provenance.desc": {
     "type": "body",
-    "value": "Provenance extended with object-capability semantics. Each attestation records who produced an artifact and which capabilities they held — and which were denied."
+    "value": "Provenance extended with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied."
   },
   "work.prx": {
     "type": "body",
