@@ -93,7 +93,7 @@
   },
   "work.prx": {
     "type": "body",
-    "value": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against their signed owner, driving a work unit through one signed pipeline to a merged PR."
+    "value": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against a signed owner, driving a work unit through one signed pipeline to a merged PR."
   },
   "work.guest-room": {
     "type": "body",
@@ -178,10 +178,6 @@
   "copy.colophon.conformance": {
     "type": "body",
     "value": "conformance"
-  },
-  "copy.colophon.link": {
-    "type": "body",
-    "value": "colophon"
   },
   "copy.colophon.title": {
     "type": "body",
