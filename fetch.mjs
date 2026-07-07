@@ -27,11 +27,11 @@ const MAX_HIGHLIGHTS = 12;
 // tags surfaced filler and missed gems. "Real" is the floor; "interesting and
 // on-thesis" is the bar. Breadth still lives in the corpus stats.
 
-async function ghAll(path) {
+async function ghAll(path, { auth = true } = {}) {
   const out = [];
   for (let page = 1; ; page++) {
     const res = await fetch(`https://api.github.com${path}${path.includes("?") ? "&" : "?"}per_page=100&page=${page}`, {
-      headers: { Authorization: `Bearer ${TOKEN}`, Accept: "application/vnd.github+json", "User-Agent": "robertdelanghe.dev-fetch" },
+      headers: { ...(auth ? { Authorization: `Bearer ${TOKEN}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "robertdelanghe.dev-fetch" },
     });
     if (!res.ok) throw new Error(`${path} → ${res.status} ${await res.text()}`);
     const batch = await res.json();
@@ -51,9 +51,19 @@ const ownRepos = await ghAll("/user/repos?affiliation=owner").catch((e) => {
   console.warn(`⚠ /user/repos → 403 (no user identity on this token) — public listing only; set GH_CORPUS_TOKEN for full counts`);
   return ghAll(`/users/${OWNER}/repos?type=owner`);
 });
+// Org listing can 403 on token *policy* too (e.g. bounded-systems forbids
+// fine-grained PATs with lifetime > 366 days — seen in the wild). The public
+// slice never needs auth, so retry unauthenticated instead of dying: private
+// org repos drop out, the refresh still lands.
+const orgRepos = (await Promise.all(ORGS.map((o) =>
+  ghAll(`/orgs/${o}/repos`).catch((e) => {
+    if (!/→ 403 /.test(e.message)) throw e;
+    console.warn(`⚠ /orgs/${o}/repos → 403 (org token policy) — retrying unauthenticated (public repos only)`);
+    return ghAll(`/orgs/${o}/repos`, { auth: false });
+  })))).flat();
 const raw = [
   ...ownRepos,
-  ...(await Promise.all(ORGS.map((o) => ghAll(`/orgs/${o}/repos`)))).flat(),
+  ...orgRepos,
 ];
 // de-dupe by full_name
 const byName = new Map(raw.map((r) => [r.full_name, r]));
