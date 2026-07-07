@@ -35,6 +35,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_CORPUS_TOKEN || github.token }}
           GH_ORG_TOKEN: ${{ secrets.GH_ORG_TOKEN }}
 
+      # Gate the fresh corpus BEFORE committing: a repo's own GitHub description can
+      # carry an overclaim (e.g. "every … is verified") the string-audit honesty gate
+      # blocks. Because the bot's commit push doesn't trigger audit.yml (Actions'
+      # recursion guard), an unaudited corpus used to reach prod silently. Run the
+      # same --strict gate here so a failing corpus fails the refresh and is never
+      # committed — the deterministic audit is the same one CI runs on PRs.
+      - name: Gate the fresh corpus (honesty + grounding)
+        run: nix develop --command bash -euo pipefail -c 'npm ci --no-audit --no-fund && npm run audit'
+
       - name: Commit if changed
         id: commit
         run: |

@@ -120,6 +120,9 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 a.fig, a.bar__k, a.chip { text-decoration: none; }
 a.fig .fig__n { color: var(--bs-color-accent); }
 a.fig:hover .fig__k, a.fig:focus-visible .fig__k { color: var(--bs-color-accent); }
+/* Fill the label column and stand ≥24px tall so the link clears WCAG 2.2
+   target-size (2.5.8) — a bare 12px text label is too small a touch target. */
+a.bar__k { display: flex; align-items: center; min-height: 24px; }
 a.bar__k:hover, a.bar__k:focus-visible { color: var(--bs-color-accent); }
 a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 
