@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # dispatch deploy.yml after the corpus commit (see last step)
 
 concurrency:
   group: refresh
@@ -35,13 +36,27 @@ jobs:
           GH_ORG_TOKEN: ${{ secrets.GH_ORG_TOKEN }}
 
       - name: Commit if changed
+        id: commit
         run: |
           if git diff --quiet -- data/site.json; then
             echo "corpus unchanged"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add data/site.json
             git commit -m "chore: refresh corpus (data/site.json)"
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # A push made with the default GITHUB_TOKEN does NOT trigger workflows
+      # (GitHub's recursion guard), so the corpus commit would sit undeployed
+      # until the next unrelated push — exactly how the site served a stale
+      # generated-date for weeks. workflow_dispatch via the API is the
+      # documented exception to that guard: kick deploy explicitly.
+      - name: Deploy the refreshed corpus
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main --repo "$GITHUB_REPOSITORY"
