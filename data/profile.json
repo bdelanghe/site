@@ -55,7 +55,7 @@
       "url": "https://pioneerworks.org",
       "startDate": "2018-11",
       "endDate": "2021-02",
-      "summary": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda, with webhook-driven workflows.",
+      "summary": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, wiring webhooks into event workflows.",
       "highlights": [
         "Derived event status from attached documents, not a human-set flag, across the venue's large concerts."
       ]
@@ -67,7 +67,7 @@
       "url": "https://kaleida.studio",
       "startDate": "2019-06",
       "endDate": "2020-03",
-      "summary": "Built the database-backed automation for just-in-time production at an AR and print-making studio.",
+      "summary": "Built the just-in-time production automation for an AR and print-making studio on Postgres, with heavy third-party API integration.",
       "highlights": [
         "Eliminated edition-numbering errors. A database issued serial edition IDs on request, making duplicates impossible by construction."
       ]
@@ -79,7 +79,7 @@
       "url": "https://scopeofwork.net",
       "startDate": "2018-10",
       "endDate": "2019-02",
-      "summary": "Engineered the relational contact-management system for the manufacturing publication.",
+      "summary": "Engineered the contact-management system for the manufacturing publication on Postgres, integrating its outside tools through their APIs.",
       "highlights": [
         "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
       ]

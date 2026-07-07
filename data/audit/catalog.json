@@ -49,7 +49,7 @@
   },
   "exp.pioneer-works.what": {
     "type": "body",
-    "value": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda, with webhook-driven workflows."
+    "value": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, wiring webhooks into event workflows."
   },
   "exp.pioneer-works.b0": {
     "type": "body",
@@ -57,7 +57,7 @@
   },
   "exp.kaleida.what": {
     "type": "body",
-    "value": "Built the database-backed automation for just-in-time production at an AR and print-making studio."
+    "value": "Built the just-in-time production automation for an AR and print-making studio on Postgres, with heavy third-party API integration."
   },
   "exp.kaleida.b0": {
     "type": "body",
@@ -65,7 +65,7 @@
   },
   "exp.scope-of-work.what": {
     "type": "body",
-    "value": "Engineered the relational contact-management system for the manufacturing publication."
+    "value": "Engineered the contact-management system for the manufacturing publication on Postgres, integrating its outside tools through their APIs."
   },
   "exp.scope-of-work.b0": {
     "type": "body",
