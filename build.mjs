@@ -669,7 +669,7 @@ ${jsonLd}
     <h1>${esc(name)}</h1>
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline.replace(/\.$/, ""))}` : ""}</p>
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
-    <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
+    <a class="r-print" href="${SITE}/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
     ${googleDocsUrl ? `<a class="r-print" href="${esc(googleDocsUrl)}" target="_blank" rel="noopener">${copy("resume.comment")}</a>` : ""}
   </header>
   <p class="r-summary">${esc(summary)}</p>
