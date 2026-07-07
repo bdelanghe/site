@@ -79,7 +79,7 @@
       "url": "https://scopeofwork.net",
       "startDate": "2018-10",
       "endDate": "2019-02",
-      "summary": "Engineered the contact-management system for the manufacturing publication on Postgres, integrating its outside tools through their APIs.",
+      "summary": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs.",
       "highlights": [
         "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
       ]

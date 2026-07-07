@@ -65,7 +65,7 @@
   },
   "exp.scope-of-work.what": {
     "type": "body",
-    "value": "Engineered the contact-management system for the manufacturing publication on Postgres, integrating its outside tools through their APIs."
+    "value": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs."
   },
   "exp.scope-of-work.b0": {
     "type": "body",
