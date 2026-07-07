@@ -49,7 +49,7 @@
   },
   "exp.pioneer-works.what": {
     "type": "body",
-    "value": "Delivered the event-planning platform for a major Brooklyn arts center."
+    "value": "Built the event-planning platform's backend for a major Brooklyn arts center."
   },
   "exp.pioneer-works.b0": {
     "type": "body",
@@ -57,7 +57,7 @@
   },
   "exp.kaleida.what": {
     "type": "body",
-    "value": "Automated just-in-time production for an AR and print-making studio."
+    "value": "Built the database-backed automation for just-in-time production at an AR and print-making studio."
   },
   "exp.kaleida.b0": {
     "type": "body",
@@ -65,7 +65,7 @@
   },
   "exp.scope-of-work.what": {
     "type": "body",
-    "value": "Engineered the contact-management system for the manufacturing publication."
+    "value": "Engineered the relational contact-management system for the manufacturing publication."
   },
   "exp.scope-of-work.b0": {
     "type": "body",
