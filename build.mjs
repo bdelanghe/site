@@ -6,7 +6,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { validateSchema } from "./vendor/conformance-kit/lib/schema-validate.mjs";
-import { reprDigest, securityTxt, securityTxtExpires, webManifest, markdownSiblingHeaders } from "./vendor/conformance-kit/emitters/index.mjs";
+import { reprDigest, securityTxt, securityTxtExpires, webManifest } from "./vendor/conformance-kit/emitters/index.mjs";
 import { buildConformanceReport, renderConformanceReport } from "./vendor/conformance-kit/gates/conformance-report.mjs";
 import { evaluateAiReadability } from "./vendor/conformance-kit/gates/ai-readability-gate.mjs";
 import { loadPosts } from "./posts.mjs";
@@ -378,10 +378,10 @@ const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 // homepage's inline colophon section — now every page carries it, plus a link to the
 // credits list's own page (moved off the homepage to /colophon).
 const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
-      <span>${esc(name)} &middot; ${esc(tokens.org || "")}</span>
+      <span>${esc(name)} &middot; ${esc(copy("footer.org"))}</span>
       ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
       <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
-      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a> &middot; <a href="/colophon">${copy("colophon.link")}</a></p>
+      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
     </footer>`;
 
 // in-toto materials: the build inputs, content-addressed where computable
@@ -421,15 +421,24 @@ for (const f of ["tokens/tokens.json", "tokens/tokens.css", "content/strings.jso
 // Bars scale to the leading language (relative, not share-of-total) so the
 // shape reads as rank — the top bar fills the track, the rest are proportional
 // to it. (Share-of-total made every bar look stunted: 26/115 ≈ 22% full.)
+// Every Public-record figure is a receipt: it links to the live GitHub query
+// that reproduces the number — interactivity without runtime, and the same
+// receipts-first bar the résumé copy is held to. Scope mirrors fetch.mjs's
+// OWNER + ORGS. (GitHub repo search excludes forks unless fork:true, so the
+// bare query IS the public-sources receipt.)
+const ghQuery = (extra) => `https://github.com/search?q=${encodeURIComponent(`user:bdelanghe user:bounded-systems${extra ? ` ${extra}` : ""}`)}&type=repositories`;
+
 const shownLangs = stats.languages.slice(0, 6);
 const langMax = Math.max(...shownLangs.map((l) => l.count), 1);
 const langBars = shownLangs.map((l) =>
-  `<div class="bar"><span class="bar__k">${esc(l.name)}</span>` +
+  `<div class="bar">${l.name === "other"
+    ? `<span class="bar__k">${esc(l.name)}</span>`
+    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
   `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`).join("\n        ");
 
 const topicChips = stats.topics.length
-  ? stats.topics.slice(0, 16).map((t) => `<span class="chip">${esc(t.name)} <em>${t.count}</em></span>`).join("\n        ")
+  ? stats.topics.slice(0, 16).map((t) => `<a class="chip" href="${ghQuery(`topic:${t.name}`)}">${esc(t.name)} <em>${t.count}</em></a>`).join("\n        ")
   : `<span class="chip chip--muted">topics: ${stats.tagged}/${stats.public} tagged — self-labeling in progress</span>`;
 
 // Selected work, broken out by tag — thesis tags first, the rest after.
@@ -490,9 +499,8 @@ const html = `<!doctype html>
     <section class="corpus">
       <h2 class="bs-text-label eyebrow">${copy("corpus.eyebrow")}</h2>
       <div class="figures">
-        <div class="fig"><span class="fig__n">${stats.repos}</span><span class="fig__k">${copy("corpus.fig.repositories")}</span></div>
-        <div class="fig"><span class="fig__n">${stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></div>
-        <div class="fig"><span class="fig__n">${stats.sources}</span><span class="fig__k">${copy("corpus.fig.sources")}</span></div>
+        <a class="fig" href="${ghQuery("fork:true")}"><span class="fig__n">${stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
+        ${stats.publicSources != null ? `<a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources}</span><span class="fig__k">${copy("corpus.fig.sources")}</span></a>` : ""}
         <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
       </div>
       <div class="bars">
@@ -513,7 +521,7 @@ const html = `<!doctype html>
       ${workGroups}
     </section>
 
-    ${siteFooter({ extra: "github.com/bdelanghe &middot; " })}
+    ${siteFooter()}
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -697,7 +705,7 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></div></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (<a href="https://json-ld.org" rel="noopener">JSON-LD</a> 1.1) is validated against <a href="https://www.w3.org/TR/shacl/" rel="noopener"><code>SHACL</code></a> shapes; an <strong><a href="https://spdx.dev" rel="noopener">SPDX</a> <a href="https://www.cisa.gov/sbom" rel="noopener">SBOM</a></strong> is generated and completeness-checked; and <code>@bdelanghe/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed <a href="https://in-toto.io" rel="noopener">in-toto</a>/<a href="https://slsa.dev" rel="noopener">SLSA</a> attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener">WCAG</a>&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</span></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above. See the <a href="/colophon">${copy("colophon.title").toLowerCase()}</a> for what built and validated it.</span></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
             <p class="prov-seal__title">${copy("prov.seal.title")}</p>
@@ -740,7 +748,7 @@ Contracts gate content before a byte renders: the canonical résumé \`data/prof
 Gates run on every build, each error-severity finding blocking it: \`lone\` blesses each rendered DOM (semantic HTML + a11y); \`copy-review\` flags overclaims; \`linkedin-check\` verifies résumé claims; \`string-audit\` runs copy hygiene; JSON-LD is SHACL-validated; an SPDX SBOM is generated + completeness-checked; brand tokens are drift-checked. Every result folds into one honest [conformance projection](${SITE}/conformance) — lone's \`conformance()\` model, which emits the strong WCAG 2.2 AA / OWASP ASVS claim only when every required criterion is met; manual and unsupplied criteria stay not-assessed.
 
 ### ${mdFromHtml(copy("prov.step.builder"))}
-Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bdelanghe/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs.
+Rendered by \`build.mjs\` under a toolchain pinned by \`flake.lock\` — Node 22 + @bdelanghe/brand${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — a reproducible function of the inputs. See the [colophon](${SITE}/colophon.md) for what built and validated it.
 
 ## ${copy("prov.seal.title")}
 commit @@COMMIT@@ · @@DATE@@ · [bdelanghe/site](https://github.com/bdelanghe/site)
@@ -940,6 +948,11 @@ ${highlights.map((h) => `- ${mdLink(h.name, h.url)}: ${h.description}`).join("\n
 ${profile.links.map((l) => l.href.startsWith("mailto:") ? `- ${emailObf}` : `- ${mdLink(l.label, l.href)}`).join("\n")}
 `;
 await writeFile(join(dist, "index.md"), indexMd);
+// Also at the bare "/.md" — every other page's twin is its clean path + ".md"
+// (/resume -> /resume.md); the homepage's clean path is "/", so the same pattern is
+// "/.md". /index.md stays too (the one already advertised via <head> and llms.txt) —
+// this is an addition, not a rename.
+await writeFile(join(dist, ".md"), indexMd);
 
 const rLinksMd = social.map((sp) => mdLink(sp.network, sp.url)).join(" · ");
 const rContactMd = [rLocation, rLinksMd, emailObf].filter(Boolean).join(" · ");
@@ -1241,6 +1254,14 @@ const reprByRoute = {
   "/feed.json": reprDigest(jsonFeedStr),
 };
 const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` : "");
+// Explicit Markdown routes, not the kit's default `/*.md` wildcard: a wildcard
+// Content-Type rule matches by PATH PATTERN, not by whether a file actually exists —
+// requesting a nonexistent/mistyped .md path (e.g. the bare "/.md" someone might try,
+// following the same "path + .md" convention every other page uses) falls through to
+// the 404 page, but Cloudflare still applies the wildcard's "Content-Type:
+// text/markdown" to that response, mislabeling real HTML content. An explicit route
+// list only ever matches the .md siblings that are genuinely written below.
+const mdRoutes = ["/.md", "/index.md", "/resume.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", ...posts.map((p) => `${postUrl(p)}.md`)];
 await writeFile(join(dist, "_headers"),
   htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600${reprLine(r)}`).join("\n") +
   `\n/feed.xml\n  Repr-Digest: ${reprByRoute["/feed.xml"]}\n` +
@@ -1250,10 +1271,8 @@ await writeFile(join(dist, "_headers"),
   `/brand/tokens/*.css\n  Cache-Control: public, max-age=31536000, immutable\n` +
   `/*.txt\n  Content-Type: text/plain; charset=utf-8\n` +
   `/*.pub\n  Content-Type: text/plain; charset=utf-8\n` +
-  // Markdown siblings + the web app manifest Content-Type rules (kit emitter). /*.md
-  // greedily matches /blog/<slug>.md too; neither overlaps an existing Content-Type
-  // rule, so no double-header merge.
-  markdownSiblingHeaders());
+  mdRoutes.map((r) => `${r}\n  Content-Type: text/markdown; charset=utf-8`).join("\n") + "\n" +
+  `/site.webmanifest\n  Content-Type: application/manifest+json; charset=utf-8\n`);
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +

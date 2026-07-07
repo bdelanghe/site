@@ -33,9 +33,13 @@
   },
   "exp.aura.b0": {
     "type": "claim",
-    "value": "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to dozens of downstream schema contracts, each checked by hundreds of test scenarios."
+    "value": "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to 61 downstream schema contracts, checked by 173 test scenarios."
   },
   "exp.aura.b1": {
+    "type": "claim",
+    "value": "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — replacing manual coordination with schema-structured pipelines."
+  },
+  "exp.aura.b2": {
     "type": "body",
     "value": "Investigated unreviewed agent-authored commits reaching main. Reconstructed each one's path across five log domains and wrote the post-mortem. Designed the controls that became Aura's policy for shipping AI-written code."
   },
@@ -89,7 +93,7 @@
   },
   "work.prx": {
     "type": "body",
-    "value": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against their signed owner, driving a work unit through one signed pipeline to a merged PR."
+    "value": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against a signed owner, driving a work unit through one signed pipeline to a merged PR."
   },
   "work.guest-room": {
     "type": "body",
@@ -125,19 +129,15 @@
   },
   "copy.corpus.eyebrow": {
     "type": "body",
-    "value": "The corpus"
-  },
-  "copy.corpus.fig.repositories": {
-    "type": "body",
-    "value": "repositories"
+    "value": "Public record"
   },
   "copy.corpus.fig.public": {
     "type": "body",
-    "value": "public"
+    "value": "public repositories"
   },
   "copy.corpus.fig.sources": {
     "type": "body",
-    "value": "sources"
+    "value": "public sources"
   },
   "copy.corpus.fig.languages": {
     "type": "body",
@@ -178,10 +178,6 @@
   "copy.colophon.conformance": {
     "type": "body",
     "value": "conformance"
-  },
-  "copy.colophon.link": {
-    "type": "body",
-    "value": "colophon"
   },
   "copy.colophon.title": {
     "type": "body",
@@ -346,5 +342,9 @@
   "copy.llms.md": {
     "type": "body",
     "value": "Markdown"
+  },
+  "copy.footer.org": {
+    "type": "body",
+    "value": "Bounded Systems"
   }
 }

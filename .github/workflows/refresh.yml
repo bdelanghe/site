@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # dispatch deploy.yml after the corpus commit (see last step)
 
 concurrency:
   group: refresh
@@ -22,21 +23,49 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
 
-      # GH_CORPUS_TOKEN (a PAT that can read your private repos) gives full counts;
-      # without it, the default token sees public repos only.
+      # GH_CORPUS_TOKEN (fine-grained PAT, resource owner bdelanghe, ≤366 days)
+      # gives full private counts for the user's repos. GH_ORG_TOKEN (fine-grained
+      # PAT, resource owner bounded-systems, ≤366 days — the org rejects longer
+      # lifetimes) adds the org's private repos. Both optional: fetch.mjs degrades
+      # to public-only listings instead of failing, and hard-allowlists owners so
+      # employer repos can never enter the corpus.
       - name: Re-ingest corpus → data/site.json
         run: nix develop --command node fetch.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GH_CORPUS_TOKEN || github.token }}
+          GH_ORG_TOKEN: ${{ secrets.GH_ORG_TOKEN }}
+
+      # Gate the fresh corpus BEFORE committing: a repo's own GitHub description can
+      # carry an overclaim (e.g. "every … is verified") the string-audit honesty gate
+      # blocks. Because the bot's commit push doesn't trigger audit.yml (Actions'
+      # recursion guard), an unaudited corpus used to reach prod silently. Run the
+      # same --strict gate here so a failing corpus fails the refresh and is never
+      # committed — the deterministic audit is the same one CI runs on PRs.
+      - name: Gate the fresh corpus (honesty + grounding)
+        run: nix develop --command bash -euo pipefail -c 'npm ci --no-audit --no-fund && npm run audit'
 
       - name: Commit if changed
+        id: commit
         run: |
           if git diff --quiet -- data/site.json; then
             echo "corpus unchanged"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add data/site.json
             git commit -m "chore: refresh corpus (data/site.json)"
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # A push made with the default GITHUB_TOKEN does NOT trigger workflows
+      # (GitHub's recursion guard), so the corpus commit would sit undeployed
+      # until the next unrelated push — exactly how the site served a stale
+      # generated-date for weeks. workflow_dispatch via the API is the
+      # documented exception to that guard: kick deploy explicitly.
+      - name: Deploy the refreshed corpus
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main --repo "$GITHUB_REPOSITORY"

@@ -9,6 +9,12 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 if (!TOKEN) { console.error("✗ set GITHUB_TOKEN"); process.exit(1); }
+// A fine-grained PAT is scoped to ONE resource owner, so the user PAT that
+// reads bdelanghe's private repos cannot see bounded-systems' private repos.
+// GH_ORG_TOKEN (optional, resource owner = the org) covers the org listing so
+// org-private work counts in the whole-corpus stats; without it the org
+// listing uses the main token and sees public org repos only.
+const ORG_TOKEN = process.env.GH_ORG_TOKEN || TOKEN;
 
 const OWNER = "bdelanghe";
 const ORGS = ["bounded-systems"];
@@ -21,17 +27,26 @@ const PINS = [
   "bounded-systems/ocap-provenance",
   "bounded-systems/string-audit",
 ];
+// Honesty override for a highlight's description. The corpus uses the repo's own
+// GitHub description as the single source, but a repo blurb can carry an absolute
+// claim the site's own honesty gate (string-audit overclaim rule) rightly blocks —
+// e.g. prx's "every privileged effect is verified". Scope it here so a refresh can't
+// drag the overclaim back onto the site. Keep this empty unless the gate flags a pin;
+// the honest end-state is to fix the claim in the repo description too.
+const DESCRIPTIONS = {
+  "bounded-systems/prx": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against a signed owner, driving a work unit through one signed pipeline to a merged PR.",
+};
 const MAX_HIGHLIGHTS = 12;
 // Selected Work is an editorial set: exactly the pinned repos, in pin order.
 // Tag-based auto-include was dropped — the strongest repos are under-tagged, so
 // tags surfaced filler and missed gems. "Real" is the floor; "interesting and
 // on-thesis" is the bar. Breadth still lives in the corpus stats.
 
-async function ghAll(path) {
+async function ghAll(path, { auth = true, token = TOKEN } = {}) {
   const out = [];
   for (let page = 1; ; page++) {
     const res = await fetch(`https://api.github.com${path}${path.includes("?") ? "&" : "?"}per_page=100&page=${page}`, {
-      headers: { Authorization: `Bearer ${TOKEN}`, Accept: "application/vnd.github+json", "User-Agent": "robertdelanghe.dev-fetch" },
+      headers: { ...(auth ? { Authorization: `Bearer ${token}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "robertdelanghe.dev-fetch" },
     });
     if (!res.ok) throw new Error(`${path} → ${res.status} ${await res.text()}`);
     const batch = await res.json();
@@ -40,13 +55,39 @@ async function ghAll(path) {
   }
 }
 
+// /user/repos requires a user-identity token (the GH_CORPUS_TOKEN PAT). The
+// workflow's fallback — the Actions installation token — has no user, so GitHub
+// answers 403 "Resource not accessible by integration", which killed every
+// scheduled refresh and froze the corpus. Degrade to the public listing instead
+// (public repos only, exactly what the workflow comment promises); a 401 (bad
+// token) still fails loudly.
+const ownRepos = await ghAll("/user/repos?affiliation=owner").catch((e) => {
+  if (!/→ 403 /.test(e.message)) throw e;
+  console.warn(`⚠ /user/repos → 403 (no user identity on this token) — public listing only; set GH_CORPUS_TOKEN for full counts`);
+  return ghAll(`/users/${OWNER}/repos?type=owner`);
+});
+// Org listing can 403 on token *policy* too (e.g. bounded-systems forbids
+// fine-grained PATs with lifetime > 366 days — seen in the wild). The public
+// slice never needs auth, so retry unauthenticated instead of dying: private
+// org repos drop out, the refresh still lands.
+const orgRepos = (await Promise.all(ORGS.map((o) =>
+  ghAll(`/orgs/${o}/repos`, { token: ORG_TOKEN }).catch((e) => {
+    if (!/→ 403 /.test(e.message)) throw e;
+    console.warn(`⚠ /orgs/${o}/repos → 403 (org token policy) — retrying unauthenticated (public repos only)`);
+    return ghAll(`/orgs/${o}/repos`, { auth: false });
+  })))).flat();
 const raw = [
-  ...(await ghAll("/user/repos?affiliation=owner")),
-  ...(await Promise.all(ORGS.map((o) => ghAll(`/orgs/${o}/repos`)))).flat(),
+  ...ownRepos,
+  ...orgRepos,
 ];
 // de-dupe by full_name
 const byName = new Map(raw.map((r) => [r.full_name, r]));
-const repos = [...byName.values()];
+// Hard owner allowlist: the corpus is OWNER + ORGS, nothing else. Employer or
+// third-party repos (e.g. pushd) must never enter the stats, whatever a broad
+// token happens to see — affiliation/org query params are trusted-by-default,
+// this line isn't.
+const ALLOWED = new Set([OWNER.toLowerCase(), ...ORGS.map((o) => o.toLowerCase())]);
+const repos = [...byName.values()].filter((r) => ALLOWED.has(r.full_name.split("/")[0].toLowerCase()));
 
 const sources = repos.filter((r) => !r.fork);
 const publicSources = sources.filter((r) => !r.private);
@@ -57,7 +98,10 @@ const tally = (arr) =>
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
 
-const languages = tally(sources.map((r) => r.language || "other"));
+// Public sources only: the homepage "Public record" section renders these as
+// receipt-links to the live GitHub queries that reproduce them, so every count
+// must be independently verifiable — private repos can't be receipts.
+const languages = tally(publicSources.map((r) => r.language || "other"));
 const topics = tally(publicSources.flatMap(topicsOf));
 
 const stats = {
@@ -65,6 +109,7 @@ const stats = {
   public: repos.filter((r) => !r.private).length,
   private: repos.filter((r) => r.private).length,
   sources: sources.length,
+  publicSources: publicSources.length,
   forks: repos.filter((r) => r.fork).length,
   tagged: publicSources.filter((r) => topicsOf(r).length > 0).length,
   languages,
@@ -89,7 +134,7 @@ const curated = eligible
     name: r.name,
     fullName: r.full_name,
     url: r.html_url,
-    description: r.description,
+    description: DESCRIPTIONS[r.full_name] ?? r.description,
     language: r.language || null,
     stars: r.stargazers_count,
     pinned: pinRank.has(r.full_name),

@@ -24,14 +24,15 @@
   "work": [
     {
       "name": "Aura",
-      "position": "Senior Software Engineer · Commerce",
+      "position": "Senior Software Engineer · Commerce Team",
       "location": "New York · Hybrid",
       "url": "https://auraframes.com",
       "startDate": "2023-10",
       "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems, running on a Ruby backend across fulfillment, accounting, and third-party integrations. I ship the automation backbone on AWS (ECS, RDS, S3, CloudFront) and built the contract-and-validation layer behind inventory-purchasing.",
       "keywords": ["Ruby", "AWS", "Capability security", "Agent infrastructure"],
       "highlights": [
-        "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to dozens of downstream schema contracts, each checked by hundreds of test scenarios.",
+        "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to 61 downstream schema contracts, checked by 173 test scenarios.",
+        "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — replacing manual coordination with schema-structured pipelines.",
         "Investigated unreviewed agent-authored commits reaching main. Reconstructed each one's path across five log domains and wrote the post-mortem. Designed the controls that became Aura's policy for shipping AI-written code."
       ]
     },

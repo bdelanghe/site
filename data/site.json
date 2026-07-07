@@ -1,63 +1,56 @@
 {
-  "generatedAt": "2026-07-07T16:04:55.854Z",
+  "generatedAt": "2026-07-07T16:05:56.329Z",
   "owner": {
     "login": "bdelanghe",
     "name": "Robert DeLanghe"
   },
   "stats": {
-    "repos": 184,
+    "repos": 187,
     "public": 118,
-    "private": 66,
-    "sources": 175,
+    "private": 69,
+    "sources": 178,
+    "publicSources": 109,
     "forks": 9,
     "tagged": 58,
     "languages": [
       {
         "name": "TypeScript",
-        "count": 65
+        "count": 57
       },
       {
         "name": "JavaScript",
-        "count": 23
-      },
-      {
-        "name": "Python",
-        "count": 22
+        "count": 17
       },
       {
         "name": "other",
-        "count": 19
-      },
-      {
-        "name": "Rust",
-        "count": 12
-      },
-      {
-        "name": "Jupyter Notebook",
-        "count": 9
-      },
-      {
-        "name": "Nix",
         "count": 8
       },
       {
-        "name": "HTML",
+        "name": "Python",
         "count": 7
       },
       {
-        "name": "Shell",
-        "count": 4
+        "name": "HTML",
+        "count": 6
       },
       {
-        "name": "Go Template",
-        "count": 1
+        "name": "Nix",
+        "count": 5
+      },
+      {
+        "name": "Rust",
+        "count": 3
+      },
+      {
+        "name": "Shell",
+        "count": 2
       },
       {
         "name": "Go",
         "count": 1
       },
       {
-        "name": "C++",
+        "name": "Jupyter Notebook",
         "count": 1
       },
       {
@@ -66,10 +59,6 @@
       },
       {
         "name": "Scheme",
-        "count": 1
-      },
-      {
-        "name": "PostScript",
         "count": 1
       }
     ],
@@ -245,7 +234,7 @@
       "name": "prx",
       "fullName": "bounded-systems/prx",
       "url": "https://github.com/bounded-systems/prx",
-      "description": "The agent-run work-unit CLI: capability-scoped agents whose every privileged effect is verified against its signed owner, driving a work unit through one signed pipeline to a merged PR.",
+      "description": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against a signed owner, driving a work unit through one signed pipeline to a merged PR.",
       "language": "TypeScript",
       "stars": 1,
       "pinned": true,
