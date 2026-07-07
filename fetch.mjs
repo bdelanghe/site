@@ -27,6 +27,15 @@ const PINS = [
   "bounded-systems/ocap-provenance",
   "bounded-systems/string-audit",
 ];
+// Honesty override for a highlight's description. The corpus uses the repo's own
+// GitHub description as the single source, but a repo blurb can carry an absolute
+// claim the site's own honesty gate (string-audit overclaim rule) rightly blocks —
+// e.g. prx's "every privileged effect is verified". Scope it here so a refresh can't
+// drag the overclaim back onto the site. Keep this empty unless the gate flags a pin;
+// the honest end-state is to fix the claim in the repo description too.
+const DESCRIPTIONS = {
+  "bounded-systems/prx": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against a signed owner, driving a work unit through one signed pipeline to a merged PR.",
+};
 const MAX_HIGHLIGHTS = 12;
 // Selected Work is an editorial set: exactly the pinned repos, in pin order.
 // Tag-based auto-include was dropped — the strongest repos are under-tagged, so
@@ -125,7 +134,7 @@ const curated = eligible
     name: r.name,
     fullName: r.full_name,
     url: r.html_url,
-    description: r.description,
+    description: DESCRIPTIONS[r.full_name] ?? r.description,
     language: r.language || null,
     stars: r.stargazers_count,
     pinned: pinRank.has(r.full_name),
