@@ -649,7 +649,7 @@ ${jsonLd}
   .r-print:hover { border-color: var(--bs-color-accent); }
   .r-print + .r-print { margin-left: 8px; }
   .r-contact .r-fav { width: 12px; height: 12px; vertical-align: -2px; margin-right: 4px; fill: var(--bs-color-ink); }
-  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .foot { display: none !important; } .r-contact .r-fav { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+  @media print { body { margin: 0; } a { color: var(--bs-color-ink); } .r-print { display: none !important; } .r-contact .r-fav { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style>
 </head>
 <body>
@@ -666,7 +666,6 @@ ${jsonLd}
   <h2>${copy("resume.section.experience")}</h2>${rExp}
   ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
   <h2>${copy("resume.section.education")}</h2>${rEdu}
-  ${siteFooter()}
   </main>
   ${EMAIL_SCRIPT}
 </body>
