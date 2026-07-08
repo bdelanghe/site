@@ -125,10 +125,12 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .chip em { color: var(--bs-color-ink-mono); font-style: normal; }
 .chip--muted { color: var(--bs-color-ink-mono); }
 .chip--all { color: var(--bs-color-ink-soft); }
-/* Hidden :target anchors that drive the pure-CSS Selected-work filter. They sit
-   just ahead of .corpus/.work so the general-sibling rules can reach both; kept
-   out of the layout and the accessibility tree. scroll-margin softens the jump. */
-.ftgt { position: absolute; width: 1px; height: 1px; overflow: hidden; scroll-margin-top: 40vh; }
+/* Hidden :target anchors that drive the pure-CSS Selected-work filter. They stay
+   DOM siblings just ahead of .corpus/.work so the general-sibling rules reach
+   both — but they're position:fixed (always "in view"), so navigating to one
+   fires :target WITHOUT scrolling the page: the filter applies in place, right
+   where you clicked. Invisible + out of the pointer/accessibility path. */
+.ftgt { position: fixed; top: 0; left: 0; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 
 /* Receipt-links — figures, bars, and chips link to the live GitHub query that
    reproduces the number. Quiet at rest (the number is the content), accent on
@@ -177,6 +179,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 /* Tier 1 — identity: name·org left, social right. */
 .foot__id { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 20px; }
 .foot__name { color: var(--bs-color-ink-soft); }
+.foot__ok { color: var(--bs-color-accent); font-weight: 600; }
 /* Tier 2 — provenance: the build stamp over the colophon line, quiet and grouped. */
 .foot__prov { display: grid; gap: 8px; }
 .colophon__more { margin: 0; line-height: 1.75; max-width: 70ch; }

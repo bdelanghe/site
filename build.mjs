@@ -224,9 +224,6 @@ const linksHtml = profile.links
     : `<a href="${esc(l.href)}">${esc(l.label)}</a>`)
   .join("\n        ");
 
-const proofHtml = proof.length
-  ? `<p class="proof">${copy("proof.prefix")} ${proof.map((p) => `<a href="${esc(p.href)}">${esc(p.label)}</a>`).join(" · ")}</p>`
-  : "";
 
 // Colophon — "built with": the upstream tools that produce + validate this site,
 // each a real build input or gate (see /provenance for the full signed chain), linked
@@ -253,10 +250,6 @@ const BG_COLOR = "#EDEAE1";      // --bs-color-paper (the body background)
 // Build provenance: the commit this artifact was built from (Cloudflare/GitHub CI env).
 // The footer SHA links to /provenance — the report of what produced + validated this build.
 const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
-const commitHtml = COMMIT
-  ? ` &middot; <a href="/provenance" title="build provenance report">${COMMIT.slice(0, 7)}</a>`
-  : ` &middot; <a href="/provenance">${copy("footer.provenance")}</a>`;
-
 // Fingerprint CSS so it can be cached immutably: the URL changes when the content
 // changes, so there's nothing stale to serve. Covers the site's own stylesheet and
 // the always-loaded brand CSS (the render-blocking weight); brand is pinned via
@@ -370,6 +363,13 @@ for (const h of highlights) {
   if (highlightCopy[h.name]) h.description = highlightCopy[h.name];
 }
 const date = new Date(site.generatedAt).toISOString().slice(0, 10);
+// Build-status line: a compact, honest receipt for the exact bytes you're viewing.
+// The commit is provable (CI env) and links to /provenance; the date is the build
+// date. Deliberately no relative "N min ago" (a static string freezes → becomes a
+// lie) and no live "matches main" (unverifiable without a runtime check).
+const buildLine = COMMIT
+  ? `<span class="foot__ok">&#10003;</span> ${copy("footer.thisbuild")} &middot; <a href="/provenance" title="build provenance report">${copy("footer.commit")} ${COMMIT.slice(0, 7)}</a> &middot; ${copy("footer.built")} ${date}`
+  : `<a href="/provenance">${copy("footer.provenance")}</a> &middot; ${copy("footer.built")} ${date}`;
 
 // Sitewide footer — was hand-duplicated per page (four slightly different copies,
 // and missing entirely from blog.html/resume.html). One function now; `extra` is the
@@ -383,7 +383,7 @@ const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
         ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
       </div>
       <div class="foot__prov">
-        <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
+        <span class="foot__meta">${extra}${buildLine}</span>
         <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
       </div>
     </footer>`;
@@ -486,10 +486,12 @@ const filterFor = (chipTopics, items) => {
     const s = slug(t);
     const active = `#f-${s}:target ~ .corpus a[href="#f-${s}"], #f-${s}:target ~ .work a[href="#f-${s}"] { ${accentOn}; }`;
     const hide = `#f-${s}:target ~ .work .proj:not([data-tags~="${s}"]) { display: none; }`;
-    const empty = has(t) ? "" : `\n#f-${s}:target ~ .work .proj-empty { display: block; }`;
+    // Corpus-only topic → reveal its own empty note (keyed by data-empty), whose
+    // link routes to that topic's live search across the record.
+    const empty = has(t) ? "" : `\n#f-${s}:target ~ .work .proj-empty[data-empty="${s}"] { display: block; }`;
     return `${active}\n${hide}${empty}`;
   }).join("\n") + `\n#f-all:target ~ .corpus a[href="#f-all"] { ${accentOn}; }`;
-  return { anchors, css, chips };
+  return { anchors, css, chips, emptyTopics: topics.filter((t) => !has(t)) };
 };
 
 const tagLinks = (h) => (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join("");
@@ -507,9 +509,13 @@ const card = (h) => `<li class="proj" data-tags="${dataTags(h)}">
           <p class="proj__desc">${esc(h.description)}</p>
           <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
         </li>`;
+// One empty note per corpus-only topic, its link routing to that topic's live
+// search across the whole record — the pinned set stays curated, but every topic
+// still surfaces its real repos on GitHub (the same receipt style as the figures).
+const emptyItem = (t) => `<li class="proj-empty" data-empty="${slug(t)}">${copy("work.empty")} <a href="${ghQuery(`topic:${t}`)}">${copy("work.empty.browse")}</a></li>`;
 const workList = `<ul class="projects">
         ${highlights.map(card).join("\n        ")}
-        <li class="proj-empty">${copy("work.empty")} <a href="https://github.com/bdelanghe">${copy("work.empty.browse")}</a></li>
+        ${homeFilter.emptyTopics.map(emptyItem).join("\n        ")}
       </ul>`;
 
 // Homepage social card (og:image): the personal home card if it's been generated
@@ -529,7 +535,6 @@ const html = `<!doctype html>
       <h1>${esc(headline)}</h1>
       ${profile.intro ? `<p class="lead lead--intro">${esc(profile.intro)}</p>` : ""}
       <p class="lead">${esc(summary)}</p>
-      ${proofHtml}
       ${place ? `<p class="place">${esc(place)}</p>` : ""}
       <nav class="links">
         ${linksHtml}
@@ -992,7 +997,7 @@ const indexMd = `# ${name} — ${role}
 > ${headline}
 ${profile.intro ? `\n${profile.intro}\n` : ""}
 ${summary}
-${place ? `\n${place}\n` : ""}${proof.length ? `\n## ${copy("proof.prefix").replace(/\s*[—-]\s*$/, "")}\n${proof.map((p) => `- ${mdLink(p.label, p.href)}`).join("\n")}\n` : ""}${s ? `\n## ${s.label || s.focus}\n${s.focus}${s.detail ? `\n\n${s.detail}` : ""}\n` : ""}
+${place ? `\n${place}\n` : ""}${s ? `\n## ${s.label || s.focus}\n${s.focus}${s.detail ? `\n\n${s.detail}` : ""}\n` : ""}
 ## ${copy("background.eyebrow")}
 ${work.map((w) => `- **${w.name}**${w.position ? ` · ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.summary ? ` — ${w.summary}` : ""}`).join("\n")}
 ${education.length ? `\n### ${copy("background.education")}\n${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `- **${e.institution}**${d ? ` · ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n")}\n` : ""}
@@ -1336,7 +1341,7 @@ if (interests?.items?.length) {
       <h2 class="bs-text-label eyebrow">${copy("interests.list.eyebrow")}</h2>
       <ul class="projects">
         ${interests.items.map(iCard).join("\n        ")}
-        <li class="proj-empty">${copy("interests.empty")} <a href="${ghStars("")}">${copy("interests.empty.browse")}</a></li>
+        ${iFilter.emptyTopics.map((t) => `<li class="proj-empty" data-empty="${slug(t)}">${copy("interests.empty")} <a href="${ghStars(t)}">${copy("interests.empty.browse")}</a></li>`).join("\n        ")}
       </ul>
     </section>`;
 } else {
