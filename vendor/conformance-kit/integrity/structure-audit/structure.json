@@ -20,7 +20,6 @@
       "/blog/resume-pipeline-google-docs-incident",
       "/conformance",
       "/feed.xml",
-      "/provenance",
       "/provenance"
     ]
   },
@@ -34,7 +33,6 @@
       "/blog",
       "/conformance",
       "/feed.xml",
-      "/provenance",
       "/provenance"
     ]
   },
@@ -48,7 +46,6 @@
       "/blog",
       "/conformance",
       "/feed.xml",
-      "/provenance",
       "/provenance"
     ]
   },
@@ -60,7 +57,6 @@
     "internalLinks": [
       "/",
       "/conformance",
-      "/provenance",
       "/provenance"
     ]
   },
@@ -94,7 +90,6 @@
       "/provenance",
       "/provenance",
       "/provenance",
-      "/provenance",
       "/provenance.json",
       "/sbom.spdx.json",
       "/site.sha256",
@@ -110,7 +105,6 @@
       "/conformance",
       "/interests",
       "/provenance",
-      "/provenance",
       "/resume"
     ]
   },
@@ -122,7 +116,6 @@
     "internalLinks": [
       "/",
       "/conformance",
-      "/provenance",
       "/provenance"
     ]
   },
@@ -137,7 +130,6 @@
       "/colophon",
       "/conformance",
       "/conformance",
-      "/provenance",
       "/provenance",
       "/provenance.json",
       "/rekor",

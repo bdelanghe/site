@@ -6,7 +6,7 @@
     "headline": "AI agents ship code. I write the contracts that keep them in check.",
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
-    "summary": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx. Agent changes land as merged PRs through one signed flow. Each git write is checked against the capability that holds it.",
+    "summary": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx. Agent changes land as merged PRs through one signed flow. Each git write is checked against the capability the agent holds.",
     "location": {
       "city": "Brooklyn",
       "region": "NY",
@@ -40,9 +40,9 @@
         "Agent infrastructure"
       ],
       "highlights": [
-        "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the cash peak tied up in inventory.",
-        "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — retiring the manual coordination that used to gate every shipment.",
-        "Reconstructed how agent-authored commits slipped past review — traced each across five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
+        "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the peak cash tied up in inventory.",
+        "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, and the freight splits between them — retiring the manual coordination that gated most shipments.",
+        "Reconstructed how agent-authored commits slipped past review — traced each across five log sources, wrote the post-mortem, and designed the controls that informed Aura's policy for shipping AI-written code."
       ]
     },
     {
@@ -52,7 +52,7 @@
       "url": "https://l2l.com",
       "startDate": "2021-04",
       "endDate": "2023-09",
-      "summary": "Owned the quality gates and developer experience for a 20-engineer team on a Python/Django backend, deployed single-tenant per customer (EC2/ECS, RDS, S3, Lambda). Drove static-analysis CI, a design system, and frontend performance.",
+      "summary": "Owned the quality gates and developer experience for a 20-engineer team on a Python/Django backend, deployed single-tenant per customer (EC2/ECS, RDS, S3, Lambda). Drove static-analysis CI, a design system, and frontend-performance work.",
       "keywords": [
         "Python",
         "AWS",
@@ -60,7 +60,7 @@
         "Developer tooling"
       ],
       "highlights": [
-        "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% — critical-severity tickets per quarter, four quarters before vs. after."
+        "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes before merge, instead of catching them after. Critical bugs fell 20% — critical-severity tickets per quarter, four quarters before vs. after."
       ]
     },
     {
@@ -82,7 +82,7 @@
       "url": "https://kaleida.studio",
       "startDate": "2019-06",
       "endDate": "2020-03",
-      "summary": "Built the just-in-time production automation for an AR and print-making studio on Postgres, with heavy third-party API integration.",
+      "summary": "Built the just-in-time production automation for an augmented-reality and print-making studio on Postgres, with heavy third-party API integration.",
       "highlights": [
         "Eliminated edition-numbering errors. A database issued serial edition IDs on request, making duplicates impossible by construction."
       ]
@@ -94,10 +94,8 @@
       "url": "https://www.recurse.com/",
       "startDate": "2019-09",
       "endDate": "2019-12",
-      "summary": "Type theory in Haskell, using the type system to make invalid states unrepresentable. It's the root of the capability work: push correctness to the boundary, and violations can't compile.",
-      "highlights": [
-        "Completed a selective 12-week programming retreat. Researched how a tight type constraint narrows the space of valid implementations."
-      ]
+      "summary": "Studied type theory in Haskell, using the type system to make invalid states unrepresentable. It's the root of the capability work: push correctness to the boundary, and violations can't compile.",
+      "highlights": []
     },
     {
       "name": "Scope of Work",
@@ -106,7 +104,7 @@
       "url": "https://scopeofwork.net",
       "startDate": "2018-10",
       "endDate": "2019-02",
-      "summary": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs.",
+      "summary": "Built the job-postings CMS behind the manufacturing publication's newsletter, and the publication's customer segmentation, on Postgres — integrating outside tools through their APIs.",
       "highlights": [
         "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
       ]
@@ -126,7 +124,7 @@
     {
       "name": "prx",
       "startDate": "2026-05",
-      "description": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Moved from a Rust predecessor to TypeScript once the key contracts proved to be between systems, not machine and kernel.",
+      "description": "An agent pipeline that drives work units to merged PRs. Each git write is checked against the capability the agent holds. Moved from a Rust predecessor to TypeScript once the key contracts proved to be between systems, not machine and kernel.",
       "url": "https://github.com/bounded-systems/prx",
       "keywords": [
         "Capability security",
@@ -142,7 +140,7 @@
     {
       "name": "ocap-provenance",
       "startDate": "2026-06",
-      "description": "Provenance extended with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied.",
+      "description": "Extends SLSA/in-toto provenance with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied.",
       "url": "https://github.com/bounded-systems/ocap-provenance",
       "keywords": [
         "Supply-chain security",
@@ -158,7 +156,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "b330e05aea9615794840ce96b8ca216dd60cbf22ca2f37d35c2d7716de1a1f93",
+    "version": "0c7b74af4b2f5a569c0c76025f689cc9415983a6006d9b5c53995befa946d6c6",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }

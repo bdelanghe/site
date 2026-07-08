@@ -367,9 +367,13 @@ const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 // The commit is provable (CI env) and links to /provenance; the date is the build
 // date. Deliberately no relative "N min ago" (a static string freezes → becomes a
 // lie) and no live "matches main" (unverifiable without a runtime check).
+// One honest line: the build (✓ + commit → the exact GitHub commit) and its two
+// receipts. Everything else — Nix, in-toto/SLSA, Sigstore/Rekor/GHCR — lives on
+// /provenance, so it isn't duplicated here.
+const provLinks = `<a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a>`;
 const buildLine = COMMIT
-  ? `<span class="foot__ok">&#10003;</span> ${copy("footer.thisbuild")} &middot; <a href="/provenance" title="build provenance report">${copy("footer.commit")} ${COMMIT.slice(0, 7)}</a> &middot; ${copy("footer.built")} ${date}`
-  : `<a href="/provenance">${copy("footer.provenance")}</a> &middot; ${copy("footer.built")} ${date}`;
+  ? `<span class="foot__ok">&#10003;</span> ${copy("footer.thisbuild")} &middot; <a href="https://github.com/bdelanghe/site/commit/${COMMIT}">${copy("footer.commit")} ${COMMIT.slice(0, 7)}</a> &middot; ${provLinks}`
+  : provLinks;
 
 // Sitewide footer — was hand-duplicated per page (four slightly different copies,
 // and missing entirely from blog.html/resume.html). One function now; `extra` is the
@@ -384,7 +388,6 @@ const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
       </div>
       <div class="foot__prov">
         <span class="foot__meta">${extra}${buildLine}</span>
-        <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
       </div>
     </footer>`;
 
