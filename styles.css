@@ -265,25 +265,55 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .conf-machine { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: 10px 0 0; }
 .conf-machine a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-soft); }
 .conf-machine a:hover { border-color: var(--bs-color-accent); }
+/* Conformance overview — proportional meter + big-number stat tiles, the at-a-glance
+   read the flat criteria list lacks. Colors: met = accent, unmet = status-negative,
+   not-assessed = a neutral (it isn't a failure, just unevaluated). */
+.conf-overview { margin: 0 0 30px; }
+.conf-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bs-color-card-alt); }
+.conf-bar__seg { display: block; height: 100%; }
+.conf-bar__seg--met { background: var(--bs-color-ink-soft); }
+.conf-bar__seg--unmet { background: var(--bs-color-status-negative); }
+.conf-bar__seg--na { background: var(--bs-color-line); }
+.conf-stats { display: flex; flex-wrap: wrap; gap: 8px 26px; margin: 14px 0 0; }
+.conf-stat { display: flex; align-items: baseline; gap: 8px; }
+.conf-stat__n { font-family: var(--bs-font-display); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: var(--bs-color-ink); font-variant-numeric: tabular-nums; }
+.conf-stat__k { font-family: var(--bs-font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--bs-color-ink-mono); }
+.conf-stat--met .conf-stat__n { color: var(--bs-color-ink); }
+.conf-stat--unmet .conf-stat__n { color: var(--bs-color-status-negative); }
+.conf-stat--na .conf-stat__n { color: var(--bs-color-ink-mono); }
+
 .ck-conformance { margin: 8px 0 0; }
 .ck-conformance__claim { font-size: 17px; line-height: 1.5; margin: 0 0 6px; padding: 14px 16px; border-radius: var(--bs-radius-md); border: 1px solid var(--bs-color-line); background: var(--bs-color-card-alt); color: var(--bs-color-ink); max-width: 64ch; }
 .ck-conformance__claim[data-conformant="true"] { border-color: var(--bs-color-accent-soft); background: var(--bs-color-accent-tint); color: var(--bs-color-accent-strong); }
 .ck-conformance__summary { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: 0 0 28px; }
 .ck-conformance__standard { color: var(--bs-color-ink-soft); }
-.ck-area { margin: 0 0 22px; }
-.ck-area__title { font-family: var(--bs-font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bs-color-accent); margin: 0 0 2px; display: flex; align-items: baseline; gap: 10px; }
-.ck-area__count { font-size: 11px; color: var(--bs-color-ink-mono); letter-spacing: 0; text-transform: none; }
-.ck-area__summary { font-size: 13px; color: var(--bs-color-ink-mono); margin: 0 0 10px; }
+/* Each area is a category of conformance — give the groups real separation: a
+   heavier top rule (vs the light per-criterion dividers) + generous whitespace,
+   so a new category reads as a new section, not another row. */
+.ck-area { margin: 44px 0 0; padding-top: 26px; border-top: 1px solid var(--bs-color-ink-mono); }
+.ck-area__title { font-family: var(--bs-font-mono); font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-accent); margin: 0 0 3px; display: flex; align-items: baseline; gap: 10px; }
+.ck-area__count { font-size: 11px; color: var(--bs-color-ink-mono); letter-spacing: 0; text-transform: none; font-weight: 400; }
+.ck-area__summary { font-size: 12px; color: var(--bs-color-ink-mono); margin: 0 0 14px; }
 .ck-criteria { list-style: none; margin: 0; padding: 0; }
 .ck-criterion { display: grid; grid-template-columns: 116px 1fr; gap: 6px 14px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--bs-color-line); }
 .ck-criterion:first-child { padding-top: 0; }
 .ck-criterion:last-child { border-bottom: 0; padding-bottom: 0; }
 .ck-criterion__status { grid-row: span 3; align-self: start; justify-self: start; font-family: var(--bs-font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--bs-color-line); color: var(--bs-color-ink-mono); white-space: nowrap; }
-.ck-status--met { color: var(--bs-color-accent); border-color: var(--bs-color-accent-soft); background: var(--bs-color-accent-tint); }
+/* met reads NEUTRAL, not red — terracotta-for-pass looked like an error. Red is
+   reserved for the one real problem (unmet); the ✓/✗/– glyph is the primary signal. */
+.ck-status--met { color: var(--bs-color-ink); border-color: var(--bs-color-line); background: var(--bs-color-card-alt); }
 .ck-status--unmet { color: var(--bs-color-status-negative); border-color: var(--bs-color-status-negative); background: var(--bs-color-status-negative-tint); }
 .ck-status--not-assessed { color: var(--bs-color-ink-mono); border-color: var(--bs-color-line); background: var(--bs-color-card-alt); }
+/* A glyph per status so the state reads without relying on color (WCAG 1.4.1). */
+.ck-status--met::before { content: "\2713\00a0"; }
+.ck-status--unmet::before { content: "\2717\00a0"; }
+.ck-status--not-assessed::before { content: "\2013\00a0"; }
 .ck-criterion__label { font-size: 15px; color: var(--bs-color-ink); font-weight: 600; }
 .ck-criterion__standard { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
+/* Each rule's standard links to the doc that declares it — a dotted underline marks
+   the link without the busy ↗ affix (suppressed via no-link-icon in the markup). */
+.ck-std { color: inherit; text-decoration: underline; text-decoration-style: dotted; text-decoration-color: var(--bs-color-ink-mono); text-underline-offset: 2px; }
+.ck-std:hover, .ck-std:focus-visible { color: var(--bs-color-accent); text-decoration-color: var(--bs-color-accent); }
 .ck-criterion__detail { font-size: 13.5px; color: var(--bs-color-ink-soft); line-height: 1.65; max-width: 60ch; margin-bottom: 2px; }
-.ck-criterion__evidence { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-soft); }
-.ck-criterion__evidence:hover { border-color: var(--bs-color-accent); }
+.ck-criterion__evidence { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent); text-decoration: underline; text-decoration-color: var(--bs-color-accent-soft); text-underline-offset: 2px; }
+.ck-criterion__evidence:hover { text-decoration-color: var(--bs-color-accent); }

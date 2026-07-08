@@ -9,7 +9,7 @@
   },
   "hero.summary": {
     "type": "body",
-    "value": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx. Agent changes land as merged PRs through one signed flow. Each git write is checked against the capability that holds it."
+    "value": "I'm a senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx: agent changes land as merged PRs, each git write checked against the capability the agent holds."
   },
   "banner.tagline": {
     "type": "tagline",
@@ -29,27 +29,31 @@
   },
   "exp.aura.what": {
     "type": "claim",
-    "value": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems, running on a Ruby backend across fulfillment, accounting, and third-party integrations. I ship the automation backbone on AWS (ECS, RDS, S3, CloudFront) and built the contract-and-validation layer behind inventory-purchasing."
+    "value": "The team owns Aura's website and business-operations systems on a Ruby backend, spanning fulfillment, accounting, and third-party integrations. I build the automation on AWS (ECS, RDS, S3, CloudFront) and the contract-and-validation layer behind inventory-purchasing."
   },
   "exp.aura.b0": {
     "type": "claim",
-    "value": "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the cash peak tied up in inventory."
+    "value": "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the peak cash tied up in inventory."
   },
   "exp.aura.b1": {
-    "type": "claim",
-    "value": "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — retiring the manual coordination that used to gate every shipment."
+    "type": "body",
+    "value": "Aligned fulfillment, accounting, and ops on a single supply plan — the consolidation took as much cross-team coordination as it did engineering."
   },
   "exp.aura.b2": {
+    "type": "claim",
+    "value": "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, and the freight splits between them — retiring the manual coordination that gated most shipments."
+  },
+  "exp.aura.b3": {
     "type": "body",
-    "value": "Reconstructed how agent-authored commits slipped past review — traced each across five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
+    "value": "Reconstructed how agent-authored commits slipped past review — traced each across five log sources, wrote the post-mortem, and designed the controls that informed Aura's policy for shipping AI-written code."
   },
   "exp.l2l.what": {
     "type": "claim",
-    "value": "Owned the quality gates and developer experience for a 20-engineer team on a Python/Django backend, deployed single-tenant per customer (EC2/ECS, RDS, S3, Lambda). Drove static-analysis CI, a design system, and frontend performance."
+    "value": "Owned the quality gates and developer experience for a 20-engineer team on a Python/Django backend, deployed single-tenant per customer (EC2/ECS, RDS, S3, Lambda). Drove static-analysis CI, a design system, and frontend-performance work."
   },
   "exp.l2l.b0": {
     "type": "claim",
-    "value": "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% — critical-severity tickets per quarter, four quarters before vs. after."
+    "value": "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes before merge, instead of catching them after. Critical bugs fell 20% — critical-severity tickets per quarter, four quarters before vs. after."
   },
   "exp.pioneer-works.what": {
     "type": "body",
@@ -61,7 +65,7 @@
   },
   "exp.kaleida.what": {
     "type": "body",
-    "value": "Built the just-in-time production automation for an AR and print-making studio on Postgres, with heavy third-party API integration."
+    "value": "Built the just-in-time production automation for an augmented-reality and print-making studio on Postgres, with heavy third-party API integration."
   },
   "exp.kaleida.b0": {
     "type": "body",
@@ -69,15 +73,11 @@
   },
   "exp.recurse-center.what": {
     "type": "body",
-    "value": "Type theory in Haskell, using the type system to make invalid states unrepresentable. It's the root of the capability work: push correctness to the boundary, and violations can't compile."
-  },
-  "exp.recurse-center.b0": {
-    "type": "claim",
-    "value": "Completed a selective 12-week programming retreat. Researched how a tight type constraint narrows the space of valid implementations."
+    "value": "Studied type theory in Haskell, using the type system to make invalid states unrepresentable. It's the root of the capability work: push correctness to the boundary, and violations can't compile."
   },
   "exp.scope-of-work.what": {
     "type": "body",
-    "value": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs."
+    "value": "Built the job-postings CMS behind the manufacturing publication's newsletter, and the publication's customer segmentation, on Postgres — integrating outside tools through their APIs."
   },
   "exp.scope-of-work.b0": {
     "type": "body",
@@ -85,11 +85,11 @@
   },
   "proj.prx.desc": {
     "type": "body",
-    "value": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Moved from a Rust predecessor to TypeScript once the key contracts proved to be between systems, not machine and kernel."
+    "value": "An agent pipeline that drives work units to merged PRs. Each git write is checked against the capability the agent holds. Moved from a Rust predecessor to TypeScript once the key contracts proved to be between systems, not machine and kernel."
   },
   "proj.ocap-provenance.desc": {
     "type": "body",
-    "value": "Provenance extended with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied."
+    "value": "Extends SLSA/in-toto provenance with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied."
   },
   "work.prx": {
     "type": "body",
@@ -135,13 +135,21 @@
     "type": "body",
     "value": "public repositories"
   },
-  "copy.corpus.fig.sources": {
+  "copy.corpus.fig.org": {
     "type": "body",
-    "value": "public sources"
+    "value": "under Bounded Systems"
   },
   "copy.corpus.fig.languages": {
     "type": "body",
     "value": "languages"
+  },
+  "copy.corpus.langs.more": {
+    "type": "body",
+    "value": "more languages"
+  },
+  "copy.corpus.chips.hint": {
+    "type": "body",
+    "value": "Topics — pick one to filter the work below"
   },
   "copy.corpus.source.computed": {
     "type": "body",
@@ -157,11 +165,75 @@
   },
   "copy.work.eyebrow": {
     "type": "body",
-    "value": "Selected work — by tag"
+    "value": "Selected work"
+  },
+  "copy.work.filter.all": {
+    "type": "body",
+    "value": "all"
+  },
+  "copy.work.empty": {
+    "type": "body",
+    "value": "No selected project carries this topic — it lives across the wider record."
+  },
+  "copy.work.empty.browse": {
+    "type": "body",
+    "value": "Browse on GitHub"
   },
   "copy.work.pinned": {
     "type": "body",
     "value": "pinned"
+  },
+  "copy.interests.eyebrow": {
+    "type": "body",
+    "value": "Interests"
+  },
+  "copy.interests.title": {
+    "type": "body",
+    "value": "What I follow"
+  },
+  "copy.interests.lede": {
+    "type": "body",
+    "value": "Not my authored work — the projects I star. This is the interest graph behind the record: computed from my GitHub stars the same way Selected work is computed from what I ship."
+  },
+  "copy.interests.fig.count": {
+    "type": "body",
+    "value": "starred repositories"
+  },
+  "copy.interests.fig.languages": {
+    "type": "body",
+    "value": "languages"
+  },
+  "copy.interests.fig.topics": {
+    "type": "body",
+    "value": "topics"
+  },
+  "copy.interests.chips.hint": {
+    "type": "body",
+    "value": "Topics — pick one to filter what I follow"
+  },
+  "copy.interests.list.eyebrow": {
+    "type": "body",
+    "value": "Following"
+  },
+  "copy.interests.empty": {
+    "type": "body",
+    "value": "Nothing I've starred carries this topic."
+  },
+  "copy.interests.empty.browse": {
+    "type": "body",
+    "value": "Browse my stars on GitHub"
+  },
+  "copy.interests.source": {
+    "type": "body",
+    "value": "Computed from my"
+  },
+  "copy.interests.source.stars": {
+    "type": "body",
+    "value": "GitHub stars"
+  },
+  "copy.interests.pending": {
+    "type": "body",
+    "value": "This list is computed from my GitHub stars on each site refresh — it will populate here shortly."
   },
   "copy.colophon.eyebrow": {
     "type": "body",
@@ -169,11 +241,11 @@
   },
   "copy.colophon.more": {
     "type": "body",
-    "value": "Hermetic Nix build · keyless-signed in-toto/SLSA provenance (Sigstore · Rekor · GHCR) —"
+    "value": "Hermetic Nix · keyless-signed in-toto/SLSA (Sigstore · Rekor · GHCR) ·"
   },
   "copy.colophon.provenance": {
     "type": "body",
-    "value": "full provenance"
+    "value": "provenance"
   },
   "copy.colophon.conformance": {
     "type": "body",
@@ -190,6 +262,18 @@
   "copy.footer.generated": {
     "type": "body",
     "value": "generated"
+  },
+  "copy.footer.thisbuild": {
+    "type": "body",
+    "value": "this build"
+  },
+  "copy.footer.commit": {
+    "type": "body",
+    "value": "commit"
+  },
+  "copy.footer.built": {
+    "type": "body",
+    "value": "built"
   },
   "copy.footer.provenance": {
     "type": "body",
@@ -307,6 +391,22 @@
     "type": "body",
     "value": "How it's built"
   },
+  "copy.conf.stat.met": {
+    "type": "body",
+    "value": "met"
+  },
+  "copy.conf.stat.unmet": {
+    "type": "body",
+    "value": "unmet"
+  },
+  "copy.conf.stat.na": {
+    "type": "body",
+    "value": "not assessed"
+  },
+  "copy.conf.stat.total": {
+    "type": "body",
+    "value": "total"
+  },
   "copy.head.resume.label": {
     "type": "body",
     "value": "Résumé"
@@ -322,6 +422,10 @@
   "copy.head.colophon.desc": {
     "type": "body",
     "value": "The upstream tools that build and validate robertdelanghe.dev — each a real build input or gate."
+  },
+  "copy.head.interests.desc": {
+    "type": "body",
+    "value": "What Robert DeLanghe follows on GitHub — the interest graph behind the work, computed from stars: languages, topics, and the projects worth watching."
   },
   "copy.head.blog.desc.lead": {
     "type": "body",

@@ -1,6 +1,5 @@
 [
   { "symbol": "exp.aura.what", "check": "grounding", "note": "Grounded by sourced evidence kept in the private worklog (merged-PR history + commerce projects led). No inline metric on the public site, by choice; receipts stay private." },
-  { "symbol": "exp.aura.b1", "check": "grounding", "note": "Each named automation is a sourced journal line in the private worklog: ocean inbound into DCL (3PL), US Amazon LTL breakdown+automation, Tactical→Amazon SplitSmart — all Notion Commerce Projects (Project Lead). Qualitative by choice; receipts stay private." },
-  { "symbol": "exp.recurse-center.b0", "check": "grounding", "note": "Public Recurse Center facts (recurse.com): selective admission, 12-week batch. Descriptive context, not a performance metric." },
+  { "symbol": "exp.aura.b2", "check": "grounding", "note": "Each named automation is a sourced journal line in the private worklog: ocean inbound into DCL (3PL), US Amazon LTL breakdown+automation, and the 3PL/Amazon freight splits — all Notion Commerce Projects (Project Lead). Qualitative by choice; receipts stay private." },
   { "symbol": "exp.bounded-systems.b0", "check": "grounding", "note": "58 = the public repository count of the bounded-systems org (github.com/orgs/bounded-systems/repositories) — publicly verifiable. Descriptive scale, not a performance metric." }
 ]
