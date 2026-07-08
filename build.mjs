@@ -378,10 +378,14 @@ const date = new Date(site.generatedAt).toISOString().slice(0, 10);
 // homepage's inline colophon section — now every page carries it, plus a link to the
 // credits list's own page (moved off the homepage to /colophon).
 const siteFooter = ({ extra = "" } = {}) => `<footer class="foot">
-      <span>${esc(name)} &middot; ${esc(copy("footer.org"))}</span>
-      ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
-      <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
-      <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
+      <div class="foot__id">
+        <span class="foot__name">${esc(name)} &middot; ${esc(copy("footer.org"))}</span>
+        ${socialHtml ? `<span class="foot__social">${socialHtml}</span>` : ""}
+      </div>
+      <div class="foot__prov">
+        <span class="foot__meta">${extra}${copy("footer.generated")} ${date}${commitHtml}</span>
+        <p class="colophon__more">${copy("colophon.more")} <a href="/provenance">${copy("colophon.provenance")}</a> &middot; <a href="/conformance">${copy("colophon.conformance")}</a></p>
+      </div>
     </footer>`;
 
 // in-toto materials: the build inputs, content-addressed where computable
@@ -580,6 +584,14 @@ for (const p of projects) {
   g.items.push(p);
 }
 const rProjects = projByEntity.map(({ entity, items }) => {
+  // Link the entity heading to its GitHub org so it renders in the accent like the
+  // linked work-org names (a plain span stayed ink — the lone black heading among
+  // terracotta ones on the page; in print all links go ink, so the PDF was uniform).
+  const entityUrl = (() => {
+    const u = items.map((p) => p.url).find(Boolean);
+    const m = u && u.match(/^(https?:\/\/github\.com\/[^/]+)/);
+    return m ? m[1] : null;
+  })();
   const roles = [...new Set(items.flatMap((p) => p.roles ?? []))].join(" · ");
   const starts = items.map((p) => p.startDate).filter(Boolean).sort();
   const when = starts.length ? `${starts[0].slice(0, 4)} – present` : "";
@@ -589,7 +601,7 @@ const rProjects = projByEntity.map(({ entity, items }) => {
   }).join("");
   return `
       <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${esc(entity)}</span>${when ? `<span class="r-job__when">${esc(when)}</span>` : ""}</div>
+        <div class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? `<span class="r-job__when">${esc(when)}</span>` : ""}</div>
         ${roles ? `<div class="r-job__role">${esc(roles)}</div>` : ""}
         <ul>${bullets}</ul>
       </div>`;
@@ -669,7 +681,7 @@ ${jsonLd}
     <h1>${esc(name)}</h1>
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline.replace(/\.$/, ""))}` : ""}</p>
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
-    <a class="r-print" href="/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
+    <a class="r-print" href="${SITE}/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
     ${googleDocsUrl ? `<a class="r-print" href="${esc(googleDocsUrl)}" target="_blank" rel="noopener">${copy("resume.comment")}</a>` : ""}
   </header>
   <p class="r-summary">${esc(summary)}</p>

@@ -148,10 +148,16 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 .tag { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-accent); background: var(--bs-color-card-alt); border: 1px solid var(--bs-color-line); border-radius: 999px; padding: 2px 8px; }
 
 .foot {
-  margin-top: clamp(56px, 9vw, 88px); padding-top: 24px; border-top: 1px solid var(--bs-color-line);
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  margin-top: clamp(56px, 9vw, 88px); padding-top: 22px; border-top: 1px solid var(--bs-color-line);
+  display: grid; gap: 18px;
   font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono);
 }
+/* Tier 1 — identity: name·org left, social right. */
+.foot__id { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 20px; }
+.foot__name { color: var(--bs-color-ink-soft); }
+/* Tier 2 — provenance: the build stamp over the colophon line, quiet and grouped. */
+.foot__prov { display: grid; gap: 8px; }
+.colophon__more { margin: 0; line-height: 1.75; max-width: 70ch; }
 
 @media (max-width: 560px) {
   .figures { grid-template-columns: repeat(2, 1fr); }

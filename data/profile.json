@@ -7,7 +7,11 @@
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
     "summary": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx. Agent changes land as merged PRs through one signed flow. Each git write is checked against the capability that holds it.",
-    "location": { "city": "Brooklyn", "region": "NY", "countryCode": "US" },
+    "location": {
+      "city": "Brooklyn",
+      "region": "NY",
+      "countryCode": "US"
+    },
     "profiles": [
       {
         "network": "GitHub",
@@ -29,11 +33,16 @@
       "url": "https://auraframes.com",
       "startDate": "2023-10",
       "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems, running on a Ruby backend across fulfillment, accounting, and third-party integrations. I ship the automation backbone on AWS (ECS, RDS, S3, CloudFront) and built the contract-and-validation layer behind inventory-purchasing.",
-      "keywords": ["Ruby", "AWS", "Capability security", "Agent infrastructure"],
+      "keywords": [
+        "Ruby",
+        "AWS",
+        "Capability security",
+        "Agent infrastructure"
+      ],
       "highlights": [
-        "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth. It compiles to 61 downstream schema contracts, checked by 173 test scenarios.",
-        "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — replacing manual coordination with schema-structured pipelines.",
-        "Investigated unreviewed agent-authored commits reaching main. Reconstructed each one's path across five log domains and wrote the post-mortem. Designed the controls that became Aura's policy for shipping AI-written code."
+        "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the cash peak tied up in inventory.",
+        "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — retiring the manual coordination that used to gate every shipment.",
+        "Reconstructed how agent-authored commits slipped past review — traced each across five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
       ]
     },
     {
@@ -44,9 +53,14 @@
       "startDate": "2021-04",
       "endDate": "2023-09",
       "summary": "Owned the quality gates and developer experience for a 20-engineer team on a Python/Django backend, deployed single-tenant per customer (EC2/ECS, RDS, S3, Lambda). Drove static-analysis CI, a design system, and frontend performance.",
-      "keywords": ["Python", "AWS", "Static analysis", "Developer tooling"],
+      "keywords": [
+        "Python",
+        "AWS",
+        "Static analysis",
+        "Developer tooling"
+      ],
       "highlights": [
-        "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
+        "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% — critical-severity tickets per quarter, four quarters before vs. after."
       ]
     },
     {
@@ -58,7 +72,7 @@
       "endDate": "2021-02",
       "summary": "Built the event-planning platform's backend for a major Brooklyn arts center — Python and JavaScript on AWS Lambda and Postgres, integrating Square POS over webhooks.",
       "highlights": [
-        "Labeled event-state transitions by the department that emitted each POS event, not a human-set flag, across the venue's large concerts."
+        "Replaced hand-set event-status flags with state derived from each department's POS activity, so status stayed correct across the venue's large concerts without manual updates."
       ]
     },
     {
@@ -74,18 +88,6 @@
       ]
     },
     {
-      "name": "Scope of Work",
-      "position": "Contract Software Engineer",
-      "location": "Brooklyn",
-      "url": "https://scopeofwork.net",
-      "startDate": "2018-10",
-      "endDate": "2019-02",
-      "summary": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs.",
-      "highlights": [
-        "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
-      ]
-    },
-    {
       "name": "Recurse Center",
       "position": "Resident",
       "location": "Brooklyn",
@@ -95,6 +97,18 @@
       "summary": "Type theory in Haskell, using the type system to make invalid states unrepresentable. It's the root of the capability work: push correctness to the boundary, and violations can't compile.",
       "highlights": [
         "Completed a selective 12-week programming retreat. Researched how a tight type constraint narrows the space of valid implementations."
+      ]
+    },
+    {
+      "name": "Scope of Work",
+      "position": "Contract Software Engineer",
+      "location": "Brooklyn",
+      "url": "https://scopeofwork.net",
+      "startDate": "2018-10",
+      "endDate": "2019-02",
+      "summary": "Built the job-postings CMS behind the manufacturing publication's newsletter, and its customer segmentation, on Postgres — integrating outside tools through their APIs.",
+      "highlights": [
+        "Designed the schema that moved spreadsheet data into a relational database, so a malformed record couldn't be written."
       ]
     }
   ],
@@ -112,10 +126,17 @@
     {
       "name": "prx",
       "startDate": "2026-05",
-      "description": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Evolved from hooksmith, a Rust predecessor that still anchors Bounded Systems' lower-level, machine-facing contracts. Moved to TypeScript once the key contracts proved to be between systems, not machine and kernel.",
+      "description": "An agent pipeline that drives each work unit to a merged PR. Git-writes are verified against the capability owner that holds them. Moved from a Rust predecessor to TypeScript once the key contracts proved to be between systems, not machine and kernel.",
       "url": "https://github.com/bounded-systems/prx",
-      "keywords": ["Capability security", "AI agents", "TypeScript", "Rust"],
-      "roles": ["Creator"],
+      "keywords": [
+        "Capability security",
+        "AI agents",
+        "TypeScript",
+        "Rust"
+      ],
+      "roles": [
+        "Creator"
+      ],
       "entity": "Bounded Systems"
     },
     {
@@ -123,8 +144,15 @@
       "startDate": "2026-06",
       "description": "Provenance extended with object-capability semantics, built in TypeScript. Each attestation records who produced an artifact and which capabilities they held — and which were denied.",
       "url": "https://github.com/bounded-systems/ocap-provenance",
-      "keywords": ["Supply-chain security", "in-toto", "SLSA", "TypeScript"],
-      "roles": ["Creator"],
+      "keywords": [
+        "Supply-chain security",
+        "in-toto",
+        "SLSA",
+        "TypeScript"
+      ],
+      "roles": [
+        "Creator"
+      ],
       "entity": "Bounded Systems"
     }
   ],
