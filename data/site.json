@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-07-07T16:05:56.329Z",
+  "generatedAt": "2026-07-08T02:02:03.942Z",
   "owner": {
     "login": "bdelanghe",
     "name": "Robert DeLanghe"
   },
   "stats": {
-    "repos": 187,
-    "public": 118,
+    "repos": 188,
+    "public": 119,
     "private": 69,
-    "sources": 178,
-    "publicSources": 109,
+    "sources": 179,
+    "publicSources": 110,
     "forks": 9,
     "tagged": 58,
     "languages": [
       {
         "name": "TypeScript",
-        "count": 57
+        "count": 58
       },
       {
         "name": "JavaScript",
@@ -235,7 +235,7 @@
       },
       {
         "name": "bdelanghe",
-        "count": 30
+        "count": 31
       }
     ]
   },
@@ -267,7 +267,7 @@
       "name": "guest-room",
       "fullName": "bounded-systems/guest-room",
       "url": "https://github.com/bounded-systems/guest-room",
-      "description": "Guest-agnostic room+door capability runtime \u2014 the core library claude-box is built on.",
+      "description": "Guest-agnostic room+door capability runtime — the core library claude-box is built on.",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
@@ -290,7 +290,7 @@
       "name": "claude-box",
       "fullName": "bounded-systems/claude-box",
       "url": "https://github.com/bounded-systems/claude-box",
-      "description": "A capability-secured box for agent sessions \u2014 its authority is the door references it holds (keeper/scout/concierge/net), parent-agnostic.",
+      "description": "A capability-secured box for agent sessions — its authority is the door references it holds (keeper/scout/concierge/net), parent-agnostic.",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
@@ -330,7 +330,7 @@
       "name": "ocap-provenance",
       "fullName": "bounded-systems/ocap-provenance",
       "url": "https://github.com/bounded-systems/ocap-provenance",
-      "description": "Capability-use provenance \u2014 a schema + SLSA mapping binding each privileged effect to a signed owner and an auditable chain.",
+      "description": "Capability-use provenance — a schema + SLSA mapping binding each privileged effect to a signed owner and an auditable chain.",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
@@ -347,7 +347,7 @@
       "name": "string-audit",
       "fullName": "bounded-systems/string-audit",
       "url": "https://github.com/bounded-systems/string-audit",
-      "description": "Cost-aware, grounded content auditor \u2014 typed string symbols, type-scoped audits, CAS-memoized LLM calls.",
+      "description": "Cost-aware, grounded content auditor — typed string symbols, type-scoped audits, CAS-memoized LLM calls.",
       "language": "JavaScript",
       "stars": 0,
       "pinned": true,
@@ -359,5 +359,3264 @@
         "security"
       ]
     }
-  ]
+  ],
+  "interests": {
+    "count": 190,
+    "shown": 30,
+    "languages": [
+      {
+        "name": "TypeScript",
+        "count": 47
+      },
+      {
+        "name": "Python",
+        "count": 39
+      },
+      {
+        "name": "Go",
+        "count": 27
+      },
+      {
+        "name": "Rust",
+        "count": 26
+      },
+      {
+        "name": "JavaScript",
+        "count": 9
+      },
+      {
+        "name": "other",
+        "count": 8
+      },
+      {
+        "name": "HTML",
+        "count": 7
+      },
+      {
+        "name": "C",
+        "count": 5
+      },
+      {
+        "name": "Jupyter Notebook",
+        "count": 4
+      },
+      {
+        "name": "Shell",
+        "count": 4
+      },
+      {
+        "name": "Bikeshed",
+        "count": 2
+      },
+      {
+        "name": "Swift",
+        "count": 2
+      },
+      {
+        "name": "SCSS",
+        "count": 1
+      },
+      {
+        "name": "Markdown",
+        "count": 1
+      },
+      {
+        "name": "C++",
+        "count": 1
+      },
+      {
+        "name": "PHP",
+        "count": 1
+      },
+      {
+        "name": "Makefile",
+        "count": 1
+      },
+      {
+        "name": "Nunjucks",
+        "count": 1
+      },
+      {
+        "name": "Pony",
+        "count": 1
+      },
+      {
+        "name": "Dockerfile",
+        "count": 1
+      },
+      {
+        "name": "Awk",
+        "count": 1
+      },
+      {
+        "name": "TeX",
+        "count": 1
+      }
+    ],
+    "topics": [
+      {
+        "name": "ai",
+        "count": 30
+      },
+      {
+        "name": "cli",
+        "count": 26
+      },
+      {
+        "name": "security",
+        "count": 24
+      },
+      {
+        "name": "ai-agents",
+        "count": 20
+      },
+      {
+        "name": "developer-tools",
+        "count": 18
+      },
+      {
+        "name": "claude-code",
+        "count": 17
+      },
+      {
+        "name": "agents",
+        "count": 14
+      },
+      {
+        "name": "python",
+        "count": 14
+      },
+      {
+        "name": "llm",
+        "count": 14
+      },
+      {
+        "name": "rust",
+        "count": 13
+      },
+      {
+        "name": "claude",
+        "count": 12
+      },
+      {
+        "name": "typescript",
+        "count": 11
+      },
+      {
+        "name": "agent",
+        "count": 10
+      },
+      {
+        "name": "codex",
+        "count": 10
+      },
+      {
+        "name": "mcp",
+        "count": 9
+      },
+      {
+        "name": "javascript",
+        "count": 9
+      },
+      {
+        "name": "openai",
+        "count": 9
+      },
+      {
+        "name": "terminal",
+        "count": 9
+      },
+      {
+        "name": "react",
+        "count": 8
+      },
+      {
+        "name": "tui",
+        "count": 8
+      },
+      {
+        "name": "security-tools",
+        "count": 8
+      },
+      {
+        "name": "secret-management",
+        "count": 7
+      },
+      {
+        "name": "shell",
+        "count": 6
+      },
+      {
+        "name": "macos",
+        "count": 6
+      },
+      {
+        "name": "chatgpt",
+        "count": 6
+      },
+      {
+        "name": "go",
+        "count": 6
+      },
+      {
+        "name": "secrets",
+        "count": 6
+      },
+      {
+        "name": "hacktoberfest",
+        "count": 5
+      },
+      {
+        "name": "git",
+        "count": 5
+      },
+      {
+        "name": "copilot",
+        "count": 5
+      },
+      {
+        "name": "gemini",
+        "count": 5
+      },
+      {
+        "name": "anthropic",
+        "count": 5
+      },
+      {
+        "name": "command-line",
+        "count": 5
+      },
+      {
+        "name": "open-source",
+        "count": 5
+      },
+      {
+        "name": "cloud",
+        "count": 4
+      },
+      {
+        "name": "skills",
+        "count": 4
+      },
+      {
+        "name": "windows",
+        "count": 4
+      },
+      {
+        "name": "artificial-intelligence",
+        "count": 4
+      },
+      {
+        "name": "opencode",
+        "count": 4
+      },
+      {
+        "name": "cursor",
+        "count": 4
+      },
+      {
+        "name": "gemini-cli",
+        "count": 4
+      },
+      {
+        "name": "devops",
+        "count": 4
+      },
+      {
+        "name": "nodejs",
+        "count": 4
+      },
+      {
+        "name": "coding",
+        "count": 4
+      },
+      {
+        "name": "frontend",
+        "count": 4
+      },
+      {
+        "name": "gpt",
+        "count": 4
+      },
+      {
+        "name": "nextjs",
+        "count": 4
+      },
+      {
+        "name": "ollama",
+        "count": 4
+      },
+      {
+        "name": "beads",
+        "count": 4
+      },
+      {
+        "name": "golang",
+        "count": 4
+      },
+      {
+        "name": "spec-driven-development",
+        "count": 4
+      },
+      {
+        "name": "ratatui",
+        "count": 4
+      },
+      {
+        "name": "azure",
+        "count": 4
+      },
+      {
+        "name": "mcp-server",
+        "count": 4
+      },
+      {
+        "name": "linux",
+        "count": 4
+      },
+      {
+        "name": "design-tokens",
+        "count": 3
+      },
+      {
+        "name": "collaboration",
+        "count": 3
+      },
+      {
+        "name": "sql",
+        "count": 3
+      },
+      {
+        "name": "devtools",
+        "count": 3
+      },
+      {
+        "name": "machine-learning",
+        "count": 3
+      },
+      {
+        "name": "web",
+        "count": 3
+      },
+      {
+        "name": "github-actions",
+        "count": 3
+      },
+      {
+        "name": "android",
+        "count": 3
+      },
+      {
+        "name": "context-engineering",
+        "count": 3
+      },
+      {
+        "name": "ai-tools",
+        "count": 3
+      },
+      {
+        "name": "vibe-coding",
+        "count": 3
+      },
+      {
+        "name": "ai-agent",
+        "count": 3
+      },
+      {
+        "name": "openclaw",
+        "count": 3
+      },
+      {
+        "name": "rag",
+        "count": 3
+      },
+      {
+        "name": "development",
+        "count": 3
+      },
+      {
+        "name": "issue-tracker",
+        "count": 3
+      },
+      {
+        "name": "configuration",
+        "count": 3
+      },
+      {
+        "name": "bash",
+        "count": 3
+      },
+      {
+        "name": "zsh",
+        "count": 3
+      },
+      {
+        "name": "productivity",
+        "count": 3
+      },
+      {
+        "name": "environment-variables",
+        "count": 3
+      },
+      {
+        "name": "secrets-management",
+        "count": 3
+      },
+      {
+        "name": "secret",
+        "count": 3
+      },
+      {
+        "name": "node-js",
+        "count": 3
+      },
+      {
+        "name": "framework",
+        "count": 3
+      },
+      {
+        "name": "vue",
+        "count": 3
+      },
+      {
+        "name": "css",
+        "count": 2
+      },
+      {
+        "name": "design-systems",
+        "count": 2
+      },
+      {
+        "name": "olap",
+        "count": 2
+      },
+      {
+        "name": "notion",
+        "count": 2
+      },
+      {
+        "name": "code-interpreter",
+        "count": 2
+      },
+      {
+        "name": "sandbox",
+        "count": 2
+      },
+      {
+        "name": "distributed",
+        "count": 2
+      },
+      {
+        "name": "webpack",
+        "count": 2
+      },
+      {
+        "name": "c",
+        "count": 2
+      },
+      {
+        "name": "actions",
+        "count": 2
+      },
+      {
+        "name": "gcp",
+        "count": 2
+      },
+      {
+        "name": "accessibility",
+        "count": 2
+      },
+      {
+        "name": "github",
+        "count": 2
+      },
+      {
+        "name": "ios",
+        "count": 2
+      },
+      {
+        "name": "native",
+        "count": 2
+      },
+      {
+        "name": "linters",
+        "count": 2
+      },
+      {
+        "name": "awesome-list",
+        "count": 2
+      },
+      {
+        "name": "agentic-ai",
+        "count": 2
+      },
+      {
+        "name": "ide",
+        "count": 2
+      },
+      {
+        "name": "cursor-agent",
+        "count": 2
+      },
+      {
+        "name": "github-copilot",
+        "count": 2
+      },
+      {
+        "name": "supply-chain-security",
+        "count": 2
+      },
+      {
+        "name": "memory",
+        "count": 2
+      },
+      {
+        "name": "claude-skills",
+        "count": 2
+      },
+      {
+        "name": "skill",
+        "count": 2
+      },
+      {
+        "name": "sqlite",
+        "count": 2
+      },
+      {
+        "name": "prompt",
+        "count": 2
+      },
+      {
+        "name": "acp",
+        "count": 2
+      },
+      {
+        "name": "agentic-coding",
+        "count": 2
+      },
+      {
+        "name": "markdown",
+        "count": 2
+      },
+      {
+        "name": "best-practices",
+        "count": 2
+      },
+      {
+        "name": "linter",
+        "count": 2
+      },
+      {
+        "name": "agentic",
+        "count": 2
+      },
+      {
+        "name": "sdlc",
+        "count": 2
+      },
+      {
+        "name": "windsurf",
+        "count": 2
+      },
+      {
+        "name": "engineering",
+        "count": 2
+      },
+      {
+        "name": "prd",
+        "count": 2
+      },
+      {
+        "name": "spec",
+        "count": 2
+      },
+      {
+        "name": "django",
+        "count": 2
+      },
+      {
+        "name": "docker",
+        "count": 2
+      },
+      {
+        "name": "dotenv",
+        "count": 2
+      },
+      {
+        "name": "credentials",
+        "count": 2
+      },
+      {
+        "name": "secret-scanning",
+        "count": 2
+      },
+      {
+        "name": "ci",
+        "count": 2
+      },
+      {
+        "name": "aws",
+        "count": 2
+      },
+      {
+        "name": "automation",
+        "count": 2
+      },
+      {
+        "name": "ci-cd",
+        "count": 2
+      },
+      {
+        "name": "generative-ai",
+        "count": 2
+      },
+      {
+        "name": "langchain",
+        "count": 2
+      },
+      {
+        "name": "llms",
+        "count": 2
+      },
+      {
+        "name": "ai-gateway",
+        "count": 2
+      },
+      {
+        "name": "gateway",
+        "count": 2
+      },
+      {
+        "name": "llm-gateway",
+        "count": 2
+      },
+      {
+        "name": "llmops",
+        "count": 2
+      },
+      {
+        "name": "mcp-gateway",
+        "count": 2
+      },
+      {
+        "name": "mcp-client",
+        "count": 2
+      },
+      {
+        "name": "kubernetes",
+        "count": 2
+      },
+      {
+        "name": "vscode",
+        "count": 2
+      },
+      {
+        "name": "webui",
+        "count": 2
+      },
+      {
+        "name": "validation",
+        "count": 2
+      },
+      {
+        "name": "monitoring",
+        "count": 2
+      },
+      {
+        "name": "library",
+        "count": 2
+      },
+      {
+        "name": "devsecops",
+        "count": 2
+      },
+      {
+        "name": "w3c",
+        "count": 1
+      },
+      {
+        "name": "w3css",
+        "count": 1
+      },
+      {
+        "name": "wiki",
+        "count": 1
+      },
+      {
+        "name": "design-system",
+        "count": 1
+      },
+      {
+        "name": "landlock",
+        "count": 1
+      },
+      {
+        "name": "arrow",
+        "count": 1
+      },
+      {
+        "name": "big-data",
+        "count": 1
+      },
+      {
+        "name": "dataframe",
+        "count": 1
+      },
+      {
+        "name": "datafusion",
+        "count": 1
+      },
+      {
+        "name": "query-engine",
+        "count": 1
+      },
+      {
+        "name": "command",
+        "count": 1
+      },
+      {
+        "name": "hosting",
+        "count": 1
+      },
+      {
+        "name": "jamstack",
+        "count": 1
+      },
+      {
+        "name": "ship",
+        "count": 1
+      },
+      {
+        "name": "vercel",
+        "count": 1
+      },
+      {
+        "name": "all-in-one",
+        "count": 1
+      },
+      {
+        "name": "crm",
+        "count": 1
+      },
+      {
+        "name": "crm-system",
+        "count": 1
+      },
+      {
+        "name": "email",
+        "count": 1
+      },
+      {
+        "name": "linear",
+        "count": 1
+      },
+      {
+        "name": "messaging",
+        "count": 1
+      },
+      {
+        "name": "notes",
+        "count": 1
+      },
+      {
+        "name": "office",
+        "count": 1
+      },
+      {
+        "name": "slack",
+        "count": 1
+      },
+      {
+        "name": "slack-alternative",
+        "count": 1
+      },
+      {
+        "name": "startup",
+        "count": 1
+      },
+      {
+        "name": "startup-tools",
+        "count": 1
+      },
+      {
+        "name": "workspace",
+        "count": 1
+      },
+      {
+        "name": "containers",
+        "count": 1
+      },
+      {
+        "name": "gpu",
+        "count": 1
+      },
+      {
+        "name": "modal",
+        "count": 1
+      },
+      {
+        "name": "pytorch",
+        "count": 1
+      },
+      {
+        "name": "serverless",
+        "count": 1
+      },
+      {
+        "name": "stable-diffusion",
+        "count": 1
+      },
+      {
+        "name": "cost",
+        "count": 1
+      },
+      {
+        "name": "dependencies",
+        "count": 1
+      },
+      {
+        "name": "npm-package",
+        "count": 1
+      },
+      {
+        "name": "performance",
+        "count": 1
+      },
+      {
+        "name": "chdb",
+        "count": 1
+      },
+      {
+        "name": "clickhouse",
+        "count": 1
+      },
+      {
+        "name": "clickhouse-database",
+        "count": 1
+      },
+      {
+        "name": "clickhouse-server",
+        "count": 1
+      },
+      {
+        "name": "data-science",
+        "count": 1
+      },
+      {
+        "name": "database",
+        "count": 1
+      },
+      {
+        "name": "embedded-database",
+        "count": 1
+      },
+      {
+        "name": "blazingly-fast",
+        "count": 1
+      },
+      {
+        "name": "built-with-rust",
+        "count": 1
+      },
+      {
+        "name": "version-control",
+        "count": 1
+      },
+      {
+        "name": "authentication",
+        "count": 1
+      },
+      {
+        "name": "google-cloud",
+        "count": 1
+      },
+      {
+        "name": "google-cloud-platform",
+        "count": 1
+      },
+      {
+        "name": "iam",
+        "count": 1
+      },
+      {
+        "name": "identity",
+        "count": 1
+      },
+      {
+        "name": "github-app",
+        "count": 1
+      },
+      {
+        "name": "github-token",
+        "count": 1
+      },
+      {
+        "name": "token",
+        "count": 1
+      },
+      {
+        "name": "rust-lang",
+        "count": 1
+      },
+      {
+        "name": "rust-libraries",
+        "count": 1
+      },
+      {
+        "name": "sigstore",
+        "count": 1
+      },
+      {
+        "name": "provenance",
+        "count": 1
+      },
+      {
+        "name": "supply-chain",
+        "count": 1
+      },
+      {
+        "name": "transparency-log",
+        "count": 1
+      },
+      {
+        "name": "sdk",
+        "count": 1
+      },
+      {
+        "name": "compile",
+        "count": 1
+      },
+      {
+        "name": "harmonyos",
+        "count": 1
+      },
+      {
+        "name": "llvm",
+        "count": 1
+      },
+      {
+        "name": "smc",
+        "count": 1
+      },
+      {
+        "name": "watchos",
+        "count": 1
+      },
+      {
+        "name": "beginner-friendly",
+        "count": 1
+      },
+      {
+        "name": "exercises",
+        "count": 1
+      },
+      {
+        "name": "rustlings",
+        "count": 1
+      },
+      {
+        "name": "formatters",
+        "count": 1
+      },
+      {
+        "name": "agent-harness",
+        "count": 1
+      },
+      {
+        "name": "agent-memory",
+        "count": 1
+      },
+      {
+        "name": "agent-orchestration",
+        "count": 1
+      },
+      {
+        "name": "ai-agent-harness",
+        "count": 1
+      },
+      {
+        "name": "harness-engineering",
+        "count": 1
+      },
+      {
+        "name": "ai-alignment",
+        "count": 1
+      },
+      {
+        "name": "ai-limits",
+        "count": 1
+      },
+      {
+        "name": "ai-safety",
+        "count": 1
+      },
+      {
+        "name": "bounded-systems-theory",
+        "count": 1
+      },
+      {
+        "name": "chaitin",
+        "count": 1
+      },
+      {
+        "name": "consciousness",
+        "count": 1
+      },
+      {
+        "name": "formal-systems",
+        "count": 1
+      },
+      {
+        "name": "godel",
+        "count": 1
+      },
+      {
+        "name": "halting-problem",
+        "count": 1
+      },
+      {
+        "name": "incompleteness",
+        "count": 1
+      },
+      {
+        "name": "model-collapse",
+        "count": 1
+      },
+      {
+        "name": "self-reference",
+        "count": 1
+      },
+      {
+        "name": "turing",
+        "count": 1
+      },
+      {
+        "name": "attestation",
+        "count": 1
+      },
+      {
+        "name": "software-supply-chain-security",
+        "count": 1
+      },
+      {
+        "name": "actor-model",
+        "count": 1
+      },
+      {
+        "name": "pony-language",
+        "count": 1
+      },
+      {
+        "name": "pony-source",
+        "count": 1
+      },
+      {
+        "name": "ponyc",
+        "count": 1
+      },
+      {
+        "name": "ponylang",
+        "count": 1
+      },
+      {
+        "name": "programming-language",
+        "count": 1
+      },
+      {
+        "name": "awesome",
+        "count": 1
+      },
+      {
+        "name": "capabilities",
+        "count": 1
+      },
+      {
+        "name": "capability-based",
+        "count": 1
+      },
+      {
+        "name": "ocap",
+        "count": 1
+      },
+      {
+        "name": "ocaps",
+        "count": 1
+      },
+      {
+        "name": "web-security",
+        "count": 1
+      },
+      {
+        "name": "coding-agent",
+        "count": 1
+      },
+      {
+        "name": "markdown-editor",
+        "count": 1
+      },
+      {
+        "name": "multi-agent-systems",
+        "count": 1
+      },
+      {
+        "name": "wysiwyg-editor",
+        "count": 1
+      },
+      {
+        "name": "cline",
+        "count": 1
+      },
+      {
+        "name": "copilot-cli",
+        "count": 1
+      },
+      {
+        "name": "cursor-cli",
+        "count": 1
+      },
+      {
+        "name": "kimi",
+        "count": 1
+      },
+      {
+        "name": "kimi-cli",
+        "count": 1
+      },
+      {
+        "name": "agent-infra",
+        "count": 1
+      },
+      {
+        "name": "capability-security",
+        "count": 1
+      },
+      {
+        "name": "oclif",
+        "count": 1
+      },
+      {
+        "name": "agentmemory",
+        "count": 1
+      },
+      {
+        "name": "claudecode",
+        "count": 1
+      },
+      {
+        "name": "genai",
+        "count": 1
+      },
+      {
+        "name": "harness",
+        "count": 1
+      },
+      {
+        "name": "hermes",
+        "count": 1
+      },
+      {
+        "name": "antigravity-skills",
+        "count": 1
+      },
+      {
+        "name": "business-knowledge",
+        "count": 1
+      },
+      {
+        "name": "codebase-analysis",
+        "count": 1
+      },
+      {
+        "name": "codex-skills",
+        "count": 1
+      },
+      {
+        "name": "developer-tools-ai-agent",
+        "count": 1
+      },
+      {
+        "name": "gemini-cli-skills",
+        "count": 1
+      },
+      {
+        "name": "karpathy-llm-wiki",
+        "count": 1
+      },
+      {
+        "name": "knowledge-base",
+        "count": 1
+      },
+      {
+        "name": "knowledge-graph",
+        "count": 1
+      },
+      {
+        "name": "opencode-skills",
+        "count": 1
+      },
+      {
+        "name": "pi-agent",
+        "count": 1
+      },
+      {
+        "name": "understandcode",
+        "count": 1
+      },
+      {
+        "name": "design",
+        "count": 1
+      },
+      {
+        "name": "lowcode",
+        "count": 1
+      },
+      {
+        "name": "nocode",
+        "count": 1
+      },
+      {
+        "name": "vibecoding",
+        "count": 1
+      },
+      {
+        "name": "ai-memory",
+        "count": 1
+      },
+      {
+        "name": "chromadb",
+        "count": 1
+      },
+      {
+        "name": "claude-agent-sdk",
+        "count": 1
+      },
+      {
+        "name": "claude-agents",
+        "count": 1
+      },
+      {
+        "name": "claude-code-plugin",
+        "count": 1
+      },
+      {
+        "name": "embeddings",
+        "count": 1
+      },
+      {
+        "name": "long-term-memory",
+        "count": 1
+      },
+      {
+        "name": "mem0",
+        "count": 1
+      },
+      {
+        "name": "memory-engine",
+        "count": 1
+      },
+      {
+        "name": "openmemory",
+        "count": 1
+      },
+      {
+        "name": "supermemory",
+        "count": 1
+      },
+      {
+        "name": "language-model",
+        "count": 1
+      },
+      {
+        "name": "software-engineering",
+        "count": 1
+      },
+      {
+        "name": "training",
+        "count": 1
+      },
+      {
+        "name": "agentic-ai-cli",
+        "count": 1
+      },
+      {
+        "name": "textual",
+        "count": 1
+      },
+      {
+        "name": "gpt-4",
+        "count": 1
+      },
+      {
+        "name": "software",
+        "count": 1
+      },
+      {
+        "name": "claude-ai",
+        "count": 1
+      },
+      {
+        "name": "chain-of-thought",
+        "count": 1
+      },
+      {
+        "name": "dataset-generation",
+        "count": 1
+      },
+      {
+        "name": "evals",
+        "count": 1
+      },
+      {
+        "name": "evaluation",
+        "count": 1
+      },
+      {
+        "name": "evaluation-framework",
+        "count": 1
+      },
+      {
+        "name": "fine-tuning",
+        "count": 1
+      },
+      {
+        "name": "ml",
+        "count": 1
+      },
+      {
+        "name": "prompt-engineering",
+        "count": 1
+      },
+      {
+        "name": "rlhf",
+        "count": 1
+      },
+      {
+        "name": "synthetic-data",
+        "count": 1
+      },
+      {
+        "name": "code-review",
+        "count": 1
+      },
+      {
+        "name": "apex",
+        "count": 1
+      },
+      {
+        "name": "autofix",
+        "count": 1
+      },
+      {
+        "name": "azure-pipelines",
+        "count": 1
+      },
+      {
+        "name": "code-quality",
+        "count": 1
+      },
+      {
+        "name": "formatter",
+        "count": 1
+      },
+      {
+        "name": "gitlab-ci",
+        "count": 1
+      },
+      {
+        "name": "groovy",
+        "count": 1
+      },
+      {
+        "name": "java",
+        "count": 1
+      },
+      {
+        "name": "jenkins",
+        "count": 1
+      },
+      {
+        "name": "kotlin",
+        "count": 1
+      },
+      {
+        "name": "megalinter",
+        "count": 1
+      },
+      {
+        "name": "sarif-report",
+        "count": 1
+      },
+      {
+        "name": "terraform",
+        "count": 1
+      },
+      {
+        "name": "notion-api",
+        "count": 1
+      },
+      {
+        "name": "codex-cli",
+        "count": 1
+      },
+      {
+        "name": "container",
+        "count": 1
+      },
+      {
+        "name": "brainstorming",
+        "count": 1
+      },
+      {
+        "name": "obra",
+        "count": 1
+      },
+      {
+        "name": "subagent-driven-development",
+        "count": 1
+      },
+      {
+        "name": "superpowers",
+        "count": 1
+      },
+      {
+        "name": "agno",
+        "count": 1
+      },
+      {
+        "name": "text-to-sql",
+        "count": 1
+      },
+      {
+        "name": "meta-prompting",
+        "count": 1
+      },
+      {
+        "name": "cursor-ai",
+        "count": 1
+      },
+      {
+        "name": "cursorai",
+        "count": 1
+      },
+      {
+        "name": "lovable",
+        "count": 1
+      },
+      {
+        "name": "lovable-dev",
+        "count": 1
+      },
+      {
+        "name": "roocode",
+        "count": 1
+      },
+      {
+        "name": "task-manager",
+        "count": 1
+      },
+      {
+        "name": "tasks",
+        "count": 1
+      },
+      {
+        "name": "tasks-list",
+        "count": 1
+      },
+      {
+        "name": "windsurf-ai",
+        "count": 1
+      },
+      {
+        "name": "planning",
+        "count": 1
+      },
+      {
+        "name": "sdd",
+        "count": 1
+      },
+      {
+        "name": "specification",
+        "count": 1
+      },
+      {
+        "name": "desktop-app",
+        "count": 1
+      },
+      {
+        "name": "ios-app",
+        "count": 1
+      },
+      {
+        "name": "macos-app",
+        "count": 1
+      },
+      {
+        "name": "project-management",
+        "count": 1
+      },
+      {
+        "name": "tauri",
+        "count": 1
+      },
+      {
+        "name": "gastown",
+        "count": 1
+      },
+      {
+        "name": "knots",
+        "count": 1
+      },
+      {
+        "name": "cortex-code",
+        "count": 1
+      },
+      {
+        "name": "multi-agent",
+        "count": 1
+      },
+      {
+        "name": "workflows",
+        "count": 1
+      },
+      {
+        "name": "anamolyco",
+        "count": 1
+      },
+      {
+        "name": "artificial-analysis",
+        "count": 1
+      },
+      {
+        "name": "benchmarks",
+        "count": 1
+      },
+      {
+        "name": "coding-agents",
+        "count": 1
+      },
+      {
+        "name": "models",
+        "count": 1
+      },
+      {
+        "name": "models-dev",
+        "count": 1
+      },
+      {
+        "name": "sst",
+        "count": 1
+      },
+      {
+        "name": "sst-inspired",
+        "count": 1
+      },
+      {
+        "name": "status",
+        "count": 1
+      },
+      {
+        "name": "status-page",
+        "count": 1
+      },
+      {
+        "name": "cargo",
+        "count": 1
+      },
+      {
+        "name": "codingagent",
+        "count": 1
+      },
+      {
+        "name": "crossterm",
+        "count": 1
+      },
+      {
+        "name": "flexbox",
+        "count": 1
+      },
+      {
+        "name": "interactive",
+        "count": 1
+      },
+      {
+        "name": "bun",
+        "count": 1
+      },
+      {
+        "name": "claude-code-native",
+        "count": 1
+      },
+      {
+        "name": "claude-code-system-prompts",
+        "count": 1
+      },
+      {
+        "name": "claude-code-themes",
+        "count": 1
+      },
+      {
+        "name": "claude-code-ui",
+        "count": 1
+      },
+      {
+        "name": "customization",
+        "count": 1
+      },
+      {
+        "name": "personalization",
+        "count": 1
+      },
+      {
+        "name": "refined-claude-code",
+        "count": 1
+      },
+      {
+        "name": "styling",
+        "count": 1
+      },
+      {
+        "name": "system-prompts",
+        "count": 1
+      },
+      {
+        "name": "themes",
+        "count": 1
+      },
+      {
+        "name": "token-counter",
+        "count": 1
+      },
+      {
+        "name": "tweak",
+        "count": 1
+      },
+      {
+        "name": "gemma",
+        "count": 1
+      },
+      {
+        "name": "large-language-models",
+        "count": 1
+      },
+      {
+        "name": "llama",
+        "count": 1
+      },
+      {
+        "name": "llama3",
+        "count": 1
+      },
+      {
+        "name": "mistral",
+        "count": 1
+      },
+      {
+        "name": "mistral-ai",
+        "count": 1
+      },
+      {
+        "name": "mixtral",
+        "count": 1
+      },
+      {
+        "name": "ollama-client",
+        "count": 1
+      },
+      {
+        "name": "ollama-interface",
+        "count": 1
+      },
+      {
+        "name": "phi-3",
+        "count": 1
+      },
+      {
+        "name": "pomodoro-timer",
+        "count": 1
+      },
+      {
+        "name": "timer",
+        "count": 1
+      },
+      {
+        "name": "llamacpp",
+        "count": 1
+      },
+      {
+        "name": "cli-tool",
+        "count": 1
+      },
+      {
+        "name": "code-animation",
+        "count": 1
+      },
+      {
+        "name": "commit-history",
+        "count": 1
+      },
+      {
+        "name": "git-history",
+        "count": 1
+      },
+      {
+        "name": "git-visualization",
+        "count": 1
+      },
+      {
+        "name": "screensaver",
+        "count": 1
+      },
+      {
+        "name": "syntax-highlighting",
+        "count": 1
+      },
+      {
+        "name": "terminal-app",
+        "count": 1
+      },
+      {
+        "name": "terminal-based",
+        "count": 1
+      },
+      {
+        "name": "terminal-screensaver",
+        "count": 1
+      },
+      {
+        "name": "tree-sitter",
+        "count": 1
+      },
+      {
+        "name": "visualization",
+        "count": 1
+      },
+      {
+        "name": "homograph-attack",
+        "count": 1
+      },
+      {
+        "name": "unicode",
+        "count": 1
+      },
+      {
+        "name": "url-security",
+        "count": 1
+      },
+      {
+        "name": "end-to-end-encryption",
+        "count": 1
+      },
+      {
+        "name": "self-hosting",
+        "count": 1
+      },
+      {
+        "name": "application-security",
+        "count": 1
+      },
+      {
+        "name": "appsec",
+        "count": 1
+      },
+      {
+        "name": "cheatsheets",
+        "count": 1
+      },
+      {
+        "name": "code",
+        "count": 1
+      },
+      {
+        "name": "owasp",
+        "count": 1
+      },
+      {
+        "name": "gnome-keyring",
+        "count": 1
+      },
+      {
+        "name": "keychain",
+        "count": 1
+      },
+      {
+        "name": "acme",
+        "count": 1
+      },
+      {
+        "name": "certificate-management",
+        "count": 1
+      },
+      {
+        "name": "pki",
+        "count": 1
+      },
+      {
+        "name": "postgres",
+        "count": 1
+      },
+      {
+        "name": "private-ca",
+        "count": 1
+      },
+      {
+        "name": "secret-manager",
+        "count": 1
+      },
+      {
+        "name": "vault",
+        "count": 1
+      },
+      {
+        "name": "devops-tools",
+        "count": 1
+      },
+      {
+        "name": "doppler",
+        "count": 1
+      },
+      {
+        "name": "doppler-cli",
+        "count": 1
+      },
+      {
+        "name": "secrets-manager",
+        "count": 1
+      },
+      {
+        "name": "pgp",
+        "count": 1
+      },
+      {
+        "name": "secret-distribution",
+        "count": 1
+      },
+      {
+        "name": "sops",
+        "count": 1
+      },
+      {
+        "name": "aws-ssm",
+        "count": 1
+      },
+      {
+        "name": "azure-keyvault",
+        "count": 1
+      },
+      {
+        "name": "worktrees",
+        "count": 1
+      },
+      {
+        "name": "deepagents",
+        "count": 1
+      },
+      {
+        "name": "enterprise",
+        "count": 1
+      },
+      {
+        "name": "langgraph",
+        "count": 1
+      },
+      {
+        "name": "multiagent",
+        "count": 1
+      },
+      {
+        "name": "pydantic",
+        "count": 1
+      },
+      {
+        "name": "aiagentframework",
+        "count": 1
+      },
+      {
+        "name": "azure-openai",
+        "count": 1
+      },
+      {
+        "name": "bedrock",
+        "count": 1
+      },
+      {
+        "name": "litellm",
+        "count": 1
+      },
+      {
+        "name": "openai-proxy",
+        "count": 1
+      },
+      {
+        "name": "rust-ai",
+        "count": 1
+      },
+      {
+        "name": "vertex-ai",
+        "count": 1
+      },
+      {
+        "name": "gateway-services",
+        "count": 1
+      },
+      {
+        "name": "guardrails",
+        "count": 1
+      },
+      {
+        "name": "llm-cost",
+        "count": 1
+      },
+      {
+        "name": "llm-observability",
+        "count": 1
+      },
+      {
+        "name": "load-balancing",
+        "count": 1
+      },
+      {
+        "name": "model-router",
+        "count": 1
+      },
+      {
+        "name": "token-management",
+        "count": 1
+      },
+      {
+        "name": "ai-coding-workflow",
+        "count": 1
+      },
+      {
+        "name": "ai-development-dashboard",
+        "count": 1
+      },
+      {
+        "name": "ai-progress-tracking",
+        "count": 1
+      },
+      {
+        "name": "ai-workflow",
+        "count": 1
+      },
+      {
+        "name": "code-workflow",
+        "count": 1
+      },
+      {
+        "name": "coding-agent-orchestration",
+        "count": 1
+      },
+      {
+        "name": "development-kanban",
+        "count": 1
+      },
+      {
+        "name": "kanban-workflow",
+        "count": 1
+      },
+      {
+        "name": "multi-agent-support",
+        "count": 1
+      },
+      {
+        "name": "spec-workflow-automation",
+        "count": 1
+      },
+      {
+        "name": "structured-development",
+        "count": 1
+      },
+      {
+        "name": "a2a",
+        "count": 1
+      },
+      {
+        "name": "dapr",
+        "count": 1
+      },
+      {
+        "name": "fastapi",
+        "count": 1
+      },
+      {
+        "name": "openai-agents-sdk",
+        "count": 1
+      },
+      {
+        "name": "ray",
+        "count": 1
+      },
+      {
+        "name": "spec-kit",
+        "count": 1
+      },
+      {
+        "name": "gemini-api",
+        "count": 1
+      },
+      {
+        "name": "spec-driven",
+        "count": 1
+      },
+      {
+        "name": "iterm2",
+        "count": 1
+      },
+      {
+        "name": "tmux",
+        "count": 1
+      },
+      {
+        "name": "wezterm",
+        "count": 1
+      },
+      {
+        "name": "terminal-emulators",
+        "count": 1
+      },
+      {
+        "name": "editor",
+        "count": 1
+      },
+      {
+        "name": "visual-studio-code",
+        "count": 1
+      },
+      {
+        "name": "vscode-extension",
+        "count": 1
+      },
+      {
+        "name": "chatbot",
+        "count": 1
+      },
+      {
+        "name": "function-calling",
+        "count": 1
+      },
+      {
+        "name": "agentclientprotocol",
+        "count": 1
+      },
+      {
+        "name": "registry",
+        "count": 1
+      },
+      {
+        "name": "graph-analysis",
+        "count": 1
+      },
+      {
+        "name": "local-first",
+        "count": 1
+      },
+      {
+        "name": "github-pages",
+        "count": 1
+      },
+      {
+        "name": "pages",
+        "count": 1
+      },
+      {
+        "name": "skills-course",
+        "count": 1
+      },
+      {
+        "name": "skills-exercise",
+        "count": 1
+      },
+      {
+        "name": "devenv",
+        "count": 1
+      },
+      {
+        "name": "nix",
+        "count": 1
+      },
+      {
+        "name": "browserstack",
+        "count": 1
+      },
+      {
+        "name": "quality-assurance",
+        "count": 1
+      },
+      {
+        "name": "testing",
+        "count": 1
+      },
+      {
+        "name": "artifacts",
+        "count": 1
+      },
+      {
+        "name": "chatgpt-clone",
+        "count": 1
+      },
+      {
+        "name": "clone",
+        "count": 1
+      },
+      {
+        "name": "deepseek",
+        "count": 1
+      },
+      {
+        "name": "google",
+        "count": 1
+      },
+      {
+        "name": "gpt-5",
+        "count": 1
+      },
+      {
+        "name": "librechat",
+        "count": 1
+      },
+      {
+        "name": "o1",
+        "count": 1
+      },
+      {
+        "name": "responses-api",
+        "count": 1
+      },
+      {
+        "name": "vision",
+        "count": 1
+      },
+      {
+        "name": "artifact",
+        "count": 1
+      },
+      {
+        "name": "mindmap",
+        "count": 1
+      },
+      {
+        "name": "javascript-library",
+        "count": 1
+      },
+      {
+        "name": "devcontainer",
+        "count": 1
+      },
+      {
+        "name": "devcontainers",
+        "count": 1
+      },
+      {
+        "name": "remote-development",
+        "count": 1
+      },
+      {
+        "name": "remote-development-environment",
+        "count": 1
+      },
+      {
+        "name": "app-framework",
+        "count": 1
+      },
+      {
+        "name": "expo",
+        "count": 1
+      },
+      {
+        "name": "mobile",
+        "count": 1
+      },
+      {
+        "name": "native-apps",
+        "count": 1
+      },
+      {
+        "name": "react-native",
+        "count": 1
+      },
+      {
+        "name": "universal",
+        "count": 1
+      },
+      {
+        "name": "web-framework",
+        "count": 1
+      },
+      {
+        "name": "android-style",
+        "count": 1
+      },
+      {
+        "name": "compiler",
+        "count": 1
+      },
+      {
+        "name": "cross-platform",
+        "count": 1
+      },
+      {
+        "name": "design-language",
+        "count": 1
+      },
+      {
+        "name": "ios-style",
+        "count": 1
+      },
+      {
+        "name": "style",
+        "count": 1
+      },
+      {
+        "name": "web-styles",
+        "count": 1
+      },
+      {
+        "name": "figma",
+        "count": 1
+      },
+      {
+        "name": "styles",
+        "count": 1
+      },
+      {
+        "name": "tokens",
+        "count": 1
+      },
+      {
+        "name": "component-driven",
+        "count": 1
+      },
+      {
+        "name": "composable",
+        "count": 1
+      },
+      {
+        "name": "composable-architecture",
+        "count": 1
+      },
+      {
+        "name": "front-end",
+        "count": 1
+      },
+      {
+        "name": "micro-frontend",
+        "count": 1
+      },
+      {
+        "name": "micro-services",
+        "count": 1
+      },
+      {
+        "name": "monorepo",
+        "count": 1
+      },
+      {
+        "name": "multirepo",
+        "count": 1
+      },
+      {
+        "name": "multirepo-maintenance",
+        "count": 1
+      },
+      {
+        "name": "polyrepo",
+        "count": 1
+      },
+      {
+        "name": "service-oriented-architecture",
+        "count": 1
+      },
+      {
+        "name": "wasm",
+        "count": 1
+      },
+      {
+        "name": "analyzer",
+        "count": 1
+      },
+      {
+        "name": "dependency-graph",
+        "count": 1
+      },
+      {
+        "name": "webpack-runtime-analyzer",
+        "count": 1
+      },
+      {
+        "name": "webpack-stats",
+        "count": 1
+      },
+      {
+        "name": "azure-data-studio",
+        "count": 1
+      },
+      {
+        "name": "electron",
+        "count": 1
+      },
+      {
+        "name": "microsoft",
+        "count": 1
+      },
+      {
+        "name": "postgresql",
+        "count": 1
+      },
+      {
+        "name": "sql-server",
+        "count": 1
+      },
+      {
+        "name": "apm-agent",
+        "count": 1
+      },
+      {
+        "name": "apm-instrumentation",
+        "count": 1
+      },
+      {
+        "name": "datadog",
+        "count": 1
+      },
+      {
+        "name": "distributed-tracing",
+        "count": 1
+      },
+      {
+        "name": "logging",
+        "count": 1
+      },
+      {
+        "name": "metrics",
+        "count": 1
+      },
+      {
+        "name": "observability",
+        "count": 1
+      },
+      {
+        "name": "open-telemetry",
+        "count": 1
+      },
+      {
+        "name": "otel",
+        "count": 1
+      },
+      {
+        "name": "profiling",
+        "count": 1
+      },
+      {
+        "name": "tracing",
+        "count": 1
+      },
+      {
+        "name": "export",
+        "count": 1
+      },
+      {
+        "name": "js",
+        "count": 1
+      },
+      {
+        "name": "resolution",
+        "count": 1
+      },
+      {
+        "name": "reverse",
+        "count": 1
+      },
+      {
+        "name": "routes",
+        "count": 1
+      },
+      {
+        "name": "urls",
+        "count": 1
+      },
+      {
+        "name": "color-scheme",
+        "count": 1
+      },
+      {
+        "name": "fish",
+        "count": 1
+      },
+      {
+        "name": "powerline",
+        "count": 1
+      },
+      {
+        "name": "theme",
+        "count": 1
+      },
+      {
+        "name": "api-testing",
+        "count": 1
+      },
+      {
+        "name": "http-proxy",
+        "count": 1
+      },
+      {
+        "name": "mock-server",
+        "count": 1
+      },
+      {
+        "name": "mocking",
+        "count": 1
+      },
+      {
+        "name": "oas",
+        "count": 1
+      },
+      {
+        "name": "openapi",
+        "count": 1
+      },
+      {
+        "name": "openapi3",
+        "count": 1
+      },
+      {
+        "name": "postman-collection",
+        "count": 1
+      },
+      {
+        "name": "prism",
+        "count": 1
+      },
+      {
+        "name": "stoplight-oss",
+        "count": 1
+      },
+      {
+        "name": "stoplight-prism",
+        "count": 1
+      },
+      {
+        "name": "swagger",
+        "count": 1
+      },
+      {
+        "name": "swagger-oss",
+        "count": 1
+      },
+      {
+        "name": "i18n",
+        "count": 1
+      },
+      {
+        "name": "internationalization",
+        "count": 1
+      },
+      {
+        "name": "plugin",
+        "count": 1
+      },
+      {
+        "name": "vue3",
+        "count": 1
+      },
+      {
+        "name": "vuejs",
+        "count": 1
+      },
+      {
+        "name": "agentic-workflow",
+        "count": 1
+      },
+      {
+        "name": "form-generation",
+        "count": 1
+      },
+      {
+        "name": "forms",
+        "count": 1
+      },
+      {
+        "name": "reactjs",
+        "count": 1
+      },
+      {
+        "name": "production",
+        "count": 1
+      },
+      {
+        "name": "dynamic-analysis",
+        "count": 1
+      },
+      {
+        "name": "precommit",
+        "count": 1
+      },
+      {
+        "name": "scanning",
+        "count": 1
+      },
+      {
+        "name": "trufflehog",
+        "count": 1
+      },
+      {
+        "name": "verification",
+        "count": 1
+      },
+      {
+        "name": "chocolatey",
+        "count": 1
+      },
+      {
+        "name": "homebrew",
+        "count": 1
+      },
+      {
+        "name": "npm",
+        "count": 1
+      },
+      {
+        "name": "snap",
+        "count": 1
+      },
+      {
+        "name": "anti-bot",
+        "count": 1
+      },
+      {
+        "name": "attack-prevention",
+        "count": 1
+      },
+      {
+        "name": "ban-hosts",
+        "count": 1
+      },
+      {
+        "name": "ban-management",
+        "count": 1
+      },
+      {
+        "name": "bsd",
+        "count": 1
+      },
+      {
+        "name": "fail2ban",
+        "count": 1
+      },
+      {
+        "name": "gplv2",
+        "count": 1
+      },
+      {
+        "name": "hids",
+        "count": 1
+      },
+      {
+        "name": "ids",
+        "count": 1
+      },
+      {
+        "name": "intrusion-detection",
+        "count": 1
+      },
+      {
+        "name": "intrusion-prevention",
+        "count": 1
+      },
+      {
+        "name": "ips",
+        "count": 1
+      },
+      {
+        "name": "loganalyzer",
+        "count": 1
+      },
+      {
+        "name": "github-api",
+        "count": 1
+      },
+      {
+        "name": "osint",
+        "count": 1
+      },
+      {
+        "name": "action",
+        "count": 1
+      },
+      {
+        "name": "secret-scanner",
+        "count": 1
+      },
+      {
+        "name": "security-automation",
+        "count": 1
+      },
+      {
+        "name": "static-analysis",
+        "count": 1
+      },
+      {
+        "name": "ai-powered",
+        "count": 1
+      },
+      {
+        "name": "cicd",
+        "count": 1
+      },
+      {
+        "name": "data-loss-prevention",
+        "count": 1
+      },
+      {
+        "name": "dlp",
+        "count": 1
+      },
+      {
+        "name": "gitleaks",
+        "count": 1
+      },
+      {
+        "name": "llm-inference",
+        "count": 1
+      },
+      {
+        "name": "llm-training",
+        "count": 1
+      },
+      {
+        "name": "nhi",
+        "count": 1
+      },
+      {
+        "name": "batch-rename",
+        "count": 1
+      },
+      {
+        "name": "disk-usage",
+        "count": 1
+      },
+      {
+        "name": "file-manager",
+        "count": 1
+      },
+      {
+        "name": "file-preview",
+        "count": 1
+      },
+      {
+        "name": "file-search",
+        "count": 1
+      },
+      {
+        "name": "filesystem",
+        "count": 1
+      },
+      {
+        "name": "launcher",
+        "count": 1
+      },
+      {
+        "name": "multi-platform",
+        "count": 1
+      },
+      {
+        "name": "ncurses",
+        "count": 1
+      },
+      {
+        "name": "raspberry-pi",
+        "count": 1
+      },
+      {
+        "name": "vim",
+        "count": 1
+      },
+      {
+        "name": "wsl",
+        "count": 1
+      },
+      {
+        "name": "dotfile",
+        "count": 1
+      },
+      {
+        "name": "dotfile-management",
+        "count": 1
+      },
+      {
+        "name": "dotfile-manager",
+        "count": 1
+      },
+      {
+        "name": "dotfile-managers",
+        "count": 1
+      },
+      {
+        "name": "dotfiles",
+        "count": 1
+      },
+      {
+        "name": "declarative",
+        "count": 1
+      },
+      {
+        "name": "ui",
+        "count": 1
+      },
+      {
+        "name": "ansible",
+        "count": 1
+      },
+      {
+        "name": "duo",
+        "count": 1
+      },
+      {
+        "name": "fido2",
+        "count": 1
+      },
+      {
+        "name": "pip",
+        "count": 1
+      },
+      {
+        "name": "pypi",
+        "count": 1
+      },
+      {
+        "name": "python3",
+        "count": 1
+      },
+      {
+        "name": "webauthn",
+        "count": 1
+      },
+      {
+        "name": "bandit",
+        "count": 1
+      },
+      {
+        "name": "security-scanner",
+        "count": 1
+      },
+      {
+        "name": "static-code-analysis",
+        "count": 1
+      },
+      {
+        "name": "category-theory",
+        "count": 1
+      },
+      {
+        "name": "cpp",
+        "count": 1
+      },
+      {
+        "name": "functional-programming",
+        "count": 1
+      },
+      {
+        "name": "haskell",
+        "count": 1
+      },
+      {
+        "name": "latex",
+        "count": 1
+      },
+      {
+        "name": "ocaml",
+        "count": 1
+      },
+      {
+        "name": "pdf",
+        "count": 1
+      },
+      {
+        "name": "scala",
+        "count": 1
+      }
+    ],
+    "items": [
+      {
+        "name": "superpowers",
+        "fullName": "obra/superpowers",
+        "url": "https://github.com/obra/superpowers",
+        "description": "An agentic skills framework & software development methodology that works.",
+        "language": "Shell",
+        "stars": 248753,
+        "topics": [
+          "ai",
+          "brainstorming",
+          "coding",
+          "obra",
+          "sdlc",
+          "skills",
+          "subagent-driven-development",
+          "superpowers"
+        ]
+      },
+      {
+        "name": "react",
+        "fullName": "react/react",
+        "url": "https://github.com/react/react",
+        "description": "The library for web and native user interfaces.",
+        "language": "JavaScript",
+        "stars": 246278,
+        "topics": [
+          "declarative",
+          "frontend",
+          "javascript",
+          "library",
+          "react",
+          "ui"
+        ]
+      },
+      {
+        "name": "andrej-karpathy-skills",
+        "fullName": "multica-ai/andrej-karpathy-skills",
+        "url": "https://github.com/multica-ai/andrej-karpathy-skills",
+        "description": "A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls.",
+        "language": null,
+        "stars": 189099,
+        "topics": []
+      },
+      {
+        "name": "opencode",
+        "fullName": "anomalyco/opencode",
+        "url": "https://github.com/anomalyco/opencode",
+        "description": "The open source coding agent.",
+        "language": "TypeScript",
+        "stars": 183387,
+        "topics": []
+      },
+      {
+        "name": "claude-code",
+        "fullName": "anthropics/claude-code",
+        "url": "https://github.com/anthropics/claude-code",
+        "description": "Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows - all through natural language commands.",
+        "language": "Python",
+        "stars": 136731,
+        "topics": []
+      },
+      {
+        "name": "gstack",
+        "fullName": "garrytan/gstack",
+        "url": "https://github.com/garrytan/gstack",
+        "description": "Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO, Designer, Eng Manager, Release Manager, Doc Engineer, and QA",
+        "language": "TypeScript",
+        "stars": 120317,
+        "topics": []
+      },
+      {
+        "name": "spec-kit",
+        "fullName": "github/spec-kit",
+        "url": "https://github.com/github/spec-kit",
+        "description": "💫 Toolkit to help you get started with Spec-Driven Development",
+        "language": "Python",
+        "stars": 118609,
+        "topics": [
+          "ai",
+          "copilot",
+          "development",
+          "engineering",
+          "prd",
+          "spec",
+          "spec-driven"
+        ]
+      },
+      {
+        "name": "gemini-cli",
+        "fullName": "google-gemini/gemini-cli",
+        "url": "https://github.com/google-gemini/gemini-cli",
+        "description": "An open-source AI agent that brings the power of Gemini directly into your terminal.",
+        "language": "TypeScript",
+        "stars": 105833,
+        "topics": [
+          "ai",
+          "ai-agents",
+          "cli",
+          "gemini",
+          "gemini-api",
+          "mcp-client",
+          "mcp-server"
+        ]
+      },
+      {
+        "name": "codex",
+        "fullName": "openai/codex",
+        "url": "https://github.com/openai/codex",
+        "description": "Lightweight coding agent that runs in your terminal",
+        "language": "Rust",
+        "stars": 96094,
+        "topics": []
+      },
+      {
+        "name": "claude-mem",
+        "fullName": "thedotmack/claude-mem",
+        "url": "https://github.com/thedotmack/claude-mem",
+        "description": "Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it with AI, and injects relevant context back into future sessions. Works with Claude Code, OpenClaw, Codex, Gemini, Hermes, Copilot, OpenCode + More",
+        "language": "JavaScript",
+        "stars": 86339,
+        "topics": [
+          "ai",
+          "ai-agents",
+          "ai-memory",
+          "anthropic",
+          "artificial-intelligence",
+          "chromadb",
+          "claude",
+          "claude-agent-sdk",
+          "claude-agents",
+          "claude-code",
+          "claude-code-plugin",
+          "claude-skills",
+          "embeddings",
+          "long-term-memory",
+          "mem0",
+          "memory-engine",
+          "openmemory",
+          "rag",
+          "sqlite",
+          "supermemory"
+        ]
+      },
+      {
+        "name": "OpenHands",
+        "fullName": "OpenHands/OpenHands",
+        "url": "https://github.com/OpenHands/OpenHands",
+        "description": "🙌 OpenHands: AI-Driven Development",
+        "language": "Python",
+        "stars": 79864,
+        "topics": [
+          "agent",
+          "artificial-intelligence",
+          "chatgpt",
+          "claude-ai",
+          "cli",
+          "developer-tools",
+          "gpt",
+          "llm",
+          "openai"
+        ]
+      },
+      {
+        "name": "Understand-Anything",
+        "fullName": "Egonex-AI/Understand-Anything",
+        "url": "https://github.com/Egonex-AI/Understand-Anything",
+        "description": "Graphs that teach > graphs that impress. Turn any code into an interactive knowledge graph you can explore, search, and ask questions about. Works with Claude Code, Codex, Cursor, Copilot, Gemini CLI, and more.",
+        "language": "TypeScript",
+        "stars": 71753,
+        "topics": [
+          "antigravity-skills",
+          "business-knowledge",
+          "claude-code",
+          "claude-skills",
+          "codebase-analysis",
+          "codex",
+          "codex-skills",
+          "developer-tools-ai-agent",
+          "gemini-cli-skills",
+          "karpathy-llm-wiki",
+          "knowledge-base",
+          "knowledge-graph",
+          "memory",
+          "opencode-skills",
+          "pi-agent",
+          "understandcode",
+          "vibe-coding"
+        ]
+      },
+      {
+        "name": "ansible",
+        "fullName": "ansible/ansible",
+        "url": "https://github.com/ansible/ansible",
+        "description": "Ansible is a radically simple IT automation platform that makes your applications and systems easier to deploy and maintain. Automate everything from code deployment to network configuration to cloud management, in a language that approaches plain English, using SSH, with no agents to install on remote systems. https://docs.ansible.com.",
+        "language": "Python",
+        "stars": 69354,
+        "topics": [
+          "ansible",
+          "python"
+        ]
+      },
+      {
+        "name": "pi",
+        "fullName": "earendil-works/pi",
+        "url": "https://github.com/earendil-works/pi",
+        "description": "AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI",
+        "language": "TypeScript",
+        "stars": 68429,
+        "topics": []
+      },
+      {
+        "name": "get-shit-done",
+        "fullName": "gsd-build/get-shit-done",
+        "url": "https://github.com/gsd-build/get-shit-done",
+        "description": "A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code by TÂCHES.",
+        "language": "JavaScript",
+        "stars": 64700,
+        "topics": [
+          "claude-code",
+          "context-engineering",
+          "meta-prompting",
+          "spec-driven-development"
+        ]
+      },
+      {
+        "name": "rustlings",
+        "fullName": "rust-lang/rustlings",
+        "url": "https://github.com/rust-lang/rustlings",
+        "description": ":crab: Small exercises to get you used to reading and writing Rust code!",
+        "language": "Rust",
+        "stars": 63469,
+        "topics": [
+          "beginner-friendly",
+          "exercises",
+          "rust",
+          "rustlings"
+        ]
+      },
+      {
+        "name": "warp",
+        "fullName": "warpdotdev/warp",
+        "url": "https://github.com/warpdotdev/warp",
+        "description": "Warp is an agentic development environment, born out of the terminal.",
+        "language": "Rust",
+        "stars": 62914,
+        "topics": [
+          "bash",
+          "linux",
+          "macos",
+          "rust",
+          "shell",
+          "terminal",
+          "wasm",
+          "zsh"
+        ]
+      },
+      {
+        "name": "git",
+        "fullName": "git/git",
+        "url": "https://github.com/git/git",
+        "description": "Git Source Code Mirror - This is a publish-only repository but pull requests can be turned into patches to the mailing list via GitGitGadget (https://gitgitgadget.github.io/). Please follow Documentation/SubmittingPatches procedure for any of your improvements.",
+        "language": "C",
+        "stars": 61893,
+        "topics": [
+          "c",
+          "hacktoberfest",
+          "shell"
+        ]
+      },
+      {
+        "name": "taste-skill",
+        "fullName": "Leonxlnx/taste-skill",
+        "url": "https://github.com/Leonxlnx/taste-skill",
+        "description": "Taste-Skill - gives your AI good taste. stops the AI from generating boring, generic slop ",
+        "language": "JavaScript",
+        "stars": 60125,
+        "topics": [
+          "agent",
+          "ai",
+          "claude",
+          "claude-code",
+          "codex",
+          "coding",
+          "design",
+          "frontend",
+          "lowcode",
+          "nocode",
+          "skill",
+          "skills",
+          "vibecoding"
+        ]
+      },
+      {
+        "name": "OpenSpec",
+        "fullName": "Fission-AI/OpenSpec",
+        "url": "https://github.com/Fission-AI/OpenSpec",
+        "description": "Spec-driven development (SDD) for AI coding assistants.",
+        "language": "TypeScript",
+        "stars": 59223,
+        "topics": [
+          "ai",
+          "context-engineering",
+          "engineering",
+          "planning",
+          "prd",
+          "sdd",
+          "sdlc",
+          "spec",
+          "spec-driven-development",
+          "specification"
+        ]
+      },
+      {
+        "name": "codegraph",
+        "fullName": "colbymchenry/codegraph",
+        "url": "https://github.com/colbymchenry/codegraph",
+        "description": "Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, Codex, Gemini, Cursor, OpenCode, AntiGravity, Kiro, and Hermes Agent — fewer tokens, fewer tool calls, 100% local",
+        "language": "TypeScript",
+        "stars": 58347,
+        "topics": []
+      },
+      {
+        "name": "crewAI",
+        "fullName": "crewAIInc/crewAI",
+        "url": "https://github.com/crewAIInc/crewAI",
+        "description": "Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.",
+        "language": "Python",
+        "stars": 55102,
+        "topics": [
+          "agents",
+          "ai",
+          "ai-agents",
+          "aiagentframework",
+          "llms"
+        ]
+      },
+      {
+        "name": "litellm",
+        "fullName": "BerriAI/litellm",
+        "url": "https://github.com/BerriAI/litellm",
+        "description": "Python SDK, Proxy Server (AI Gateway) to call 100+ LLM APIs in OpenAI (or native) format, with cost tracking, guardrails, loadbalancing and logging. [Bedrock, Azure, OpenAI, VertexAI, Cohere, Anthropic, Sagemaker, HuggingFace, VLLM, NVIDIA NIM]",
+        "language": "Python",
+        "stars": 52902,
+        "topics": [
+          "ai-gateway",
+          "anthropic",
+          "azure-openai",
+          "bedrock",
+          "gateway",
+          "langchain",
+          "litellm",
+          "llm",
+          "llm-gateway",
+          "llmops",
+          "mcp-gateway",
+          "openai",
+          "openai-proxy",
+          "rust",
+          "rust-ai",
+          "vertex-ai"
+        ]
+      },
+      {
+        "name": "goose",
+        "fullName": "aaif-goose/goose",
+        "url": "https://github.com/aaif-goose/goose",
+        "description": "an open source, extensible AI agent that goes beyond code suggestions - install, execute, edit, and test with any LLM",
+        "language": "Rust",
+        "stars": 50804,
+        "topics": [
+          "acp",
+          "ai",
+          "ai-agents",
+          "mcp"
+        ]
+      },
+      {
+        "name": "expo",
+        "fullName": "expo/expo",
+        "url": "https://github.com/expo/expo",
+        "description": "An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.",
+        "language": "TypeScript",
+        "stars": 50513,
+        "topics": [
+          "android",
+          "app-framework",
+          "expo",
+          "framework",
+          "frontend",
+          "ios",
+          "javascript",
+          "mobile",
+          "native",
+          "native-apps",
+          "react",
+          "react-native",
+          "typescript",
+          "universal",
+          "web",
+          "web-framework"
+        ]
+      },
+      {
+        "name": "container",
+        "fullName": "apple/container",
+        "url": "https://github.com/apple/container",
+        "description": "A tool for creating and running Linux containers using lightweight virtual machines on a Mac. It is written in Swift, and optimized for Apple silicon. ",
+        "language": "Swift",
+        "stars": 47004,
+        "topics": []
+      },
+      {
+        "name": "claude-cookbooks",
+        "fullName": "anthropics/claude-cookbooks",
+        "url": "https://github.com/anthropics/claude-cookbooks",
+        "description": "A collection of notebooks/recipes showcasing some fun and effective ways of using Claude.",
+        "language": "Jupyter Notebook",
+        "stars": 46598,
+        "topics": []
+      },
+      {
+        "name": "agno",
+        "fullName": "agno-agi/agno",
+        "url": "https://github.com/agno-agi/agno",
+        "description": "Build, run, and manage agent platforms.",
+        "language": "Python",
+        "stars": 41041,
+        "topics": [
+          "agents",
+          "ai",
+          "ai-agents",
+          "developer-tools",
+          "python"
+        ]
+      },
+      {
+        "name": "LibreChat",
+        "fullName": "danny-avila/LibreChat",
+        "url": "https://github.com/danny-avila/LibreChat",
+        "description": "Enhanced ChatGPT Clone: Features Agents, MCP, Skills, DeepSeek, Anthropic, AWS, OpenAI, Responses API, Azure, Groq, o1, GPT-5, Mistral, OpenRouter, Vertex AI, Gemini, Artifacts, AI model switching, message search, Code Interpreter, langchain, DALL-E-3, OpenAPI Actions, Functions, Secure Multi-User Auth, Presets, open-source for self-hosting. Active",
+        "language": "TypeScript",
+        "stars": 40408,
+        "topics": [
+          "ai",
+          "anthropic",
+          "artifacts",
+          "aws",
+          "azure",
+          "chatgpt",
+          "chatgpt-clone",
+          "claude",
+          "clone",
+          "deepseek",
+          "gemini",
+          "google",
+          "gpt-5",
+          "librechat",
+          "mcp",
+          "o1",
+          "openai",
+          "responses-api",
+          "vision",
+          "webui"
+        ]
+      },
+      {
+        "name": "ink",
+        "fullName": "vadimdemedes/ink",
+        "url": "https://github.com/vadimdemedes/ink",
+        "description": "🌈 React for interactive command-line apps",
+        "language": "TypeScript",
+        "stars": 39211,
+        "topics": [
+          "cli",
+          "command-line",
+          "flexbox",
+          "interactive",
+          "javascript",
+          "react"
+        ]
+      }
+    ]
+  }
 }
