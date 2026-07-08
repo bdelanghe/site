@@ -103,6 +103,10 @@ const tally = (arr) =>
 // must be independently verifiable — private repos can't be receipts.
 const languages = tally(publicSources.map((r) => r.language || "other"));
 const topics = tally(publicSources.flatMap(topicsOf));
+// Split the public record by owner (personal vs. the org). Same public-source
+// basis as the languages/topics bars, so each owner's count reproduces at its
+// own `user:<owner>` search — the receipt a visitor sees (forks hidden).
+const byOwner = tally(publicSources.map((r) => r.full_name.split("/")[0]));
 
 const stats = {
   repos: repos.length,
@@ -114,6 +118,7 @@ const stats = {
   tagged: publicSources.filter((r) => topicsOf(r).length > 0).length,
   languages,
   topics,
+  byOwner,
 };
 
 // Curate: public, non-fork, non-archived, non-meta, with a description.

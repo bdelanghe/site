@@ -431,6 +431,10 @@ for (const f of ["tokens/tokens.json", "tokens/tokens.css", "content/strings.jso
 // OWNER + ORGS. (GitHub repo search excludes forks unless fork:true, so the
 // bare query IS the public-sources receipt.)
 const ghQuery = (extra) => `https://github.com/search?q=${encodeURIComponent(`user:bdelanghe user:bounded-systems${extra ? ` ${extra}` : ""}`)}&type=repositories`;
+// Owner-scoped receipt — the second figure counts one owner (the org), so it
+// links to that owner's search, which reproduces the number a visitor sees.
+const ghOwner = (owner, extra) => `https://github.com/search?q=${encodeURIComponent(`user:${owner}${extra ? ` ${extra}` : ""}`)}&type=repositories`;
+const orgCount = (stats.byOwner || []).find((o) => o.name === "bounded-systems")?.count;
 
 const shownLangs = stats.languages.slice(0, 6);
 const langMax = Math.max(...shownLangs.map((l) => l.count), 1);
@@ -441,37 +445,51 @@ const langBars = shownLangs.map((l) =>
   `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`).join("\n        ");
 
-const topicChips = stats.topics.length
-  ? stats.topics.slice(0, 16).map((t) => `<a class="chip" href="${ghQuery(`topic:${t.name}`)}">${esc(t.name)} <em>${t.count}</em></a>`).join("\n        ")
+// The Public-record topic chips and each project's tags are the SAME control:
+// clicking one narrows Selected work to the pinned projects that carry that topic.
+// Pure CSS, zero JS — a hidden :target anchor per topic (rendered once, ahead of
+// .corpus/.work) plus a generated `#f-slug:target ~ .work .proj:not([data-tags~=
+// "slug"]) { display:none }` rule. Deep-linkable (the URL carries the filter),
+// printable, and it survives with JS off. `no-link-icon` keeps the in-page
+// anchors from picking up the automatic § affix.
+const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const chipTopics = stats.topics.slice(0, 16);
+// Every topic that can be a filter: the shown chips ∪ every tag on a pinned repo.
+const filterTopics = [...new Set([...chipTopics.map((t) => t.name), ...highlights.flatMap((h) => h.topics || [])])];
+// A topic with no pinned project behind it (corpus-only) shows an honest empty note.
+const hasProject = (t) => highlights.some((h) => (h.topics || []).map(slug).includes(slug(t)));
+
+const topicChips = chipTopics.length
+  ? `<a class="chip chip--all no-link-icon" href="#f-all">${copy("work.filter.all")}</a>\n        ` +
+    chipTopics.map((t) => `<a class="chip no-link-icon" href="#f-${slug(t.name)}">${esc(t.name)} <em>${t.count}</em></a>`).join("\n        ")
   : `<span class="chip chip--muted">topics: ${stats.tagged}/${stats.public} tagged — self-labeling in progress</span>`;
 
-// Selected work, broken out by tag — thesis tags first, the rest after.
-const TAG_ORDER = ["capability-security", "agent-infra", "ai", "developer-tools", "cli", "infrastructure", "library", "nix", "web", "design-tokens"];
-const tagLabel = (t) => t.replace(/-/g, " ");
+const filterAnchors = `<span class="ftgt" id="f-all"></span>` +
+  filterTopics.map((t) => `<span class="ftgt" id="f-${slug(t)}"></span>`).join("");
+
+// One :target rule per topic: light its chips + tags, hide the projects that
+// don't carry it. Corpus-only topics hide every project and reveal the empty note.
+const accentOn = "background:var(--bs-color-accent);color:var(--bs-color-on-accent);border-color:var(--bs-color-accent)";
+const filterCss = filterTopics.map((t) => {
+  const s = slug(t);
+  const active = `#f-${s}:target ~ .corpus a[href="#f-${s}"], #f-${s}:target ~ .work a[href="#f-${s}"] { ${accentOn}; }`;
+  const hide = `#f-${s}:target ~ .work .proj:not([data-tags~="${s}"]) { display: none; }`;
+  const empty = hasProject(t) ? "" : `\n#f-${s}:target ~ .work .proj-empty { display: block; }`;
+  return `${active}\n${hide}${empty}`;
+}).join("\n") + `\n#f-all:target ~ .corpus a[href="#f-all"] { ${accentOn}; }`;
+
 const card = (h) => {
-  const topics = (h.topics || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
-  return `<li class="proj">
-          <a href="${esc(h.url)}">
-            <div class="proj__top"><span class="proj__name">${esc(h.name)}</span>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}</div>
-            <p class="proj__desc">${esc(h.description)}</p>
-            <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}${topics}</div>
-          </a>
+  const tags = (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join("");
+  return `<li class="proj" data-tags="${(h.topics || []).map(slug).join(" ")}">
+          <div class="proj__top"><a class="proj__name" href="${esc(h.url)}">${esc(h.name)}</a>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <p class="proj__desc">${esc(h.description)}</p>
+          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tags}</div>
         </li>`;
 };
-const primaryTag = (h) => TAG_ORDER.find((t) => (h.topics || []).includes(t)) ?? (h.topics?.[0] ?? "other");
-const workByTag = new Map();
-for (const h of highlights) {
-  const k = primaryTag(h);
-  (workByTag.get(k) ?? workByTag.set(k, []).get(k)).push(h);
-}
-const rank = (t) => { const i = TAG_ORDER.indexOf(t); return i < 0 ? 99 : i; };
-const workGroups = [...workByTag.keys()].sort((a, b) => rank(a) - rank(b)).map((k) => `
-      <div class="work-group">
-        <h3 class="work-group__tag">${esc(tagLabel(k))} <em>${workByTag.get(k).length}</em></h3>
-        <ul class="projects">
-        ${workByTag.get(k).map(card).join("\n        ")}
-        </ul>
-      </div>`).join("\n");
+const workList = `<ul class="projects">
+        ${highlights.map(card).join("\n        ")}
+        <li class="proj-empty">${copy("work.empty")} <a href="https://github.com/bdelanghe">${copy("work.empty.browse")}</a></li>
+      </ul>`;
 
 // Homepage social card (og:image): the personal home card if it's been generated
 // (foregrounds the person, not the org), else the brand lockup. See .github/workflows/cards.yml.
@@ -500,16 +518,19 @@ const html = `<!doctype html>
 
     ${backgroundHtml}
 
+    <style>${filterCss}</style>
+    ${filterAnchors}
     <section class="corpus">
       <h2 class="bs-text-label eyebrow">${copy("corpus.eyebrow")}</h2>
       <div class="figures">
-        <a class="fig" href="${ghQuery("fork:true")}"><span class="fig__n">${stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
-        ${stats.publicSources != null ? `<a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources}</span><span class="fig__k">${copy("corpus.fig.sources")}</span></a>` : ""}
+        <a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources ?? stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
+        ${orgCount != null ? `<a class="fig" href="${ghOwner("bounded-systems")}"><span class="fig__n">${orgCount}</span><span class="fig__k">${copy("corpus.fig.org")}</span></a>` : ""}
         <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
       </div>
       <div class="bars">
         ${langBars}
       </div>
+      <p class="chips__hint">${copy("corpus.chips.hint")}</p>
       <div class="chips">
         ${topicChips}
       </div>
@@ -522,7 +543,7 @@ const html = `<!doctype html>
 
     <section class="work">
       <h2 class="bs-text-label eyebrow">${copy("work.eyebrow")}</h2>
-      ${workGroups}
+      ${workList}
     </section>
 
     ${siteFooter()}

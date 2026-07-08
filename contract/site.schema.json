@@ -109,6 +109,26 @@
         "publicSources": {
           "type": "integer",
           "description": "public, non-fork repos — the verifiable slice the homepage Public record section renders (optional until the first post-change refresh lands)"
+        },
+        "byOwner": {
+          "type": "array",
+          "description": "public-source count per owner (personal vs. org), each reproducible at that owner's `user:<owner>` search — drives the second Public-record figure. Optional until the first post-change refresh lands.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "count"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              }
+            }
+          }
         }
       }
     },
