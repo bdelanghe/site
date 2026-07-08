@@ -41,7 +41,7 @@
   },
   "exp.aura.b2": {
     "type": "body",
-    "value": "Traced each unreviewed agent commit back through five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
+    "value": "Reconstructed how agent-authored commits slipped past review — traced each across five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
   },
   "exp.l2l.what": {
     "type": "claim",
@@ -49,7 +49,7 @@
   },
   "exp.l2l.b0": {
     "type": "claim",
-    "value": "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
+    "value": "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% — critical-severity tickets per quarter, four quarters before vs. after."
   },
   "exp.pioneer-works.what": {
     "type": "body",

@@ -42,7 +42,7 @@
       "highlights": [
         "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the cash peak tied up in inventory.",
         "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, Tactical→Amazon splits — retiring the manual coordination that used to gate every shipment.",
-        "Traced each unreviewed agent commit back through five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
+        "Reconstructed how agent-authored commits slipped past review — traced each across five log domains, wrote the post-mortem, and designed the controls that became Aura's policy for shipping AI-written code."
       ]
     },
     {
@@ -60,7 +60,7 @@
         "Developer tooling"
       ],
       "highlights": [
-        "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% across the team."
+        "Shipped static-analysis gating into the PR pipeline. It blocks whole defect classes at merge instead of catching them after. Critical bugs fell 20% — critical-severity tickets per quarter, four quarters before vs. after."
       ]
     },
     {
