@@ -6,7 +6,7 @@
     "headline": "AI agents ship code. I write the contracts that keep them in check.",
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
-    "summary": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx. Agent changes land as merged PRs through one signed flow. Each git write is checked against the capability the agent holds.",
+    "summary": "I'm a senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx: agent changes land as merged PRs, each git write checked against the capability the agent holds.",
     "location": {
       "city": "Brooklyn",
       "region": "NY",
@@ -32,7 +32,7 @@
       "location": "New York · Hybrid",
       "url": "https://auraframes.com",
       "startDate": "2023-10",
-      "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems, running on a Ruby backend across fulfillment, accounting, and third-party integrations. I ship the automation backbone on AWS (ECS, RDS, S3, CloudFront) and built the contract-and-validation layer behind inventory-purchasing.",
+      "summary": "The team owns Aura's website and business-operations systems on a Ruby backend, spanning fulfillment, accounting, and third-party integrations. I build the automation on AWS (ECS, RDS, S3, CloudFront) and the contract-and-validation layer behind inventory-purchasing.",
       "keywords": [
         "Ruby",
         "AWS",
@@ -156,7 +156,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "0c7b74af4b2f5a569c0c76025f689cc9415983a6006d9b5c53995befa946d6c6",
+    "version": "84c8e24d7f6c75e68b099784fd5f01d6818f4848d676f464cf4fd5a92a832098",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
