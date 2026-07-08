@@ -520,6 +520,7 @@ const html = `<!doctype html>
 <head>
   ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/", ogImage: homeOgImage, mdAlt: "/index.md" })}
   ${jsonLd}
+  <style>${filterCss}</style>
 </head>
 <body>
   <main class="wrap">
@@ -539,7 +540,6 @@ const html = `<!doctype html>
 
     ${backgroundHtml}
 
-    <style>${filterCss}</style>
     ${filterAnchors}
     <section class="corpus">
       <h2 class="bs-text-label eyebrow">${copy("corpus.eyebrow")}</h2>
@@ -1292,7 +1292,7 @@ const interests = site.interests;
 const ghStars = (q) => `https://github.com/bdelanghe?tab=stars${q ? `&q=${encodeURIComponent(q)}` : ""}`;
 const fmtStars = (n) => n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "")}k` : `${n}`;
 
-let interestsBody;
+let interestsBody, interestsStyle = "";
 if (interests?.items?.length) {
   const iChips = interests.topics.slice(0, 16);
   const iFilter = filterFor(iChips, interests.items);
@@ -1315,8 +1315,8 @@ if (interests?.items?.length) {
           ${h.description ? `<p class="proj__desc">${esc(h.description)}</p>` : ""}
           <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
         </li>`;
-  interestsBody = `<style>${iFilter.css}</style>
-    ${iFilter.anchors}
+  interestsStyle = `<style>${iFilter.css}</style>`;
+  interestsBody = `${iFilter.anchors}
     <section class="corpus">
       <div class="figures">
         <a class="fig" href="${ghStars("")}"><span class="fig__n">${interests.count}</span><span class="fig__k">${copy("interests.fig.count")}</span></a>
@@ -1357,6 +1357,7 @@ const interestsHtml = `<!doctype html>
 <html lang="en">
 <head>
 ${head({ title: `${copy("interests.title")} — ${name}`, description: copy("head.interests.desc"), path: "/interests", mdAlt: "/interests.md" })}
+${interestsStyle}
 </head>
 <body>
   <main class="wrap">
