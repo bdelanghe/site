@@ -176,8 +176,13 @@ SemanticNode digest → page semantic root → site-manifest root → cosign sig
 
 ## Next steps
 
-1. Land `digest(node)` + a documented canonicalization in lone upstream (the only piece that
-   can't be done in this repo, since the conformance model here is a port pinned to lone).
+1. **Land `digest(node)` + a documented canonicalization in lone upstream** (the only piece
+   that can't be done in this repo, since the conformance model here is a port pinned to lone).
+   *Status: implemented and handed off* — a verified-clean patch against
+   `@bounded-systems/lone@0.6.0` adds `digestNode()` / `withDigests()` (bottom-up SHA-256 over
+   canonicalized semantic fields, `DIGEST_VERSION`-gated) plus a Deno test suite, opt-in and
+   leaving `validate()`/`bless()` untouched. Awaiting the upstream PR/merge; once lone ships it,
+   pin the `DIGEST_VERSION` here and proceed to step 2.
 2. Extend the conformance-kit port so `CriterionResult` carries `subjectPath` +
    `subjectDigest` for lone-evidence criteria.
 3. Add per-page semantic roots to `gen-sitemanifest.mjs` and surface them on `/provenance`.
