@@ -247,8 +247,8 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 /* the signed output — the seal that closes the chain */
 .prov-seal { position: relative; padding-left: 32px; }
 .prov-seal::after { content: ""; position: absolute; left: 0; top: 6px; width: 13px; height: 13px; background: var(--bs-color-accent); transform: rotate(45deg); }
-.prov-seal__card { border: 1px solid var(--bs-color-accent-soft); background: var(--bs-color-accent-tint); border-radius: var(--bs-radius-md); padding: 16px 18px; }
-.prov-seal__title { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-accent); margin: 0 0 6px; }
+.prov-seal__card { border: 1px solid var(--bs-color-line); background: var(--bs-color-card); border-radius: var(--bs-radius-md); padding: 16px 18px; }
+.prov-seal__title { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-ink); margin: 0 0 6px; }
 .prov-seal__meta { font-family: var(--bs-font-mono); font-size: 14px; color: var(--bs-color-ink); margin: 0; }
 .prov-seal__meta a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-soft); }
 .prov-evidence { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
