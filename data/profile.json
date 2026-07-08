@@ -41,6 +41,7 @@
       ],
       "highlights": [
         "Wrote the CLI that replaced Aura's 9-tab spreadsheet supply plan with a single source of truth — 61 schema contracts checked by 173 test scenarios — to bring down the peak cash tied up in inventory.",
+        "Aligned fulfillment, accounting, and ops on a single supply plan — the consolidation took as much cross-team coordination as it did engineering.",
         "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, and the freight splits between them — retiring the manual coordination that gated most shipments.",
         "Reconstructed how agent-authored commits slipped past review — traced each across five log sources, wrote the post-mortem, and designed the controls that informed Aura's policy for shipping AI-written code."
       ]
@@ -156,7 +157,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "84c8e24d7f6c75e68b099784fd5f01d6818f4848d676f464cf4fd5a92a832098",
+    "version": "019cb46a1dec05c312e03f1cf37a4526eaf3bae5a70e721ec6efd118e89e7d05",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
