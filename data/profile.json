@@ -6,7 +6,7 @@
     "headline": "AI agents ship code. I write the contracts that keep them in check.",
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
-    "summary": "Senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx. Agent changes land as merged PRs through one signed flow. Each git write is checked against the capability the agent holds.",
+    "summary": "I'm a senior engineer at Aura, where I built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx: agent changes land as merged PRs, each git write checked against the capability the agent holds.",
     "location": {
       "city": "Brooklyn",
       "region": "NY",
@@ -156,7 +156,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "cb1e5e8da5a732ae748ddd2b5077640e1e3950806d040b937fcdc3931e133ef4",
+    "version": "84c8e24d7f6c75e68b099784fd5f01d6818f4848d676f464cf4fd5a92a832098",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
