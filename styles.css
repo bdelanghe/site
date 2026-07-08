@@ -105,7 +105,16 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .bar__fill { display: block; height: 100%; background: var(--bs-color-accent); }
 .bar__n { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); text-align: right; }
 
-.chips__hint { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); margin: 0 0 10px; }
+/* Language expander — the top 6 bars show; the rest sit behind a native <details>
+   (zero JS, no :target so it never fights the topic filter; prints expanded). */
+.langmore { margin: 6px 0 0; }
+.langmore__sum { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent); cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 6px; min-height: 24px; padding: 2px 0; }
+.langmore__sum::-webkit-details-marker { display: none; }
+.langmore__sum::before { content: "+"; font-weight: 600; }
+.langmore[open] .langmore__sum::before { content: "\2212"; } /* − */
+.langmore__sum:hover, .langmore__sum:focus-visible { color: var(--bs-color-accent-strong); }
+.bars--more { margin-top: 8px; }
+.chips__hint { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); margin: 14px 0 10px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
   font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent);
@@ -146,6 +155,10 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 .proj__name:hover, .proj__name:focus-visible { text-decoration: underline; }
 .proj__pin { font-family: var(--bs-font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bs-color-ink-mono); }
 .proj__lang { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); margin-left: auto; }
+/* Interest cards carry a star count (their signal) where authored cards carry a pin.
+   Stars anchor the right of the header row; the language sits just after it. */
+.proj__stars { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent); margin-left: auto; }
+.proj__stars + .proj__lang { margin-left: 10px; }
 .proj__desc { font-size: 15px; line-height: 1.5; color: var(--bs-color-ink-soft); margin: 0 0 8px; }
 .proj__meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 /* Tag pills double as filter controls — same look as a corpus chip, accent when

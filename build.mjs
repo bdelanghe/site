@@ -436,14 +436,27 @@ const ghQuery = (extra) => `https://github.com/search?q=${encodeURIComponent(`us
 const ghOwner = (owner, extra) => `https://github.com/search?q=${encodeURIComponent(`user:${owner}${extra ? ` ${extra}` : ""}`)}&type=repositories`;
 const orgCount = (stats.byOwner || []).find((o) => o.name === "bounded-systems")?.count;
 
-const shownLangs = stats.languages.slice(0, 6);
-const langMax = Math.max(...shownLangs.map((l) => l.count), 1);
-const langBars = shownLangs.map((l) =>
+// Bars scale to the leading language (langMax), so the top bar fills the track
+// and the rest read as rank. The top 6 show at rest; the remaining languages sit
+// behind a native <details> so the full spread is one click away — zero JS, no
+// :target (which the topic filter owns), and it prints expanded.
+const langMax = Math.max(...stats.languages.map((l) => l.count), 1);
+const langBar = (l) =>
   `<div class="bar">${l.name === "other"
     ? `<span class="bar__k">${esc(l.name)}</span>`
     : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
   `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
-  `<span class="bar__n">${l.count}</span></div>`).join("\n        ");
+  `<span class="bar__n">${l.count}</span></div>`;
+const langBars = stats.languages.slice(0, 6).map(langBar).join("\n        ");
+const restLangs = stats.languages.slice(6);
+const langMore = restLangs.length
+  ? `<details class="langmore">
+        <summary class="langmore__sum no-link-icon">${restLangs.length} ${copy("corpus.langs.more")}</summary>
+        <div class="bars bars--more">
+        ${restLangs.map(langBar).join("\n        ")}
+        </div>
+      </details>`
+  : "";
 
 // The Public-record topic chips and each project's tags are the SAME control:
 // clicking one narrows Selected work to the pinned projects that carry that topic.
@@ -453,39 +466,47 @@ const langBars = shownLangs.map((l) =>
 // printable, and it survives with JS off. `no-link-icon` keeps the in-page
 // anchors from picking up the automatic § affix.
 const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-const chipTopics = stats.topics.slice(0, 16);
-// Every topic that can be a filter: the shown chips ∪ every tag on a pinned repo.
-const filterTopics = [...new Set([...chipTopics.map((t) => t.name), ...highlights.flatMap((h) => h.topics || [])])];
-// A topic with no pinned project behind it (corpus-only) shows an honest empty note.
-const hasProject = (t) => highlights.some((h) => (h.topics || []).map(slug).includes(slug(t)));
-
-const topicChips = chipTopics.length
-  ? `<a class="chip chip--all no-link-icon" href="#f-all">${copy("work.filter.all")}</a>\n        ` +
-    chipTopics.map((t) => `<a class="chip no-link-icon" href="#f-${slug(t.name)}">${esc(t.name)} <em>${t.count}</em></a>`).join("\n        ")
-  : `<span class="chip chip--muted">topics: ${stats.tagged}/${stats.public} tagged — self-labeling in progress</span>`;
-
-const filterAnchors = `<span class="ftgt" id="f-all"></span>` +
-  filterTopics.map((t) => `<span class="ftgt" id="f-${slug(t)}"></span>`).join("");
-
-// One :target rule per topic: light its chips + tags, hide the projects that
-// don't carry it. Corpus-only topics hide every project and reveal the empty note.
 const accentOn = "background:var(--bs-color-accent);color:var(--bs-color-on-accent);border-color:var(--bs-color-accent)";
-const filterCss = filterTopics.map((t) => {
-  const s = slug(t);
-  const active = `#f-${s}:target ~ .corpus a[href="#f-${s}"], #f-${s}:target ~ .work a[href="#f-${s}"] { ${accentOn}; }`;
-  const hide = `#f-${s}:target ~ .work .proj:not([data-tags~="${s}"]) { display: none; }`;
-  const empty = hasProject(t) ? "" : `\n#f-${s}:target ~ .work .proj-empty { display: block; }`;
-  return `${active}\n${hide}${empty}`;
-}).join("\n") + `\n#f-all:target ~ .corpus a[href="#f-all"] { ${accentOn}; }`;
+// Build the shared zero-JS topic filter for a record→list pair. `chipTopics` are
+// the record's shown chips; `items` are the cards below (each with .topics). One
+// hidden :target anchor per topic plus a generated sibling rule lights the chips/
+// tags and hides non-matching cards; a topic with no item shows the empty note.
+// Both the homepage (authored work) and /interests (starred) render through this,
+// so the interaction is identical. `#f-*` ids are page-scoped — safe to reuse.
+const filterFor = (chipTopics, items) => {
+  const topics = [...new Set([...chipTopics.map((t) => t.name), ...items.flatMap((h) => h.topics || [])])];
+  const has = (t) => items.some((h) => (h.topics || []).map(slug).includes(slug(t)));
+  const chips = chipTopics.length
+    ? `<a class="chip chip--all no-link-icon" href="#f-all">${copy("work.filter.all")}</a>\n        ` +
+      chipTopics.map((t) => `<a class="chip no-link-icon" href="#f-${slug(t.name)}">${esc(t.name)} <em>${t.count}</em></a>`).join("\n        ")
+    : "";
+  const anchors = `<span class="ftgt" id="f-all"></span>` +
+    topics.map((t) => `<span class="ftgt" id="f-${slug(t)}"></span>`).join("");
+  const css = topics.map((t) => {
+    const s = slug(t);
+    const active = `#f-${s}:target ~ .corpus a[href="#f-${s}"], #f-${s}:target ~ .work a[href="#f-${s}"] { ${accentOn}; }`;
+    const hide = `#f-${s}:target ~ .work .proj:not([data-tags~="${s}"]) { display: none; }`;
+    const empty = has(t) ? "" : `\n#f-${s}:target ~ .work .proj-empty { display: block; }`;
+    return `${active}\n${hide}${empty}`;
+  }).join("\n") + `\n#f-all:target ~ .corpus a[href="#f-all"] { ${accentOn}; }`;
+  return { anchors, css, chips };
+};
 
-const card = (h) => {
-  const tags = (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join("");
-  return `<li class="proj" data-tags="${(h.topics || []).map(slug).join(" ")}">
+const tagLinks = (h) => (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join("");
+const dataTags = (h) => (h.topics || []).map(slug).join(" ");
+
+const chipTopics = stats.topics.slice(0, 16);
+const homeFilter = filterFor(chipTopics, highlights);
+const topicChips = chipTopics.length ? homeFilter.chips
+  : `<span class="chip chip--muted">topics: ${stats.tagged}/${stats.public} tagged — self-labeling in progress</span>`;
+const filterAnchors = homeFilter.anchors;
+const filterCss = homeFilter.css;
+
+const card = (h) => `<li class="proj" data-tags="${dataTags(h)}">
           <div class="proj__top"><a class="proj__name" href="${esc(h.url)}">${esc(h.name)}</a>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
           <p class="proj__desc">${esc(h.description)}</p>
-          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tags}</div>
+          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
         </li>`;
-};
 const workList = `<ul class="projects">
         ${highlights.map(card).join("\n        ")}
         <li class="proj-empty">${copy("work.empty")} <a href="https://github.com/bdelanghe">${copy("work.empty.browse")}</a></li>
@@ -530,13 +551,14 @@ const html = `<!doctype html>
       <div class="bars">
         ${langBars}
       </div>
+      ${langMore}
       <p class="chips__hint">${copy("corpus.chips.hint")}</p>
       <div class="chips">
         ${topicChips}
       </div>
       <p class="corpus__src">
         ${copy("corpus.source.computed")} <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
-        &middot; <a href="https://github.com/bdelanghe?tab=stars">${copy("corpus.source.starred")}</a>
+        &middot; <a href="/interests">${copy("corpus.source.starred")}</a>
         &middot; ${copy("corpus.source.topics")} <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
       </p>
     </section>
@@ -1262,6 +1284,109 @@ ${profile.colophon.map((c) => `- ${mdLink(c.name, c.href)}${c.role ? ` — ${c.r
 `;
 await writeFile(join(dist, "colophon.md"), colophonMd);
 
+// ---- /interests — the interest graph: what I FOLLOW (starred), not what I built.
+// Same record→filter interface as the homepage, computed over stars via filterFor.
+// When the star data hasn't been fetched yet (no token on the last refresh) the
+// page renders an honest pending state rather than fabricating a list.
+const interests = site.interests;
+const ghStars = (q) => `https://github.com/bdelanghe?tab=stars${q ? `&q=${encodeURIComponent(q)}` : ""}`;
+const fmtStars = (n) => n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "")}k` : `${n}`;
+
+let interestsBody;
+if (interests?.items?.length) {
+  const iChips = interests.topics.slice(0, 16);
+  const iFilter = filterFor(iChips, interests.items);
+  const iMax = Math.max(...interests.languages.map((l) => l.count), 1);
+  const iBar = (l) => `<div class="bar">${l.name === "other"
+      ? `<span class="bar__k">${esc(l.name)}</span>`
+      : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
+    `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / iMax) * 100)}%"></span></span>` +
+    `<span class="bar__n">${l.count}</span></div>`;
+  const iBars = interests.languages.slice(0, 6).map(iBar).join("\n        ");
+  const iRest = interests.languages.slice(6);
+  const iMore = iRest.length ? `<details class="langmore">
+        <summary class="langmore__sum no-link-icon">${iRest.length} ${copy("corpus.langs.more")}</summary>
+        <div class="bars bars--more">
+        ${iRest.map(iBar).join("\n        ")}
+        </div>
+      </details>` : "";
+  const iCard = (h) => `<li class="proj" data-tags="${dataTags(h)}">
+          <div class="proj__top"><a class="proj__name" href="${esc(h.url)}">${esc(h.name)}</a>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          ${h.description ? `<p class="proj__desc">${esc(h.description)}</p>` : ""}
+          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
+        </li>`;
+  interestsBody = `<style>${iFilter.css}</style>
+    ${iFilter.anchors}
+    <section class="corpus">
+      <div class="figures">
+        <a class="fig" href="${ghStars("")}"><span class="fig__n">${interests.count}</span><span class="fig__k">${copy("interests.fig.count")}</span></a>
+        <div class="fig"><span class="fig__n">${interests.languages.length}</span><span class="fig__k">${copy("interests.fig.languages")}</span></div>
+        <div class="fig"><span class="fig__n">${interests.topics.length}</span><span class="fig__k">${copy("interests.fig.topics")}</span></div>
+      </div>
+      <div class="bars">
+        ${iBars}
+      </div>
+      ${iMore}
+      <p class="chips__hint">${copy("interests.chips.hint")}</p>
+      <div class="chips">
+        ${iFilter.chips}
+      </div>
+    </section>
+    <section class="work">
+      <h2 class="bs-text-label eyebrow">${copy("interests.list.eyebrow")}</h2>
+      <ul class="projects">
+        ${interests.items.map(iCard).join("\n        ")}
+        <li class="proj-empty">${copy("interests.empty")} <a href="${ghStars("")}">${copy("interests.empty.browse")}</a></li>
+      </ul>
+    </section>`;
+} else {
+  // Pending state — no star data fetched yet. Keep the SAME section skeleton (the
+  // "Following" <h2>, the same internal links) so the committed structure-audit
+  // baseline covers both shapes: the page can flip pending→full on the next
+  // refresh without going stale.
+  interestsBody = `<section class="corpus">
+      <p class="lead">${copy("interests.pending")}</p>
+    </section>
+    <section class="work">
+      <h2 class="bs-text-label eyebrow">${copy("interests.list.eyebrow")}</h2>
+      <p class="corpus__src">${copy("interests.source")} <a href="${ghStars("")}">${copy("interests.source.stars")}</a></p>
+    </section>`;
+}
+
+const interestsHtml = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `${copy("interests.title")} — ${name}`, description: copy("head.interests.desc"), path: "/interests", mdAlt: "/interests.md" })}
+</head>
+<body>
+  <main class="wrap">
+    <header class="intro">
+      <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
+      <h1>${copy("interests.title")}</h1>
+      <p class="lead">${copy("interests.lede")}</p>
+    </header>
+    ${interestsBody}
+    ${siteFooter()}
+  </main>
+</body>
+</html>
+`;
+await writeHtml("interests.html", interestsHtml);
+
+const interestsMd = `# ${copy("interests.title")} — ${name}
+
+> ${copy("interests.lede")}
+
+## ${copy("interests.list.eyebrow")}
+
+${interests?.items?.length
+    ? `${copy("interests.fig.count")}: ${interests.count} · ${copy("interests.fig.languages")}: ${interests.languages.length} · ${copy("interests.fig.topics")}: ${interests.topics.length}
+
+${interests.items.map((h) => `- [${h.name}](${h.url})${h.language ? ` — ${h.language}` : ""}${h.description ? `: ${h.description}` : ""}${h.topics?.length ? ` (${h.topics.join(", ")})` : ""}`).join("\n")}`
+    : `${copy("interests.pending")}\n\n${copy("interests.source")} [${copy("interests.source.stars")}](${ghStars("")}).`}
+`;
+await writeFile(join(dist, "interests.md"), interestsMd);
+
 // Response headers (Cloudflare _headers). HTML routes have no ETag on html_handling
 // routes, so without a positive max-age they re-fetch on every load — give them a
 // short cache + stale-while-revalidate window. Fingerprinted CSS is immutable (the
@@ -1294,7 +1419,7 @@ const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` :
 // the 404 page, but Cloudflare still applies the wildcard's "Content-Type:
 // text/markdown" to that response, mislabeling real HTML content. An explicit route
 // list only ever matches the .md siblings that are genuinely written below.
-const mdRoutes = ["/.md", "/index.md", "/resume.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", ...posts.map((p) => `${postUrl(p)}.md`)];
+const mdRoutes = ["/.md", "/index.md", "/resume.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`)];
 await writeFile(join(dist, "_headers"),
   htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600${reprLine(r)}`).join("\n") +
   `\n/feed.xml\n  Repr-Digest: ${reprByRoute["/feed.xml"]}\n` +

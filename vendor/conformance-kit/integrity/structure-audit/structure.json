@@ -108,9 +108,22 @@
     "readerOk": null,
     "internalLinks": [
       "/conformance",
+      "/interests",
       "/provenance",
       "/provenance",
       "/resume"
+    ]
+  },
+  "interests.html": {
+    "h1": "What I follow",
+    "outline": "12",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/conformance",
+      "/provenance",
+      "/provenance"
     ]
   },
   "provenance.html": {

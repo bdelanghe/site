@@ -178,6 +178,66 @@
           }
         }
       }
+    },
+    "interests": {
+      "type": "object",
+      "description": "Interest graph — the projects the owner STARS (not authored work). Same shape as the corpus so /interests renders the identical record→filter interface. Optional: absent until a refresh with star access lands, in which case /interests shows a pending state.",
+      "additionalProperties": false,
+      "required": [
+        "count",
+        "items"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "total public starred repos"
+        },
+        "shown": {
+          "type": "integer",
+          "description": "how many of them are rendered as cards (top-starred slice)"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "count"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "count": { "type": "integer" }
+            }
+          }
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "count"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "count": { "type": "integer" }
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "fullName", "url"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "fullName": { "type": "string" },
+              "url": { "type": "string", "format": "uri" },
+              "description": { "type": "string" },
+              "language": { "type": ["string", "null"] },
+              "stars": { "type": "integer" },
+              "topics": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
     }
   }
 }
