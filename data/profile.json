@@ -32,7 +32,7 @@
       "location": "New York · Hybrid",
       "url": "https://auraframes.com",
       "startDate": "2023-10",
-      "summary": "On Commerce, the team behind Aura's website, commerce-routing, and business-operations systems, running on a Ruby backend across fulfillment, accounting, and third-party integrations. I ship the automation backbone on AWS (ECS, RDS, S3, CloudFront) and built the contract-and-validation layer behind inventory-purchasing.",
+      "summary": "The team owns Aura's website and business-operations systems on a Ruby backend, spanning fulfillment, accounting, and third-party integrations. I build the automation on AWS (ECS, RDS, S3, CloudFront) and the contract-and-validation layer behind inventory-purchasing.",
       "keywords": [
         "Ruby",
         "AWS",
@@ -156,7 +156,7 @@
   ],
   "meta": {
     "canonical": "https://robertdelanghe.dev/resume.json",
-    "version": "0c7b74af4b2f5a569c0c76025f689cc9415983a6006d9b5c53995befa946d6c6",
+    "version": "cb1e5e8da5a732ae748ddd2b5077640e1e3950806d040b937fcdc3931e133ef4",
     "_source": "Canonical résumé doc in JSON Resume format (jsonresume.org). Authored + signed off here (review.mjs) and published to bdelanghe/site, where build.mjs renders /resume + /resume.json. Curated from a saved LinkedIn webarchive, NOT live-fetched. Site render-context (banner, intro, seeking, nav links, the decorative place line) lives in presentation.json. Edit here, not in site."
   }
 }
