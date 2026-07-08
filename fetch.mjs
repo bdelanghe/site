@@ -37,6 +37,10 @@ const DESCRIPTIONS = {
   "bounded-systems/prx": "The agent-run work-unit CLI: capability-scoped agents whose privileged effects are verified against a signed owner, driving a work unit through one signed pipeline to a merged PR.",
 };
 const MAX_HIGHLIGHTS = 12;
+// Interest graph: how many starred repos to render as cards on /interests (the
+// full count still shows as a figure). Top-starred first — a readable slice, not
+// the whole firehose.
+const INTEREST_ITEMS = 30;
 // Selected Work is an editorial set: exactly the pinned repos, in pin order.
 // Tag-based auto-include was dropped — the strongest repos are under-tagged, so
 // tags surfaced filler and missed gems. "Real" is the floor; "interesting and
@@ -103,6 +107,10 @@ const tally = (arr) =>
 // must be independently verifiable — private repos can't be receipts.
 const languages = tally(publicSources.map((r) => r.language || "other"));
 const topics = tally(publicSources.flatMap(topicsOf));
+// Split the public record by owner (personal vs. the org). Same public-source
+// basis as the languages/topics bars, so each owner's count reproduces at its
+// own `user:<owner>` search — the receipt a visitor sees (forks hidden).
+const byOwner = tally(publicSources.map((r) => r.full_name.split("/")[0]));
 
 const stats = {
   repos: repos.length,
@@ -114,6 +122,7 @@ const stats = {
   tagged: publicSources.filter((r) => topicsOf(r).length > 0).length,
   languages,
   topics,
+  byOwner,
 };
 
 // Curate: public, non-fork, non-archived, non-meta, with a description.
@@ -141,11 +150,44 @@ const curated = eligible
     topics: topicsOf(r),
   }));
 
+// Interest graph — the projects I star, NOT my authored work. Same shape as the
+// corpus so /interests renders the identical record→filter interface over it.
+// Best-effort: a failure here must not sink the whole refresh, so degrade to no
+// interests block (the page falls back to its pending state) rather than throw.
+let interests = null;
+try {
+  const starred = await ghAll(`/users/${OWNER}/starred`);
+  const starRepos = starred.filter((r) => r && !r.private);
+  const starItems = [...starRepos]
+    .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+    .slice(0, INTEREST_ITEMS)
+    .map((r) => ({
+      name: r.name,
+      fullName: r.full_name,
+      url: r.html_url,
+      description: r.description || "",
+      language: r.language || null,
+      stars: r.stargazers_count || 0,
+      topics: topicsOf(r),
+    }));
+  interests = {
+    count: starRepos.length,
+    shown: starItems.length,
+    languages: tally(starRepos.map((r) => r.language || "other")),
+    topics: tally(starRepos.flatMap(topicsOf)),
+    items: starItems,
+  };
+  console.log(`✓ interests — ${starRepos.length} starred, top ${starItems.length} shown, ${interests.languages.length} languages`);
+} catch (e) {
+  console.warn(`⚠ starred fetch failed (${String(e.message).slice(0, 80)}) — /interests will show the pending state`);
+}
+
 const site = {
   generatedAt: new Date().toISOString(),
   owner: { login: OWNER, name: "Robert DeLanghe" },
   stats,
   highlights: curated,
+  ...(interests ? { interests } : {}),
 };
 
 // Lightweight contract check (the schema is the spec; this guards the essentials).

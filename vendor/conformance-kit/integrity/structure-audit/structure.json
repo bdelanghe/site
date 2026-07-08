@@ -103,14 +103,27 @@
   },
   "index.html": {
     "h1": "AI agents ship code. I write the contracts that keep them in check.",
-    "outline": "12223",
+    "outline": "1222",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
       "/conformance",
+      "/interests",
       "/provenance",
       "/provenance",
       "/resume"
+    ]
+  },
+  "interests.html": {
+    "h1": "What I follow",
+    "outline": "12",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/conformance",
+      "/provenance",
+      "/provenance"
     ]
   },
   "provenance.html": {

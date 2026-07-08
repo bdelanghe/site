@@ -227,6 +227,16 @@
         "name": "oidc",
         "count": 1
       }
+    ],
+    "byOwner": [
+      {
+        "name": "bounded-systems",
+        "count": 79
+      },
+      {
+        "name": "bdelanghe",
+        "count": 30
+      }
     ]
   },
   "highlights": [
@@ -257,7 +267,7 @@
       "name": "guest-room",
       "fullName": "bounded-systems/guest-room",
       "url": "https://github.com/bounded-systems/guest-room",
-      "description": "Guest-agnostic room+door capability runtime — the core library claude-box is built on.",
+      "description": "Guest-agnostic room+door capability runtime \u2014 the core library claude-box is built on.",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
@@ -280,7 +290,7 @@
       "name": "claude-box",
       "fullName": "bounded-systems/claude-box",
       "url": "https://github.com/bounded-systems/claude-box",
-      "description": "A capability-secured box for agent sessions — its authority is the door references it holds (keeper/scout/concierge/net), parent-agnostic.",
+      "description": "A capability-secured box for agent sessions \u2014 its authority is the door references it holds (keeper/scout/concierge/net), parent-agnostic.",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
@@ -320,7 +330,7 @@
       "name": "ocap-provenance",
       "fullName": "bounded-systems/ocap-provenance",
       "url": "https://github.com/bounded-systems/ocap-provenance",
-      "description": "Capability-use provenance — a schema + SLSA mapping binding each privileged effect to a signed owner and an auditable chain.",
+      "description": "Capability-use provenance \u2014 a schema + SLSA mapping binding each privileged effect to a signed owner and an auditable chain.",
       "language": "TypeScript",
       "stars": 0,
       "pinned": true,
@@ -337,7 +347,7 @@
       "name": "string-audit",
       "fullName": "bounded-systems/string-audit",
       "url": "https://github.com/bounded-systems/string-audit",
-      "description": "Cost-aware, grounded content auditor — typed string symbols, type-scoped audits, CAS-memoized LLM calls.",
+      "description": "Cost-aware, grounded content auditor \u2014 typed string symbols, type-scoped audits, CAS-memoized LLM calls.",
       "language": "JavaScript",
       "stars": 0,
       "pinned": true,
