@@ -730,7 +730,7 @@ ${jsonLd}
   <main>
   <header>
     <h1>${esc(name)}</h1>
-    <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline.replace(/\.$/, ""))}` : ""}</p>
+    <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline)}` : ""}</p>
     <p class="r-contact">${rLocation ? esc(rLocation) + " · " : ""}${rLinks}</p>
     <a class="r-print" href="${SITE}/resume.pdf" download="${name.split(" ").join("-")}-Resume.pdf">${copy("resume.download")}&nbsp;&darr;</a>
     ${googleDocsUrl ? `<a class="r-print" href="${esc(googleDocsUrl)}" target="_blank" rel="noopener">${copy("resume.comment")}</a>` : ""}
@@ -1215,6 +1215,24 @@ const evidenceLabelFor = (href) => {
   }
   return href.startsWith("/") ? href.slice(1) : href;
 };
+// At-a-glance summary the flat criteria list lacks: a proportional meter (met /
+// unmet / not-assessed) + big-number stat tiles. Status carries a glyph in the
+// pills (CSS), so the read never depends on color alone.
+const cSum = confReport.summary;
+const cPct = (n) => `${((n / (cSum.total || 1)) * 100).toFixed(2)}%`;
+const confOverview = `<div class="conf-overview">
+      <div class="conf-bar" role="img" aria-label="${cSum.met} ${copy("conf.stat.met")}, ${cSum.unmet} ${copy("conf.stat.unmet")}, ${cSum.notAssessed} ${copy("conf.stat.na")} of ${cSum.total}">
+        <span class="conf-bar__seg conf-bar__seg--met" style="width:${cPct(cSum.met)}"></span>
+        <span class="conf-bar__seg conf-bar__seg--unmet" style="width:${cPct(cSum.unmet)}"></span>
+        <span class="conf-bar__seg conf-bar__seg--na" style="width:${cPct(cSum.notAssessed)}"></span>
+      </div>
+      <div class="conf-stats">
+        <div class="conf-stat conf-stat--met"><span class="conf-stat__n">${cSum.met}</span><span class="conf-stat__k">${copy("conf.stat.met")}</span></div>
+        <div class="conf-stat conf-stat--unmet"><span class="conf-stat__n">${cSum.unmet}</span><span class="conf-stat__k">${copy("conf.stat.unmet")}</span></div>
+        <div class="conf-stat conf-stat--na"><span class="conf-stat__n">${cSum.notAssessed}</span><span class="conf-stat__k">${copy("conf.stat.na")}</span></div>
+        <div class="conf-stat conf-stat--total"><span class="conf-stat__n">${cSum.total}</span><span class="conf-stat__k">${copy("conf.stat.total")}</span></div>
+      </div>
+    </div>`;
 const conformanceHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -1228,6 +1246,7 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
       <p class="lead">${copy("conf.lede")}</p>
       <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
     </header>
+    ${confOverview}
     ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref, evidenceLabel: (c, href) => evidenceLabelFor(href) })}
     ${siteFooter()}
   </main>

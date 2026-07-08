@@ -265,6 +265,23 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .conf-machine { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: 10px 0 0; }
 .conf-machine a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-soft); }
 .conf-machine a:hover { border-color: var(--bs-color-accent); }
+/* Conformance overview — proportional meter + big-number stat tiles, the at-a-glance
+   read the flat criteria list lacks. Colors: met = accent, unmet = status-negative,
+   not-assessed = a neutral (it isn't a failure, just unevaluated). */
+.conf-overview { margin: 0 0 30px; }
+.conf-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bs-color-card-alt); }
+.conf-bar__seg { display: block; height: 100%; }
+.conf-bar__seg--met { background: var(--bs-color-accent); }
+.conf-bar__seg--unmet { background: var(--bs-color-status-negative); }
+.conf-bar__seg--na { background: var(--bs-color-ink-mono); }
+.conf-stats { display: flex; flex-wrap: wrap; gap: 8px 26px; margin: 14px 0 0; }
+.conf-stat { display: flex; align-items: baseline; gap: 8px; }
+.conf-stat__n { font-family: var(--bs-font-display); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: var(--bs-color-ink); font-variant-numeric: tabular-nums; }
+.conf-stat__k { font-family: var(--bs-font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--bs-color-ink-mono); }
+.conf-stat--met .conf-stat__n { color: var(--bs-color-accent); }
+.conf-stat--unmet .conf-stat__n { color: var(--bs-color-status-negative); }
+.conf-stat--na .conf-stat__n { color: var(--bs-color-ink-soft); }
+
 .ck-conformance { margin: 8px 0 0; }
 .ck-conformance__claim { font-size: 17px; line-height: 1.5; margin: 0 0 6px; padding: 14px 16px; border-radius: var(--bs-radius-md); border: 1px solid var(--bs-color-line); background: var(--bs-color-card-alt); color: var(--bs-color-ink); max-width: 64ch; }
 .ck-conformance__claim[data-conformant="true"] { border-color: var(--bs-color-accent-soft); background: var(--bs-color-accent-tint); color: var(--bs-color-accent-strong); }
@@ -282,6 +299,10 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .ck-status--met { color: var(--bs-color-accent); border-color: var(--bs-color-accent-soft); background: var(--bs-color-accent-tint); }
 .ck-status--unmet { color: var(--bs-color-status-negative); border-color: var(--bs-color-status-negative); background: var(--bs-color-status-negative-tint); }
 .ck-status--not-assessed { color: var(--bs-color-ink-mono); border-color: var(--bs-color-line); background: var(--bs-color-card-alt); }
+/* A glyph per status so the state reads without relying on color (WCAG 1.4.1). */
+.ck-status--met::before { content: "\2713\00a0"; }
+.ck-status--unmet::before { content: "\2717\00a0"; }
+.ck-status--not-assessed::before { content: "\2013\00a0"; }
 .ck-criterion__label { font-size: 15px; color: var(--bs-color-ink); font-weight: 600; }
 .ck-criterion__standard { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
 .ck-criterion__detail { font-size: 13.5px; color: var(--bs-color-ink-soft); line-height: 1.65; max-width: 60ch; margin-bottom: 2px; }
