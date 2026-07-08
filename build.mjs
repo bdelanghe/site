@@ -1233,6 +1233,53 @@ const confOverview = `<div class="conf-overview">
         <div class="conf-stat conf-stat--total"><span class="conf-stat__n">${cSum.total}</span><span class="conf-stat__k">${copy("conf.stat.total")}</span></div>
       </div>
     </div>`;
+// Link each criterion's standard to the doc that DECLARES the rule. The vendored
+// renderer emits the standard as plain text (no href hook), so we post-process its
+// output: wrap each known standard's name — anchored on the " · level" that always
+// follows it inside .ck-criterion__standard — in a link to the primary spec. Internal
+// "Bounded Systems … bar" / "Design-system hygiene" have no external spec, so they
+// stay plain (their declaration is this build's own evidence, already linked).
+const STANDARD_DOCS = {
+  "HTML Living Standard": "https://html.spec.whatwg.org/multipage/",
+  "Nu Html Checker": "https://validator.w3.org/nu/",
+  "WAI-ARIA 1.2": "https://www.w3.org/TR/wai-aria-1.2/",
+  "WCAG 2.2 + APCA": "https://www.w3.org/TR/WCAG22/",
+  "WCAG 2.2": "https://www.w3.org/TR/WCAG22/",
+  "ARIA/WCAG (machine heuristic)": "https://www.w3.org/WAI/standards-guidelines/wcag/",
+  "axe-core": "https://github.com/dequelabs/axe-core",
+  "OWASP ASVS 5.0.0": "https://owasp.org/www-project-application-security-verification-standard/",
+  "RFC 6797 / hstspreload.org": "https://www.rfc-editor.org/rfc/rfc6797",
+  "Core Web Vitals": "https://web.dev/articles/vitals",
+  "Baseline": "https://web.dev/baseline/",
+  "CommonMark": "https://spec.commonmark.org/",
+  "JSON-LD 1.1 / SHACL": "https://www.w3.org/TR/json-ld11/",
+  "OpenAPI 3.2 / JSON Schema 2020-12": "https://spec.openapis.org/oas/latest.html",
+  "RFC 4287": "https://www.rfc-editor.org/rfc/rfc4287",
+  "llms.txt convention": "https://llmstxt.org/",
+  "Search-engine technical guidelines / RFC 9309": "https://www.rfc-editor.org/rfc/rfc9309",
+  "IPFS / CIDv1": "https://docs.ipfs.tech/concepts/content-addressing/",
+  "OpenSSF Scorecard": "https://github.com/ossf/scorecard",
+  "RFC 9110": "https://www.rfc-editor.org/rfc/rfc9110",
+  "RFC 9530": "https://www.rfc-editor.org/rfc/rfc9530",
+  "Reproducible Builds": "https://reproducible-builds.org/",
+  "SLSA / in-toto": "https://slsa.dev/spec/",
+  "SLSA": "https://slsa.dev/",
+  "SPDX": "https://spdx.dev/",
+  "W3C COGA Making Content Usable — Objective 5": "https://www.w3.org/TR/coga-usable/",
+  "W3C COGA (derived)": "https://www.w3.org/WAI/cognitive/",
+  "W3C COGA": "https://www.w3.org/WAI/cognitive/",
+};
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const linkifyStandards = (html) => {
+  // Longest names first so a short name ("WCAG 2.2") can't pre-empt a longer one
+  // ("WCAG 2.2 + APCA"); the trailing " &middot;" anchors each match to the whole name.
+  for (const nm of Object.keys(STANDARD_DOCS).sort((a, b) => b.length - a.length)) {
+    const re = new RegExp(`(<span class="ck-criterion__standard">)${reEsc(esc(nm))}( &middot;)`, "g");
+    html = html.replace(re, `$1<a class="ck-std no-link-icon" href="${STANDARD_DOCS[nm]}">${esc(nm)}</a>$2`);
+  }
+  return html;
+};
+const confBody = linkifyStandards(renderConformanceReport(confReport, { evidenceHref: confEvidenceHref, evidenceLabel: (c, href) => evidenceLabelFor(href) }));
 const conformanceHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -1247,7 +1294,7 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
       <p class="conf-machine"><a href="/api/v1/conformance.json">${copy("conf.machine")}</a> &middot; <a href="/provenance">${copy("conf.provenance")}</a></p>
     </header>
     ${confOverview}
-    ${renderConformanceReport(confReport, { evidenceHref: confEvidenceHref, evidenceLabel: (c, href) => evidenceLabelFor(href) })}
+    ${confBody}
     ${siteFooter()}
   </main>
 </body>
