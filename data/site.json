@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T09:27:06.461Z",
+  "generatedAt": "2026-07-20T09:25:58.056Z",
   "owner": {
     "login": "bdelanghe",
     "name": "Robert DeLanghe"
@@ -361,40 +361,40 @@
     }
   ],
   "interests": {
-    "count": 210,
+    "count": 225,
     "shown": 30,
     "languages": [
       {
         "name": "TypeScript",
-        "count": 51
-      },
-      {
-        "name": "Python",
-        "count": 39
+        "count": 52
       },
       {
         "name": "Rust",
-        "count": 37
+        "count": 43
+      },
+      {
+        "name": "Python",
+        "count": 41
       },
       {
         "name": "Go",
-        "count": 28
+        "count": 30
       },
       {
         "name": "JavaScript",
         "count": 10
       },
       {
+        "name": "HTML",
+        "count": 9
+      },
+      {
         "name": "other",
         "count": 9
       },
       {
-        "name": "HTML",
-        "count": 7
-      },
-      {
         "name": "C",
-        "count": 5
+        "count": 6
       },
       {
         "name": "Jupyter Notebook",
@@ -415,6 +415,10 @@
       {
         "name": "Swift",
         "count": 2
+      },
+      {
+        "name": "Nix",
+        "count": 1
       },
       {
         "name": "CSS",
@@ -460,11 +464,15 @@
     "topics": [
       {
         "name": "ai",
-        "count": 30
+        "count": 32
       },
       {
         "name": "cli",
-        "count": 28
+        "count": 31
+      },
+      {
+        "name": "rust",
+        "count": 24
       },
       {
         "name": "security",
@@ -472,34 +480,38 @@
       },
       {
         "name": "ai-agents",
-        "count": 21
-      },
-      {
-        "name": "rust",
-        "count": 20
+        "count": 22
       },
       {
         "name": "developer-tools",
-        "count": 18
+        "count": 20
       },
       {
         "name": "claude-code",
         "count": 17
       },
       {
+        "name": "llm",
+        "count": 15
+      },
+      {
+        "name": "python",
+        "count": 15
+      },
+      {
+        "name": "terminal",
+        "count": 14
+      },
+      {
         "name": "agents",
         "count": 14
       },
       {
-        "name": "python",
-        "count": 14
-      },
-      {
-        "name": "llm",
-        "count": 14
-      },
-      {
         "name": "typescript",
+        "count": 13
+      },
+      {
+        "name": "tui",
         "count": 12
       },
       {
@@ -507,7 +519,11 @@
         "count": 12
       },
       {
-        "name": "terminal",
+        "name": "hacktoberfest",
+        "count": 11
+      },
+      {
+        "name": "openai",
         "count": 10
       },
       {
@@ -519,10 +535,6 @@
         "count": 10
       },
       {
-        "name": "hacktoberfest",
-        "count": 9
-      },
-      {
         "name": "mcp",
         "count": 9
       },
@@ -531,15 +543,15 @@
         "count": 9
       },
       {
-        "name": "openai",
-        "count": 9
-      },
-      {
-        "name": "react",
+        "name": "macos",
         "count": 8
       },
       {
-        "name": "tui",
+        "name": "git",
+        "count": 8
+      },
+      {
+        "name": "react",
         "count": 8
       },
       {
@@ -547,7 +559,7 @@
         "count": 8
       },
       {
-        "name": "macos",
+        "name": "command-line",
         "count": 7
       },
       {
@@ -557,6 +569,14 @@
       {
         "name": "secret-management",
         "count": 7
+      },
+      {
+        "name": "anthropic",
+        "count": 6
+      },
+      {
+        "name": "linux",
+        "count": 6
       },
       {
         "name": "chatgpt",
@@ -571,7 +591,15 @@
         "count": 6
       },
       {
-        "name": "git",
+        "name": "productivity",
+        "count": 5
+      },
+      {
+        "name": "windows",
+        "count": 5
+      },
+      {
+        "name": "bash",
         "count": 5
       },
       {
@@ -583,19 +611,27 @@
         "count": 5
       },
       {
-        "name": "anthropic",
-        "count": 5
-      },
-      {
-        "name": "command-line",
-        "count": 5
-      },
-      {
         "name": "open-source",
         "count": 5
       },
       {
-        "name": "bash",
+        "name": "context-engineering",
+        "count": 4
+      },
+      {
+        "name": "rag",
+        "count": 4
+      },
+      {
+        "name": "development",
+        "count": 4
+      },
+      {
+        "name": "file-manager",
+        "count": 4
+      },
+      {
+        "name": "android",
         "count": 4
       },
       {
@@ -624,10 +660,6 @@
       },
       {
         "name": "skills",
-        "count": 4
-      },
-      {
-        "name": "windows",
         "count": 4
       },
       {
@@ -699,8 +731,28 @@
         "count": 4
       },
       {
-        "name": "linux",
-        "count": 4
+        "name": "langchain",
+        "count": 3
+      },
+      {
+        "name": "memory",
+        "count": 3
+      },
+      {
+        "name": "visualization",
+        "count": 3
+      },
+      {
+        "name": "github",
+        "count": 3
+      },
+      {
+        "name": "vim",
+        "count": 3
+      },
+      {
+        "name": "c",
+        "count": 3
       },
       {
         "name": "sqlite",
@@ -727,14 +779,6 @@
         "count": 3
       },
       {
-        "name": "android",
-        "count": 3
-      },
-      {
-        "name": "context-engineering",
-        "count": 3
-      },
-      {
         "name": "vibe-coding",
         "count": 3
       },
@@ -743,23 +787,11 @@
         "count": 3
       },
       {
-        "name": "rag",
-        "count": 3
-      },
-      {
-        "name": "development",
-        "count": 3
-      },
-      {
         "name": "issue-tracker",
         "count": 3
       },
       {
         "name": "configuration",
-        "count": 3
-      },
-      {
-        "name": "productivity",
         "count": 3
       },
       {
@@ -787,6 +819,62 @@
         "count": 3
       },
       {
+        "name": "agent-memory",
+        "count": 2
+      },
+      {
+        "name": "ai-memory",
+        "count": 2
+      },
+      {
+        "name": "embeddings",
+        "count": 2
+      },
+      {
+        "name": "fastapi",
+        "count": 2
+      },
+      {
+        "name": "long-term-memory",
+        "count": 2
+      },
+      {
+        "name": "personalization",
+        "count": 2
+      },
+      {
+        "name": "nix",
+        "count": 2
+      },
+      {
+        "name": "dependency-graph",
+        "count": 2
+      },
+      {
+        "name": "github-api",
+        "count": 2
+      },
+      {
+        "name": "file-preview",
+        "count": 2
+      },
+      {
+        "name": "cross-platform",
+        "count": 2
+      },
+      {
+        "name": "filesystem",
+        "count": 2
+      },
+      {
+        "name": "command-line-tool",
+        "count": 2
+      },
+      {
+        "name": "ncurses",
+        "count": 2
+      },
+      {
         "name": "fish",
         "count": 2
       },
@@ -808,10 +896,6 @@
       },
       {
         "name": "ml",
-        "count": 2
-      },
-      {
-        "name": "visualization",
         "count": 2
       },
       {
@@ -847,10 +931,6 @@
         "count": 2
       },
       {
-        "name": "c",
-        "count": 2
-      },
-      {
         "name": "actions",
         "count": 2
       },
@@ -860,10 +940,6 @@
       },
       {
         "name": "accessibility",
-        "count": 2
-      },
-      {
-        "name": "github",
         "count": 2
       },
       {
@@ -900,10 +976,6 @@
       },
       {
         "name": "supply-chain-security",
-        "count": 2
-      },
-      {
-        "name": "memory",
         "count": 2
       },
       {
@@ -1003,10 +1075,6 @@
         "count": 2
       },
       {
-        "name": "langchain",
-        "count": 2
-      },
-      {
         "name": "llms",
         "count": 2
       },
@@ -1061,6 +1129,158 @@
       {
         "name": "devsecops",
         "count": 2
+      },
+      {
+        "name": "continual-learning",
+        "count": 1
+      },
+      {
+        "name": "state-management",
+        "count": 1
+      },
+      {
+        "name": "vector-database",
+        "count": 1
+      },
+      {
+        "name": "development-environment",
+        "count": 1
+      },
+      {
+        "name": "architecture",
+        "count": 1
+      },
+      {
+        "name": "browser-based",
+        "count": 1
+      },
+      {
+        "name": "code-analysis",
+        "count": 1
+      },
+      {
+        "name": "codebase-visualization",
+        "count": 1
+      },
+      {
+        "name": "d3js",
+        "count": 1
+      },
+      {
+        "name": "single-file",
+        "count": 1
+      },
+      {
+        "name": "cuda",
+        "count": 1
+      },
+      {
+        "name": "mlx",
+        "count": 1
+      },
+      {
+        "name": "qwen3-tts",
+        "count": 1
+      },
+      {
+        "name": "qwen3-tts-ui",
+        "count": 1
+      },
+      {
+        "name": "voice-ai",
+        "count": 1
+      },
+      {
+        "name": "voice-clone",
+        "count": 1
+      },
+      {
+        "name": "whisper",
+        "count": 1
+      },
+      {
+        "name": "does-anyone-read-these",
+        "count": 1
+      },
+      {
+        "name": "holepunching",
+        "count": 1
+      },
+      {
+        "name": "memes",
+        "count": 1
+      },
+      {
+        "name": "multipath",
+        "count": 1
+      },
+      {
+        "name": "p2p",
+        "count": 1
+      },
+      {
+        "name": "quic",
+        "count": 1
+      },
+      {
+        "name": "realtime",
+        "count": 1
+      },
+      {
+        "name": "tags",
+        "count": 1
+      },
+      {
+        "name": "tagsoftags",
+        "count": 1
+      },
+      {
+        "name": "blog",
+        "count": 1
+      },
+      {
+        "name": "console",
+        "count": 1
+      },
+      {
+        "name": "file-launcher",
+        "count": 1
+      },
+      {
+        "name": "asyncio",
+        "count": 1
+      },
+      {
+        "name": "concurrency",
+        "count": 1
+      },
+      {
+        "name": "file-explorer",
+        "count": 1
+      },
+      {
+        "name": "neovim",
+        "count": 1
+      },
+      {
+        "name": "balanced-bfs-descent",
+        "count": 1
+      },
+      {
+        "name": "fuzzy-search",
+        "count": 1
+      },
+      {
+        "name": "tree",
+        "count": 1
+      },
+      {
+        "name": "async",
+        "count": 1
+      },
+      {
+        "name": "command-line-interface",
+        "count": 1
       },
       {
         "name": "human-centered-design",
@@ -1463,10 +1683,6 @@
         "count": 1
       },
       {
-        "name": "agent-memory",
-        "count": 1
-      },
-      {
         "name": "agent-orchestration",
         "count": 1
       },
@@ -1719,10 +1935,6 @@
         "count": 1
       },
       {
-        "name": "ai-memory",
-        "count": 1
-      },
-      {
         "name": "chromadb",
         "count": 1
       },
@@ -1736,14 +1948,6 @@
       },
       {
         "name": "claude-code-plugin",
-        "count": 1
-      },
-      {
-        "name": "embeddings",
-        "count": 1
-      },
-      {
-        "name": "long-term-memory",
         "count": 1
       },
       {
@@ -2096,10 +2300,6 @@
       },
       {
         "name": "customization",
-        "count": 1
-      },
-      {
-        "name": "personalization",
         "count": 1
       },
       {
@@ -2463,10 +2663,6 @@
         "count": 1
       },
       {
-        "name": "fastapi",
-        "count": 1
-      },
-      {
         "name": "openai-agents-sdk",
         "count": 1
       },
@@ -2552,10 +2748,6 @@
       },
       {
         "name": "devenv",
-        "count": 1
-      },
-      {
-        "name": "nix",
         "count": 1
       },
       {
@@ -2671,10 +2863,6 @@
         "count": 1
       },
       {
-        "name": "cross-platform",
-        "count": 1
-      },
-      {
         "name": "design-language",
         "count": 1
       },
@@ -2752,10 +2940,6 @@
       },
       {
         "name": "analyzer",
-        "count": 1
-      },
-      {
-        "name": "dependency-graph",
         "count": 1
       },
       {
@@ -3047,10 +3231,6 @@
         "count": 1
       },
       {
-        "name": "github-api",
-        "count": 1
-      },
-      {
         "name": "osint",
         "count": 1
       },
@@ -3111,19 +3291,7 @@
         "count": 1
       },
       {
-        "name": "file-manager",
-        "count": 1
-      },
-      {
-        "name": "file-preview",
-        "count": 1
-      },
-      {
         "name": "file-search",
-        "count": 1
-      },
-      {
-        "name": "filesystem",
         "count": 1
       },
       {
@@ -3135,15 +3303,7 @@
         "count": 1
       },
       {
-        "name": "ncurses",
-        "count": 1
-      },
-      {
         "name": "raspberry-pi",
-        "count": 1
-      },
-      {
-        "name": "vim",
         "count": 1
       },
       {
@@ -3258,7 +3418,7 @@
         "url": "https://github.com/obra/superpowers",
         "description": "An agentic skills framework & software development methodology that works.",
         "language": "Shell",
-        "stars": 253405,
+        "stars": 257850,
         "topics": [
           "ai",
           "brainstorming",
@@ -3276,7 +3436,7 @@
         "url": "https://github.com/react/react",
         "description": "The library for web and native user interfaces.",
         "language": "JavaScript",
-        "stars": 246457,
+        "stars": 246588,
         "topics": [
           "declarative",
           "frontend",
@@ -3292,7 +3452,7 @@
         "url": "https://github.com/multica-ai/andrej-karpathy-skills",
         "description": "A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls.",
         "language": null,
-        "stars": 191392,
+        "stars": 194524,
         "topics": []
       },
       {
@@ -3301,7 +3461,7 @@
         "url": "https://github.com/anomalyco/opencode",
         "description": "The open source coding agent.",
         "language": "TypeScript",
-        "stars": 185263,
+        "stars": 187669,
         "topics": []
       },
       {
@@ -3310,7 +3470,7 @@
         "url": "https://github.com/anthropics/claude-code",
         "description": "Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows - all through natural language commands.",
         "language": "Python",
-        "stars": 137646,
+        "stars": 138403,
         "topics": []
       },
       {
@@ -3319,7 +3479,7 @@
         "url": "https://github.com/garrytan/gstack",
         "description": "Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO, Designer, Eng Manager, Release Manager, Doc Engineer, and QA",
         "language": "TypeScript",
-        "stars": 121554,
+        "stars": 123070,
         "topics": []
       },
       {
@@ -3328,7 +3488,7 @@
         "url": "https://github.com/github/spec-kit",
         "description": "💫 Toolkit to help you get started with Spec-Driven Development",
         "language": "Python",
-        "stars": 120161,
+        "stars": 122531,
         "topics": [
           "ai",
           "copilot",
@@ -3345,7 +3505,7 @@
         "url": "https://github.com/rust-lang/rust",
         "description": "Empowering everyone to build reliable and efficient software.",
         "language": "Rust",
-        "stars": 114677,
+        "stars": 114738,
         "topics": [
           "compiler",
           "language",
@@ -3358,7 +3518,7 @@
         "url": "https://github.com/google-gemini/gemini-cli",
         "description": "An open-source AI agent that brings the power of Gemini directly into your terminal.",
         "language": "TypeScript",
-        "stars": 105951,
+        "stars": 106084,
         "topics": [
           "ai",
           "ai-agents",
@@ -3375,7 +3535,7 @@
         "url": "https://github.com/openai/codex",
         "description": "Lightweight coding agent that runs in your terminal",
         "language": "Rust",
-        "stars": 97560,
+        "stars": 99879,
         "topics": []
       },
       {
@@ -3384,7 +3544,7 @@
         "url": "https://github.com/thedotmack/claude-mem",
         "description": "Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it with AI, and injects relevant context back into future sessions. Works with Claude Code, OpenClaw, Codex, Gemini, Hermes, Copilot, OpenCode + More",
         "language": "JavaScript",
-        "stars": 87019,
+        "stars": 87919,
         "topics": [
           "ai",
           "ai-agents",
@@ -3414,7 +3574,7 @@
         "url": "https://github.com/OpenHands/OpenHands",
         "description": "🙌 OpenHands: AI-Driven Development",
         "language": "Python",
-        "stars": 80618,
+        "stars": 81371,
         "topics": [
           "agent",
           "artificial-intelligence",
@@ -3428,12 +3588,25 @@
         ]
       },
       {
+        "name": "lazygit",
+        "fullName": "jesseduffield/lazygit",
+        "url": "https://github.com/jesseduffield/lazygit",
+        "description": "simple terminal UI for git commands",
+        "language": "Go",
+        "stars": 80536,
+        "topics": [
+          "cli",
+          "git",
+          "terminal"
+        ]
+      },
+      {
         "name": "Understand-Anything",
         "fullName": "Egonex-AI/Understand-Anything",
         "url": "https://github.com/Egonex-AI/Understand-Anything",
         "description": "Graphs that teach > graphs that impress. Turn any code into an interactive knowledge graph you can explore, search, and ask questions about. Works with Claude Code, Codex, Cursor, Copilot, Gemini CLI, and more.",
         "language": "TypeScript",
-        "stars": 73719,
+        "stars": 75269,
         "topics": [
           "antigravity-skills",
           "business-knowledge",
@@ -3460,7 +3633,7 @@
         "url": "https://github.com/earendil-works/pi",
         "description": "AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI",
         "language": "TypeScript",
-        "stars": 70213,
+        "stars": 73028,
         "topics": []
       },
       {
@@ -3469,56 +3642,10 @@
         "url": "https://github.com/ansible/ansible",
         "description": "Ansible is a radically simple IT automation platform that makes your applications and systems easier to deploy and maintain. Automate everything from code deployment to network configuration to cloud management, in a language that approaches plain English, using SSH, with no agents to install on remote systems. https://docs.ansible.com.",
         "language": "Python",
-        "stars": 69656,
+        "stars": 69639,
         "topics": [
           "ansible",
           "python"
-        ]
-      },
-      {
-        "name": "get-shit-done",
-        "fullName": "gsd-build/get-shit-done",
-        "url": "https://github.com/gsd-build/get-shit-done",
-        "description": "A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code by TÂCHES.",
-        "language": "JavaScript",
-        "stars": 64748,
-        "topics": [
-          "claude-code",
-          "context-engineering",
-          "meta-prompting",
-          "spec-driven-development"
-        ]
-      },
-      {
-        "name": "rustlings",
-        "fullName": "rust-lang/rustlings",
-        "url": "https://github.com/rust-lang/rustlings",
-        "description": ":crab: Small exercises to get you used to reading and writing Rust code!",
-        "language": "Rust",
-        "stars": 63513,
-        "topics": [
-          "beginner-friendly",
-          "exercises",
-          "rust",
-          "rustlings"
-        ]
-      },
-      {
-        "name": "warp",
-        "fullName": "warpdotdev/warp",
-        "url": "https://github.com/warpdotdev/warp",
-        "description": "Warp is an agentic development environment, born out of the terminal.",
-        "language": "Rust",
-        "stars": 63111,
-        "topics": [
-          "bash",
-          "linux",
-          "macos",
-          "rust",
-          "shell",
-          "terminal",
-          "wasm",
-          "zsh"
         ]
       },
       {
@@ -3527,7 +3654,7 @@
         "url": "https://github.com/Leonxlnx/taste-skill",
         "description": "Taste-Skill - gives your AI good taste. stops the AI from generating boring, generic slop ",
         "language": "JavaScript",
-        "stars": 62693,
+        "stars": 65412,
         "topics": [
           "agent",
           "ai",
@@ -3545,12 +3672,58 @@
         ]
       },
       {
+        "name": "get-shit-done",
+        "fullName": "gsd-build/get-shit-done",
+        "url": "https://github.com/gsd-build/get-shit-done",
+        "description": "A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code by TÂCHES.",
+        "language": "JavaScript",
+        "stars": 64779,
+        "topics": [
+          "claude-code",
+          "context-engineering",
+          "meta-prompting",
+          "spec-driven-development"
+        ]
+      },
+      {
+        "name": "rustlings",
+        "fullName": "rust-lang/rustlings",
+        "url": "https://github.com/rust-lang/rustlings",
+        "description": ":crab: Small exercises to get you used to reading and writing Rust code!",
+        "language": "Rust",
+        "stars": 63579,
+        "topics": [
+          "beginner-friendly",
+          "exercises",
+          "rust",
+          "rustlings"
+        ]
+      },
+      {
+        "name": "warp",
+        "fullName": "warpdotdev/warp",
+        "url": "https://github.com/warpdotdev/warp",
+        "description": "Warp is an agentic development environment, born out of the terminal.",
+        "language": "Rust",
+        "stars": 63446,
+        "topics": [
+          "bash",
+          "linux",
+          "macos",
+          "rust",
+          "shell",
+          "terminal",
+          "wasm",
+          "zsh"
+        ]
+      },
+      {
         "name": "git",
         "fullName": "git/git",
         "url": "https://github.com/git/git",
         "description": "Git Source Code Mirror - This is a publish-only repository but pull requests can be turned into patches to the mailing list via GitGitGadget (https://gitgitgadget.github.io/). Please follow Documentation/SubmittingPatches procedure for any of your improvements.",
         "language": "C",
-        "stars": 61996,
+        "stars": 62104,
         "topics": [
           "c",
           "hacktoberfest",
@@ -3563,7 +3736,7 @@
         "url": "https://github.com/Fission-AI/OpenSpec",
         "description": "Spec-driven development (SDD) for AI coding assistants.",
         "language": "TypeScript",
-        "stars": 60461,
+        "stars": 61680,
         "topics": [
           "ai",
           "context-engineering",
@@ -3583,7 +3756,7 @@
         "url": "https://github.com/colbymchenry/codegraph",
         "description": "Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, Codex, Gemini, Cursor, OpenCode, AntiGravity, Kiro, and Hermes Agent — fewer tokens, fewer tool calls, 100% local",
         "language": "TypeScript",
-        "stars": 59553,
+        "stars": 61048,
         "topics": []
       },
       {
@@ -3592,7 +3765,7 @@
         "url": "https://github.com/crewAIInc/crewAI",
         "description": "Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.",
         "language": "Python",
-        "stars": 55422,
+        "stars": 55826,
         "topics": [
           "agents",
           "ai",
@@ -3605,9 +3778,9 @@
         "name": "litellm",
         "fullName": "BerriAI/litellm",
         "url": "https://github.com/BerriAI/litellm",
-        "description": "Python SDK, Proxy Server (AI Gateway) to call 100+ LLM APIs in OpenAI (or native) format, with cost tracking, guardrails, loadbalancing and logging. [Bedrock, Azure, OpenAI, VertexAI, Cohere, Anthropic, Sagemaker, HuggingFace, VLLM, NVIDIA NIM]",
+        "description": "The fastest, litest AI Gateway. Rust core with Python SDK. Call 100+ LLM APIs in OpenAI (or native) format with cost tracking, guardrails, load balancing, and logging [Bedrock, Azure, OpenAI, Anthropic, OpenAI, VertexAI, vLLM, Nvidia NIM]",
         "language": "Python",
-        "stars": 53411,
+        "stars": 54085,
         "topics": [
           "ai-gateway",
           "anthropic",
@@ -3633,7 +3806,7 @@
         "url": "https://github.com/aaif-goose/goose",
         "description": "an open source, extensible AI agent that goes beyond code suggestions - install, execute, edit, and test with any LLM",
         "language": "Rust",
-        "stars": 51142,
+        "stars": 51315,
         "topics": [
           "acp",
           "ai",
@@ -3647,7 +3820,7 @@
         "url": "https://github.com/expo/expo",
         "description": "An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.",
         "language": "TypeScript",
-        "stars": 50605,
+        "stars": 50769,
         "topics": [
           "android",
           "app-framework",
@@ -3673,7 +3846,7 @@
         "url": "https://github.com/anthropics/claude-cookbooks",
         "description": "A collection of notebooks/recipes showcasing some fun and effective ways of using Claude.",
         "language": "Jupyter Notebook",
-        "stars": 48666,
+        "stars": 49195,
         "topics": []
       },
       {
@@ -3682,52 +3855,25 @@
         "url": "https://github.com/apple/container",
         "description": "A tool for creating and running Linux containers using lightweight virtual machines on a Mac. It is written in Swift, and optimized for Apple silicon. ",
         "language": "Swift",
-        "stars": 47665,
+        "stars": 48044,
         "topics": []
       },
       {
-        "name": "agno",
-        "fullName": "agno-agi/agno",
-        "url": "https://github.com/agno-agi/agno",
-        "description": "Build, run, and manage your own agent platform.",
-        "language": "Python",
-        "stars": 41122,
-        "topics": [
-          "agents",
-          "ai",
-          "ai-agents",
-          "developer-tools",
-          "python"
-        ]
-      },
-      {
-        "name": "LibreChat",
-        "fullName": "danny-avila/LibreChat",
-        "url": "https://github.com/danny-avila/LibreChat",
-        "description": "Enhanced ChatGPT Clone: Features Agents, MCP, Skills, DeepSeek, Anthropic, AWS, OpenAI, Responses API, Azure, Groq, o1, GPT-5, Mistral, OpenRouter, Vertex AI, Gemini, Artifacts, AI model switching, message search, Code Interpreter, langchain, DALL-E-3, OpenAPI Actions, Functions, Secure Multi-User Auth, Presets, open-source for self-hosting. Active",
+        "name": "voicebox",
+        "fullName": "jamiepine/voicebox",
+        "url": "https://github.com/jamiepine/voicebox",
+        "description": "The open-source AI voice studio. Clone, dictate, create.",
         "language": "TypeScript",
-        "stars": 40658,
+        "stars": 43734,
         "topics": [
           "ai",
-          "anthropic",
-          "artifacts",
-          "aws",
-          "azure",
-          "chatgpt",
-          "chatgpt-clone",
-          "claude",
-          "clone",
-          "deepseek",
-          "gemini",
-          "google",
-          "gpt-5",
-          "librechat",
-          "mcp",
-          "o1",
-          "openai",
-          "responses-api",
-          "vision",
-          "webui"
+          "cuda",
+          "mlx",
+          "qwen3-tts",
+          "qwen3-tts-ui",
+          "voice-ai",
+          "voice-clone",
+          "whisper"
         ]
       }
     ]
