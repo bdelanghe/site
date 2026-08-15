@@ -143,7 +143,7 @@ jobs:
   deploy:
     needs: build
     if: needs.build.outputs.oci != ''
-    uses: bounded-systems/.github/.github/workflows/site-deploy.yml@48fd2593823d00e45ff79fdf22c4339a21a11883 # main, carries bounded-systems/.github#171 (per-role broker routes)
+    uses: bounded-systems/.github/.github/workflows/site-deploy.yml@42db0e942a7ef35430e6e86b0973b9ca1fee1e6e # main, carries bounded-systems/.github#172 (restores caller id-token)
     with:
       oci: ${{ needs.build.outputs.oci }}
       domain: "https://robertdelanghe.dev"
