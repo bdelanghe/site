@@ -30,17 +30,36 @@ nix build .#site # hermetic build → ./result (nodejs + brand pinned by flake.l
 
 ## Deploy
 
-Hosted on **Cloudflare Workers** (static assets), deployed by **Cloudflare Workers
-Builds** connected to this repo: on every push to `main` it runs `npm run build`
-(which runs the brand token-drift check first) then `npx wrangler deploy`. No secret
-to manage — Builds uses its own token. The worker is named **`site`**; `wrangler.jsonc`
-must match it (a Worker can't be renamed — delete + recreate if you ever want a
-different name). Add the custom domain `robertdelanghe.dev` in the Worker's
-Settings → Domains & Routes; DNS is already in Cloudflare.
+Hosted on **Cloudflare Workers** (static assets). Deployment is
+`.github/workflows/deploy.yml` — a **two-phase, promote-the-artifact pipeline**, not a
+push-to-deploy hook:
 
-`.github/workflows/refresh.yml` refreshes `data/site.json` weekly (commit → Builds
-redeploys), so the corpus stays current. `flake.nix` still gives a hermetic local
-build (`nix build .#site`) for reproducible verification.
+1. **build** — hermetic `nix build .#site`, then keyless-sign the in-toto/SLSA statement
+   and the whole-site manifest via Sigstore/Rekor (no held key) and publish a signed,
+   fully-deployable **OCI artifact to GHCR**.
+2. **deploy** — the canonical reusable pipeline in
+   [`bounded-systems/.github`](https://github.com/bounded-systems/.github) (`site-deploy.yml`):
+   pull and **cosign-verify** the artifact, upload an un-served **preview** version,
+   cryptographically verify that version's own preview URL, then **promote** to production.
+
+Promotion is gated behind the repo's **`site-promote` Environment (required reviewers)** —
+a push to `main` builds and previews automatically, then *waits* for a human to approve
+before production routing changes. Promote re-verifies the same artifact rather than
+rebuilding, so what reaches prod is byte-identical to what was previewed.
+
+> **Cloudflare Workers Builds must stay disconnected.** If the Builds Git App is attached
+> to this repo it deploys in parallel and races this pipeline — bypassing the signing,
+> verification, and approval gate entirely. `deploy.yml` says the same in its header.
+
+The worker is named **`site`**; `wrangler.jsonc` must match it (a Worker can't be renamed —
+delete and recreate to change it). The custom domain `robertdelanghe.dev` is set in the
+Worker's Settings → Domains & Routes; DNS is already in Cloudflare.
+
+`.github/workflows/refresh.yml` re-ingests the GitHub corpus weekly (Mondays 08:17 UTC),
+commits `data/site.json`, and then **dispatches `deploy.yml` via the API** — a scheduled
+commit does not itself trigger a push-event deploy, so the explicit dispatch is what keeps
+the corpus live. `flake.nix` gives the same hermetic build locally (`nix build .#site`) for
+reproducible verification.
 
 When bumping the brand, update both `package.json`'s dependency and
 `nix flake update brand`.
