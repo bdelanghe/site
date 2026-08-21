@@ -3,7 +3,7 @@
   "basics": {
     "name": "Robert DeLanghe",
     "label": "Senior Software Engineer",
-    "headline": "AI agents ship code. I write the contracts that keep them in check.",
+    "headline": "I design boundaries for systems that act.",
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
     "summary": "I'm a senior engineer who built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx: agent changes land as merged PRs, each git write checked against the capability the agent holds.",

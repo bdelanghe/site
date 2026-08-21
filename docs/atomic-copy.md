@@ -101,8 +101,9 @@ Copy is authored as data, not embedded in templates:
   `contract/jsonresume.schema.json` (`build.mjs:58`). Holds `basics.headline`,
   `basics.summary`, `work[].summary`, `work[].highlights[]`, `projects[].description`.
 - `data/presentation.json` — render-context "slugs for copy"; validated against
-  `contract/presentation.schema.json` (`build.mjs:59`). Holds `intro`, `banner.tagline`,
-  `seeking.{focus,detail,cta}`, nav `links`. Its schema already states the layer's
+  `contract/presentation.schema.json` (`build.mjs:59`). Holds `deck`, `origin`,
+  `banner.tagline`, `seeking.{label,focus,places}`, `caseStudies[]`, nav `links`. Its
+  schema already states the layer's
   intent: *"Held to the same string-audit lens as the canonical copy."*
 
 These are the **author-facing atoms**. `build.mjs` shallow-merges them (`build.mjs:60`)
@@ -115,7 +116,7 @@ so templates read one `profile` object.
 ```js
 const tokens = {
   org, tagline, thesis, brandDesc,   // ← brand/content/strings.json (verbal, org-level)
-  name, role, place, headline,       // ← profile / presentation slugs
+  name, role, headline,              // ← profile / presentation slugs
   email: emailObf,                   // ← obfuscated so transcluded prose stays un-harvestable
   proof: { …label → href },          // ← derived from canonical projects[]
   repo:  { …name → url },            // ← derived from data/site.json highlights
@@ -137,7 +138,8 @@ dangling reference is a build error — the verbal analogue of an undefined CSS 
 `audit-catalog.mjs` derives a **typed-symbol catalog** from the contracts: every
 shipped string becomes `{ type, value }` under a stable address —
 `hero.headline` (`headline`), `hero.summary` (`body`), `banner.tagline` (`tagline`),
-`seeking.cta` (`cta`), `exp.<slug>.b<n>`, `proj.<slug>.desc`, `work.<slug>`. The type
+`case.<slug>.{kicker,problem,intervention,evidence,role}`, `exp.<slug>.b<n>`,
+`proj.<slug>.desc`, `work.<slug>`. The type
 is assigned by `claimOrBody()` (`audit-catalog.mjs:27`): **a digit-bearing string is a
 `claim`** (falsifiable → grounding check), narrative copy is `body`. Output:
 `data/audit/catalog.json`.
@@ -187,7 +189,6 @@ Representative examples (all in `build.mjs`):
 | `Selected work — by tag` | `build.mjs:381` | section eyebrow |
 | `Computed from` · `starred work` · `topics kept honest by` | `build.mjs:374–376` | corpus source line |
 | `Built with` | `build.mjs:145` | colophon heading |
-| `Get in touch` (fallback) | `build.mjs:246` | seeking CTA default |
 | `Skills` · `Experience` · `Projects` · `Education` | `build.mjs:536–539` | résumé section headings |
 | `Download PDF` | `build.mjs:533` | résumé button |
 | `Provenance` · `Provenance chain` · `Claims → evidence` | `build.mjs:558, 562, 579` | provenance page |

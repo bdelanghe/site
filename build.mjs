@@ -172,7 +172,19 @@ const knowsAbout = [...new Set([
   ...projects.flatMap((p) => p.keywords ?? []),
 ])];
 const social = basics.profiles ?? [];           // [{ network, username, url }]
-const place = presentation.place ?? "";         // decorative hero line (render context)
+// The homepage opens with ONE positioning statement: the headline is the statement,
+// `deck` is its single supporting line. basics.summary stays canonical résumé copy and
+// is deliberately NOT repeated here — four restatements of the same thesis in the first
+// screen read as generated, however reasonable each one is on its own.
+const deck = presentation.deck ?? "";
+// One sentence of personal texture in the record margin (architecture/sculpture → systems).
+const origin = presentation.origin ?? "";
+// The dossier: authored case studies, the unit of professional value on this page. A
+// repository is evidence INSIDE an entry, never an entry — the full repository index
+// is /archive.
+const caseStudies = presentation.caseStudies ?? [];
+// City line for the masthead's right column, from the canonical location (not a slug).
+const cityLine = [basics.location?.city, basics.location?.region].filter(Boolean).join(", ");
 // Claim → evidence: the homepage proof line, token bag, and JSON-LD all derive from
 // the canonical projects[] — one source for prx/guest-room/… instead of a duplicate list.
 const proof = projects.map((p) => ({ label: p.name, href: p.url }));
@@ -197,7 +209,7 @@ const sval = (x) => (x && typeof x === "object" && "$value" in x ? x.$value : x)
 const strings = (await exists(join(brand, "content", "strings.json"))) ? await loadJson(join(brand, "content", "strings.json")) : {};
 const tokens = {
   org: sval(strings.name), tagline: sval(strings.tagline), thesis: sval(strings.thesis), brandDesc: sval(strings.description),
-  name, role, place, headline,
+  name, role, headline,
   email: emailObf, // posts transclude {{email}} into prose — keep it un-harvestable too
 
   proof: Object.fromEntries(proof.map((p) => [p.label, p.href])),
@@ -243,7 +255,7 @@ const OG_IMAGE = `${SITE}/brand/lockup/lockup-accent-1200.png`;
 // manifest read the same literals (accent fill + paper surface — the brand tokens the
 // page already paints with: --bs-color-accent / --bs-color-paper) so they can't drift.
 const THEME_COLOR = "#943D2A";   // --bs-color-accent
-const BG_COLOR = "#EDEAE1";      // --bs-color-paper (the body background)
+const BG_COLOR = "#FFFFFF";      // --bs-color-card (styles.css paints the body white)
 // RFC 9530 representation digest (`sha-256=:<base64>:`), per canonical doc, over the
 // bytes build.mjs itself writes (self-contained; not the later site.sha256) —
 // reprDigest is imported from the conformance kit's emitters.
@@ -338,19 +350,64 @@ const backgroundHtml =
       <h2 class="bs-text-label eyebrow">${copy("background.eyebrow")}</h2>
       ${exp.length ? `<ul class="entries">\n        ${exp.map(entry).join("\n        ")}\n      </ul>` : ""}
       ${edu.length ? `<p class="bg__sub bs-text-label">${copy("background.education")}</p>\n      <ul class="entries">\n        ${edu.map(eduEntry).join("\n        ")}\n      </ul>` : ""}
+      ${origin ? `<p class="bg__origin">${esc(origin)}</p>` : ""}
     </section>`
     : "";
 
+// Availability — ruled label/value rows, not a filled panel. The old callout was a
+// terracotta card with a promotional paragraph and a CTA: the one element on the page
+// that read as a generated landing-page block dropped into an editorial document. Same
+// four facts, rendered as a definition list the eye reads as record, not advertisement.
+// CONTACT is the canonical basics.email (obfuscated like every other address here), so
+// the address ships once and the nav links stay GitHub / LinkedIn / Résumé.
 const s = profile.seeking;
-const seekingHtml = s
-  ? `<div class="seeking">
-      ${s.label ? `<p class="bs-text-label seeking__label">${esc(s.label)}</p>` : ""}
-      <p class="seeking__focus">${esc(s.focus)}</p>
-      ${s.detail ? `<p class="seeking__detail">${esc(s.detail)}</p>` : ""}
-      ${s.href ? (s.href.startsWith("mailto:")
-        ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta no-link-icon" })
-        : `<a class="seeking__cta no-link-icon" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
-    </div>`
+const availRow = (label, value) =>
+  `<div class="rows__row"><dt class="bs-text-label rows__k">${label}</dt><dd class="rows__v">${value}</dd></div>`;
+const availHtml = s
+  ? `<section class="avail">
+      <h2 class="bs-text-label eyebrow">${copy("avail.eyebrow")}</h2>
+      <dl class="rows">
+        ${[
+          s.label ? availRow(copy("avail.status"), esc(s.label)) : "",
+          s.focus ? availRow(copy("avail.focus"), esc(s.focus)) : "",
+          s.places ? availRow(copy("avail.location"), esc(s.places)) : "",
+          email ? availRow(copy("avail.contact"), mailLink({ cls: "rows__mail no-link-icon" })) : "",
+        ].filter(Boolean).join("\n        ")}
+      </dl>
+    </section>`
+  : "";
+
+// The dossier. Each entry is numbered in the margin and answers the same four
+// questions, so the set reads as one instrument rather than three write-ups. The
+// number is decorative (aria-hidden) — the ordered list already carries the sequence
+// to assistive technology, and reading "zero one" before every heading is noise.
+const caseLinks = (c) => (c.links || []).length
+  ? `<p class="case__links">${c.links.map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" ")}</p>`
+  : "";
+const caseRow = (label, value) =>
+  `<div class="case__row"><dt class="bs-text-label case__k">${label}</dt><dd class="case__v">${esc(value)}</dd></div>`;
+const caseEntry = (c, i) => `<li class="case">
+          <p class="case__n" aria-hidden="true">${String(i + 1).padStart(2, "0")}</p>
+          <div class="case__body">
+            <h3 class="case__name">${esc(c.name)}</h3>
+            <p class="case__kicker">${esc(c.kicker)}</p>
+            <dl class="case__rows">
+              ${caseRow(copy("case.problem"), c.problem)}
+              ${caseRow(copy("case.intervention"), c.intervention)}
+              ${caseRow(copy("case.evidence"), c.evidence)}
+              ${caseRow(copy("case.role"), c.role)}
+            </dl>
+            ${caseLinks(c)}
+          </div>
+        </li>`;
+const casesHtml = caseStudies.length
+  ? `<section class="cases">
+      <h2 class="bs-text-label eyebrow">${copy("work.eyebrow")}</h2>
+      <ol class="cases__list">
+        ${caseStudies.map(caseEntry).join("\n        ")}
+      </ol>
+      <p class="cases__more"><a href="/archive">${copy("archive.pointer")}</a></p>
+    </section>`
   : "";
 
 const { stats, highlights } = site;
@@ -529,52 +586,29 @@ const html = `<!doctype html>
 <head>
   ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/", ogImage: homeOgImage, mdAlt: "/index.md" })}
   ${jsonLd}
-  <style>${filterCss}</style>
 </head>
 <body>
   <main class="wrap">
-    <header class="intro">
-      <p class="bs-text-label eyebrow">${esc(name)}&nbsp;&nbsp;&middot;&nbsp;&nbsp;${esc(role)}</p>
+    <header class="mast">
+      <p class="mast__name">${esc(name)}</p>
+      <p class="mast__role">${esc(role)}</p>
+      ${cityLine ? `<p class="mast__where bs-text-label">${esc(cityLine)}</p>` : ""}
+      <p class="mast__year bs-text-label">${date.slice(0, 4)}</p>
+    </header>
+
+    <section class="statement">
       <h1>${esc(headline)}</h1>
-      ${profile.intro ? `<p class="lead lead--intro">${esc(profile.intro)}</p>` : ""}
-      <p class="lead">${esc(summary)}</p>
-      ${place ? `<p class="place">${esc(place)}</p>` : ""}
+      ${deck ? `<p class="deck">${esc(deck)}</p>` : ""}
       <nav class="links">
         ${linksHtml}
       </nav>
-    </header>
+    </section>
 
-    ${seekingHtml}
+    ${availHtml}
+
+    ${casesHtml}
 
     ${backgroundHtml}
-
-    ${filterAnchors}
-    <section class="corpus">
-      <h2 class="bs-text-label eyebrow">${copy("corpus.eyebrow")}</h2>
-      <div class="figures">
-        <a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources ?? stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
-        ${orgCount != null ? `<a class="fig" href="${ghOwner("bounded-systems")}"><span class="fig__n">${orgCount}</span><span class="fig__k">${copy("corpus.fig.org")}</span></a>` : ""}
-        <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
-      </div>
-      <div class="bars">
-        ${langBars}
-      </div>
-      ${langMore}
-      <p class="chips__hint">${copy("corpus.chips.hint")}</p>
-      <div class="chips">
-        ${topicChips}
-      </div>
-      <p class="corpus__src">
-        ${copy("corpus.source.computed")} <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
-        &middot; <a href="/interests">${copy("corpus.source.starred")}</a>
-        &middot; ${copy("corpus.source.topics")} <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
-      </p>
-    </section>
-
-    <section class="work">
-      <h2 class="bs-text-label eyebrow">${copy("work.eyebrow")}</h2>
-      ${workList}
-    </section>
 
     ${siteFooter()}
   </main>
@@ -998,15 +1032,26 @@ const mdLink = (label, href) => `[${label}](${href.startsWith("/") ? SITE + href
 const indexMd = `# ${name} — ${role}
 
 > ${headline}
-${profile.intro ? `\n${profile.intro}\n` : ""}
-${summary}
-${place ? `\n${place}\n` : ""}${s ? `\n## ${s.label || s.focus}\n${s.focus}${s.detail ? `\n\n${s.detail}` : ""}\n` : ""}
+${deck ? `\n${deck}\n` : ""}${cityLine ? `\n${cityLine}\n` : ""}${s ? `\n## ${copy("avail.eyebrow")}\n${[
+  s.label ? `- **${copy("avail.status")}** — ${s.label}` : "",
+  s.focus ? `- **${copy("avail.focus")}** — ${s.focus}` : "",
+  s.places ? `- **${copy("avail.location")}** — ${s.places}` : "",
+  email ? `- **${copy("avail.contact")}** — ${emailObf}` : "",
+].filter(Boolean).join("\n")}\n` : ""}
+## ${copy("work.eyebrow")}
+${caseStudies.map((c, i) => `### ${String(i + 1).padStart(2, "0")} ${c.name}
+${c.kicker}
+
+- **${copy("case.problem")}** — ${c.problem}
+- **${copy("case.intervention")}** — ${c.intervention}
+- **${copy("case.evidence")}** — ${c.evidence}
+- **${copy("case.role")}** — ${c.role}${(c.links || []).length ? `\n- ${c.links.map((l) => mdLink(l.label, l.href)).join(" · ")}` : ""}`).join("\n\n")}
+
+${mdLink(copy("archive.pointer"), "/archive")}
+
 ## ${copy("background.eyebrow")}
 ${work.map((w) => `- **${w.name}**${w.position ? ` · ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.summary ? ` — ${w.summary}` : ""}`).join("\n")}
-${education.length ? `\n### ${copy("background.education")}\n${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `- **${e.institution}**${d ? ` · ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n")}\n` : ""}
-## ${copy("work.eyebrow")}
-${highlights.map((h) => `- ${mdLink(h.name, h.url)}: ${h.description}`).join("\n")}
-
+${education.length ? `\n### ${copy("background.education")}\n${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `- **${e.institution}**${d ? ` · ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n")}\n` : ""}${origin ? `\n${origin}\n` : ""}
 ## ${copy("llms.links")}
 ${profile.links.map((l) => l.href.startsWith("mailto:") ? `- ${emailObf}` : `- ${mdLink(l.label, l.href)}`).join("\n")}
 `;
@@ -1079,17 +1124,19 @@ const llms = `# ${name}
 
 ${summary}
 
-${role}${place ? ` · ${place}` : ""}
+${role}${cityLine ? ` · ${cityLine}` : ""}
 
 ## ${copy("llms.links")}
 ${profile.links.filter((l) => !l.href.startsWith("mailto:")).map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.href : l.href})`).join("\n")}
 
 ## ${copy("llms.work")}
-${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
+${caseStudies.map((c) => `- ${c.name} — ${c.kicker}: ${c.intervention}${(c.links || []).length ? ` (${c.links.map((l) => `[${l.label}](${l.href})`).join(", ")})` : ""}`).join("\n")}
+- [${copy("corpus.eyebrow")}](${SITE}/archive): ${highlights.map((h) => h.name).join(", ")}
 ${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}
 ## ${copy("llms.md")}
 - [${name} — ${role}](${SITE}/index.md)
 - [${copy("head.resume.label")}](${SITE}/resume.md)
+- [${copy("corpus.eyebrow")}](${SITE}/archive.md)
 - [${copy("nav.writing")}](${SITE}/blog.md)
 - [${copy("conf.title")}](${SITE}/conformance.md)
 - [${copy("prov.title")}](${SITE}/provenance.md)
@@ -1358,6 +1405,88 @@ ${profile.colophon.map((c) => `- ${mdLink(c.name, c.href)}${c.role ? ` — ${c.r
 `;
 await writeFile(join(dist, "colophon.md"), colophonMd);
 
+// ---- /archive — the generated index: every public repository, its languages and
+// topics, and the pinned set the topic filter narrows. This all used to sit on the
+// homepage, under the dossier. It came off for one reason: a repository count and a
+// topic cloud measure ACTIVITY, and a personal page that leads with activity argues
+// scale where it means to argue judgment — the overlapping topic facets (claude,
+// claude-code, agents, ai-agent, ai-agents, llm) read as one body of work counted six
+// times. The computation is unchanged and still linked from the home page; only the
+// projection moved. Case studies carry the argument; this carries the material.
+const archiveHtml = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `${copy("corpus.eyebrow")} — ${name}`, description: copy("head.archive.desc"), path: "/archive", mdAlt: "/archive.md" })}
+<style>${filterCss}</style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="mast mast--sub">
+      <p class="mast__name"><a href="/">&larr;&nbsp;${esc(name)}</a></p>
+      <p class="mast__role">${copy("corpus.eyebrow")}</p>
+      <p class="mast__year bs-text-label">${date}</p>
+    </header>
+
+    <section class="statement">
+      <h1>${copy("corpus.eyebrow")}</h1>
+      <p class="deck">${copy("archive.lede")}</p>
+    </section>
+
+    ${filterAnchors}
+    <section class="corpus">
+      <h2 class="bs-text-label eyebrow">${copy("archive.figures.eyebrow")}</h2>
+      <div class="corpus__body">
+      <div class="figures">
+        <a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources ?? stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
+        ${orgCount != null ? `<a class="fig" href="${ghOwner("bounded-systems")}"><span class="fig__n">${orgCount}</span><span class="fig__k">${copy("corpus.fig.org")}</span></a>` : ""}
+        <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
+      </div>
+      <div class="bars">
+        ${langBars}
+      </div>
+      ${langMore}
+      <p class="chips__hint">${copy("corpus.chips.hint")}</p>
+      <div class="chips">
+        ${topicChips}
+      </div>
+      <p class="corpus__src">
+        ${copy("corpus.source.computed")} <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
+        &middot; <a href="/interests">${copy("corpus.source.starred")}</a>
+        &middot; ${copy("corpus.source.topics")} <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
+      </p>
+      </div>
+    </section>
+
+    <section class="work">
+      <h2 class="bs-text-label eyebrow">${copy("archive.list.eyebrow")}</h2>
+      ${workList}
+    </section>
+
+    ${siteFooter()}
+  </main>
+</body>
+</html>
+`;
+await writeHtml("archive.html", archiveHtml);
+
+const archiveMd = `# ${copy("corpus.eyebrow")} — ${name}
+
+> ${copy("archive.lede")}
+
+## ${copy("archive.figures.eyebrow")}
+
+${copy("corpus.fig.public")}: ${stats.publicSources ?? stats.public}${orgCount != null ? ` · ${copy("corpus.fig.org")}: ${orgCount}` : ""} · ${copy("corpus.fig.languages")}: ${stats.languages.length}
+
+${stats.languages.map((l) => `- ${l.name}: ${l.count}`).join("\n")}
+
+## ${copy("archive.list.eyebrow")}
+
+${highlights.map((h) => `- ${mdLink(h.name, h.url)}${h.language ? ` — ${h.language}` : ""}: ${h.description}${h.topics?.length ? ` (${h.topics.join(", ")})` : ""}`).join("\n")}
+
+${copy("corpus.source.computed")} ${mdLink("github.com/bdelanghe", "https://github.com/bdelanghe")} · ${mdLink(copy("corpus.source.starred"), "/interests")}
+`;
+await writeFile(join(dist, "archive.md"), archiveMd);
+
 // ---- /interests — the interest graph: what I FOLLOW (starred), not what I built.
 // Same record→filter interface as the homepage, computed over stars via filterFor.
 // When the star data hasn't been fetched yet (no token on the last refresh) the
@@ -1470,7 +1599,7 @@ await writeFile(join(dist, "interests.md"), interestsMd);
 // asset matches two Cache-Control rules — Cloudflare _headers MERGES overlapping
 // rules, which would emit a malformed double Cache-Control. Plus UTF-8 on text
 // assets (Cloudflare otherwise sends text/plain with no charset → Latin-1 mojibake).
-const htmlRoutes = ["/", "/resume", "/blog", "/provenance", "/conformance", "/colophon", ...posts.map(postUrl)];
+const htmlRoutes = ["/", "/resume", "/archive", "/blog", "/provenance", "/conformance", "/colophon", ...posts.map(postUrl)];
 // RFC 9530 Repr-Digest per canonical doc, computed over the exact bytes written above
 // (self-contained — not the later site.sha256). Scoped to the canonical documents, not
 // fingerprinted assets. /provenance is intentionally OMITTED: gen-attestation.mjs stamps
@@ -1480,6 +1609,7 @@ const htmlRoutes = ["/", "/resume", "/blog", "/provenance", "/conformance", "/co
 const reprByRoute = {
   "/": reprDigest(html),
   "/resume": reprDigest(resumeHtml),
+  "/archive": reprDigest(archiveHtml),
   "/blog": reprDigest(blogHtml),
   "/conformance": reprDigest(conformanceHtml),
   ...Object.fromEntries(postReprs),
@@ -1494,7 +1624,7 @@ const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` :
 // the 404 page, but Cloudflare still applies the wildcard's "Content-Type:
 // text/markdown" to that response, mislabeling real HTML content. An explicit route
 // list only ever matches the .md siblings that are genuinely written below.
-const mdRoutes = ["/.md", "/index.md", "/resume.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`)];
+const mdRoutes = ["/.md", "/index.md", "/resume.md", "/archive.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`)];
 await writeFile(join(dist, "_headers"),
   htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600${reprLine(r)}`).join("\n") +
   `\n/feed.xml\n  Repr-Digest: ${reprByRoute["/feed.xml"]}\n` +

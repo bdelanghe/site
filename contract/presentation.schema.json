@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://robertdelanghe.dev/contract/presentation.schema.json",
   "title": "presentation / render-context contract",
-  "description": "Homepage render context — banner, intro, seeking, the decorative place line, and the homepage nav links. Decorates the canonical JSON Resume doc (contract/jsonresume.schema.json) and never redefines its fields; build.mjs shallow-merges presentation over profile. The homepage proof line derives from the canonical projects[], not from here. Held to the same string-audit lens as the canonical copy.",
+  "description": "Homepage render context — the deck, the availability rows, the authored case studies, and the homepage nav links. Decorates the canonical JSON Resume doc (contract/jsonresume.schema.json) and never redefines its fields; build.mjs shallow-merges presentation over profile. Held to the same string-audit lens as the canonical copy. The homepage opens with ONE positioning statement: basics.headline is the statement, `deck` is its single supporting line, and basics.summary is résumé copy that the homepage deliberately does not repeat.",
   "type": "object",
   "required": ["links"],
   "additionalProperties": false,
@@ -17,24 +17,53 @@
         "stack": { "type": "array", "items": { "type": "string" }, "description": "small-caps tech list rendered under the tagline" }
       }
     },
-    "intro": { "type": "string", "description": "hero — short first-person bio line, sits between headline and summary" },
-    "place": { "type": "string", "description": "decorative hero line — affiliations (e.g. 'Brooklyn · Aura · Recurse Center · Bennington'). The résumé location comes from basics.location, not here." },
+    "deck": { "type": "string", "description": "hero — the ONE line under the headline. Names the fields the selected work covers; it does not restate the headline's thesis." },
+    "origin": { "type": "string", "description": "one sentence in the record margin tying the architecture / sculpture training to the systems work. Personal texture, not positioning — keep it to a single sentence." },
     "seeking": {
       "type": "object",
-      "description": "Job-search callout: what roles you're open to.",
+      "description": "Availability — rendered as ruled label/value rows (STATUS · FOCUS · LOCATION), not as a filled callout panel. CONTACT is the canonical basics.email, not a field here. No promotional paragraph: each value is one line.",
       "required": ["focus"],
       "additionalProperties": false,
       "properties": {
-        "label": { "type": "string" },
-        "focus": { "type": "string" },
-        "detail": { "type": "string" },
-        "cta": { "type": "string" },
-        "href": { "type": "string" }
+        "label": { "type": "string", "description": "the STATUS row's value — what roles are open" },
+        "focus": { "type": "string", "description": "the FOCUS row's value — the fields, dot-separated" },
+        "places": { "type": "string", "description": "the LOCATION row's value — cities and remote posture, dot-separated" }
+      }
+    },
+    "caseStudies": {
+      "type": "array",
+      "description": "The homepage's authored dossier entries — the unit of professional value, replacing the repository card as the thing the page argues with. Each is numbered in render order and answers the same four questions, so the set reads as one instrument: what was wrong, what was done, what shows it worked, and which parts were the author's. An editorial set of three to five; a repository is evidence inside an entry, never an entry on its own. Every string here is audited exactly like the résumé copy, so a figure must be in data/audit/grounding.json.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "kicker", "problem", "intervention", "evidence", "role"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "description": "the system's name — an org, a product surface, or a program of work" },
+          "kicker": { "type": "string", "description": "one line under the name — what the system is" },
+          "problem": { "type": "string", "description": "what was wrong, stated as a condition rather than a task" },
+          "intervention": { "type": "string", "description": "what was changed, in the author's own terms" },
+          "evidence": { "type": "string", "description": "what shows it worked — and, where the record is incomplete, what is still open" },
+          "role": { "type": "string", "description": "which parts of the work were the author's" },
+          "links": {
+            "type": "array",
+            "description": "public artefacts backing the entry. Omitted where the work is not public — an entry without links is not a weaker entry.",
+            "items": {
+              "type": "object",
+              "required": ["label", "href"],
+              "additionalProperties": false,
+              "properties": {
+                "label": { "type": "string" },
+                "href": { "type": "string" }
+              }
+            }
+          }
+        }
       }
     },
     "links": {
       "type": "array",
-      "description": "Homepage nav links (and llms.txt). The résumé contact line uses basics.profiles + the canonical email, not these.",
+      "description": "Homepage nav links (and llms.txt). Email is NOT one of them — it is the availability block's CONTACT row, sourced from basics.email, so the address renders once. The résumé contact line uses basics.profiles + the canonical email, not these.",
       "minItems": 1,
       "items": {
         "type": "object",
