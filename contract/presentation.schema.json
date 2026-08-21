@@ -27,8 +27,8 @@
       "properties": {
         "role": { "type": "string", "description": "the CURRENTLY row's value \u2014 employer and place. Not the title: the masthead carries basics.label and the record carries the full entry." },
         "roleHref": { "type": "string", "description": "employer link" },
-        "note": { "type": "string", "description": "one short line under the rows \u2014 the page's single call to action" },
-        "noteHref": { "type": "string", "description": "where the note points" }
+        "note": { "type": "string", "description": "OPTIONAL one short line under the rows. Currently unset, and that is the default state, not an omission: it briefly advertised the employer's open roles, which was wrong once the posting in question was the one this r\u00e9sum\u00e9's owner filled. Set it only for something a reader can act on that is TRUE at the time of writing; a stale pointer is worse than none." },
+        "noteHref": { "type": "string", "description": "where the note points. Required in practice whenever `note` is set \u2014 an un-actionable call to action is not one." }
       }
     },
     "caseStudies": {

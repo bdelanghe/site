@@ -23,10 +23,6 @@
     "type": "body",
     "value": "Empathic — New York"
   },
-  "now.note": {
-    "type": "body",
-    "value": "Empathic is hiring"
-  },
   "case.bounded-systems.kicker": {
     "type": "body",
     "value": "Capability security for coding agents"
