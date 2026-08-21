@@ -50,7 +50,6 @@ function buildCatalog(profile, site, highlightCopy, copy) {
   put("hero.headline", "headline", basics.headline);
   put("hero.deck", "body", profile.deck);
   put("hero.summary", "body", basics.summary);
-  put("bio.origin", "body", profile.origin);
   if (profile.banner?.tagline) put("banner.tagline", "tagline", profile.banner.tagline);
 
   // The Currently rows. (CONTACT is the canonical email, not authored copy, so it has

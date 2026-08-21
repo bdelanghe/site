@@ -18,7 +18,6 @@
       }
     },
     "deck": { "type": "string", "description": "hero — the ONE line under the headline. Names the fields the selected work covers; it does not restate the headline's thesis." },
-    "origin": { "type": "string", "description": "one sentence in the record margin tying the architecture / sculpture training to the systems work. Personal texture, not positioning — keep it to a single sentence." },
     "now": {
       "type": "object",
       "description": "Where the work happens, as ruled label/value rows — NOT an availability pitch. It replaced `seeking` when the job search ended: a block that advertises openness to roles nobody is open to is a dead call to action taking up the best position on the page. Deliberately two rows and one note: everything the r\u00e9sum\u00e9 record already states (title, dates, history) is NOT repeated here, and the only outbound action offered is the one a reader can actually take.",
