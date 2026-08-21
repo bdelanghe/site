@@ -60,7 +60,6 @@ const profile = {
   profiles: b.profiles || [],
   skills: resume.skills || [],
   deck: presentation.deck,
-  origin: presentation.origin,
   now: presentation.now,
   // The authored dossier — the homepage's unit of professional value, exposed to
   // agents/parsers as the same four-answer shape it renders as.
@@ -88,7 +87,6 @@ const profileSchema = {
     profiles: { type: "array", items: { type: "object", additionalProperties: true } },
     skills: { type: "array", items: { type: "object", additionalProperties: true } },
     deck: { type: "string" },
-    origin: { type: "string" },
     now: { type: "object", additionalProperties: true },
     caseStudies: { type: "array", items: { type: "object", additionalProperties: true } },
     links: { type: "array", items: { type: "object", additionalProperties: true } },

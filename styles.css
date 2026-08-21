@@ -10,8 +10,8 @@
 
    Type: three registers, from @bdelanghe/brand's Plex superfamily. Sans carries
    identity, headings and UI; SERIF carries narrative prose (the deck, case-study
-   answers, the origin note) — the reading register, so extended copy stops being set in
-   the interface face; mono is scoped to labels, dates and identifiers and nothing else.
+   answers, the record summaries) — the reading register, so extended copy stops being
+   set in the interface face; mono is scoped to labels, dates and identifiers, nothing else.
    The heavy small-caps mono labelling everywhere was half of what made this read as a
    generated technical portfolio. bdelanghe/brand#5 is what made the serif reachable —
    before it, this pinning and bounded-systems/brand pinned the same two families.
@@ -23,9 +23,8 @@
    3.79:1 on white, so no lighter compliant hairline exists to reach for. (Naming the
    token, not its hex: the design-system coverage gate scans comment text too, and a
    literal hex here is a raw colour in a file whose whole rule is that it has none.)
-   Measured and
-   filed as bdelanghe/brand#6; it awaits an owner decision, and this comment is here so
-   the workaround is not silently inherited. */
+   Measured and filed as bdelanghe/brand#6; it awaits an owner decision, and this comment
+   is here so the workaround is not silently inherited. */
 :root {
   --maxw: 880px;
   --col: 116px;   /* the margin column — labels, project numbers, dates */
@@ -137,7 +136,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 }
 /* Content blocks sit in the wide column; the two that carry their own margin items
    (case numbers, employment dates) span both so those items reach the margin line. */
-.rows, .cases__more, .bg__origin, .corpus__body, .colophon__list, .colophon__more,
+.rows, .cases__more, .corpus__body, .colophon__list, .colophon__more,
 .figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects { grid-column: 2; }
 .cases__list, .entries { grid-column: 1 / -1; }
 .bg__sub { grid-column: 1; }
@@ -246,13 +245,6 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .entry__org { font-weight: 600; color: var(--bs-color-ink); }
 .entry__role { font-weight: 400; color: var(--bs-color-ink-soft); }
 .entry__what { display: block; font-family: var(--bs-font-text); font-size: 15px; line-height: 1.6; color: var(--bs-color-ink-soft); margin-top: 4px; max-width: 58ch; }
-/* One sentence of the person, not the positioning — set as a margin note, in clay. */
-.bg__origin {
-  margin: 24px 0 0; padding-left: 14px;
-  border-left: 2px solid var(--bs-color-accent);
-  font-family: var(--bs-font-text); font-style: italic;
-  font-size: 15px; line-height: 1.6; color: var(--bs-color-ink-soft); max-width: 58ch;
-}
 
 /* colophon: built-with */
 .colophon__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-card-alt); border-top: 1px solid var(--bs-color-card-alt); border-bottom: 1px solid var(--bs-color-card-alt); }
@@ -367,7 +359,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
   .rows__row, .case, .entry { grid-template-columns: minmax(0, 1fr); }
   .avail > .eyebrow, .cases > .eyebrow, .bg > .eyebrow,
   .corpus > .eyebrow, .work > .eyebrow, .colophon > .eyebrow { margin: 0 0 14px; }
-  .rows, .cases__more, .bg__origin, .corpus__body, .colophon__list, .colophon__more,
+  .rows, .cases__more, .corpus__body, .colophon__list, .colophon__more,
   .figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects,
   .cases__list, .entries, .bg__sub, .case__body, .now__note { grid-column: 1; }
   .case::before { grid-column: 1; }

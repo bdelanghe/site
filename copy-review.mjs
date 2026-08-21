@@ -124,7 +124,6 @@ function bundle(profile, site, highlightCopy = {}) {
     headline: basics.headline,
     deck: profile.deck,
     summary: basics.summary,
-    origin: profile.origin,
     now: profile.now && {
       role: profile.now.role,
       note: profile.now.note,

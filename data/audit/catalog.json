@@ -11,10 +11,6 @@
     "type": "body",
     "value": "I build the controls for software that acts on its own. After unreviewed agent commits reached main, I designed the checks that stop it and open-sourced them as prx: agent changes land as merged pull requests, each git write checked against the capability the agent holds."
   },
-  "bio.origin": {
-    "type": "body",
-    "value": "I read architecture and sculpture before I wrote software, and both are trainings in deciding where a thing ends — which is most of what the work above is."
-  },
   "banner.tagline": {
     "type": "tagline",
     "value": "Bounded authority for AI agents"

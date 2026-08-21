@@ -177,8 +177,6 @@ const social = basics.profiles ?? [];           // [{ network, username, url }]
 // is deliberately NOT repeated here — four restatements of the same thesis in the first
 // screen read as generated, however reasonable each one is on its own.
 const deck = presentation.deck ?? "";
-// One sentence of personal texture in the record margin (architecture/sculpture → systems).
-const origin = presentation.origin ?? "";
 // The dossier: authored case studies, the unit of professional value on this page. A
 // repository is evidence INSIDE an entry, never an entry — the full repository index
 // is /archive.
@@ -385,7 +383,6 @@ const backgroundHtml =
       <h2 class="bs-text-label eyebrow">${copy("background.eyebrow")}</h2>
       ${exp.length ? `<ul class="entries">\n        ${exp.map(entry).join("\n        ")}\n      </ul>` : ""}
       ${edu.length ? `<p class="bg__sub bs-text-label">${copy("background.education")}</p>\n      <ul class="entries">\n        ${edu.map(eduEntry).join("\n        ")}\n      </ul>` : ""}
-      ${origin ? `<p class="bg__origin">${esc(origin)}</p>` : ""}
     </section>`
     : "";
 
@@ -1094,7 +1091,7 @@ ${mdLink(copy("archive.pointer"), "/archive")}
 
 ## ${copy("background.eyebrow")}
 ${work.map((w) => `- **${w.name}**${w.position ? ` · ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.summary ? ` — ${w.summary}` : ""}`).join("\n")}
-${education.length ? `\n### ${copy("background.education")}\n${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `- **${e.institution}**${d ? ` · ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n")}\n` : ""}${origin ? `\n${origin}\n` : ""}
+${education.length ? `\n### ${copy("background.education")}\n${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `- **${e.institution}**${d ? ` · ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n")}\n` : ""}
 ## ${copy("llms.links")}
 ${profile.links.map((l) => l.href.startsWith("mailto:") ? `- ${emailObf}` : `- ${mdLink(l.label, l.href)}`).join("\n")}
 `;
