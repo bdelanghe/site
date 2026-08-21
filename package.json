@@ -16,7 +16,7 @@
     "check:css": "node scripts/check-css.mjs",
     "check:sbom": "node scripts/check-sbom.mjs",
     "check:vulns": "node vendor/conformance-kit/gates/vuln-gate.mjs",
-    "check:axe": "AXE_RUNNER=tezcatl node vendor/conformance-kit/gates/axe-gate.mjs dist",
+    "check:axe": "AXE_RUNNER=playwright node vendor/conformance-kit/gates/axe-gate.mjs dist",
     "check:html": "node vendor/conformance-kit/gates/html-validator-gate.mjs dist",
     "check:baseline": "node vendor/conformance-kit/gates/baseline-gate.mjs",
     "check:ai-readability": "AIR_SIBLING_IGNORE=404 node vendor/conformance-kit/gates/ai-readability-gate.mjs dist",

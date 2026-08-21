@@ -1,31 +1,95 @@
 {
   "hero.headline": {
     "type": "headline",
-    "value": "AI agents ship code. I write the contracts that keep them in check."
+    "value": "I make software safe to run when you can't fully trust what it will do."
   },
-  "hero.intro": {
+  "hero.deck": {
     "type": "body",
-    "value": "I'm Bobby. I build the controls that keep AI agents inside the job you gave them."
+    "value": "Selected work in agent infrastructure, commerce systems, and developer tooling."
   },
   "hero.summary": {
     "type": "body",
-    "value": "I'm a senior engineer who built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx: agent changes land as merged PRs, each git write checked against the capability the agent holds."
+    "value": "I build the controls for software that acts on its own. After unreviewed agent commits reached main, I designed the checks that stop it and open-sourced them as prx: agent changes land as merged pull requests, each git write checked against the capability the agent holds."
+  },
+  "bio.origin": {
+    "type": "body",
+    "value": "I read architecture and sculpture before I wrote software, and both are trainings in deciding where a thing ends — which is most of what the work above is."
   },
   "banner.tagline": {
     "type": "tagline",
     "value": "Bounded authority for AI agents"
   },
-  "seeking.cta": {
-    "type": "cta",
-    "value": "Get in touch"
-  },
-  "seeking.focus": {
+  "now.role": {
     "type": "body",
-    "value": "Senior / founding engineering on agent infrastructure: agent safety and code provenance"
+    "value": "Empathic — New York"
   },
-  "seeking.detail": {
+  "now.note": {
     "type": "body",
-    "value": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy. Brooklyn · NYC · remote."
+    "value": "Empathic is hiring"
+  },
+  "case.bounded-systems.kicker": {
+    "type": "body",
+    "value": "Capability security for coding agents"
+  },
+  "case.bounded-systems.problem": {
+    "type": "body",
+    "value": "Agent-authored commits reached main without review, and afterwards nobody could say which writes the agent had been authorized to make."
+  },
+  "case.bounded-systems.intervention": {
+    "type": "body",
+    "value": "Moved privileged git effects behind capability-checked operations, and routed the work through one pipeline whose only exit is a merged pull request."
+  },
+  "case.bounded-systems.evidence": {
+    "type": "body",
+    "value": "prx drives a work unit to an attributed pull request; ocap-provenance records which capabilities each effect held, and which were denied. Both are public, and both name what is still outside the check."
+  },
+  "case.bounded-systems.role": {
+    "type": "body",
+    "value": "System model, schemas, implementation, and the operational testing."
+  },
+  "case.commerce-systems.kicker": {
+    "type": "body",
+    "value": "Supply planning and inbound logistics"
+  },
+  "case.commerce-systems.problem": {
+    "type": "claim",
+    "value": "A 9-tab spreadsheet was the supply plan of record, and three teams each read it differently."
+  },
+  "case.commerce-systems.intervention": {
+    "type": "claim",
+    "value": "Replaced it with a CLI over one source of truth — 61 schema contracts, 173 test scenarios — and automated the inbound freight it had been gating."
+  },
+  "case.commerce-systems.evidence": {
+    "type": "body",
+    "value": "The three teams now plan against the same document, and freight moves without the manual coordination that used to hold shipments."
+  },
+  "case.commerce-systems.role": {
+    "type": "body",
+    "value": "Contract design, the CLI, and the cross-team consolidation."
+  },
+  "case.developer-systems.kicker": {
+    "type": "claim",
+    "value": "Quality gates for a 20-engineer team"
+  },
+  "case.developer-systems.problem": {
+    "type": "body",
+    "value": "Whole classes of defect were being found after merge, by people, one ticket at a time."
+  },
+  "case.developer-systems.intervention": {
+    "type": "body",
+    "value": "Moved static analysis into the pull-request pipeline as a blocking gate, so those classes could not reach main in the first place."
+  },
+  "case.developer-systems.evidence": {
+    "type": "claim",
+    "value": "Critical bugs fell 20% — critical-severity tickets per quarter, the four quarters before against the four after."
+  },
+  "case.developer-systems.role": {
+    "type": "body",
+    "value": "Gate design, the CI implementation, and the developer-experience work that kept the gate from being routed around."
+  },
+  "exp.empathic.what": {
+    "type": "body",
+    "value": "Infrastructure for operating software that changes behavior after it ships. Agent sandboxing enforced by the operating system, and the tooling teams need to run low-trust code with confidence."
   },
   "exp.aura.what": {
     "type": "claim",
@@ -162,6 +226,54 @@
   "copy.corpus.source.topics": {
     "type": "body",
     "value": "topics kept honest by"
+  },
+  "copy.now.eyebrow": {
+    "type": "body",
+    "value": "Currently"
+  },
+  "copy.now.at": {
+    "type": "body",
+    "value": "At"
+  },
+  "copy.now.contact": {
+    "type": "body",
+    "value": "Contact"
+  },
+  "copy.case.problem": {
+    "type": "body",
+    "value": "Problem"
+  },
+  "copy.case.intervention": {
+    "type": "body",
+    "value": "Intervention"
+  },
+  "copy.case.evidence": {
+    "type": "body",
+    "value": "Evidence"
+  },
+  "copy.case.role": {
+    "type": "body",
+    "value": "Role"
+  },
+  "copy.archive.lede": {
+    "type": "body",
+    "value": "The generated index behind the selected work: every public repository, its language and its topics, computed from GitHub on each refresh. The case studies on the home page carry the argument; this is the material they were drawn from."
+  },
+  "copy.archive.figures.eyebrow": {
+    "type": "body",
+    "value": "Shape"
+  },
+  "copy.archive.list.eyebrow": {
+    "type": "body",
+    "value": "Repositories"
+  },
+  "copy.archive.pointer": {
+    "type": "body",
+    "value": "Public record — the full repository index, by language and topic"
+  },
+  "copy.head.archive.desc": {
+    "type": "body",
+    "value": "The generated index behind Robert DeLanghe's selected work — every public repository, its language and its topics, computed from GitHub."
   },
   "copy.work.eyebrow": {
     "type": "body",

@@ -2,11 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
   "basics": {
     "name": "Robert DeLanghe",
-    "label": "Senior Software Engineer",
-    "headline": "AI agents ship code. I write the contracts that keep them in check.",
+    "label": "Founding Engineer",
+    "headline": "I make software safe to run when you can't fully trust what it will do.",
     "email": "cv@robertdelanghe.dev",
     "url": "https://robertdelanghe.dev",
-    "summary": "I'm a senior engineer who built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx: agent changes land as merged PRs, each git write checked against the capability the agent holds.",
+    "summary": "I build the controls for software that acts on its own. After unreviewed agent commits reached main, I designed the checks that stop it and open-sourced them as prx: agent changes land as merged pull requests, each git write checked against the capability the agent holds.",
     "location": {
       "city": "Brooklyn",
       "region": "NY",
@@ -27,6 +27,21 @@
   },
   "work": [
     {
+      "name": "Empathic",
+      "position": "Founding Engineer",
+      "location": "New York · In person",
+      "url": "https://empathic.dev",
+      "startDate": "2026-08",
+      "summary": "Infrastructure for operating software that changes behavior after it ships. Agent sandboxing enforced by the operating system, and the tooling teams need to run low-trust code with confidence.",
+      "keywords": [
+        "Rust",
+        "Capability security",
+        "Agent infrastructure",
+        "Sandboxing"
+      ],
+      "highlights": []
+    },
+    {
       "name": "Aura",
       "position": "Senior Software Engineer · Commerce Team",
       "location": "New York · Hybrid",
@@ -44,7 +59,8 @@
         "Aligned fulfillment, accounting, and ops on a single supply plan — the consolidation took as much cross-team coordination as it did engineering.",
         "Automated the inbound supply chain — ocean freight into the 3PL, Amazon LTL, and the freight splits between them — retiring the manual coordination that gated most shipments.",
         "Reconstructed how agent-authored commits slipped past review — traced each across five log sources, wrote the post-mortem, and designed the controls that informed the company's policy for shipping AI-written code."
-      ]
+      ],
+      "endDate": "2026-08"
     },
     {
       "name": "L2L",
