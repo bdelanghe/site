@@ -139,8 +139,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const gated = rows.filter((r) => !r.exempt).length;
   console.log(
     `\n  ${gated} content page(s) gated · ${rows.length - gated} navigational page(s) reported only\n` +
-      "  Evidence type: Mozilla Readability extraction — the engine Safari/Firefox Reader use.\n" +
-      "  It measures whether a reader mode can SEE the content, NOT whether the prose reads well.",
+      "  Evidence type: Mozilla Readability extraction — the engine FIREFOX Reader runs.\n" +
+      "  Safari's reader is WebKit's own and is stricter, so this is a floor, not a\n" +
+      "  certificate. It measures whether a reader mode can SEE the content, NOT whether\n" +
+      "  the prose reads well.",
   );
   if (failed.length) {
     console.error(`\n✗ reader-view gate: ${failed.length} page(s) below the ${FLOOR} floor:`);
