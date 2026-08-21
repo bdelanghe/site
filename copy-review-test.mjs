@@ -12,7 +12,10 @@
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { review } from "./copy-review.mjs";
+// The gate's entry point is `reviewCopy`; this harness was written against an earlier
+// name and has been failing at IMPORT time ever since — before the no-API-key skip
+// below could run, so it never reported as skipped either, it just threw.
+import { reviewCopy as review } from "./copy-review.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 
