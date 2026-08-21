@@ -394,8 +394,7 @@ const caseLinks = (c) => (c.links || []).length
   : "";
 const caseRow = (label, value) =>
   `<div class="case__row"><dt class="bs-text-label case__k">${label}</dt><dd class="case__v">${esc(value)}</dd></div>`;
-const caseEntry = (c, i) => `<li class="case">
-          <p class="case__n" aria-hidden="true">${String(i + 1).padStart(2, "0")}</p>
+const caseEntry = (c) => `<li class="case">
           <div class="case__body">
             <h3 class="case__name">${esc(c.name)}</h3>
             <p class="case__kicker">${esc(c.kicker)}</p>
@@ -573,7 +572,7 @@ const filterAnchors = homeFilter.anchors;
 const filterCss = homeFilter.css;
 
 const card = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><a class="proj__name" href="${esc(h.url)}">${esc(h.name)}</a>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
           <p class="proj__desc">${esc(h.description)}</p>
           <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
         </li>`;
@@ -1537,7 +1536,7 @@ if (interests?.items?.length) {
         </div>
       </details>` : "";
   const iCard = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><a class="proj__name" href="${esc(h.url)}">${esc(h.name)}</a>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
           ${h.description ? `<p class="proj__desc">${esc(h.description)}</p>` : ""}
           <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
         </li>`;
