@@ -7,7 +7,7 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths: ["posts/**", "build.mjs", "posts.mjs", "semantic/**", "vendor/conformance-kit/gates/semantic/**", ".github/workflows/semantic.yml"]
+    paths: ["posts/**", "build.mjs", "posts.mjs", "styles.css", "data/**", "semantic/**", "vendor/conformance-kit/gates/semantic/**", ".github/workflows/semantic.yml"]
   workflow_dispatch:
 
 jobs:
@@ -32,5 +32,21 @@ jobs:
       # lock records. The runner itself is the vendored, hash-pinned conformance-kit
       # gate; its import map (deno.json) ships with it. --allow-env: the kit gate reads
       # $SEMANTIC_DIR / $SEMANTIC_SELECTOR (defaults match this site: dist/blog · article).
-      - name: lone — bless rendered posts
+      # TWO invocations, not one widened $SEMANTIC_DIR. The kit's gate.ts uses
+      # Deno.readDir, which does NOT recurse — so pointing it at `dist` would SWAP
+      # coverage rather than widen it: it would pick up the nine top-level pages and
+      # silently stop blessing the two posts under dist/blog. Same shape as the bug this
+      # change exists to fix, so it is worth not repeating.
+      - name: lone — bless rendered posts (dist/blog)
+        run: deno run --frozen --lock=semantic/deno.lock --allow-read --allow-net --allow-env --config vendor/conformance-kit/gates/semantic/deno.json vendor/conformance-kit/gates/semantic/gate.ts
+      # The nine top-level pages, which have never been blessed. $SEMANTIC_DIR defaults
+      # to "dist/blog" and was never set here, so lone's nine validators — including its
+      # own reader-view one — only ever ran against the two pages that were never broken.
+      # /provenance shipped a <span> narrative that made it unreadable in Reader and this
+      # gate was green throughout, because it was not looking. Every page now carries
+      # <article class="doc">, so the default selector resolves to the right subject
+      # instead of falling back to <body> and dragging page chrome into the subtree.
+      - name: lone — bless the top-level pages (dist)
+        env:
+          SEMANTIC_DIR: dist
         run: deno run --frozen --lock=semantic/deno.lock --allow-read --allow-net --allow-env --config vendor/conformance-kit/gates/semantic/deno.json vendor/conformance-kit/gates/semantic/gate.ts

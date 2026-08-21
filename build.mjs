@@ -796,6 +796,7 @@ ${jsonLd}
 </head>
 <body>
   <main>
+  <article class="doc">
   <header>
     <h1>${esc(name)}</h1>
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline)}` : ""}</p>
@@ -808,6 +809,7 @@ ${jsonLd}
   <h2>${copy("resume.section.experience")}</h2>${rExp}
   ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
   <h2>${copy("resume.section.education")}</h2>${rEdu}
+  </article>
   </main>
   ${EMAIL_SCRIPT}
 </body>
