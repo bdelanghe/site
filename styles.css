@@ -142,6 +142,19 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .cases__list, .entries { grid-column: 1 / -1; }
 .bg__sub { grid-column: 1; }
 
+/* /provenance's chain section — ruled like the dossier sections, but deliberately NOT
+   gridded: its content is a prose chain, not a figure with margin annotations. It used
+   to reuse class="bg", which put it in the selector list above, and the whole chain was
+   auto-placed into the 116px MARGIN column — a ~10ch ribbon of text running for
+   thousands of pixels. Shipped that way with every gate green, because no gate looks at
+   layout. Named separately now so the two cannot collide again. */
+.prov {
+  margin-top: var(--sec);
+  padding-top: 18px;
+  border-top: 1px solid var(--bs-color-line);
+}
+.prov > .eyebrow { margin: 0 0 18px; }
+
 /* ---- availability: ruled rows, not a panel --------------------------------------
    This block used to be a filled terracotta card with a display-size focus line, a
    promotional paragraph and a "Get in touch →" CTA — the single strongest generated-
@@ -407,7 +420,13 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .prov-link::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: -6px; width: 2px; background: var(--bs-color-line); }
 .prov-link::after { content: ""; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--bs-color-on-accent); border: 2px solid var(--bs-color-accent-soft); }
 .prov-link__name { display: block; font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-accent); margin: 0 0 5px; }
+/* The body is a <div> of <p>, not a <span>: prose belongs in a paragraph, and reader
+   modes (Safari Reader, Firefox Reader — both Mozilla Readability) score only
+   p/td/pre/section/h2-h6. A narrative in a <span> is invisible to that scorer, so this
+   whole <ol> was being culled as a link-dense list with no content, and /provenance
+   rendered in Reader as bare digests. See scripts/reader-view-gate.mjs. */
 .prov-link__body { color: var(--bs-color-ink-soft); font-size: 15px; line-height: 1.55; max-width: 60ch; }
+.prov-link__body p { margin: 0; }
 .prov-link__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-accent-tint); padding: 1px 5px; color: var(--bs-color-ink); }
 .prov-link__body a { color: var(--bs-color-accent); text-decoration: underline; text-underline-offset: 2px; }
 /* :has() is not yet Baseline Widely Available; guard it as a progressive
@@ -433,7 +452,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .prov-materials li:last-child { border-bottom: 0; }
 .prov-materials code { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink); background: none; padding: 0; }
 .prov-dg { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); white-space: nowrap; }
-.prov-materials__note { display: block; font-size: 13px; color: var(--bs-color-ink-mono); margin-top: 8px; line-height: 1.5; }
+.prov-materials__note { display: block; font-size: 13px; color: var(--bs-color-ink-mono); margin: 8px 0 0; line-height: 1.5; }
 
 /* ---- conformance: the computed conformance projection (kit renderer) -------- */
 .conf-machine { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: 10px 0 0; }

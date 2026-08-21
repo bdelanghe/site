@@ -47,6 +47,17 @@ jobs:
         run: node brand/tools/meta.mjs --check dist
       - name: Accessibility (WCAG AA contrast + headings)
         run: node brand/tools/a11y.mjs --check dist
+      - name: Reader-view gate (Safari/Firefox Reader actually gets the content)
+        # Complements the kit's structure-audit below rather than duplicating it. That
+        # check is scoped by $STRUCTURE_ARTICLE_PREFIX, which defaults to "blog/" and is
+        # never set here — so it only ever ran against the two blog posts, which were
+        # never broken. And its bar is "extracted > 200 chars", which /provenance CLEARED
+        # at 568 while rendering in Reader as a bare column of sha256 digests.
+        #
+        # This gate measures COVERAGE (extracted / visible text) across every content
+        # page, plus whether the browser will offer the Reader control at all. The
+        # /provenance regression scored 0.14; the floor is 0.55.
+        run: node scripts/reader-view-gate.mjs dist --strict
       - name: Install structure-audit deps (vendored conformance-kit tenant)
         run: npm ci --prefix vendor/conformance-kit/integrity/structure-audit
       - name: Whole-page structure gate (reader survivability + outline + links)
