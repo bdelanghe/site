@@ -9,6 +9,18 @@
       "/resume"
     ]
   },
+  "archive.html": {
+    "h1": "Public record",
+    "outline": "122",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/conformance",
+      "/interests",
+      "/provenance"
+    ]
+  },
   "blog.html": {
     "h1": "Writing",
     "outline": "1",
@@ -97,13 +109,13 @@
     ]
   },
   "index.html": {
-    "h1": "AI agents ship code. I write the contracts that keep them in check.",
-    "outline": "1222",
+    "h1": "I make software safe to run when you can't fully trust what it will do.",
+    "outline": "1223332",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
+      "/archive",
       "/conformance",
-      "/interests",
       "/provenance",
       "/resume"
     ]
