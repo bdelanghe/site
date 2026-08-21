@@ -10,7 +10,7 @@
     ]
   },
   "intro": "I'm Bobby. I build the controls that keep AI agents inside the job you gave them.",
-  "place": "Brooklyn · Aura · Recurse Center · Bennington",
+  "place": "Brooklyn · Recurse Center · Bennington",
   "seeking": {
     "label": "Open to new roles",
     "focus": "Senior / founding engineering on agent infrastructure: agent safety and code provenance",
