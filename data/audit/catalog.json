@@ -259,10 +259,6 @@
     "type": "body",
     "value": "Repositories"
   },
-  "copy.archive.pointer": {
-    "type": "body",
-    "value": "Public record — the full repository index, by language and topic"
-  },
   "copy.head.archive.desc": {
     "type": "body",
     "value": "The generated index behind Robert DeLanghe's selected work — every public repository, its language and its topics, computed from GitHub."

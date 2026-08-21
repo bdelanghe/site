@@ -136,7 +136,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 }
 /* Content blocks sit in the wide column; the two that carry their own margin items
    (case numbers, employment dates) span both so those items reach the margin line. */
-.rows, .cases__more, .corpus__body, .colophon__list, .colophon__more,
+.rows, .corpus__body, .colophon__list, .colophon__more,
 .figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects { grid-column: 2; }
 .cases__list, .entries { grid-column: 1 / -1; }
 .bg__sub { grid-column: 1; }
@@ -225,10 +225,6 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .case__links { margin: 16px 0 0; display: flex; flex-wrap: wrap; gap: 18px; font-family: var(--bs-font-mono); font-size: 12px; }
 .case__links a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); padding-bottom: 2px; }
 .case__links a:hover { border-color: var(--bs-color-accent); }
-/* The pointer at the generated index — deliberately a footnote, not a section. */
-.cases__more { margin: 26px 0 0; font-family: var(--bs-font-mono); font-size: 12px; }
-.cases__more a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); padding-bottom: 2px; }
-.cases__more a:hover { border-color: var(--bs-color-accent); }
 
 /* ---- record: experience + education, dates in the margin ------------------------- */
 .bg__sub { margin: 32px 0 12px; color: var(--bs-color-ink-mono); }
@@ -359,7 +355,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
   .rows__row, .case, .entry { grid-template-columns: minmax(0, 1fr); }
   .avail > .eyebrow, .cases > .eyebrow, .bg > .eyebrow,
   .corpus > .eyebrow, .work > .eyebrow, .colophon > .eyebrow { margin: 0 0 14px; }
-  .rows, .cases__more, .corpus__body, .colophon__list, .colophon__more,
+  .rows, .corpus__body, .colophon__list, .colophon__more,
   .figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects,
   .cases__list, .entries, .bg__sub, .case__body, .now__note { grid-column: 1; }
   .case::before { grid-column: 1; }

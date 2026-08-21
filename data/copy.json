@@ -22,7 +22,6 @@
   "archive.lede": "The generated index behind the selected work: every public repository, its language and its topics, computed from GitHub on each refresh. The case studies on the home page carry the argument; this is the material they were drawn from.",
   "archive.figures.eyebrow": "Shape",
   "archive.list.eyebrow": "Repositories",
-  "archive.pointer": "Public record — the full repository index, by language and topic",
   "head.archive.desc": "The generated index behind Robert DeLanghe's selected work — every public repository, its language and its topics, computed from GitHub.",
   "work.eyebrow": "Selected work",
   "work.filter.all": "all",

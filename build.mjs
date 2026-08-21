@@ -439,7 +439,6 @@ const casesHtml = caseStudies.length
       <ol class="cases__list">
         ${caseStudies.map(caseEntry).join("\n        ")}
       </ol>
-      <p class="cases__more"><a href="/archive">${copy("archive.pointer")}</a></p>
     </section>`
   : "";
 
@@ -1086,8 +1085,6 @@ ${c.kicker}
 - **${copy("case.intervention")}** — ${c.intervention}
 - **${copy("case.evidence")}** — ${c.evidence}
 - **${copy("case.role")}** — ${c.role}${(c.links || []).length ? `\n- ${c.links.map((l) => mdLink(l.label, l.href)).join(" · ")}` : ""}`).join("\n\n")}
-
-${mdLink(copy("archive.pointer"), "/archive")}
 
 ## ${copy("background.eyebrow")}
 ${work.map((w) => `- **${w.name}**${w.position ? ` · ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.summary ? ` — ${w.summary}` : ""}`).join("\n")}
