@@ -267,7 +267,35 @@ const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_
 // the always-loaded brand CSS (the render-blocking weight); brand is pinned via
 // flake.lock, so a bump changes content → new hash → new URL. Fonts keep stable
 // names + ETag — fonts.css's relative ./fonts/ url()s still resolve after rename.
-const stylesCss = await readFile(join(root, "styles.css"));
+// styles.css is heavily commented — the comments explain WHY a rule exists (which
+// reader modes cull, which token collision produced a bug), and they belong in the
+// source. They do not belong in the bytes a phone downloads on a slow connection: they
+// were 30% of the stylesheet (10,874 of 36,004 bytes). Stripped on the way out, so the
+// source stays documented and the artifact stays small.
+//
+// String-aware rather than a bare /\*...\*/ regex: a `content:` value may legitimately
+// contain the comment-open sequence, and eating from there to the next close would
+// silently delete rules. Same reasoning as scripts/check-css.mjs's scanner, which reads
+// the SOURCE — so token purity is still checked against every comment written here.
+const stripCssComments = (css) => {
+  let out = "", i = 0;
+  while (i < css.length) {
+    const c = css[i];
+    if (c === '"' || c === "'") {            // copy string literals verbatim
+      const q = c; out += c; i++;
+      while (i < css.length && css[i] !== q) { if (css[i] === "\\") { out += css[i++]; } out += css[i++]; }
+      out += css[i++]; continue;
+    }
+    if (c === "/" && css[i + 1] === "*") {   // drop the comment, keep a separator
+      i += 2;
+      while (i < css.length && !(css[i] === "*" && css[i + 1] === "/")) i++;
+      i += 2; continue;
+    }
+    out += c; i++;
+  }
+  return out.replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").trim() + "\n";
+};
+const stylesCss = stripCssComments(await readFile(join(root, "styles.css"), "utf8"));
 const stylesHref = `/styles.${createHash("sha256").update(stylesCss).digest("hex").slice(0, 12)}.css`;
 
 const fpBrand = async (rel) => { // rel under brand/, e.g. "css/fonts.css"
@@ -310,6 +338,7 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${mdAlt ? `
   <link rel="alternate" type="text/markdown" href="${mdAlt}">` : ""}${social.map((s) => `
   <link rel="me" href="${esc(s.url)}">`).join("")}
+  <link rel="preload" as="font" type="font/woff2" href="/brand/css/fonts/ibm-plex-sans-600.woff2" crossorigin>
   <link rel="stylesheet" href="${bFonts.href}">
   <link rel="stylesheet" href="${bTokens.href}">${appCss ? `
   <link rel="stylesheet" href="${bBase.href}">
@@ -1650,7 +1679,32 @@ const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` :
 // text/markdown" to that response, mislabeling real HTML content. An explicit route
 // list only ever matches the .md siblings that are genuinely written below.
 const mdRoutes = ["/.md", "/index.md", "/resume.md", "/archive.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`)];
+// Security headers, sitewide. A separate /* block carrying ONLY these: Cloudflare
+// merges overlapping _headers rules, which is why the cache/content-type rules below are
+// per-route — but merging is harmless when the blocks set disjoint header names, and it
+// is the only way to cover every response including the sidecar artifacts.
+//
+// NOT set here, deliberately:
+//   Content-Security-Policy — every page carries an inline <script> (the email
+//     de-obfuscator, the provenance freshness probe) and inline style="" attributes on
+//     the language bars. Hashes cover the scripts, but a style ATTRIBUTE cannot be
+//     hashed — it needs 'unsafe-hashes', and ld+json's treatment under script-src still
+//     varies. A CSP shipped without testing against the live edge is a broken page, so
+//     it is follow-up work with a real test, not a line added on faith.
+//   HSTS `preload` — the token advertises consent to the browser preload list, which
+//     includes every subdomain and is slow and painful to leave. max-age and
+//     includeSubDomains are set; joining the list is a decision, not a default, so
+//     Lighthouse's HSTS audit stays partially unmet on purpose.
+const securityHeaders = `/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+`;
 await writeFile(join(dist, "_headers"),
+  securityHeaders +
   htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600${reprLine(r)}`).join("\n") +
   `\n/feed.xml\n  Repr-Digest: ${reprByRoute["/feed.xml"]}\n` +
   `/feed.json\n  Repr-Digest: ${reprByRoute["/feed.json"]}\n` +
