@@ -1,10 +1,29 @@
 #!/usr/bin/env node
 // reader-view gate — does a reader mode actually get this page's CONTENT?
 //
-// Safari Reader and Firefox Reader both run Mozilla's Readability. So does this gate:
-// the same library, over the same built HTML, which makes "renders well in Reader" a
-// measured property of the artifact instead of something you check by hand on a phone
-// and then never check again.
+// Firefox Reader runs Mozilla's Readability, and so does this gate — the same library,
+// over the same built HTML, which makes "renders in Reader" a measured property of the
+// artifact instead of something you check by hand on a phone and then never check again.
+//
+// SAFARI IS NOT THIS LIBRARY, and an earlier version of this comment wrongly said it was.
+// WebKit ships its own reader, historically derived from Readability but maintained
+// separately, and it is measurably STRICTER. Checked against Safari Reader print-to-PDF
+// of the live pages, it culled content this library keeps:
+//
+//   "Empathic — New York" + the contact address (/)     kept here, dropped by Safari
+//   the repository names prx / guest-room / … (/archive) kept here, dropped by Safari
+//
+// The common factor is short, link-dense blocks — a two-row <dl> of links, or a card
+// header that is a bare <a> plus two <span>s. Both engines cull on link density; Safari's
+// threshold is lower. So treat a pass here as NECESSARY, NOT SUFFICIENT: it proves
+// Firefox and any Readability-based tool get the page, and it will catch the gross
+// failures (a <span> narrative, an unoffered page), but it cannot certify Safari.
+//
+// The guaranteed reading surface is not Reader at all — it is the Markdown twin
+// (/index.md, /archive.md), which is lossless, deterministic, and covered by
+// md-parity-gate. Reader is best-effort by construction: an undocumented per-browser
+// heuristic we can influence and cannot control. Chasing one engine's exact thresholds
+// is not a fixable problem, so this gate deliberately measures the floor, not the ceiling.
 //
 // WHY THIS EXISTS. /provenance shipped with its entire provenance-chain narrative
 // wrapped in <span>. Readability scores only p / td / pre / section / h2-h6 — a <span>

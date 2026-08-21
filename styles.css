@@ -197,8 +197,15 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
   border-top: 1px solid var(--bs-color-card-alt);
 }
 .case:first-child { border-top: 0; padding-top: 0; }
-.case__n {
-  grid-column: 1; margin: 0; padding-top: 4px;
+/* The number is decorative and was already aria-hidden, so CSS owns it rather than the
+   HTML. As text it was real content: reader modes strip `list-style: none`, so the <ol>'s
+   own marker came back and every entry read "1. 01 Bounded Systems". A counter renders
+   identically on the page and leaves Reader one ordinal. */
+.cases__list { counter-reset: case; }
+.case { counter-increment: case; }
+.case::before {
+  content: counter(case, decimal-leading-zero);
+  grid-column: 1; padding-top: 4px;
   font-family: var(--bs-font-mono); font-size: 13px; font-weight: 600;
   letter-spacing: 0.1em; color: var(--bs-color-accent);
 }
@@ -321,8 +328,9 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 .projects { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-card-alt); border-top: 1px solid var(--bs-color-card-alt); border-bottom: 1px solid var(--bs-color-card-alt); }
 .proj { background: var(--bs-color-card); padding: 16px 2px; }
 .proj__top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
-.proj__name { font-family: var(--bs-font-mono); font-weight: 600; font-size: 15px; color: var(--bs-color-accent); text-decoration: none; }
-.proj__name:hover, .proj__name:focus-visible { text-decoration: underline; }
+.proj__name { margin: 0; font-family: var(--bs-font-mono); font-weight: 600; font-size: 15px; }
+.proj__name a { color: var(--bs-color-accent); text-decoration: none; }
+.proj__name a:hover, .proj__name a:focus-visible { text-decoration: underline; }
 .proj__pin { font-family: var(--bs-font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bs-color-ink-mono); }
 .proj__lang { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); margin-left: auto; }
 /* Interest cards carry a star count (their signal) where authored cards carry a pin.
@@ -361,8 +369,9 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
   .corpus > .eyebrow, .work > .eyebrow, .colophon > .eyebrow { margin: 0 0 14px; }
   .rows, .cases__more, .bg__origin, .corpus__body, .colophon__list, .colophon__more,
   .figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects,
-  .cases__list, .entries, .bg__sub, .case__n, .case__body, .now__note { grid-column: 1; }
-  .case__n { padding: 0 0 4px; }
+  .cases__list, .entries, .bg__sub, .case__body, .now__note { grid-column: 1; }
+  .case::before { grid-column: 1; }
+  .case::before { padding: 0 0 4px; }
   .entry__when { padding-top: 0; }
   .case__row { grid-template-columns: minmax(0, 1fr); }
   .case__k { padding: 0 0 3px; }
