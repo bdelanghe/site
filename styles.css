@@ -19,8 +19,11 @@
    Palette note: this page paints on --bs-color-card (white), not --bs-color-paper (the
    cream base.css sets). The secondary hairline is --bs-color-card-alt — a SURFACE token
    doing a border's job, which is a known policy problem, not a preference: the brand's
-   palette contract says hairlines must clear 3:1, and `line` (#888374) is already only
-   3.79:1 on white, so no lighter compliant hairline exists to reach for. Measured and
+   palette contract says hairlines must clear 3:1, and --bs-color-line is already only
+   3.79:1 on white, so no lighter compliant hairline exists to reach for. (Naming the
+   token, not its hex: the design-system coverage gate scans comment text too, and a
+   literal hex here is a raw colour in a file whose whole rule is that it has none.)
+   Measured and
    filed as bdelanghe/brand#6; it awaits an owner decision, and this comment is here so
    the workaround is not silently inherited. */
 :root {
