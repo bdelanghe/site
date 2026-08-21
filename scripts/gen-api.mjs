@@ -61,7 +61,7 @@ const profile = {
   skills: resume.skills || [],
   deck: presentation.deck,
   origin: presentation.origin,
-  seeking: presentation.seeking,
+  now: presentation.now,
   // The authored dossier — the homepage's unit of professional value, exposed to
   // agents/parsers as the same four-answer shape it renders as.
   caseStudies: presentation.caseStudies || [],
@@ -89,7 +89,7 @@ const profileSchema = {
     skills: { type: "array", items: { type: "object", additionalProperties: true } },
     deck: { type: "string" },
     origin: { type: "string" },
-    seeking: { type: "object", additionalProperties: true },
+    now: { type: "object", additionalProperties: true },
     caseStudies: { type: "array", items: { type: "object", additionalProperties: true } },
     links: { type: "array", items: { type: "object", additionalProperties: true } },
     proof: { type: "array", items: { type: "object", required: ["label", "href"], additionalProperties: false, properties: { label: { type: "string" }, href: { type: "string", format: "uri" } } } },

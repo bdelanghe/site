@@ -158,6 +158,11 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .rows__v { margin: 0; font-size: 15px; line-height: 1.5; color: var(--bs-color-ink); }
 .rows__mail { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); }
 .rows__mail:hover { border-color: var(--bs-color-accent); }
+/* The page's single call to action, and deliberately a note rather than a row: it is
+   about somebody else's open roles, not a fact about this record. */
+.now__note { grid-column: 2; margin: 16px 0 0; font-family: var(--bs-font-mono); font-size: 12px; }
+.now__note a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); padding-bottom: 2px; }
+.now__note a:hover { border-color: var(--bs-color-accent); }
 /* The availability rows carry their keys in the page margin, so they align with the
    section labels rather than indenting inside the content column. */
 .avail .rows { grid-column: 1 / -1; }
@@ -340,7 +345,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
   .corpus > .eyebrow, .work > .eyebrow, .colophon > .eyebrow { margin: 0 0 14px; }
   .rows, .cases__more, .bg__origin, .corpus__body, .colophon__list, .colophon__more,
   .figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects,
-  .cases__list, .entries, .bg__sub, .case__n, .case__body { grid-column: 1; }
+  .cases__list, .entries, .bg__sub, .case__n, .case__body, .now__note { grid-column: 1; }
   .case__n { padding: 0 0 4px; }
   .entry__when { padding-top: 0; }
   .case__row { grid-template-columns: minmax(0, 1fr); }

@@ -125,10 +125,9 @@ function bundle(profile, site, highlightCopy = {}) {
     deck: profile.deck,
     summary: basics.summary,
     origin: profile.origin,
-    seeking: profile.seeking && {
-      label: profile.seeking.label,
-      focus: profile.seeking.focus,
-      places: profile.seeking.places,
+    now: profile.now && {
+      role: profile.now.role,
+      note: profile.now.note,
     },
     // The homepage's authored dossier — the prose that now carries the argument, so
     // it goes through the same review as the résumé copy it draws on.
@@ -264,7 +263,7 @@ async function main() {
     readJson("data/site.json"),
     readJson("data/highlight-copy.json").catch(() => ({})),
   ]);
-  // deck, seeking and caseStudies are render-context (presentation.json); merge so the
+  // deck, now and caseStudies are render-context (presentation.json); merge so the
   // agentic review judges them alongside the canonical headline/summary/experience.
   const profile = { ...canonical, ...presentation };
   const copy = bundle(profile, site, highlightCopy);

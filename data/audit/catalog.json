@@ -1,15 +1,15 @@
 {
   "hero.headline": {
     "type": "headline",
-    "value": "I design boundaries for systems that act."
+    "value": "I make software safe to run when you can't fully trust what it will do."
   },
   "hero.deck": {
     "type": "body",
-    "value": "Selected work in agent infrastructure, commerce systems, developer tooling, and schema-driven software."
+    "value": "Selected work in agent infrastructure, commerce systems, and developer tooling."
   },
   "hero.summary": {
     "type": "body",
-    "value": "I'm a senior engineer who built the controls for shipping AI-written code after unreviewed agent commits reached main. I open-sourced the approach as prx: agent changes land as merged PRs, each git write checked against the capability the agent holds."
+    "value": "I build the controls for software that acts on its own. After unreviewed agent commits reached main, I designed the checks that stop it and open-sourced them as prx: agent changes land as merged pull requests, each git write checked against the capability the agent holds."
   },
   "bio.origin": {
     "type": "body",
@@ -19,17 +19,13 @@
     "type": "tagline",
     "value": "Bounded authority for AI agents"
   },
-  "seeking.status": {
+  "now.role": {
     "type": "body",
-    "value": "Open to senior and founding roles"
+    "value": "Empathic — New York"
   },
-  "seeking.focus": {
+  "now.note": {
     "type": "body",
-    "value": "Agent infrastructure · Backend systems · Developer tooling"
-  },
-  "seeking.places": {
-    "type": "body",
-    "value": "Brooklyn · NYC · Remote"
+    "value": "Empathic is hiring"
   },
   "case.bounded-systems.kicker": {
     "type": "body",
@@ -45,7 +41,7 @@
   },
   "case.bounded-systems.evidence": {
     "type": "body",
-    "value": "prx drives a work unit to an attributed pull request; ocap-provenance records which capabilities each effect held and which were denied. Both are public, and both name the effects still outside the check rather than claiming coverage they do not have."
+    "value": "prx drives a work unit to an attributed pull request; ocap-provenance records which capabilities each effect held, and which were denied. Both are public, and both name what is still outside the check."
   },
   "case.bounded-systems.role": {
     "type": "body",
@@ -57,19 +53,19 @@
   },
   "case.commerce-systems.problem": {
     "type": "claim",
-    "value": "A 9-tab spreadsheet was the supply plan of record, and fulfillment, accounting, and ops each read it differently."
+    "value": "A 9-tab spreadsheet was the supply plan of record, and three teams each read it differently."
   },
   "case.commerce-systems.intervention": {
     "type": "claim",
-    "value": "Replaced it with a CLI over one source of truth — 61 schema contracts checked by 173 test scenarios — and automated the inbound freight the manual plan had been gating."
+    "value": "Replaced it with a CLI over one source of truth — 61 schema contracts, 173 test scenarios — and automated the inbound freight it had been gating."
   },
   "case.commerce-systems.evidence": {
     "type": "body",
-    "value": "Three teams now plan against the same document, and ocean freight, Amazon LTL, and the splits between them move without the manual coordination that used to hold most shipments."
+    "value": "The three teams now plan against the same document, and freight moves without the manual coordination that used to hold shipments."
   },
   "case.commerce-systems.role": {
     "type": "body",
-    "value": "Contract design, the CLI, the integration work, and the cross-team consolidation that made a single plan stick."
+    "value": "Contract design, the CLI, and the cross-team consolidation."
   },
   "case.developer-systems.kicker": {
     "type": "claim",
@@ -90,6 +86,10 @@
   "case.developer-systems.role": {
     "type": "body",
     "value": "Gate design, the CI implementation, and the developer-experience work that kept the gate from being routed around."
+  },
+  "exp.empathic.what": {
+    "type": "body",
+    "value": "Infrastructure for operating software that changes behavior after it ships. Agent sandboxing enforced by the operating system, and the tooling teams need to run low-trust code with confidence."
   },
   "exp.aura.what": {
     "type": "claim",
@@ -227,23 +227,15 @@
     "type": "body",
     "value": "topics kept honest by"
   },
-  "copy.avail.eyebrow": {
+  "copy.now.eyebrow": {
     "type": "body",
-    "value": "Availability"
+    "value": "Currently"
   },
-  "copy.avail.status": {
+  "copy.now.at": {
     "type": "body",
-    "value": "Status"
+    "value": "At"
   },
-  "copy.avail.focus": {
-    "type": "body",
-    "value": "Focus"
-  },
-  "copy.avail.location": {
-    "type": "body",
-    "value": "Location"
-  },
-  "copy.avail.contact": {
+  "copy.now.contact": {
     "type": "body",
     "value": "Contact"
   },

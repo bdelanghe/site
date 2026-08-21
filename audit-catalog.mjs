@@ -53,11 +53,10 @@ function buildCatalog(profile, site, highlightCopy, copy) {
   put("bio.origin", "body", profile.origin);
   if (profile.banner?.tagline) put("banner.tagline", "tagline", profile.banner.tagline);
 
-  // Availability rows — the ruled STATUS / FOCUS / LOCATION values. (CONTACT is the
-  // canonical email, not authored copy, so it has no symbol.)
-  if (profile.seeking?.label) put("seeking.status", "body", profile.seeking.label);
-  if (profile.seeking?.focus) put("seeking.focus", "body", profile.seeking.focus);
-  if (profile.seeking?.places) put("seeking.places", "body", profile.seeking.places);
+  // The Currently rows. (CONTACT is the canonical email, not authored copy, so it has
+  // no symbol.) `seeking.*` retired with the job search — see presentation.schema.json.
+  if (profile.now?.role) put("now.role", "body", profile.now.role);
+  if (profile.now?.note) put("now.note", "body", profile.now.note);
 
   // Case studies — the homepage's authored dossier. Held to exactly the résumé bar:
   // a figure in any of the four answers is a `claim` and must ground.

@@ -329,14 +329,20 @@ const jsonLd = `<script type="application/ld+json">${JSON.stringify({
 
 // generic: link a name to its url if present (work orgs, education institutions, projects)
 const linkName = (nm, url) => (url ? `<a href="${esc(url)}">${esc(nm)}</a>` : esc(nm));
-const entry = (w) =>
+// The homepage record is a TRAJECTORY, not the résumé. Only the two most recent roles
+// carry their summary prose; older entries are org · role · dates. Seven full summaries
+// was ~280 words — the densest block on the page — restating in the reader's third
+// scroll what /resume, /resume.md and /resume.json already hold in full. Nothing is
+// lost: the nav links the résumé, and every word still ships there and in the JSON.
+const SUMMARIES_SHOWN = 2;
+const entry = (w, i) =>
   `<li class="entry"><span class="entry__when">${esc(fmtRange(w.startDate, w.endDate))}</span><span class="entry__body">` +
   `<span class="entry__org">${linkName(w.name, w.url)}${w.position ? ` · <span class="entry__role">${esc(w.position)}</span>` : ""}</span>` +
-  `<span class="entry__what">${esc(w.summary)}</span></span></li>`;
+  `${w.summary && i < SUMMARIES_SHOWN ? `<span class="entry__what">${esc(w.summary)}</span>` : ""}</span></li>`;
 // Education uses JSON Resume field names (institution / studyType / area) and has no
 // summary — it can't share the work-shaped entry() mapper above (name/position/summary),
 // or those fields render as "undefined". Mirrors /resume's rEdu: institution · degree.
-const eduEntry = (e) => {
+const eduEntry = (e) => { // (index unused: education never carries summary prose)
   const degree = [e.studyType, e.area].filter(Boolean).join(", ");
   return `<li class="entry"><span class="entry__when">${esc(fmtRange(e.startDate, e.endDate))}</span><span class="entry__body">` +
     `<span class="entry__org">${linkName(e.institution, e.url)}${degree ? ` · <span class="entry__role">${esc(degree)}</span>` : ""}</span>` +
@@ -354,26 +360,28 @@ const backgroundHtml =
     </section>`
     : "";
 
-// Availability — ruled label/value rows, not a filled panel. The old callout was a
-// terracotta card with a promotional paragraph and a CTA: the one element on the page
-// that read as a generated landing-page block dropped into an editorial document. Same
-// four facts, rendered as a definition list the eye reads as record, not advertisement.
-// CONTACT is the canonical basics.email (obfuscated like every other address here), so
-// the address ships once and the nav links stay GitHub / LinkedIn / Résumé.
-const s = profile.seeking;
-const availRow = (label, value) =>
+// Currently — two ruled rows and one note. This block used to be the "open to roles"
+// callout: first a terracotta panel with a promotional paragraph and a CTA, then four
+// ruled availability rows. Both were advertising a search that has ended, and a dead
+// call to action in the best position on the page is worse than no call to action.
+//
+// What survives is only what nothing else on the page says. The masthead carries the
+// title, the record carries dates and history, the deck carries the fields — so this is
+// employer + place, the address, and one live pointer. Four rows became two because
+// cognitive load is the constraint here, not completeness.
+const s = profile.now;
+const nowRow = (label, value) =>
   `<div class="rows__row"><dt class="bs-text-label rows__k">${label}</dt><dd class="rows__v">${value}</dd></div>`;
-const availHtml = s
+const nowHtml = s
   ? `<section class="avail">
-      <h2 class="bs-text-label eyebrow">${copy("avail.eyebrow")}</h2>
+      <h2 class="bs-text-label eyebrow">${copy("now.eyebrow")}</h2>
       <dl class="rows">
         ${[
-          s.label ? availRow(copy("avail.status"), esc(s.label)) : "",
-          s.focus ? availRow(copy("avail.focus"), esc(s.focus)) : "",
-          s.places ? availRow(copy("avail.location"), esc(s.places)) : "",
-          email ? availRow(copy("avail.contact"), mailLink({ cls: "rows__mail no-link-icon" })) : "",
+          s.role ? nowRow(copy("now.at"), s.roleHref ? `<a href="${esc(s.roleHref)}">${esc(s.role)}</a>` : esc(s.role)) : "",
+          email ? nowRow(copy("now.contact"), mailLink({ cls: "rows__mail no-link-icon" })) : "",
         ].filter(Boolean).join("\n        ")}
       </dl>
+      ${s.note ? `<p class="now__note">${s.noteHref ? `<a href="${esc(s.noteHref)}">${esc(s.note)}</a>` : esc(s.note)}</p>` : ""}
     </section>`
   : "";
 
@@ -604,7 +612,7 @@ const html = `<!doctype html>
       </nav>
     </section>
 
-    ${availHtml}
+    ${nowHtml}
 
     ${casesHtml}
 
@@ -1032,11 +1040,10 @@ const mdLink = (label, href) => `[${label}](${href.startsWith("/") ? SITE + href
 const indexMd = `# ${name} — ${role}
 
 > ${headline}
-${deck ? `\n${deck}\n` : ""}${cityLine ? `\n${cityLine}\n` : ""}${s ? `\n## ${copy("avail.eyebrow")}\n${[
-  s.label ? `- **${copy("avail.status")}** — ${s.label}` : "",
-  s.focus ? `- **${copy("avail.focus")}** — ${s.focus}` : "",
-  s.places ? `- **${copy("avail.location")}** — ${s.places}` : "",
-  email ? `- **${copy("avail.contact")}** — ${emailObf}` : "",
+${deck ? `\n${deck}\n` : ""}${cityLine ? `\n${cityLine}\n` : ""}${s ? `\n## ${copy("now.eyebrow")}\n${[
+  s.role ? `- **${copy("now.at")}** — ${s.roleHref ? mdLink(s.role, s.roleHref) : s.role}` : "",
+  email ? `- **${copy("now.contact")}** — ${emailObf}` : "",
+  s.note ? `- ${s.noteHref ? mdLink(s.note, s.noteHref) : s.note}` : "",
 ].filter(Boolean).join("\n")}\n` : ""}
 ## ${copy("work.eyebrow")}
 ${caseStudies.map((c, i) => `### ${String(i + 1).padStart(2, "0")} ${c.name}

@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write # OIDC → cf-token-broker, for the per-run Anthropic key
 
 jobs:
   fixtures:
@@ -22,7 +23,14 @@ jobs:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: "22"
+      - name: Mint the Anthropic key (broker when configured, stored secret otherwise)
+        id: anthropic
+        uses: ./.github/actions/broker-anthropic-key
+        with:
+          broker-url: ${{ vars.CF_BROKER_URL }}
+          broker-path: ${{ vars.ANTHROPIC_BROKER_PATH }}
+          stored: ${{ secrets.ANTHROPIC_API_KEY }}
       - name: Copy-review fixtures
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ steps.anthropic.outputs.key }}
         run: node copy-review-fixtures.mjs

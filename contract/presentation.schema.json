@@ -19,15 +19,16 @@
     },
     "deck": { "type": "string", "description": "hero — the ONE line under the headline. Names the fields the selected work covers; it does not restate the headline's thesis." },
     "origin": { "type": "string", "description": "one sentence in the record margin tying the architecture / sculpture training to the systems work. Personal texture, not positioning — keep it to a single sentence." },
-    "seeking": {
+    "now": {
       "type": "object",
-      "description": "Availability — rendered as ruled label/value rows (STATUS · FOCUS · LOCATION), not as a filled callout panel. CONTACT is the canonical basics.email, not a field here. No promotional paragraph: each value is one line.",
-      "required": ["focus"],
+      "description": "Where the work happens, as ruled label/value rows — NOT an availability pitch. It replaced `seeking` when the job search ended: a block that advertises openness to roles nobody is open to is a dead call to action taking up the best position on the page. Deliberately two rows and one note: everything the r\u00e9sum\u00e9 record already states (title, dates, history) is NOT repeated here, and the only outbound action offered is the one a reader can actually take.",
+      "required": ["role"],
       "additionalProperties": false,
       "properties": {
-        "label": { "type": "string", "description": "the STATUS row's value — what roles are open" },
-        "focus": { "type": "string", "description": "the FOCUS row's value — the fields, dot-separated" },
-        "places": { "type": "string", "description": "the LOCATION row's value — cities and remote posture, dot-separated" }
+        "role": { "type": "string", "description": "the CURRENTLY row's value \u2014 employer and place. Not the title: the masthead carries basics.label and the record carries the full entry." },
+        "roleHref": { "type": "string", "description": "employer link" },
+        "note": { "type": "string", "description": "one short line under the rows \u2014 the page's single call to action" },
+        "noteHref": { "type": "string", "description": "where the note points" }
       }
     },
     "caseStudies": {

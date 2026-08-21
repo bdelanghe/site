@@ -9,12 +9,13 @@
       "Developer tools"
     ]
   },
-  "deck": "Selected work in agent infrastructure, commerce systems, developer tooling, and schema-driven software.",
+  "deck": "Selected work in agent infrastructure, commerce systems, and developer tooling.",
   "origin": "I read architecture and sculpture before I wrote software, and both are trainings in deciding where a thing ends — which is most of what the work above is.",
-  "seeking": {
-    "label": "Open to senior and founding roles",
-    "focus": "Agent infrastructure · Backend systems · Developer tooling",
-    "places": "Brooklyn · NYC · Remote"
+  "now": {
+    "role": "Empathic — New York",
+    "roleHref": "https://empathic.dev",
+    "note": "Empathic is hiring",
+    "noteHref": "https://www.linkedin.com/company/empathic-dev"
   },
   "caseStudies": [
     {
@@ -22,20 +23,26 @@
       "kicker": "Capability security for coding agents",
       "problem": "Agent-authored commits reached main without review, and afterwards nobody could say which writes the agent had been authorized to make.",
       "intervention": "Moved privileged git effects behind capability-checked operations, and routed the work through one pipeline whose only exit is a merged pull request.",
-      "evidence": "prx drives a work unit to an attributed pull request; ocap-provenance records which capabilities each effect held and which were denied. Both are public, and both name the effects still outside the check rather than claiming coverage they do not have.",
+      "evidence": "prx drives a work unit to an attributed pull request; ocap-provenance records which capabilities each effect held, and which were denied. Both are public, and both name what is still outside the check.",
       "role": "System model, schemas, implementation, and the operational testing.",
       "links": [
-        { "label": "prx", "href": "https://github.com/bounded-systems/prx" },
-        { "label": "ocap-provenance", "href": "https://github.com/bounded-systems/ocap-provenance" }
+        {
+          "label": "prx",
+          "href": "https://github.com/bounded-systems/prx"
+        },
+        {
+          "label": "ocap-provenance",
+          "href": "https://github.com/bounded-systems/ocap-provenance"
+        }
       ]
     },
     {
       "name": "Commerce systems",
       "kicker": "Supply planning and inbound logistics",
-      "problem": "A 9-tab spreadsheet was the supply plan of record, and fulfillment, accounting, and ops each read it differently.",
-      "intervention": "Replaced it with a CLI over one source of truth — 61 schema contracts checked by 173 test scenarios — and automated the inbound freight the manual plan had been gating.",
-      "evidence": "Three teams now plan against the same document, and ocean freight, Amazon LTL, and the splits between them move without the manual coordination that used to hold most shipments.",
-      "role": "Contract design, the CLI, the integration work, and the cross-team consolidation that made a single plan stick."
+      "problem": "A 9-tab spreadsheet was the supply plan of record, and three teams each read it differently.",
+      "intervention": "Replaced it with a CLI over one source of truth — 61 schema contracts, 173 test scenarios — and automated the inbound freight it had been gating.",
+      "evidence": "The three teams now plan against the same document, and freight moves without the manual coordination that used to hold shipments.",
+      "role": "Contract design, the CLI, and the cross-team consolidation."
     },
     {
       "name": "Developer systems",
@@ -47,17 +54,54 @@
     }
   ],
   "links": [
-    { "label": "GitHub", "href": "https://github.com/bounded-systems" },
-    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" },
-    { "label": "Résumé", "href": "/resume" }
+    {
+      "label": "GitHub",
+      "href": "https://github.com/bounded-systems"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/rdelanghe/"
+    },
+    {
+      "label": "Résumé",
+      "href": "/resume"
+    }
   ],
   "colophon": [
-    { "name": "baobab", "role": "design-system structure — no defaults", "href": "https://github.com/bounded-systems/baobab" },
-    { "name": "brand", "role": "baobab's pinning — tokens, fonts, the mark", "href": "https://github.com/bdelanghe/brand" },
-    { "name": "lone", "role": "blesses every rendered page's DOM — semantic HTML and a11y", "href": "https://github.com/bounded-systems/lone" },
-    { "name": "string-audit", "role": "grounded copy-hygiene gate", "href": "https://github.com/bounded-systems/string-audit" },
-    { "name": "synoptic-github", "role": "keeps repo topics honest — feeds the corpus", "href": "https://github.com/bdelanghe/synoptic-github" },
-    { "name": "lobby", "role": "the vault these posts are written in", "href": "https://github.com/bounded-systems/lobby" },
-    { "name": "unfold-dev", "role": "the container this site is built in", "href": "https://github.com/users/bdelanghe/packages/container/package/unfold-dev" }
+    {
+      "name": "baobab",
+      "role": "design-system structure — no defaults",
+      "href": "https://github.com/bounded-systems/baobab"
+    },
+    {
+      "name": "brand",
+      "role": "baobab's pinning — tokens, fonts, the mark",
+      "href": "https://github.com/bdelanghe/brand"
+    },
+    {
+      "name": "lone",
+      "role": "blesses every rendered page's DOM — semantic HTML and a11y",
+      "href": "https://github.com/bounded-systems/lone"
+    },
+    {
+      "name": "string-audit",
+      "role": "grounded copy-hygiene gate",
+      "href": "https://github.com/bounded-systems/string-audit"
+    },
+    {
+      "name": "synoptic-github",
+      "role": "keeps repo topics honest — feeds the corpus",
+      "href": "https://github.com/bdelanghe/synoptic-github"
+    },
+    {
+      "name": "lobby",
+      "role": "the vault these posts are written in",
+      "href": "https://github.com/bounded-systems/lobby"
+    },
+    {
+      "name": "unfold-dev",
+      "role": "the container this site is built in",
+      "href": "https://github.com/users/bdelanghe/packages/container/package/unfold-dev"
+    }
   ]
 }
