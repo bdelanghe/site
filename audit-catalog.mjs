@@ -48,14 +48,23 @@ function buildCatalog(profile, site, highlightCopy, copy) {
   // Hero + identity copy. Canonical is JSON Resume: headline/summary live under basics.
   const basics = profile.basics ?? {};
   put("hero.headline", "headline", basics.headline);
-  put("hero.intro", "body", profile.intro);
+  put("hero.deck", "body", profile.deck);
   put("hero.summary", "body", basics.summary);
   if (profile.banner?.tagline) put("banner.tagline", "tagline", profile.banner.tagline);
 
-  // Open-to-roles callout.
-  if (profile.seeking?.cta) put("seeking.cta", "cta", profile.seeking.cta);
-  if (profile.seeking?.focus) put("seeking.focus", "body", profile.seeking.focus);
-  if (profile.seeking?.detail) put("seeking.detail", "body", profile.seeking.detail);
+  // The Currently rows. (CONTACT is the canonical email, not authored copy, so it has
+  // no symbol.) `seeking.*` retired with the job search — see presentation.schema.json.
+  if (profile.now?.role) put("now.role", "body", profile.now.role);
+  if (profile.now?.note) put("now.note", "body", profile.now.note);
+
+  // Case studies — the homepage's authored dossier. Held to exactly the résumé bar:
+  // a figure in any of the four answers is a `claim` and must ground.
+  (profile.caseStudies || []).forEach((c) => {
+    const k = slug(c.name);
+    put(`case.${k}.kicker`, claimOrBody(c.kicker || ""), c.kicker);
+    for (const f of ["problem", "intervention", "evidence", "role"])
+      put(`case.${k}.${f}`, claimOrBody(c[f] || ""), c[f]);
+  });
 
   // Work: the summary line and every highlight. Metric-bearing strings become
   // `claim`s so string-audit checks them against the grounding registry.

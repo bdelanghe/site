@@ -129,10 +129,15 @@ const work = canonical.work ?? [];
 // see the human-readable obfuscated form.
 const [emailUser, emailHost] = (email || "").split("@");
 const emailObf = email ? `${emailUser} [at] ${emailHost.replace(/\./g, " [dot] ")}` : "";
-// label omitted → the de-obfuscated address becomes the visible text (data-show).
-const mailLink = ({ label = "", cls = "" } = {}) =>
-  email ? `<a${cls ? ` class="${cls}"` : ""} data-mail="${esc(emailObf)}"${label ? "" : " data-show"}>${label || esc(emailObf)}</a>` : "";
-const EMAIL_SCRIPT = `<script>for(const a of document.querySelectorAll('a[data-mail]')){const m=a.getAttribute('data-mail').replace(' [at] ','@').replace(/ \\[dot\\] /g,'.');a.href='mailto:'+m;if(a.hasAttribute('data-show'))a.textContent=m;}</script>`;
+// It ships as a <span>, not an <a>. With JS off there is no address to link to —
+// the obfuscated form is not a valid mailto — so an <a> there would be a link that
+// does not navigate: lone flags it (LONE_SEMANTIC_LINK_WITHOUT_HREF), and a keyboard
+// user tabs to a control that does nothing. The script replaces the span with a real
+// anchor once the address is re-formed, carrying any class across so the styling
+// (.rows__mail, .no-link-icon) is identical before and after.
+const mailLink = ({ cls = "" } = {}) =>
+  email ? `<span${cls ? ` class="${cls}"` : ""} data-mail="${esc(emailObf)}">${esc(emailObf)}</span>` : "";
+const EMAIL_SCRIPT = `<script>for(const s of document.querySelectorAll('[data-mail]')){const m=s.getAttribute('data-mail').replace(' [at] ','@').replace(/ \\[dot\\] /g,'.');const a=document.createElement('a');if(s.className)a.className=s.className;a.href='mailto:'+m;a.textContent=m;s.replaceWith(a);}</script>`;
 // On-load freshness probe for the /provenance seal: "are we the latest build?" in
 // two honest senses — your view vs the live deploy (signed baked-in commit vs a
 // fresh /provenance.json; same origin, a cache-freshness check not trust), and the
@@ -141,10 +146,13 @@ const EMAIL_SCRIPT = `<script>for(const a of document.querySelectorAll('a[data-m
 // Written with string concatenation (no backticks / ${}) so this template literal
 // doesn't interpolate it.
 const FRESHNESS_SCRIPT = `<script>(async()=>{
-  var el=document.getElementById("build-freshness"); if(!el) return;
+  var card=document.querySelector(".prov-seal__card"); if(!card) return;
+  var el=document.createElement("p");
+  el.id="build-freshness"; el.className="prov-seal__note";
+  el.setAttribute("style","font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink);");
   var short=function(s){return String(s||"").slice(0,7);};
   var ago=function(iso){var ms=Date.now()-Date.parse(iso); if(!isFinite(ms))return ""; return ms<36e5?Math.round(ms/6e4)+"m":ms<864e5?Math.round(ms/36e5)+"h":Math.round(ms/864e5)+"d";};
-  var show=function(t){el.textContent=t; el.hidden=false;};
+  var show=function(t){el.textContent=t; card.appendChild(el);};
   try{
     var prov=await (await fetch("/provenance.json",{cache:"no-store"})).json();
     var deploy=(prov&&prov.builder&&prov.builder.commit)||"";
@@ -172,7 +180,17 @@ const knowsAbout = [...new Set([
   ...projects.flatMap((p) => p.keywords ?? []),
 ])];
 const social = basics.profiles ?? [];           // [{ network, username, url }]
-const place = presentation.place ?? "";         // decorative hero line (render context)
+// The homepage opens with ONE positioning statement: the headline is the statement,
+// `deck` is its single supporting line. basics.summary stays canonical résumé copy and
+// is deliberately NOT repeated here — four restatements of the same thesis in the first
+// screen read as generated, however reasonable each one is on its own.
+const deck = presentation.deck ?? "";
+// The dossier: authored case studies, the unit of professional value on this page. A
+// repository is evidence INSIDE an entry, never an entry — the full repository index
+// is /archive.
+const caseStudies = presentation.caseStudies ?? [];
+// City line for the masthead's right column, from the canonical location (not a slug).
+const cityLine = [basics.location?.city, basics.location?.region].filter(Boolean).join(", ");
 // Claim → evidence: the homepage proof line, token bag, and JSON-LD all derive from
 // the canonical projects[] — one source for prx/guest-room/… instead of a duplicate list.
 const proof = projects.map((p) => ({ label: p.name, href: p.url }));
@@ -197,7 +215,7 @@ const sval = (x) => (x && typeof x === "object" && "$value" in x ? x.$value : x)
 const strings = (await exists(join(brand, "content", "strings.json"))) ? await loadJson(join(brand, "content", "strings.json")) : {};
 const tokens = {
   org: sval(strings.name), tagline: sval(strings.tagline), thesis: sval(strings.thesis), brandDesc: sval(strings.description),
-  name, role, place, headline,
+  name, role, headline,
   email: emailObf, // posts transclude {{email}} into prose — keep it un-harvestable too
 
   proof: Object.fromEntries(proof.map((p) => [p.label, p.href])),
@@ -243,7 +261,7 @@ const OG_IMAGE = `${SITE}/brand/lockup/lockup-accent-1200.png`;
 // manifest read the same literals (accent fill + paper surface — the brand tokens the
 // page already paints with: --bs-color-accent / --bs-color-paper) so they can't drift.
 const THEME_COLOR = "#943D2A";   // --bs-color-accent
-const BG_COLOR = "#EDEAE1";      // --bs-color-paper (the body background)
+const BG_COLOR = "#FFFFFF";      // --bs-color-card (styles.css paints the body white)
 // RFC 9530 representation digest (`sha-256=:<base64>:`), per canonical doc, over the
 // bytes build.mjs itself writes (self-contained; not the later site.sha256) —
 // reprDigest is imported from the conformance kit's emitters.
@@ -255,7 +273,35 @@ const COMMIT = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_
 // the always-loaded brand CSS (the render-blocking weight); brand is pinned via
 // flake.lock, so a bump changes content → new hash → new URL. Fonts keep stable
 // names + ETag — fonts.css's relative ./fonts/ url()s still resolve after rename.
-const stylesCss = await readFile(join(root, "styles.css"));
+// styles.css is heavily commented — the comments explain WHY a rule exists (which
+// reader modes cull, which token collision produced a bug), and they belong in the
+// source. They do not belong in the bytes a phone downloads on a slow connection: they
+// were 30% of the stylesheet (10,874 of 36,004 bytes). Stripped on the way out, so the
+// source stays documented and the artifact stays small.
+//
+// String-aware rather than a bare /\*...\*/ regex: a `content:` value may legitimately
+// contain the comment-open sequence, and eating from there to the next close would
+// silently delete rules. Same reasoning as scripts/check-css.mjs's scanner, which reads
+// the SOURCE — so token purity is still checked against every comment written here.
+const stripCssComments = (css) => {
+  let out = "", i = 0;
+  while (i < css.length) {
+    const c = css[i];
+    if (c === '"' || c === "'") {            // copy string literals verbatim
+      const q = c; out += c; i++;
+      while (i < css.length && css[i] !== q) { if (css[i] === "\\") { out += css[i++]; } out += css[i++]; }
+      out += css[i++]; continue;
+    }
+    if (c === "/" && css[i + 1] === "*") {   // drop the comment, keep a separator
+      i += 2;
+      while (i < css.length && !(css[i] === "*" && css[i + 1] === "/")) i++;
+      i += 2; continue;
+    }
+    out += c; i++;
+  }
+  return out.replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").trim() + "\n";
+};
+const stylesCss = stripCssComments(await readFile(join(root, "styles.css"), "utf8"));
 const stylesHref = `/styles.${createHash("sha256").update(stylesCss).digest("hex").slice(0, 12)}.css`;
 
 const fpBrand = async (rel) => { // rel under brand/, e.g. "css/fonts.css"
@@ -298,6 +344,7 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
   <link rel="alternate" type="application/feed+json" title="Robert DeLanghe — Writing" href="/feed.json">${mdAlt ? `
   <link rel="alternate" type="text/markdown" href="${mdAlt}">` : ""}${social.map((s) => `
   <link rel="me" href="${esc(s.url)}">`).join("")}
+  <link rel="preload" as="font" type="font/woff2" href="/brand/css/fonts/ibm-plex-sans-600.woff2" crossorigin>
   <link rel="stylesheet" href="${bFonts.href}">
   <link rel="stylesheet" href="${bTokens.href}">${appCss ? `
   <link rel="stylesheet" href="${bBase.href}">
@@ -305,30 +352,100 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
 };
 // One source for identity: basics.profiles → sameAs (JSON-LD), rel=me (head), footer.
 const socialHtml = social.map((s) => `<a rel="me" href="${esc(s.url)}">${esc(s.network)}</a>`).join(" &middot; ");
+// The record has to be a LOSSLESS FOLD of what the page shows. It used to be a
+// stub: seven employers, every date, and the degree itself all rendered on
+// /resume and appeared nowhere in the record, so `alumniOf: [{name}]` was a
+// name and nothing else — the reason /resume read as a first-class object and
+// behaved like a placeholder. scripts/fold-load.mjs measures exactly this, by
+// checking each rendered fact is recoverable from the record.
+//
+// Dates and role names attach through the schema.org ROLE pattern: a Role node
+// carries the dates and repeats the property that points at the real value, so
+// `worksFor` still resolves to an Organization for a consumer that ignores Role.
 const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org", "@type": "Person",
   name, url: SITE, jobTitle: role, description: headline,
+  email: email ? `mailto:${email}` : undefined,
+  address: basics.location
+    ? {
+      "@type": "PostalAddress",
+      addressLocality: basics.location.city,
+      addressRegion: basics.location.region,
+      addressCountry: basics.location.countryCode,
+    }
+    : undefined,
   knowsAbout: knowsAbout.length ? knowsAbout : undefined,
-  alumniOf: education.map((e) => ({ "@type": "Organization", name: e.institution })),
+  worksFor: work.map((w) => ({
+    "@type": "OrganizationRole",
+    worksFor: { "@type": "Organization", name: w.name, url: w.url },
+    roleName: w.position,
+    startDate: w.startDate,
+    endDate: w.endDate,
+    // The résumé line reads "New York · Hybrid" — one string covering place and
+    // arrangement, which is what the page shows and so what the record carries.
+    location: w.location,
+  })),
+  alumniOf: education.map((e) => ({
+    "@type": "OrganizationRole",
+    alumniOf: { "@type": "CollegeOrUniversity", name: e.institution, url: e.url },
+    startDate: e.startDate,
+    endDate: e.endDate,
+  })),
+  hasCredential: education.map((e) => ({
+    "@type": "EducationalOccupationalCredential",
+    name: [e.studyType, e.area].filter(Boolean).join(", "),
+    credentialCategory: e.studyType,
+    about: e.area,
+    recognizedBy: { "@type": "CollegeOrUniversity", name: e.institution, url: e.url },
+  })),
   // claim → evidence: each hero claim points at the project repo that backs it.
-  subjectOf: projects.map((p) => ({ "@type": "CreativeWork", name: p.name, url: p.url })),
+  subjectOf: projects.map((p) => ({
+    "@type": "CreativeWork",
+    name: p.name,
+    url: p.url,
+    dateCreated: p.startDate,
+    keywords: p.keywords?.length ? p.keywords.join(", ") : undefined,
+    sourceOrganization: p.entity ? { "@type": "Organization", name: p.entity } : undefined,
+    creator: p.roles?.length
+      ? {
+        "@type": "Role",
+        creator: { "@type": "Person", name, url: SITE },
+        roleName: p.roles.join(", "),
+      }
+      : undefined,
+  })),
   sameAs: social.map((s) => s.url),
 }).replace(/</g, "\\u003c")}</script>`;
 
 // generic: link a name to its url if present (work orgs, education institutions, projects)
 const linkName = (nm, url) => (url ? `<a href="${esc(url)}">${esc(nm)}</a>` : esc(nm));
-const entry = (w) =>
-  `<li class="entry"><span class="entry__when">${esc(fmtRange(w.startDate, w.endDate))}</span><span class="entry__body">` +
-  `<span class="entry__org">${linkName(w.name, w.url)}${w.position ? ` · <span class="entry__role">${esc(w.position)}</span>` : ""}</span>` +
-  `<span class="entry__what">${esc(w.summary)}</span></span></li>`;
+// The homepage record is a TRAJECTORY, not the résumé. Only the two most recent roles
+// carry their summary prose; older entries are org · role · dates. Seven full summaries
+// was ~280 words — the densest block on the page — restating in the reader's third
+// scroll what /resume, /resume.md and /resume.json already hold in full. Nothing is
+// lost: the nav links the résumé, and every word still ships there and in the JSON.
+const SUMMARIES_SHOWN = 2;
+// BLOCK elements, not spans. Reader renders the DOM with the CLASSES STRIPPED and its
+// own stylesheet applied, so every line break this layout got from CSS is gone there —
+// `.entry` being a grid, and `.entry__what { display: block }`, buy nothing once the
+// class is removed. Only an element's DEFAULT display survives, so an entry built from
+// adjacent spans collapsed into one run-on line:
+//   "Aug 2026 – presentEmpathic · Founding EngineerInfrastructure for operating…"
+// <p> and <div> render as separate lines in Reader with no CSS at all, and the grid
+// treats them exactly as it treated the spans. entry__role stays inline because it
+// genuinely belongs on the org's line, after the "·".
+const entry = (w, i) =>
+  `<li class="entry"><p class="entry__when">${esc(fmtRange(w.startDate, w.endDate))}</p><div class="entry__body">` +
+  `<p class="entry__org">${linkName(w.name, w.url)}${w.position ? ` · <span class="entry__role">${esc(w.position)}</span>` : ""}</p>` +
+  `${w.summary && i < SUMMARIES_SHOWN ? `<p class="entry__what">${esc(w.summary)}</p>` : ""}</div></li>`;
 // Education uses JSON Resume field names (institution / studyType / area) and has no
 // summary — it can't share the work-shaped entry() mapper above (name/position/summary),
 // or those fields render as "undefined". Mirrors /resume's rEdu: institution · degree.
-const eduEntry = (e) => {
+const eduEntry = (e) => { // (index unused: education never carries summary prose)
   const degree = [e.studyType, e.area].filter(Boolean).join(", ");
-  return `<li class="entry"><span class="entry__when">${esc(fmtRange(e.startDate, e.endDate))}</span><span class="entry__body">` +
-    `<span class="entry__org">${linkName(e.institution, e.url)}${degree ? ` · <span class="entry__role">${esc(degree)}</span>` : ""}</span>` +
-    `</span></li>`;
+  return `<li class="entry"><p class="entry__when">${esc(fmtRange(e.startDate, e.endDate))}</p><div class="entry__body">` +
+    `<p class="entry__org">${linkName(e.institution, e.url)}${degree ? ` · <span class="entry__role">${esc(degree)}</span>` : ""}</p>` +
+    `</div></li>`;
 };
 const exp = work;
 const edu = education;
@@ -341,16 +458,71 @@ const backgroundHtml =
     </section>`
     : "";
 
-const s = profile.seeking;
-const seekingHtml = s
-  ? `<div class="seeking">
-      ${s.label ? `<p class="bs-text-label seeking__label">${esc(s.label)}</p>` : ""}
-      <p class="seeking__focus">${esc(s.focus)}</p>
-      ${s.detail ? `<p class="seeking__detail">${esc(s.detail)}</p>` : ""}
-      ${s.href ? (s.href.startsWith("mailto:")
-        ? mailLink({ label: `${esc(s.cta || "Get in touch")} &rarr;`, cls: "seeking__cta no-link-icon" })
-        : `<a class="seeking__cta no-link-icon" href="${esc(s.href)}">${esc(s.cta || "Get in touch")} &rarr;</a>`) : ""}
-    </div>`
+// Currently — two ruled rows and one note. This block used to be the "open to roles"
+// callout: first a terracotta panel with a promotional paragraph and a CTA, then four
+// ruled availability rows. Both were advertising a search that has ended, and a dead
+// call to action in the best position on the page is worse than no call to action.
+//
+// What survives is only what nothing else on the page says. The masthead carries the
+// title, the record carries dates and history, the deck carries the fields — so this is
+// employer + place, the address, and one live pointer. Four rows became two because
+// cognitive load is the constraint here, not completeness.
+const s = profile.now;
+const nowRow = (label, value) =>
+  `<div class="rows__row"><dt class="bs-text-label rows__k">${label}</dt><dd class="rows__v">${value}</dd></div>`;
+const nowHtml = s
+  ? `<section class="avail">
+      <h2 class="bs-text-label eyebrow">${copy("now.eyebrow")}</h2>
+      <dl class="rows">
+        ${[
+          s.role ? nowRow(copy("now.at"), s.roleHref ? `<a href="${esc(s.roleHref)}">${esc(s.role)}</a>` : esc(s.role)) : "",
+          email ? nowRow(copy("now.contact"), mailLink({ cls: "rows__mail no-link-icon" })) : "",
+        ].filter(Boolean).join("\n        ")}
+      </dl>
+      ${s.note ? `<p class="now__note">${s.noteHref ? `<a href="${esc(s.noteHref)}">${esc(s.note)}</a>` : esc(s.note)}</p>` : ""}
+    </section>`
+  : "";
+
+// The dossier. Each entry is numbered in the margin and answers the same four
+// questions, so the set reads as one instrument rather than three write-ups. The
+// number is decorative (aria-hidden) — the ordered list already carries the sequence
+// to assistive technology, and reading "zero one" before every heading is noise.
+// The links belong to EVIDENCE, and now say so structurally. They used to hang off the
+// end of the case as a bare <p> of anchors joined by a space — outside the <dl>, so the
+// one part of a case study with no stated relationship to it, and read aloud as a single
+// run-on phrase ("prx ocap-provenance") rather than two things. They are the citation
+// for the evidence claim: the prose names prx and ocap-provenance and says both are
+// public, so the reference belongs against the sentence it supports. Nesting them there
+// also keeps the four questions four — the symmetry that makes the set read as one
+// instrument — instead of adding a fifth row to the one case that happens to have links.
+// A <ul>, because two links are a list of two things; role="list" because Safari drops
+// list semantics from a list-style:none <ul>.
+const caseLinks = (c) => (c.links || []).length
+  ? `<ul role="list" class="case__links">${
+    c.links.map((l) => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`).join("")
+  }</ul>`
+  : "";
+const caseRow = (label, value, extra = "") =>
+  `<div class="case__row"><dt class="bs-text-label case__k">${label}</dt><dd class="case__v">${esc(value)}${extra}</dd></div>`;
+const caseEntry = (c) => `<li class="case">
+          <div class="case__body">
+            <h3 class="case__name">${esc(c.name)}</h3>
+            <p class="case__kicker">${esc(c.kicker)}</p>
+            <dl class="case__rows">
+              ${caseRow(copy("case.problem"), c.problem)}
+              ${caseRow(copy("case.intervention"), c.intervention)}
+              ${caseRow(copy("case.evidence"), c.evidence, caseLinks(c))}
+              ${caseRow(copy("case.role"), c.role)}
+            </dl>
+          </div>
+        </li>`;
+const casesHtml = caseStudies.length
+  ? `<section class="cases">
+      <h2 class="bs-text-label eyebrow">${copy("work.eyebrow")}</h2>
+      <ol class="cases__list">
+        ${caseStudies.map(caseEntry).join("\n        ")}
+      </ol>
+    </section>`
   : "";
 
 const { stats, highlights } = site;
@@ -440,6 +612,15 @@ const ghOwner = (owner, extra) => `https://github.com/search?q=${encodeURICompon
 const orgCount = (stats.byOwner || []).find((o) => o.name === "bounded-systems")?.count;
 
 // Bars scale to the leading language (langMax), so the top bar fills the track
+// Each row's link carries an aria-label naming the language AND its count. The row
+// shows both — name, bar, number — but only the name is in the link, so the
+// announcement was "Go, link" with the figure it refers to sitting outside it. lone
+// 0.8 flags exactly one of these (LONE_COGA_UNCLEAR_LINK_PURPOSE on "Go", whose
+// phrase list contains "go"), and that particular finding is a FALSE POSITIVE — it is
+// the language, beside Rust and Python, not the imperative. The underlying point is
+// real for every row though, so every row gets the label rather than Go getting a
+// special case to quiet one warning.
+//
 // and the rest read as rank. The top 6 show at rest; the remaining languages sit
 // behind a native <details> so the full spread is one click away — zero JS, no
 // :target (which the topic filter owns), and it prints expanded.
@@ -447,7 +628,9 @@ const langMax = Math.max(...stats.languages.map((l) => l.count), 1);
 const langBar = (l) =>
   `<div class="bar">${l.name === "other"
     ? `<span class="bar__k">${esc(l.name)}</span>`
-    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
+    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}" aria-label="${
+      esc(`${l.name} — ${l.count} ${l.count === 1 ? "repository" : "repositories"} on GitHub`)
+    }">${esc(l.name)}</a>`}` +
   `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`;
 const langBars = stats.languages.slice(0, 6).map(langBar).join("\n        ");
@@ -497,7 +680,25 @@ const filterFor = (chipTopics, items) => {
   return { anchors, css, chips, emptyTopics: topics.filter((t) => !has(t)) };
 };
 
-const tagLinks = (h) => (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join("");
+// A card wears at most TAGS_SHOWN topics at rest; the rest sit behind a native
+// <details>, the same disclosure the language bar already uses for its overflow.
+// /interests had a card carrying twenty topic chips and 173 across the page — past
+// the point where a chip row reads as a set of labels rather than a wall. This is a
+// legibility change, not a gate one: lone's CHOICE_DENSITY counts every interactive
+// descendant whether or not a <details> is closed (countOwnScope), so the warning
+// stands and should — what changes is how much a reader meets at once.
+const TAGS_SHOWN = 6;
+const tagChip = (t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`;
+const tagLinks = (h) => {
+  const topics = h.topics || [];
+  if (!topics.length) return "";
+  const shown = topics.slice(0, TAGS_SHOWN).map(tagChip).join(" ");
+  const rest = topics.slice(TAGS_SHOWN);
+  return rest.length
+    ? `${shown} <details class="tagmore"><summary class="tagmore__sum no-link-icon">${
+      rest.length} ${copy("work.tags.more")}</summary>${rest.map(tagChip).join(" ")}</details>`
+    : shown;
+};
 const dataTags = (h) => (h.topics || []).map(slug).join(" ");
 
 const chipTopics = stats.topics.slice(0, 16);
@@ -508,9 +709,9 @@ const filterAnchors = homeFilter.anchors;
 const filterCss = homeFilter.css;
 
 const card = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><a class="proj__name" href="${esc(h.url)}">${esc(h.name)}</a>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <section class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.pinned ? ` <span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</section>
           <p class="proj__desc">${esc(h.description)}</p>
-          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
+          <section class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</section>
         </li>`;
 // One empty note per corpus-only topic, its link routing to that topic's live
 // search across the whole record — the pinned set stays curated, but every topic
@@ -529,52 +730,31 @@ const html = `<!doctype html>
 <head>
   ${head({ title: `${name} — ${role}`, description: `${role} — ${headline}`, path: "/", ogImage: homeOgImage, mdAlt: "/index.md" })}
   ${jsonLd}
-  <style>${filterCss}</style>
 </head>
 <body>
   <main class="wrap">
-    <header class="intro">
-      <p class="bs-text-label eyebrow">${esc(name)}&nbsp;&nbsp;&middot;&nbsp;&nbsp;${esc(role)}</p>
+    <article class="doc">
+    <header class="mast">
+      <p class="mast__name">${esc(name)}</p>
+      <p class="mast__role">${esc(role)}</p>
+      ${cityLine ? `<p class="mast__where bs-text-label">${esc(cityLine)}</p>` : ""}
+      <p class="mast__year bs-text-label">${date.slice(0, 4)}</p>
+    </header>
+
+    <section class="statement">
       <h1>${esc(headline)}</h1>
-      ${profile.intro ? `<p class="lead lead--intro">${esc(profile.intro)}</p>` : ""}
-      <p class="lead">${esc(summary)}</p>
-      ${place ? `<p class="place">${esc(place)}</p>` : ""}
+      ${deck ? `<p class="deck">${esc(deck)}</p>` : ""}
       <nav class="links">
         ${linksHtml}
       </nav>
-    </header>
+    </section>
 
-    ${seekingHtml}
+    ${nowHtml}
+
+    ${casesHtml}
 
     ${backgroundHtml}
-
-    ${filterAnchors}
-    <section class="corpus">
-      <h2 class="bs-text-label eyebrow">${copy("corpus.eyebrow")}</h2>
-      <div class="figures">
-        <a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources ?? stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
-        ${orgCount != null ? `<a class="fig" href="${ghOwner("bounded-systems")}"><span class="fig__n">${orgCount}</span><span class="fig__k">${copy("corpus.fig.org")}</span></a>` : ""}
-        <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
-      </div>
-      <div class="bars">
-        ${langBars}
-      </div>
-      ${langMore}
-      <p class="chips__hint">${copy("corpus.chips.hint")}</p>
-      <div class="chips">
-        ${topicChips}
-      </div>
-      <p class="corpus__src">
-        ${copy("corpus.source.computed")} <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
-        &middot; <a href="/interests">${copy("corpus.source.starred")}</a>
-        &middot; ${copy("corpus.source.topics")} <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
-      </p>
-    </section>
-
-    <section class="work">
-      <h2 class="bs-text-label eyebrow">${copy("work.eyebrow")}</h2>
-      ${workList}
-    </section>
+    </article>
 
     ${siteFooter()}
   </main>
@@ -605,7 +785,7 @@ const BRAND_ICONS = {
 const brandMark = (href, label) => {
   const d = BRAND_ICONS[linkHost(href)];
   return d
-    ? `<svg class="r-fav" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`
+    ? `<svg class="r-fav" viewBox="0 0 24 24" width="12" height="12" focusable="false"><title>${esc(label)}</title><path d="${d}"/></svg>`
     : `<img class="r-fav" src="https://${esc(linkHost(href))}/favicon.ico" alt="${esc(label)}" width="12" height="12" loading="lazy">`;
 };
 const rLinks = [...social.map((s) => ({ label: s.network, href: s.url })), rEmail].filter(Boolean).map((l) =>
@@ -619,12 +799,12 @@ const rLocation = basics.location?.city
   ? [basics.location.city, basics.location.region].filter(Boolean).join(", ")
   : "";
 const rExp = work.map((w) => `
-      <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span><span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></div>
-        <div class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</div>
+      <section class="r-job">
+        <p class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span> <span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></p>
+        <p class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</p>
         ${w.summary ? `<p class="r-job__summary">${esc(w.summary)}</p>` : ""}
         ${w.highlights?.length ? `<ul>${w.highlights.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
-      </div>`).join("");
+      </section>`).join("");
 // Projects bind into one system: render a single block per entity (the umbrella) instead
 // of repeating "Creator · Bounded Systems" on every repo. Each repo is a dated bullet.
 const projByEntity = [];
@@ -651,16 +831,16 @@ const rProjects = projByEntity.map(({ entity, items }) => {
     return `<li><strong>${linkName(p.name, p.url)}</strong>${date}${p.description ? ` — ${esc(p.description)}` : ""}</li>`;
   }).join("");
   return `
-      <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? `<span class="r-job__when">${esc(when)}</span>` : ""}</div>
-        ${roles ? `<div class="r-job__role">${esc(roles)}</div>` : ""}
+      <section class="r-job">
+        <p class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? ` <span class="r-job__when">${esc(when)}</span>` : ""}</p>
+        ${roles ? `<p class="r-job__role">${esc(roles)}</p>` : ""}
         <ul>${bullets}</ul>
-      </div>`;
+      </section>`;
 }).join("");
 const rEdu = education.map((e) => {
   const degree = [e.studyType, e.area].filter(Boolean).join(", ");
   return `
-      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${linkName(e.institution, e.url)}</span><span class="r-job__when">${esc(fmtRange(e.startDate, e.endDate))}</span></div>${degree ? `<div class="r-job__role">${esc(degree)}</div>` : ""}</div>`;
+      <section class="r-job"><p class="r-job__head"><span class="r-job__org">${linkName(e.institution, e.url)}</span> <span class="r-job__when">${esc(fmtRange(e.startDate, e.endDate))}</span></p>${degree ? `<p class="r-job__role">${esc(degree)}</p>` : ""}</section>`;
 }).join("");
 const rSkills = skills.map((g) =>
   g.keywords?.length
@@ -711,10 +891,10 @@ ${jsonLd}
   .r-skills { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-skill-grp { margin: 0 0 4px; font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-job { margin: 0 0 12px; break-inside: avoid; }
-  .r-job__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .r-job__head { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .r-job__org { font-weight: 600; font-size: 14px; }
   .r-job__when { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); white-space: nowrap; }
-  .r-job__role { font-size: 12px; color: var(--bs-color-accent); margin-bottom: 4px; }
+  .r-job__role { font-size: 12px; color: var(--bs-color-accent); margin: 0 0 4px; }
   .r-job__summary { margin: 0 0 4px; }
   .r-job ul { margin: 4px 0 0; padding-left: 16px; }
   .r-job li { margin: 0 0 3px; }
@@ -728,6 +908,7 @@ ${jsonLd}
 </head>
 <body>
   <main>
+  <article class="doc">
   <header>
     <h1>${esc(name)}</h1>
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline)}` : ""}</p>
@@ -740,6 +921,7 @@ ${jsonLd}
   <h2>${copy("resume.section.experience")}</h2>${rExp}
   ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
   <h2>${copy("resume.section.education")}</h2>${rEdu}
+  </article>
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -756,30 +938,32 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
 </head>
 <body>
   <main class="wrap">
+    <article class="doc">
     <header class="intro">
       <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
       <h1>${copy("prov.title")}</h1>
       <p class="lead">${copy("prov.lede")}</p>
     </header>
-    <section class="bg">
+    <section class="prov">
       <h2 class="bs-text-label eyebrow">${copy("prov.chain.eyebrow")}</h2>
       <p class="lead">${copy("prov.chain.lede")}</p>
       <ol class="prov-chain">
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><span class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</span></div></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><span class="prov-link__body">Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</span></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><span class="prov-link__body">Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (<a href="https://json-ld.org" rel="noopener">JSON-LD</a> 1.1) is validated against <a href="https://www.w3.org/TR/shacl/" rel="noopener"><code>SHACL</code></a> shapes; an <strong><a href="https://spdx.dev" rel="noopener">SPDX</a> <a href="https://www.cisa.gov/sbom" rel="noopener">SBOM</a></strong> is generated and completeness-checked; and <code>@bdelanghe/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed <a href="https://in-toto.io" rel="noopener">in-toto</a>/<a href="https://slsa.dev" rel="noopener">SLSA</a> attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener">WCAG</a>&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</span></li>
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><span class="prov-link__body">Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above. See the <a href="/colophon">${copy("colophon.title").toLowerCase()}</a> for what built and validated it.</span></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code> <span class="prov-dg">${m.id}</span></li>`).join("")}</ul><p class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</p></div></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><div class="prov-link__body"><p>Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</p></div></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><div class="prov-link__body"><p>Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (<a href="https://json-ld.org" rel="noopener">JSON-LD</a> 1.1) is validated against <a href="https://www.w3.org/TR/shacl/" rel="noopener"><code>SHACL</code></a> shapes; an <strong><a href="https://spdx.dev" rel="noopener">SPDX</a> <a href="https://www.cisa.gov/sbom" rel="noopener">SBOM</a></strong> is generated and completeness-checked; and <code>@bdelanghe/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed <a href="https://in-toto.io" rel="noopener">in-toto</a>/<a href="https://slsa.dev" rel="noopener">SLSA</a> attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener">WCAG</a>&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</p></div></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><div class="prov-link__body"><p>Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above. See the <a href="/colophon">${copy("colophon.title").toLowerCase()}</a> for what built and validated it.</p></div></li>
         <li class="prov-seal">
           <div class="prov-seal__card">
             <p class="prov-seal__title">${copy("prov.seal.title")}</p>
             <p class="prov-seal__meta">commit @@COMMIT@@ &middot; @@DATE@@ &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
             <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);">Real <a href="https://in-toto.io" rel="noopener">in-toto</a> <code>Statement/v1</code> + <a href="https://slsa.dev" rel="noopener">SLSA</a> provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via <a href="https://sigstore.dev" rel="noopener">Sigstore</a> — a one-build <a href="https://docs.sigstore.dev/fulcio/overview/" rel="noopener">Fulcio</a> certificate minted from this workflow's GitHub <a href="https://openid.net/connect/" rel="noopener">OIDC</a> identity, logged in the public <a href="https://docs.sigstore.dev/rekor/overview/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry" rel="noopener">GHCR</a> as a pullable, signed <a href="https://opencontainers.org" rel="noopener">OCI</a> artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact.</p>
             <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);"><strong>Authorized.</strong> Production is not deployed straight from a build: each version is first uploaded as an un-served preview, reviewed, and <strong>promoted to production only on required human approval</strong> (the <code>site-promote</code> environment). The exact reviewed, signed version is what goes live — so the live site is not just intact, its promotion was authorized.</p>
-            <p id="build-freshness" class="prov-seal__note" style="font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink);" hidden></p>
           </div>
         </li>
       </ol>
     </section>
+    </article>
+
     ${siteFooter()}
   </main>
   ${FRESHNESS_SCRIPT}
@@ -850,6 +1034,7 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
 </head>
 <body>
   <main class="wrap">
+    <article class="doc">
     <header class="intro">
       <p class="bs-text-label eyebrow">${esc(name)} &nbsp;&middot;&nbsp; ${copy("nav.writing")}</p>
       <h1>${copy("nav.writing")}</h1>
@@ -863,6 +1048,8 @@ ${head({ title: `${copy("nav.writing")} — ${name}`, description: `${copy("head
     <div class="posts">
       ${blogIndex}
     </div>
+    </article>
+
     ${siteFooter()}
   </main>
 </body>
@@ -900,7 +1087,19 @@ for (const p of posts) {
     // claim → evidence, same as the homepage Person.subjectOf.
     citation: (proof || []).map((pr) => ({ "@type": "CreativeWork", name: pr.label, url: pr.href })),
   };
-  const tagsHtml = (p.meta.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+  // A <ul>, on its own line, NOT appended to the byline behind a "·". Reader engines
+  // identify a byline and LIFT it into their own header — Safari removes the <time> and
+  // the author link from the paragraph when it does, which left the two "·" separators
+  // dangling in front of the tags: "·  ·  capability-security agent-infra contracts".
+  // Mozilla's Readability keeps them, so the local gates cannot see this; making the
+  // tags a separate element is engine-independent, and is what they are anyway — a list
+  // of terms, not a continuation of the byline sentence. role="list" because Safari
+  // drops list semantics from a list-style:none <ul>.
+  const tagsHtml = (p.meta.tags || []).length
+    ? `<ul role="list" class="post__tags">${
+      p.meta.tags.map((t) => `<li class="tag">${esc(t)}</li>`).join(" ")
+    }</ul>`
+    : "";
   const ph = `<!doctype html>
 <html lang="en">
 <head>
@@ -913,7 +1112,8 @@ ${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "a
       <header class="post__head">
         <p class="bs-text-label eyebrow"><a href="/blog">&larr;&nbsp;${copy("nav.writing")}</a></p>
         <h1 class="p-name">${esc(p.meta.title)}</h1>
-        <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> &nbsp;&middot;&nbsp; <a class="p-author h-card" href="${SITE}">${esc(name)}</a>${tagsHtml ? ` &nbsp;&middot;&nbsp; ${tagsHtml}` : ""}</p>
+        <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> <a class="p-author h-card" href="${SITE}">${esc(name)}</a></p>
+        ${tagsHtml}
       </header>
       <div class="post__body e-content">
       ${p.html}
@@ -998,15 +1198,23 @@ const mdLink = (label, href) => `[${label}](${href.startsWith("/") ? SITE + href
 const indexMd = `# ${name} — ${role}
 
 > ${headline}
-${profile.intro ? `\n${profile.intro}\n` : ""}
-${summary}
-${place ? `\n${place}\n` : ""}${s ? `\n## ${s.label || s.focus}\n${s.focus}${s.detail ? `\n\n${s.detail}` : ""}\n` : ""}
+${deck ? `\n${deck}\n` : ""}${cityLine ? `\n${cityLine}\n` : ""}${s ? `\n## ${copy("now.eyebrow")}\n${[
+  s.role ? `- **${copy("now.at")}** — ${s.roleHref ? mdLink(s.role, s.roleHref) : s.role}` : "",
+  email ? `- **${copy("now.contact")}** — ${emailObf}` : "",
+  s.note ? `- ${s.noteHref ? mdLink(s.note, s.noteHref) : s.note}` : "",
+].filter(Boolean).join("\n")}\n` : ""}
+## ${copy("work.eyebrow")}
+${caseStudies.map((c, i) => `### ${String(i + 1).padStart(2, "0")} ${c.name}
+${c.kicker}
+
+- **${copy("case.problem")}** — ${c.problem}
+- **${copy("case.intervention")}** — ${c.intervention}
+- **${copy("case.evidence")}** — ${c.evidence}${(c.links || []).length ? ` (${c.links.map((l) => mdLink(l.label, l.href)).join(", ")})` : ""}
+- **${copy("case.role")}** — ${c.role}`).join("\n\n")}
+
 ## ${copy("background.eyebrow")}
 ${work.map((w) => `- **${w.name}**${w.position ? ` · ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.summary ? ` — ${w.summary}` : ""}`).join("\n")}
 ${education.length ? `\n### ${copy("background.education")}\n${education.map((e) => { const d = [e.studyType, e.area].filter(Boolean).join(", "); return `- **${e.institution}**${d ? ` · ${d}` : ""} (${fmtRange(e.startDate, e.endDate)})`; }).join("\n")}\n` : ""}
-## ${copy("work.eyebrow")}
-${highlights.map((h) => `- ${mdLink(h.name, h.url)}: ${h.description}`).join("\n")}
-
 ## ${copy("llms.links")}
 ${profile.links.map((l) => l.href.startsWith("mailto:") ? `- ${emailObf}` : `- ${mdLink(l.label, l.href)}`).join("\n")}
 `;
@@ -1079,17 +1287,19 @@ const llms = `# ${name}
 
 ${summary}
 
-${role}${place ? ` · ${place}` : ""}
+${role}${cityLine ? ` · ${cityLine}` : ""}
 
 ## ${copy("llms.links")}
 ${profile.links.filter((l) => !l.href.startsWith("mailto:")).map((l) => `- [${l.label}](${l.href.startsWith("/") ? SITE + l.href : l.href})`).join("\n")}
 
 ## ${copy("llms.work")}
-${highlights.map((h) => `- [${h.name}](${h.url}): ${h.description}`).join("\n")}
+${caseStudies.map((c) => `- ${c.name} — ${c.kicker}: ${c.intervention}${(c.links || []).length ? ` (${c.links.map((l) => `[${l.label}](${l.href})`).join(", ")})` : ""}`).join("\n")}
+- [${copy("corpus.eyebrow")}](${SITE}/archive): ${highlights.map((h) => h.name).join(", ")}
 ${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.title}](${SITE}${postUrl(p)}): ${p.meta.description}`).join("\n")}\n` : ""}
 ## ${copy("llms.md")}
 - [${name} — ${role}](${SITE}/index.md)
 - [${copy("head.resume.label")}](${SITE}/resume.md)
+- [${copy("corpus.eyebrow")}](${SITE}/archive.md)
 - [${copy("nav.writing")}](${SITE}/blog.md)
 - [${copy("conf.title")}](${SITE}/conformance.md)
 - [${copy("prov.title")}](${SITE}/provenance.md)
@@ -1198,8 +1408,25 @@ const CONF_EVIDENCE_LINKS = {
   "security.no-critical-vulns": `${REPO}/actions/workflows/brand-checks.yml`,
   "semantic.jsonld-shacl": `${REPO}/actions/workflows/shacl.yml`,
   "semantic.commonmark": `${REPO}/actions/workflows/seo.yml`,
+
+  // RFC 9530 Repr-Digest per canonical doc. There is no URL that shows these: they
+  // are response headers, computed here and written to dist/_headers, which Cloudflare
+  // consumes as configuration rather than serving. So the evidence is the code that
+  // computes them over the exact bytes it just wrote.
+  "integrity.content-digests": `${REPO}/blob/main/build.mjs`,
 };
-const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id] ?? "/provenance";
+// NO DEFAULT. Every criterion not named above gets NO evidence link, and the kit's
+// renderer already omits one when this returns undefined — the `?? "/provenance"` that
+// used to be here was overriding that on purpose it could not justify.
+//
+// It sent 12 criteria to the signed-chain page, and ELEVEN OF THEM ARE NOT-ASSESSED:
+// wcag22-aa-manual, asvs, core-web-vitals, runtime reliability, coga-usability-testing
+// and the rest. Offering "evidence" for a criterion the same row just reported as not
+// assessed is a category error — there is nothing to show, which is the honest and
+// whole point of reporting it that way. A link there implies proof exists and invites
+// the reader to go look for it, which is precisely the overclaim this page is built to
+// refuse. The twelfth was `met` and simply lacked a mapping; it has one now.
+const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id];
 // Derives the evidence link's visible text FROM the href itself (not a hand-maintained
 // parallel map that could drift out of sync with CONF_EVIDENCE_LINKS above) — a GitHub
 // Actions workflow link reads as the workflow file, a source-file link as
@@ -1221,16 +1448,16 @@ const evidenceLabelFor = (href) => {
 const cSum = confReport.summary;
 const cPct = (n) => `${((n / (cSum.total || 1)) * 100).toFixed(2)}%`;
 const confOverview = `<div class="conf-overview">
-      <div class="conf-bar" role="img" aria-label="${cSum.met} ${copy("conf.stat.met")}, ${cSum.unmet} ${copy("conf.stat.unmet")}, ${cSum.notAssessed} ${copy("conf.stat.na")} of ${cSum.total}">
+      <div class="conf-bar" aria-hidden="true">
         <span class="conf-bar__seg conf-bar__seg--met" style="width:${cPct(cSum.met)}"></span>
         <span class="conf-bar__seg conf-bar__seg--unmet" style="width:${cPct(cSum.unmet)}"></span>
         <span class="conf-bar__seg conf-bar__seg--na" style="width:${cPct(cSum.notAssessed)}"></span>
       </div>
       <div class="conf-stats">
-        <div class="conf-stat conf-stat--met"><span class="conf-stat__n">${cSum.met}</span><span class="conf-stat__k">${copy("conf.stat.met")}</span></div>
-        <div class="conf-stat conf-stat--unmet"><span class="conf-stat__n">${cSum.unmet}</span><span class="conf-stat__k">${copy("conf.stat.unmet")}</span></div>
-        <div class="conf-stat conf-stat--na"><span class="conf-stat__n">${cSum.notAssessed}</span><span class="conf-stat__k">${copy("conf.stat.na")}</span></div>
-        <div class="conf-stat conf-stat--total"><span class="conf-stat__n">${cSum.total}</span><span class="conf-stat__k">${copy("conf.stat.total")}</span></div>
+        <div class="conf-stat conf-stat--met"><span class="conf-stat__n">${cSum.met}</span> <span class="conf-stat__k">${copy("conf.stat.met")}</span></div>
+        <div class="conf-stat conf-stat--unmet"><span class="conf-stat__n">${cSum.unmet}</span> <span class="conf-stat__k">${copy("conf.stat.unmet")}</span></div>
+        <div class="conf-stat conf-stat--na"><span class="conf-stat__n">${cSum.notAssessed}</span> <span class="conf-stat__k">${copy("conf.stat.na")}</span></div>
+        <div class="conf-stat conf-stat--total"><span class="conf-stat__n">${cSum.total}</span> <span class="conf-stat__k">${copy("conf.stat.total")}</span></div>
       </div>
     </div>`;
 // Link each criterion's standard to the doc that DECLARES the rule. The vendored
@@ -1287,6 +1514,7 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
 </head>
 <body>
   <main class="wrap">
+    <article class="doc">
     <header class="intro">
       <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
       <h1>${copy("conf.title")}</h1>
@@ -1295,6 +1523,8 @@ ${head({ title: `${copy("conf.title")} — ${name}`, description: copy("head.con
     </header>
     ${confOverview}
     ${confBody}
+    </article>
+
     ${siteFooter()}
   </main>
 </body>
@@ -1335,6 +1565,7 @@ ${head({ title: `${copy("colophon.title")} — ${name}`, description: copy("head
 </head>
 <body>
   <main class="wrap">
+    <article class="doc">
     <header class="intro">
       <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
       <h1>${copy("colophon.title")}</h1>
@@ -1343,6 +1574,8 @@ ${head({ title: `${copy("colophon.title")} — ${name}`, description: copy("head
     <section class="colophon">
       ${colophonListHtml}
     </section>
+    </article>
+
     ${siteFooter()}
   </main>
 </body>
@@ -1357,6 +1590,90 @@ const colophonMd = `# ${copy("colophon.title")} — ${name}
 ${profile.colophon.map((c) => `- ${mdLink(c.name, c.href)}${c.role ? ` — ${c.role}` : ""}`).join("\n")}
 `;
 await writeFile(join(dist, "colophon.md"), colophonMd);
+
+// ---- /archive — the generated index: every public repository, its languages and
+// topics, and the pinned set the topic filter narrows. This all used to sit on the
+// homepage, under the dossier. It came off for one reason: a repository count and a
+// topic cloud measure ACTIVITY, and a personal page that leads with activity argues
+// scale where it means to argue judgment — the overlapping topic facets (claude,
+// claude-code, agents, ai-agent, ai-agents, llm) read as one body of work counted six
+// times. The computation is unchanged and still linked from the home page; only the
+// projection moved. Case studies carry the argument; this carries the material.
+const archiveHtml = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `${copy("corpus.eyebrow")} — ${name}`, description: copy("head.archive.desc"), path: "/archive", mdAlt: "/archive.md" })}
+<style>${filterCss}</style>
+</head>
+<body>
+  <main class="wrap">
+    <article class="doc">
+    <header class="mast mast--sub">
+      <p class="mast__name"><a href="/">&larr;&nbsp;${esc(name)}</a></p>
+      <p class="mast__role">${copy("corpus.eyebrow")}</p>
+      <p class="mast__year bs-text-label">${date}</p>
+    </header>
+
+    <section class="statement">
+      <h1>${copy("corpus.eyebrow")}</h1>
+      <p class="deck">${copy("archive.lede")}</p>
+    </section>
+
+    ${filterAnchors}
+    <section class="corpus">
+      <h2 class="bs-text-label eyebrow">${copy("archive.figures.eyebrow")}</h2>
+      <div class="corpus__body">
+      <div class="figures">
+        <a class="fig" href="${ghQuery("")}"><span class="fig__n">${stats.publicSources ?? stats.public}</span><span class="fig__k">${copy("corpus.fig.public")}</span></a>
+        ${orgCount != null ? `<a class="fig" href="${ghOwner("bounded-systems")}"><span class="fig__n">${orgCount}</span><span class="fig__k">${copy("corpus.fig.org")}</span></a>` : ""}
+        <div class="fig"><span class="fig__n">${stats.languages.length}</span><span class="fig__k">${copy("corpus.fig.languages")}</span></div>
+      </div>
+      <div class="bars">
+        ${langBars}
+      </div>
+      ${langMore}
+      <p class="chips__hint">${copy("corpus.chips.hint")}</p>
+      <div class="chips">
+        ${topicChips}
+      </div>
+      <p class="corpus__src">
+        ${copy("corpus.source.computed")} <a href="https://github.com/bdelanghe">github.com/bdelanghe</a>
+        &middot; <a href="/interests">${copy("corpus.source.starred")}</a>
+        &middot; ${copy("corpus.source.topics")} <a href="https://github.com/bdelanghe/synoptic-github">synoptic-github</a>
+      </p>
+      </div>
+    </section>
+
+    <section class="work">
+      <h2 class="bs-text-label eyebrow">${copy("archive.list.eyebrow")}</h2>
+      ${workList}
+    </section>
+    </article>
+
+    ${siteFooter()}
+  </main>
+</body>
+</html>
+`;
+await writeHtml("archive.html", archiveHtml);
+
+const archiveMd = `# ${copy("corpus.eyebrow")} — ${name}
+
+> ${copy("archive.lede")}
+
+## ${copy("archive.figures.eyebrow")}
+
+${copy("corpus.fig.public")}: ${stats.publicSources ?? stats.public}${orgCount != null ? ` · ${copy("corpus.fig.org")}: ${orgCount}` : ""} · ${copy("corpus.fig.languages")}: ${stats.languages.length}
+
+${stats.languages.map((l) => `- ${l.name}: ${l.count}`).join("\n")}
+
+## ${copy("archive.list.eyebrow")}
+
+${highlights.map((h) => `- ${mdLink(h.name, h.url)}${h.language ? ` — ${h.language}` : ""}: ${h.description}${h.topics?.length ? ` (${h.topics.join(", ")})` : ""}`).join("\n")}
+
+${copy("corpus.source.computed")} ${mdLink("github.com/bdelanghe", "https://github.com/bdelanghe")} · ${mdLink(copy("corpus.source.starred"), "/interests")}
+`;
+await writeFile(join(dist, "archive.md"), archiveMd);
 
 // ---- /interests — the interest graph: what I FOLLOW (starred), not what I built.
 // Same record→filter interface as the homepage, computed over stars via filterFor.
@@ -1373,7 +1690,9 @@ if (interests?.items?.length) {
   const iMax = Math.max(...interests.languages.map((l) => l.count), 1);
   const iBar = (l) => `<div class="bar">${l.name === "other"
       ? `<span class="bar__k">${esc(l.name)}</span>`
-      : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
+      : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}" aria-label="${
+        esc(`${l.name} — ${l.count} starred ${l.count === 1 ? "repository" : "repositories"}`)
+      }">${esc(l.name)}</a>`}` +
     `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / iMax) * 100)}%"></span></span>` +
     `<span class="bar__n">${l.count}</span></div>`;
   const iBars = interests.languages.slice(0, 6).map(iBar).join("\n        ");
@@ -1385,9 +1704,9 @@ if (interests?.items?.length) {
         </div>
       </details>` : "";
   const iCard = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><a class="proj__name" href="${esc(h.url)}">${esc(h.name)}</a>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <section class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</section>
           ${h.description ? `<p class="proj__desc">${esc(h.description)}</p>` : ""}
-          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
+          <section class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</section>
         </li>`;
   interestsStyle = `<style>${iFilter.css}</style>`;
   interestsBody = `${iFilter.anchors}
@@ -1435,12 +1754,15 @@ ${interestsStyle}
 </head>
 <body>
   <main class="wrap">
+    <article class="doc">
     <header class="intro">
       <p class="bs-text-label eyebrow"><a href="/">&larr;&nbsp;${copy("nav.home")}</a></p>
       <h1>${copy("interests.title")}</h1>
       <p class="lead">${copy("interests.lede")}</p>
     </header>
     ${interestsBody}
+    </article>
+
     ${siteFooter()}
   </main>
 </body>
@@ -1470,18 +1792,22 @@ await writeFile(join(dist, "interests.md"), interestsMd);
 // asset matches two Cache-Control rules — Cloudflare _headers MERGES overlapping
 // rules, which would emit a malformed double Cache-Control. Plus UTF-8 on text
 // assets (Cloudflare otherwise sends text/plain with no charset → Latin-1 mojibake).
-const htmlRoutes = ["/", "/resume", "/blog", "/provenance", "/conformance", "/colophon", ...posts.map(postUrl)];
+const htmlRoutes = ["/", "/resume", "/archive", "/blog", "/provenance", "/conformance", "/colophon", "/interests", ...posts.map(postUrl)];
 // RFC 9530 Repr-Digest per canonical doc, computed over the exact bytes written above
 // (self-contained — not the later site.sha256). Scoped to the canonical documents, not
-// fingerprinted assets. /provenance is intentionally OMITTED: gen-attestation.mjs stamps
-// @@COMMIT@@/@@DATE@@ into provenance.html AFTER this build, so a build-time digest would
-// not match the served bytes. The digest is added in the SAME rule block as Cache-Control
+// fingerprinted assets. Every canonical document carries one; /provenance is the ONE
+// deliberate omission: gen-attestation.mjs stamps @@COMMIT@@/@@DATE@@ into
+// provenance.html AFTER this build, so a build-time digest would not match the
+// served bytes. The digest is added in the SAME rule block as Cache-Control
 // (Cloudflare _headers merges overlapping rules — one block per route avoids duplication).
 const reprByRoute = {
   "/": reprDigest(html),
   "/resume": reprDigest(resumeHtml),
+  "/archive": reprDigest(archiveHtml),
   "/blog": reprDigest(blogHtml),
   "/conformance": reprDigest(conformanceHtml),
+  "/colophon": reprDigest(colophonHtml),
+  "/interests": reprDigest(interestsHtml),
   ...Object.fromEntries(postReprs),
   "/feed.xml": reprDigest(atom),
   "/feed.json": reprDigest(jsonFeedStr),
@@ -1494,8 +1820,33 @@ const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` :
 // the 404 page, but Cloudflare still applies the wildcard's "Content-Type:
 // text/markdown" to that response, mislabeling real HTML content. An explicit route
 // list only ever matches the .md siblings that are genuinely written below.
-const mdRoutes = ["/.md", "/index.md", "/resume.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`)];
+const mdRoutes = ["/.md", "/index.md", "/resume.md", "/archive.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`)];
+// Security headers, sitewide. A separate /* block carrying ONLY these: Cloudflare
+// merges overlapping _headers rules, which is why the cache/content-type rules below are
+// per-route — but merging is harmless when the blocks set disjoint header names, and it
+// is the only way to cover every response including the sidecar artifacts.
+//
+// NOT set here, deliberately:
+//   Content-Security-Policy — every page carries an inline <script> (the email
+//     de-obfuscator, the provenance freshness probe) and inline style="" attributes on
+//     the language bars. Hashes cover the scripts, but a style ATTRIBUTE cannot be
+//     hashed — it needs 'unsafe-hashes', and ld+json's treatment under script-src still
+//     varies. A CSP shipped without testing against the live edge is a broken page, so
+//     it is follow-up work with a real test, not a line added on faith.
+//   HSTS `preload` — the token advertises consent to the browser preload list, which
+//     includes every subdomain and is slow and painful to leave. max-age and
+//     includeSubDomains are set; joining the list is a decision, not a default, so
+//     Lighthouse's HSTS audit stays partially unmet on purpose.
+const securityHeaders = `/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+`;
 await writeFile(join(dist, "_headers"),
+  securityHeaders +
   htmlRoutes.map((r) => `${r}\n  Cache-Control: public, max-age=600, stale-while-revalidate=3600${reprLine(r)}`).join("\n") +
   `\n/feed.xml\n  Repr-Digest: ${reprByRoute["/feed.xml"]}\n` +
   `/feed.json\n  Repr-Digest: ${reprByRoute["/feed.json"]}\n` +
@@ -1506,7 +1857,33 @@ await writeFile(join(dist, "_headers"),
   `/*.pub\n  Content-Type: text/plain; charset=utf-8\n` +
   mdRoutes.map((r) => `${r}\n  Content-Type: text/markdown; charset=utf-8`).join("\n") + "\n" +
   `/site.webmanifest\n  Content-Type: application/manifest+json; charset=utf-8\n`);
-await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
+// robots.txt — the crawl policy is AUTHORED HERE, in the signed build, not in a CDN
+// dashboard (#259). Cloudflare's "Managed robots.txt" prepends its own block at the
+// edge, which puts an express reservation of rights on the wire that is absent from
+// the source, invisible to review, and outside site.sha256 — so it stays OFF and this
+// file says what we mean. verify-site's `cloudflare-managed-robots` strip rule then
+// has nothing to strip, and robots.txt verifies byte-exact like every other file.
+//
+// Nothing is Disallowed on purpose: /llms.txt and the .md sibling of every page exist
+// to be read by agents, and four gates defend that surface. What the signal refuses is
+// TRAINING on this content, not reading it — blocking the readers would contradict the
+// thing the rest of the build invests in.
+const robotsTxt = `# Content Signals — how automated consumers may use this site.
+#   search:   building a search index and returning links/excerpts.
+#   ai-train: training or fine-tuning a model on this content.
+#   use:      how an AI system may consume it (immediate | reference | full).
+#
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF RIGHTS
+# UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT AND RELATED
+# RIGHTS IN THE DIGITAL SINGLE MARKET.
+
+User-agent: *
+Content-Signal: search=yes,ai-train=no,use=reference
+Allow: /
+
+Sitemap: ${SITE}/sitemap.xml
+`;
+await writeFile(join(dist, "robots.txt"), robotsTxt);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   htmlRoutes.map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +

@@ -42,3 +42,35 @@ the hermetic build, so a link to one is resolvable rather than dead. The logic i
   not content strategy.
 - **Off-page signals** (backlinks, etc.) and **rendered-vs-source** parity at the edge —
   the post-deploy HTTP probe (`vendor/conformance-kit/integrity/http-probe.mjs`) covers edge behaviour.
+
+## Lighthouse's `robots-txt` audit is deliberately not asserted
+
+`lighthouse.yml` runs a second, independent SEO check via `lighthouserc.json`. Its SEO
+assertions are written **per audit** rather than as a `categories:seo` floor, and
+`robots-txt` is explicitly `off`. That is a correctness fix, not a relaxation.
+
+The site's `robots.txt` carries a Content Signals directive:
+
+```
+User-agent: *
+Content-Signal: search=yes,ai-train=no,use=reference
+Allow: /
+```
+
+**RFC 9309 §2.2.4 requires parsers to ignore unrecognised fields**, which is what the gate
+above implements and what real crawlers do. Lighthouse instead validates against a fixed
+allowlist of directives and reports `Unknown directive` — scoring the audit 0 and pulling
+the category to 0.92 for a file that is valid. Asserting a category floor would therefore
+have forced a choice between the rights reservation and the gate.
+
+Every **other** scored SEO audit is asserted at a perfect `1.0`: `is-crawlable`,
+`document-title`, `meta-description`, `http-status-code`, `link-text`, `crawlable-anchors`,
+`hreflang`, `canonical`. That is exactly what the previous `minScore: 0.95` floor already
+demanded — the category is 12.04 weighted points, so the lightest single audit is worth
+0.083 and no audit could fail beneath a 0.95 floor. The two forms are equivalent on
+everything except the one audit that is wrong.
+
+**The cost, stated plainly:** a per-audit list does not automatically pick up new SEO audits
+that a future Lighthouse version adds. Re-check the list when bumping `@lhci/cli`. The
+robots.txt contract itself is not weakened — `npm run check:seo` parses the file per RFC
+9309 on every build, and that gate, not Lighthouse, is the enforceable one.
