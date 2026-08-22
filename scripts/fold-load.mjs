@@ -170,12 +170,31 @@ const PROSE = /\.(summary|highlights\[|description|_source|\$schema|version|cano
 const CHOICE = "a[href], button, summary, input, select, textarea";
 
 // Where a node stands in the fold: 0 = at rest, n = n applications of u away.
+//
+// A <summary> is the SEED of its own <details>, not content inside it — a closed
+// details still renders its summary, which is the whole point of a seed. So the
+// details a summary labels does not fold it; every other closed details above it
+// does. Counting the seed as folded made this file undercount every run that
+// contains a disclosure, which is exactly the runs it exists to measure.
+function foldParent(el) {
+  const p = el.parentElement;
+  return el.tagName === "SUMMARY" && p?.tagName === "DETAILS" ? p.parentElement : p;
+}
+
 function unfoldDepth(el, root) {
   let d = 0;
-  for (let n = el.parentElement; n && n !== root; n = n.parentElement) {
+  for (let n = foldParent(el); n && n !== root; n = n.parentElement) {
     if (n.tagName === "DETAILS" && !n.hasAttribute("open")) d++;
   }
   return d;
+}
+
+// Which run a choice belongs to. A <details> is transparent here for the same
+// reason: the seed is a peer of whatever stands beside it, not a run of one
+// inside its own wrapper. `display: contents` on the wrapper makes that literal
+// on screen, and the model says it regardless of the CSS.
+function runParent(el) {
+  return foldParent(el);
 }
 
 // What share of a container's text is inside its choices. 1.0 is a bare run of
@@ -330,7 +349,7 @@ for (const rel of (await htmlFiles(dir)).sort()) {
   // takes, so its width is the fan-out the budget is about.
   const runs = new Map();
   for (const el of atRest) {
-    const parent = el.parentElement;
+    const parent = runParent(el);
     if (!parent) continue;
     if (!runs.has(parent)) runs.set(parent, []);
     runs.get(parent).push(el);
