@@ -149,7 +149,6 @@ const FRESHNESS_SCRIPT = `<script>(async()=>{
   var card=document.querySelector(".prov-seal__card"); if(!card) return;
   var el=document.createElement("p");
   el.id="build-freshness"; el.className="prov-seal__note";
-  el.setAttribute("style","font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink);");
   var short=function(s){return String(s||"").slice(0,7);};
   var ago=function(iso){var ms=Date.now()-Date.parse(iso); if(!isFinite(ms))return ""; return ms<36e5?Math.round(ms/6e4)+"m":ms<864e5?Math.round(ms/36e5)+"h":Math.round(ms/864e5)+"d";};
   var show=function(t){el.textContent=t; card.appendChild(el);};
@@ -301,7 +300,14 @@ const stripCssComments = (css) => {
   }
   return out.replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").trim() + "\n";
 };
-const stylesCss = stripCssComments(await readFile(join(root, "styles.css"), "utf8"));
+// CSP: a style ATTRIBUTE cannot be hashed — covering one needs 'unsafe-hashes', which
+// re-opens the hole the policy exists to close. So every data-driven width in the build is
+// a CLASS, and the classes are these: a static 0-100 set, appended to the fingerprinted
+// stylesheet. Static because the set cannot depend on the data (the stylesheet is
+// fingerprinted before the pages that pick a width are rendered). ~2.5KB raw, and it
+// gzips to almost nothing — it is 101 near-identical rules. See docs/csp.md.
+const widthUtilities = Array.from({ length: 101 }, (_, i) => `.w-${i}{width:${i}%}`).join("");
+const stylesCss = stripCssComments(await readFile(join(root, "styles.css"), "utf8")) + widthUtilities;
 const stylesHref = `/styles.${createHash("sha256").update(stylesCss).digest("hex").slice(0, 12)}.css`;
 
 const fpBrand = async (rel) => { // rel under brand/, e.g. "css/fonts.css"
@@ -631,7 +637,7 @@ const langBar = (l) =>
     : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}" aria-label="${
       esc(`${l.name} — ${l.count} ${l.count === 1 ? "repository" : "repositories"} on GitHub`)
     }">${esc(l.name)}</a>`}` +
-  `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
+  `<span class="bar__track"><span class="bar__fill w-${Math.round((l.count / langMax) * 100)}"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`;
 const langBars = stats.languages.slice(0, 6).map(langBar).join("\n        ");
 const restLangs = stats.languages.slice(6);
@@ -956,8 +962,8 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
           <div class="prov-seal__card">
             <p class="prov-seal__title">${copy("prov.seal.title")}</p>
             <p class="prov-seal__meta">commit @@COMMIT@@ &middot; @@DATE@@ &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
-            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);">Real <a href="https://in-toto.io" rel="noopener">in-toto</a> <code>Statement/v1</code> + <a href="https://slsa.dev" rel="noopener">SLSA</a> provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via <a href="https://sigstore.dev" rel="noopener">Sigstore</a> — a one-build <a href="https://docs.sigstore.dev/fulcio/overview/" rel="noopener">Fulcio</a> certificate minted from this workflow's GitHub <a href="https://openid.net/connect/" rel="noopener">OIDC</a> identity, logged in the public <a href="https://docs.sigstore.dev/rekor/overview/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry" rel="noopener">GHCR</a> as a pullable, signed <a href="https://opencontainers.org" rel="noopener">OCI</a> artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact.</p>
-            <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);"><strong>Authorized.</strong> Production is not deployed straight from a build: each version is first uploaded as an un-served preview, reviewed, and <strong>promoted to production only on required human approval</strong> (the <code>site-promote</code> environment). The exact reviewed, signed version is what goes live — so the live site is not just intact, its promotion was authorized.</p>
+            <p class="prov-seal__note">Real <a href="https://in-toto.io" rel="noopener">in-toto</a> <code>Statement/v1</code> + <a href="https://slsa.dev" rel="noopener">SLSA</a> provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via <a href="https://sigstore.dev" rel="noopener">Sigstore</a> — a one-build <a href="https://docs.sigstore.dev/fulcio/overview/" rel="noopener">Fulcio</a> certificate minted from this workflow's GitHub <a href="https://openid.net/connect/" rel="noopener">OIDC</a> identity, logged in the public <a href="https://docs.sigstore.dev/rekor/overview/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry" rel="noopener">GHCR</a> as a pullable, signed <a href="https://opencontainers.org" rel="noopener">OCI</a> artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact.</p>
+            <p class="prov-seal__note"><strong>Authorized.</strong> Production is not deployed straight from a build: each version is first uploaded as an un-served preview, reviewed, and <strong>promoted to production only on required human approval</strong> (the <code>site-promote</code> environment). The exact reviewed, signed version is what goes live — so the live site is not just intact, its promotion was authorized.</p>
           </div>
         </li>
       </ol>
@@ -1446,12 +1452,18 @@ const evidenceLabelFor = (href) => {
 // unmet / not-assessed) + big-number stat tiles. Status carries a glyph in the
 // pills (CSS), so the read never depends on color alone.
 const cSum = confReport.summary;
-const cPct = (n) => `${((n / (cSum.total || 1)) * 100).toFixed(2)}%`;
+// Integer percents so each segment can be a class rather than a style attribute (CSP —
+// see widthUtilities). The last segment takes the remainder instead of rounding
+// independently, so the three always sum to exactly 100 and the track never gaps.
+const cWide = (n) => Math.round((n / (cSum.total || 1)) * 100);
+const cMetW = cWide(cSum.met);
+const cUnmetW = cWide(cSum.unmet);
+const cNaW = Math.max(0, 100 - cMetW - cUnmetW);
 const confOverview = `<div class="conf-overview">
       <div class="conf-bar" aria-hidden="true">
-        <span class="conf-bar__seg conf-bar__seg--met" style="width:${cPct(cSum.met)}"></span>
-        <span class="conf-bar__seg conf-bar__seg--unmet" style="width:${cPct(cSum.unmet)}"></span>
-        <span class="conf-bar__seg conf-bar__seg--na" style="width:${cPct(cSum.notAssessed)}"></span>
+        <span class="conf-bar__seg conf-bar__seg--met w-${cMetW}"></span>
+        <span class="conf-bar__seg conf-bar__seg--unmet w-${cUnmetW}"></span>
+        <span class="conf-bar__seg conf-bar__seg--na w-${cNaW}"></span>
       </div>
       <div class="conf-stats">
         <div class="conf-stat conf-stat--met"><span class="conf-stat__n">${cSum.met}</span> <span class="conf-stat__k">${copy("conf.stat.met")}</span></div>
@@ -1693,7 +1705,7 @@ if (interests?.items?.length) {
       : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}" aria-label="${
         esc(`${l.name} — ${l.count} starred ${l.count === 1 ? "repository" : "repositories"}`)
       }">${esc(l.name)}</a>`}` +
-    `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / iMax) * 100)}%"></span></span>` +
+    `<span class="bar__track"><span class="bar__fill w-${Math.round((l.count / iMax) * 100)}"></span></span>` +
     `<span class="bar__n">${l.count}</span></div>`;
   const iBars = interests.languages.slice(0, 6).map(iBar).join("\n        ");
   const iRest = interests.languages.slice(6);

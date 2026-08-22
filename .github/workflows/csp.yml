@@ -1,0 +1,76 @@
+name: csp
+
+# Content-Security-Policy, gated in two places because the two prove different things.
+#
+#   build   — csp-gate.mjs re-derives every inline block's hash from dist/ and checks the
+#             policy in dist/_headers covers it. Catches a stale hash before it ships.
+#   browser — csp-browser-gate.mjs loads every route in Chromium UNDER the policy and fails
+#             on any securitypolicyviolation, plus asserts the email de-obfuscator actually
+#             ran. A hash-based policy that is one byte stale does not warn — it silently
+#             kills the script — so "no violation" has to be observed, not assumed.
+#
+# The `live` job re-runs the browser gate against the SERVED policy after a deploy
+# completes, which is the only place a CDN that drops, rewrites, or doubles the header is
+# visible. It reads the header from the edge rather than from the build.
+#
+# Why not in deploy.yml: this repo's post-deploy verification is the canonical reusable
+# pipeline in bounded-systems/.github (site-deploy.yml), pinned by SHA — adding a step
+# there changes every site that calls it. A workflow_run trigger here is repo-local.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "build.mjs"
+      - "styles.css"
+      - "posts/**"
+      - "data/**"
+      - "scripts/csp-*.mjs"
+      - "scripts/gen-csp.mjs"
+      - ".github/workflows/csp.yml"
+  workflow_run:
+    workflows: [deploy]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  built:
+    if: github.event_name != 'workflow_run'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Install Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+      # `npm run build` already runs gen-csp + csp-gate; re-running the gate here is the
+      # cheap half and keeps the failure legible when the build itself is what broke.
+      - name: Build dist/
+        run: npm run build
+      - name: CSP covers every inline block
+        run: npm run check:csp
+      - name: Every route loads clean under the policy
+        run: npm run check:csp-browser
+
+  live:
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "22"
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+      - name: Install Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+      - name: Served policy holds on the live origin
+        run: node scripts/csp-browser-gate.mjs https://robertdelanghe.dev

@@ -5,7 +5,7 @@
   "description": "robertdelanghe.dev \u2014 software-engineering portfolio, built on @bdelanghe/brand.",
   "type": "module",
   "scripts": {
-    "build": "node build.mjs && SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json node vendor/conformance-kit/gates/seo-gate.mjs dist && node scripts/gen-api.mjs && node scripts/gen-identity.mjs && node scripts/gen-sbom.mjs && node scripts/gen-attestation.mjs && node scripts/check-sbom.mjs && node vendor/conformance-kit/generators/gen-cid.mjs",
+    "build": "node build.mjs && SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json node vendor/conformance-kit/gates/seo-gate.mjs dist && node scripts/gen-api.mjs && node scripts/gen-identity.mjs && node scripts/gen-sbom.mjs && node scripts/gen-attestation.mjs && node scripts/check-sbom.mjs && node vendor/conformance-kit/generators/gen-cid.mjs && node scripts/gen-csp.mjs && node scripts/csp-gate.mjs",
     "check:linkedin": "node linkedin-check.mjs",
     "check:copy": "node copy-review.mjs",
     "check:copy-fixtures": "node copy-review-fixtures.mjs",
@@ -42,7 +42,9 @@
     "check:resume": "node resume-parse.mjs",
     "audit:catalog": "node audit-catalog.mjs",
     "audit": "node scripts/audit.mjs --strict",
-    "audit:vendor": "node scripts/vendor-audit.mjs"
+    "audit:vendor": "node scripts/vendor-audit.mjs",
+    "check:csp": "node scripts/csp-gate.mjs",
+    "check:csp-browser": "node scripts/csp-browser-gate.mjs"
   },
   "dependencies": {
     "@bdelanghe/brand": "github:bdelanghe/brand#main"
