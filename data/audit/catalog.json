@@ -283,6 +283,10 @@
     "type": "body",
     "value": "pinned"
   },
+  "copy.work.tags.more": {
+    "type": "body",
+    "value": "more topics"
+  },
   "copy.interests.eyebrow": {
     "type": "body",
     "value": "Interests"

@@ -28,6 +28,7 @@
   "work.empty": "No selected project carries this topic — it lives across the wider record.",
   "work.empty.browse": "Browse on GitHub",
   "work.pinned": "pinned",
+  "work.tags.more": "more topics",
   "interests.eyebrow": "Interests",
   "interests.title": "What I follow",
   "interests.lede": "Not my authored work — the projects I star. This is the interest graph behind the record: computed from my GitHub stars the same way Selected work is computed from what I ship.",

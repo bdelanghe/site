@@ -680,7 +680,25 @@ const filterFor = (chipTopics, items) => {
   return { anchors, css, chips, emptyTopics: topics.filter((t) => !has(t)) };
 };
 
-const tagLinks = (h) => (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join(" ");
+// A card wears at most TAGS_SHOWN topics at rest; the rest sit behind a native
+// <details>, the same disclosure the language bar already uses for its overflow.
+// /interests had a card carrying twenty topic chips and 173 across the page — past
+// the point where a chip row reads as a set of labels rather than a wall. This is a
+// legibility change, not a gate one: lone's CHOICE_DENSITY counts every interactive
+// descendant whether or not a <details> is closed (countOwnScope), so the warning
+// stands and should — what changes is how much a reader meets at once.
+const TAGS_SHOWN = 6;
+const tagChip = (t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`;
+const tagLinks = (h) => {
+  const topics = h.topics || [];
+  if (!topics.length) return "";
+  const shown = topics.slice(0, TAGS_SHOWN).map(tagChip).join(" ");
+  const rest = topics.slice(TAGS_SHOWN);
+  return rest.length
+    ? `${shown} <details class="tagmore"><summary class="tagmore__sum no-link-icon">${
+      rest.length} ${copy("work.tags.more")}</summary>${rest.map(tagChip).join(" ")}</details>`
+    : shown;
+};
 const dataTags = (h) => (h.topics || []).map(slug).join(" ");
 
 const chipTopics = stats.topics.slice(0, 16);

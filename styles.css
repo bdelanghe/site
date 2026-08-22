@@ -352,6 +352,14 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 .proj__meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 /* Tag pills double as filter controls — same look as a corpus chip, accent when
    their topic is the active :target (rule generated per-topic in build.mjs). */
+/* Overflow topics on a project card — the same native disclosure .langmore uses for
+   the language spread. `display: contents` so the revealed chips join the parent's
+   flex row rather than forming a block of their own, which keeps an opened card
+   looking exactly like an uncapped one. */
+.tagmore { display: contents; }
+.tagmore__sum { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-ink-mono); cursor: pointer; list-style: none; display: inline-flex; align-items: center; padding: 2px 7px; min-height: 24px; border: 1px dashed var(--bs-color-line); }
+.tagmore__sum::-webkit-details-marker { display: none; }
+.tagmore__sum:hover { color: var(--bs-color-accent); border-color: var(--bs-color-accent); }
 .tag { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-accent); background: var(--bs-color-card); border: 1px solid var(--bs-color-line); padding: 2px 7px; text-decoration: none; display: inline-flex; align-items: center; min-height: 24px; }
 a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 /* Shown only when a corpus-only topic is the active filter (per-topic rule). */
