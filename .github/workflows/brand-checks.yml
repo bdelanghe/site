@@ -58,6 +58,14 @@ jobs:
         # page, plus whether the browser will offer the Reader control at all. The
         # /provenance regression scored 0.14; the floor is 0.55.
         run: node scripts/reader-view-gate.mjs dist --strict
+      - name: Reachability gate (every page has a path to it from /)
+        # The complement of structure-audit's link checker below, which finds links
+        # pointing at nothing. This finds the opposite — a page nothing points at.
+        # /blog and both posts shipped that way after the redesign replaced the
+        # homepage link list: still built, still in the sitemap, still in llms.txt,
+        # and reachable only by typing the URL. Every gate was green, because a
+        # sitemap entry is not a link and llms.txt is not navigation.
+        run: node scripts/reachability-gate.mjs dist
       - name: Install structure-audit deps (vendored conformance-kit tenant)
         run: npm ci --prefix vendor/conformance-kit/integrity/structure-audit
       - name: Whole-page structure gate (reader survivability + outline + links)

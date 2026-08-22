@@ -64,6 +64,10 @@
       "href": "/resume"
     },
     {
+      "label": "Writing",
+      "href": "/blog"
+    },
+    {
       "label": "Public record",
       "href": "/archive"
     }
