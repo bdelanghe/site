@@ -81,7 +81,7 @@ if (!live) {
 console.log(`csp-browser-gate: ${live ? "SERVED policy" : "built policy over dist/"} · ${base} · ${ROUTES.length + 1} route(s)`);
 
 const browser = await chromium.launch({ args: ["--no-sandbox"] });
-let problems = 0;
+let problems = 0, unreachable = 0;
 for (const route of [...ROUTES, "/this-path-should-never-exist-12345"]) {
   const page = await browser.newPage();
   const errs = [];
@@ -93,29 +93,62 @@ for (const route of [...ROUTES, "/this-path-should-never-exist-12345"]) {
   page.on("console", (m) => { if (m.type() === "error") errs.push(`console: ${m.text().slice(0, 200)}`); });
   await page.goto(base + route, { waitUntil: "networkidle" }).catch((e) => errs.push(`navigation: ${e.message.split("\n")[0]}`));
 
-  const cspv = await page.evaluate(() => window.__cspv || []);
-  const state = await page.evaluate(() => ({
+  // A live origin can still be settling when networkidle resolves — an edge redirect or a
+  // late client navigation tears down the execution context and page.evaluate throws
+  // "Execution context was destroyed". That is a race in the harness, not a finding, so
+  // retry once against a settled page and only report if it still cannot be read. Never
+  // let it escape as an uncaught throw: this gate runs post-deploy, and a crash there is
+  // indistinguishable from a real policy failure at a glance.
+  const read = async (fn, label) => {
+    for (const attempt of [0, 1]) {
+      try { return await page.evaluate(fn); }
+      catch (e) {
+        if (attempt === 0 && /Execution context was destroyed|Target closed|navigating/i.test(e.message)) {
+          await page.waitForLoadState("load").catch(() => {});
+          continue;
+        }
+        errs.push(`could not read ${label}: ${e.message.split("\n")[0]}`);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const cspv = (await read(() => window.__cspv || [], "violations")) ?? [];
+  const state = (await read(() => ({
     header: !!document.querySelector("h1, .intro"),
     pending: document.querySelectorAll("[data-mail]").length,
     mailto: document.querySelectorAll('a[href^="mailto:"]').length,
-  }));
+  }), "page state")) ?? { header: true, pending: 0, mailto: 0 };
   // An inline script the policy blocks leaves the obfuscated span in place, so this is the
   // functional counterpart to "no violation was reported".
   if (state.pending) cspv.push(`${state.pending} unresolved [data-mail] — the de-obfuscator did not run`);
   if (!state.header && !route.includes("should-never-exist")) cspv.push("page rendered no heading — it may not have loaded");
 
-  // Two exclusions, both narrow: a cert failure is the sandbox's TLS proxy rather than the
+  // Two exclusions, both narrow: a cert failure is a TLS-intercepting proxy rather than the
   // site, and the deliberate-404 route logs its OWN 404 status (a 404 on any other route,
   // or on a subresource, still counts).
   const ignorable = (e) => e.includes("ERR_CERT_AUTHORITY_INVALID")
     || (route.includes("should-never-exist") && /status of 404/.test(e));
-  const real = [...cspv, ...errs.filter((e) => !ignorable(e))];
-  if (real.length) { problems += real.length; console.log(`  ✗ ${route}`); real.forEach((v) => console.log(`      ${v}`)); }
+  // A page that never loaded is UNREACHABLE, not a policy failure. Both are red — this
+  // gate fails closed either way — but they need different words, because the fix is in a
+  // different place and a run that says "the policy breaks the page" when the real cause
+  // was a connection reset sends the reader hunting in the wrong file.
+  const transport = errs.filter((e) => e.startsWith("navigation:") && !ignorable(e));
+  const real = [...cspv, ...errs.filter((e) => !ignorable(e) && !e.startsWith("navigation:"))];
+  if (transport.length) { unreachable++; console.log(`  ? ${route}`); transport.forEach((v) => console.log(`      ${v}`)); }
+  else if (real.length) { problems += real.length; console.log(`  ✗ ${route}`); real.forEach((v) => console.log(`      ${v}`)); }
   else console.log(`  ✓ ${route}${state.mailto ? `  (mailto resolved)` : ""}`);
   await page.close();
 }
 await browser.close();
 server?.close();
 
-if (problems) { console.error(`\n✗ csp-browser-gate: ${problems} problem(s) — the policy breaks the page`); process.exit(1); }
+if (unreachable) {
+  console.error(`\n✗ csp-browser-gate: ${unreachable} route(s) could not be loaded at all — the policy was NOT exercised.`);
+  console.error("  This is a reachability failure, not a policy failure: the origin, the network, or a");
+  console.error("  TLS-intercepting proxy between them. Nothing here says anything about the CSP.");
+  process.exit(1);
+}
+if (problems) { console.error(`\n✗ csp-browser-gate: ${problems} policy violation(s) — the served policy blocks something the page loads`); process.exit(1); }
 console.log(`\n✓ csp-browser-gate: every route loads clean under the policy, no violations.`);
