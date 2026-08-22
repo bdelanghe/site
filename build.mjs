@@ -1311,8 +1311,25 @@ const CONF_EVIDENCE_LINKS = {
   "security.no-critical-vulns": `${REPO}/actions/workflows/brand-checks.yml`,
   "semantic.jsonld-shacl": `${REPO}/actions/workflows/shacl.yml`,
   "semantic.commonmark": `${REPO}/actions/workflows/seo.yml`,
+
+  // RFC 9530 Repr-Digest per canonical doc. There is no URL that shows these: they
+  // are response headers, computed here and written to dist/_headers, which Cloudflare
+  // consumes as configuration rather than serving. So the evidence is the code that
+  // computes them over the exact bytes it just wrote.
+  "integrity.content-digests": `${REPO}/blob/main/build.mjs`,
 };
-const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id] ?? "/provenance";
+// NO DEFAULT. Every criterion not named above gets NO evidence link, and the kit's
+// renderer already omits one when this returns undefined — the `?? "/provenance"` that
+// used to be here was overriding that on purpose it could not justify.
+//
+// It sent 12 criteria to the signed-chain page, and ELEVEN OF THEM ARE NOT-ASSESSED:
+// wcag22-aa-manual, asvs, core-web-vitals, runtime reliability, coga-usability-testing
+// and the rest. Offering "evidence" for a criterion the same row just reported as not
+// assessed is a category error — there is nothing to show, which is the honest and
+// whole point of reporting it that way. A link there implies proof exists and invites
+// the reader to go look for it, which is precisely the overclaim this page is built to
+// refuse. The twelfth was `met` and simply lacked a mapping; it has one now.
+const confEvidenceHref = (c) => CONF_EVIDENCE_LINKS[c.id];
 // Derives the evidence link's visible text FROM the href itself (not a hand-maintained
 // parallel map that could drift out of sync with CONF_EVIDENCE_LINKS above) — a GitHub
 // Actions workflow link reads as the workflow file, a source-file link as
