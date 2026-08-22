@@ -99,6 +99,29 @@ It is not in `deploy.yml` because this repo's post-deploy verification is the ca
 reusable pipeline in `bounded-systems/.github` (`site-deploy.yml`), pinned by SHA; a step
 added there would change every site that calls it.
 
+## What the policy found on day one
+
+Cloudflare **Web Analytics** was injecting a beacon into every HTML response at the edge:
+
+```html
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v451…"
+  integrity="sha512-…" data-cf-beacon='{"version":"2024.11.0",…}' crossorigin="anonymous">
+```
+
+It is injected only for real browsers — a plain `curl` does not receive it, and neither does
+`verify-site.mjs`, which is why the byte-exact check kept passing. So the site was serving
+**visitors** a script that is not in the signed build, while its provenance page said what is
+served is what was signed. That was true for every fetch except the ones humans make.
+
+The CSP is what surfaced it: `script-src` carries hashes and no host, so the beacon was
+blocked and `csp-browser-gate` went red naming the URL. **Web Analytics is being turned off**
+rather than allowlisted — the same call as Managed robots.txt, and for the same reason: the
+edge should not add to what the build signed. Allowlisting the host was the alternative, and
+would have meant the policy blessing a script no reader of the repo could account for.
+
+An injected script that the policy blocks is a **policy violation** in this gate, not a
+reachability failure — the two are reported separately and mean different things.
+
 ## Deliberately not set
 
 - **`'unsafe-hashes'`** — see above. The attributes were removed instead.
