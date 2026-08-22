@@ -17,14 +17,24 @@
    before it, this pinning and bounded-systems/brand pinned the same two families.
 
    Palette note: this page paints on --bs-color-card (white), not --bs-color-paper (the
-   cream base.css sets). The secondary hairline is --bs-color-card-alt — a SURFACE token
-   doing a border's job, which is a known policy problem, not a preference: the brand's
-   palette contract says hairlines must clear 3:1, and --bs-color-line is already only
-   3.79:1 on white, so no lighter compliant hairline exists to reach for. (Naming the
-   token, not its hex: the design-system coverage gate scans comment text too, and a
-   literal hex here is a raw colour in a file whose whole rule is that it has none.)
-   Measured and filed as bdelanghe/brand#6; it awaits an owner decision, and this comment
-   is here so the workaround is not silently inherited. */
+   cream base.css sets). There is ONE hairline, --bs-color-line, and every rule that
+   separates one record from the next uses it.
+
+   This page briefly had two, the quieter one being --bs-color-card-alt — a SURFACE token
+   doing a border's job, below the 3:1 the palette contract requires of a hairline. It was
+   filed as bdelanghe/brand#6 asking for an attested decorative tier, and the answer was
+   that no such tier exists: a rule that marks where one record ends is a schematic
+   marker, and a marker that not everyone can see is not doing the marking. Calling it
+   decorative would have been the lie — a line placed deliberately, to be read, is by
+   definition not decoration.
+
+   So the two-level hierarchy is carried by the axes that are not contrast-regulated and
+   are perceivable to everyone: SPACING (11px between contact rows, 14px between record
+   entries, 30px between cases, --sec between sections) and the section eyebrow. The rules
+   themselves are one weight, which is also what /blog, /provenance and /conformance were
+   already doing. (Naming the token, not its hex: the design-system coverage gate scans
+   comment text too, and a literal hex here is a raw colour in a file whose whole rule is
+   that it has none.) */
 :root {
   --maxw: 880px;
   --col: 116px;   /* the margin column — labels, project numbers, dates */
@@ -165,7 +175,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
   grid-template-columns: var(--col) minmax(0, 1fr);
   column-gap: var(--gut);
   padding: 11px 0;
-  border-top: 1px solid var(--bs-color-card-alt);
+  border-top: 1px solid var(--bs-color-line);
   align-items: baseline;
 }
 .rows__row:first-child { border-top: 0; padding-top: 0; }
@@ -193,7 +203,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
   grid-template-columns: var(--col) minmax(0, 1fr);
   column-gap: var(--gut);
   padding: 30px 0;
-  border-top: 1px solid var(--bs-color-card-alt);
+  border-top: 1px solid var(--bs-color-line);
 }
 .case:first-child { border-top: 0; padding-top: 0; }
 /* The number is decorative and was already aria-hidden, so CSS owns it rather than the
@@ -217,7 +227,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
   grid-template-columns: 104px minmax(0, 1fr);
   column-gap: 20px;
   padding: 10px 0;
-  border-top: 1px solid var(--bs-color-card-alt);
+  border-top: 1px solid var(--bs-color-line);
 }
 .case__row:first-child { border-top: 0; padding-top: 0; }
 .case__k { margin: 0; padding-top: 4px; color: var(--bs-color-ink-mono); }
@@ -234,7 +244,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
   grid-template-columns: var(--col) minmax(0, 1fr);
   column-gap: var(--gut);
   padding: 14px 0;
-  border-top: 1px solid var(--bs-color-card-alt);
+  border-top: 1px solid var(--bs-color-line);
 }
 .entry:first-child { border-top: 0; padding-top: 0; }
 .entry__when { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); padding-top: 4px; }
@@ -243,7 +253,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .entry__what { display: block; font-family: var(--bs-font-text); font-size: 15px; line-height: 1.6; color: var(--bs-color-ink-soft); margin-top: 4px; max-width: 58ch; }
 
 /* colophon: built-with */
-.colophon__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-card-alt); border-top: 1px solid var(--bs-color-card-alt); border-bottom: 1px solid var(--bs-color-card-alt); }
+.colophon__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border-top: 1px solid var(--bs-color-line); border-bottom: 1px solid var(--bs-color-line); }
 .colophon__list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 12px 2px; text-decoration: none; color: inherit; background: var(--bs-color-card); }
 .colophon__list a:hover { background: var(--bs-color-card-alt); }
 .colophon__name { font-family: var(--bs-font-mono); font-weight: 600; font-size: 13px; color: var(--bs-color-accent); }
@@ -253,9 +263,9 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .colophon__more a:hover { border-color: var(--bs-color-accent); }
 
 /* corpus: meta-analysis */
-.figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0 0 28px; border-top: 1px solid var(--bs-color-card-alt); }
+.figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0 0 28px; border-top: 1px solid var(--bs-color-line); }
 .fig {
-  background: var(--bs-color-card); border-bottom: 1px solid var(--bs-color-card-alt);
+  background: var(--bs-color-card); border-bottom: 1px solid var(--bs-color-line);
   padding: 14px 16px 14px 0;
 }
 .fig__n { display: block; font-family: var(--bs-font-display); font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--bs-color-ink); }
@@ -281,7 +291,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
   font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent);
-  background: var(--bs-color-card); border: 1px solid var(--bs-color-card-alt);
+  background: var(--bs-color-card); border: 1px solid var(--bs-color-line);
   padding: 4px 8px;
   display: inline-flex; align-items: center; gap: 6px; min-height: 24px;
 }
@@ -313,7 +323,7 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 
 /* selected work — a flat list the Public-record topics filter in place */
 .proj__full { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
-.projects { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-card-alt); border-top: 1px solid var(--bs-color-card-alt); border-bottom: 1px solid var(--bs-color-card-alt); }
+.projects { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border-top: 1px solid var(--bs-color-line); border-bottom: 1px solid var(--bs-color-line); }
 .proj { background: var(--bs-color-card); padding: 16px 2px; }
 .proj__top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
 .proj__name { margin: 0; font-family: var(--bs-font-mono); font-weight: 600; font-size: 15px; }
@@ -329,7 +339,7 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 .proj__meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 /* Tag pills double as filter controls — same look as a corpus chip, accent when
    their topic is the active :target (rule generated per-topic in build.mjs). */
-.tag { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-accent); background: var(--bs-color-card); border: 1px solid var(--bs-color-card-alt); padding: 2px 7px; text-decoration: none; display: inline-flex; align-items: center; min-height: 24px; }
+.tag { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-accent); background: var(--bs-color-card); border: 1px solid var(--bs-color-line); padding: 2px 7px; text-decoration: none; display: inline-flex; align-items: center; min-height: 24px; }
 a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 /* Shown only when a corpus-only topic is the active filter (per-topic rule). */
 .proj-empty { display: none; background: var(--bs-color-card); padding: 16px 2px; font-family: var(--bs-font-mono); font-size: 12px; line-height: 1.6; color: var(--bs-color-ink-soft); }
