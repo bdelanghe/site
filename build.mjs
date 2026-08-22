@@ -423,11 +423,23 @@ const nowHtml = s
 // questions, so the set reads as one instrument rather than three write-ups. The
 // number is decorative (aria-hidden) — the ordered list already carries the sequence
 // to assistive technology, and reading "zero one" before every heading is noise.
+// The links belong to EVIDENCE, and now say so structurally. They used to hang off the
+// end of the case as a bare <p> of anchors joined by a space — outside the <dl>, so the
+// one part of a case study with no stated relationship to it, and read aloud as a single
+// run-on phrase ("prx ocap-provenance") rather than two things. They are the citation
+// for the evidence claim: the prose names prx and ocap-provenance and says both are
+// public, so the reference belongs against the sentence it supports. Nesting them there
+// also keeps the four questions four — the symmetry that makes the set read as one
+// instrument — instead of adding a fifth row to the one case that happens to have links.
+// A <ul>, because two links are a list of two things; role="list" because Safari drops
+// list semantics from a list-style:none <ul>.
 const caseLinks = (c) => (c.links || []).length
-  ? `<p class="case__links">${c.links.map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(" ")}</p>`
+  ? `<ul role="list" class="case__links">${
+    c.links.map((l) => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`).join("")
+  }</ul>`
   : "";
-const caseRow = (label, value) =>
-  `<div class="case__row"><dt class="bs-text-label case__k">${label}</dt><dd class="case__v">${esc(value)}</dd></div>`;
+const caseRow = (label, value, extra = "") =>
+  `<div class="case__row"><dt class="bs-text-label case__k">${label}</dt><dd class="case__v">${esc(value)}${extra}</dd></div>`;
 const caseEntry = (c) => `<li class="case">
           <div class="case__body">
             <h3 class="case__name">${esc(c.name)}</h3>
@@ -435,10 +447,9 @@ const caseEntry = (c) => `<li class="case">
             <dl class="case__rows">
               ${caseRow(copy("case.problem"), c.problem)}
               ${caseRow(copy("case.intervention"), c.intervention)}
-              ${caseRow(copy("case.evidence"), c.evidence)}
+              ${caseRow(copy("case.evidence"), c.evidence, caseLinks(c))}
               ${caseRow(copy("case.role"), c.role)}
             </dl>
-            ${caseLinks(c)}
           </div>
         </li>`;
 const casesHtml = caseStudies.length
@@ -1092,8 +1103,8 @@ ${c.kicker}
 
 - **${copy("case.problem")}** — ${c.problem}
 - **${copy("case.intervention")}** — ${c.intervention}
-- **${copy("case.evidence")}** — ${c.evidence}
-- **${copy("case.role")}** — ${c.role}${(c.links || []).length ? `\n- ${c.links.map((l) => mdLink(l.label, l.href)).join(" · ")}` : ""}`).join("\n\n")}
+- **${copy("case.evidence")}** — ${c.evidence}${(c.links || []).length ? ` (${c.links.map((l) => mdLink(l.label, l.href)).join(", ")})` : ""}
+- **${copy("case.role")}** — ${c.role}`).join("\n\n")}
 
 ## ${copy("background.eyebrow")}
 ${work.map((w) => `- **${w.name}**${w.position ? ` · ${w.position}` : ""} (${fmtRange(w.startDate, w.endDate)})${w.summary ? ` — ${w.summary}` : ""}`).join("\n")}

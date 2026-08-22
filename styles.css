@@ -232,7 +232,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .case__row:first-child { border-top: 0; padding-top: 0; }
 .case__k { margin: 0; padding-top: 4px; color: var(--bs-color-ink-mono); }
 .case__v { margin: 0; font-family: var(--bs-font-text); font-size: 15px; line-height: 1.6; color: var(--bs-color-ink); max-width: 58ch; }
-.case__links { margin: 16px 0 0; display: flex; flex-wrap: wrap; gap: 18px; font-family: var(--bs-font-mono); font-size: 12px; }
+.case__links { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 18px; font-family: var(--bs-font-mono); font-size: 12px; }
 .case__links a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); padding-bottom: 2px; }
 .case__links a:hover { border-color: var(--bs-color-accent); }
 
