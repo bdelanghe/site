@@ -612,6 +612,15 @@ const ghOwner = (owner, extra) => `https://github.com/search?q=${encodeURICompon
 const orgCount = (stats.byOwner || []).find((o) => o.name === "bounded-systems")?.count;
 
 // Bars scale to the leading language (langMax), so the top bar fills the track
+// Each row's link carries an aria-label naming the language AND its count. The row
+// shows both — name, bar, number — but only the name is in the link, so the
+// announcement was "Go, link" with the figure it refers to sitting outside it. lone
+// 0.8 flags exactly one of these (LONE_COGA_UNCLEAR_LINK_PURPOSE on "Go", whose
+// phrase list contains "go"), and that particular finding is a FALSE POSITIVE — it is
+// the language, beside Rust and Python, not the imperative. The underlying point is
+// real for every row though, so every row gets the label rather than Go getting a
+// special case to quiet one warning.
+//
 // and the rest read as rank. The top 6 show at rest; the remaining languages sit
 // behind a native <details> so the full spread is one click away — zero JS, no
 // :target (which the topic filter owns), and it prints expanded.
@@ -619,7 +628,9 @@ const langMax = Math.max(...stats.languages.map((l) => l.count), 1);
 const langBar = (l) =>
   `<div class="bar">${l.name === "other"
     ? `<span class="bar__k">${esc(l.name)}</span>`
-    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
+    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}" aria-label="${
+      esc(`${l.name} — ${l.count} ${l.count === 1 ? "repository" : "repositories"} on GitHub`)
+    }">${esc(l.name)}</a>`}` +
   `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`;
 const langBars = stats.languages.slice(0, 6).map(langBar).join("\n        ");
@@ -1661,7 +1672,9 @@ if (interests?.items?.length) {
   const iMax = Math.max(...interests.languages.map((l) => l.count), 1);
   const iBar = (l) => `<div class="bar">${l.name === "other"
       ? `<span class="bar__k">${esc(l.name)}</span>`
-      : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
+      : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}" aria-label="${
+        esc(`${l.name} — ${l.count} starred ${l.count === 1 ? "repository" : "repositories"}`)
+      }">${esc(l.name)}</a>`}` +
     `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / iMax) * 100)}%"></span></span>` +
     `<span class="bar__n">${l.count}</span></div>`;
   const iBars = interests.languages.slice(0, 6).map(iBar).join("\n        ");
