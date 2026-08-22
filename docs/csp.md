@@ -75,10 +75,23 @@ does not warn — it silently kills the script, and the page looks fine until so
 the email link never resolved. So "no violation" is **observed**, and the gate additionally
 asserts the de-obfuscator replaced its `[data-mail]` span with a real `mailto:` link.
 
+### The deploy path lists its generators explicitly
+
+`gen-csp.mjs` is named in **`deploy.yml`**, not only in `npm run build`. The pipeline does
+not use the npm script: `nix build .#site`'s `buildPhase` runs `node build.mjs` alone, and
+`deploy.yml` then runs each generator by name. A generator wired only into `package.json`
+never runs on the deploy path — which is how this policy first shipped as a **no-op in
+production**, passing every local gate while the served site had no CSP at all. `deploy.yml`
+runs `csp-gate.mjs` straight after, so a missing or stale policy fails the deploy.
+
 ### Against served pages, not just built ones
 
 `node scripts/csp-browser-gate.mjs https://robertdelanghe.dev` runs the same checks against
-the **live** origin, reading the policy from the edge. That is the only place a CDN which
+the **live** origin, and **first asserts the policy is actually there** — present, single,
+hash-carrying, `default-src 'none'`, no `unsafe-*`. That check exists because its absence
+was a real failure: an earlier version only watched for `securitypolicyviolation`, and
+against an origin serving no policy there are none, so the job reported success on a site
+with no CSP. Absence of a violation is not presence of a policy. That is the only place a CDN which
 drops, rewrites, or doubles the header is visible — the build cannot see it. `csp.yml`'s
 `live` job runs it on a `workflow_run` trigger after `deploy` completes.
 
