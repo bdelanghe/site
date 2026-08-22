@@ -27,6 +27,38 @@ const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascrip
   ".md": "text/markdown", ".pdf": "application/pdf" };
 
 let base = target, server;
+// LIVE MODE MUST PROVE THE POLICY IS THERE.
+//
+// An earlier version of this gate only watched for securitypolicyviolation. Against an
+// origin serving NO policy there are no violations, so it reported green on a site with no
+// CSP at all — which is precisely what happened: the generator was wired into `npm run
+// build` while the deploy pipeline runs its generators explicitly, the policy never
+// shipped, and this job called it a success. Absence of a violation is not presence of a
+// policy. So live mode fetches the header first and fails closed if it is missing, weak,
+// or doubled.
+if (live) {
+  const res = await fetch(base + "/", { headers: { "cache-control": "no-cache" } });
+  const served = res.headers.get("content-security-policy");
+  // getAll() is not in undici's Headers; a repeated header arrives comma-joined, and a
+  // policy legitimately contains no commas — so a comma here means the edge sent two.
+  const all = served ? served.split(",").filter((p) => /(?:^|\s)(?:default|script|style)-src\s/.test(p)) : [];
+  if (!served) {
+    console.error(`✗ csp-browser-gate: ${base} serves NO Content-Security-Policy header.`);
+    console.error("  The build may not have run scripts/gen-csp.mjs (the deploy pipeline lists its");
+    console.error("  generators explicitly and does not use `npm run build`), or the edge dropped it.");
+    process.exit(1);
+  }
+  if (all.length > 1) {
+    console.error(`✗ csp-browser-gate: ${all.length} Content-Security-Policy policies in the response — browsers enforce the INTERSECTION.`);
+    process.exit(1);
+  }
+  const { UNSAFE } = await import("./csp-lib.mjs");
+  for (const u of UNSAFE) if (served.includes(u)) { console.error(`✗ csp-browser-gate: served policy contains ${u}`); process.exit(1); }
+  if (!/(?:^|;)\s*default-src\s+'none'/.test(served)) { console.error("✗ csp-browser-gate: served policy has no default-src 'none'"); process.exit(1); }
+  const hashes = (served.match(/'sha256-[A-Za-z0-9+/=]+'/g) || []).length;
+  if (!hashes) { console.error("✗ csp-browser-gate: served policy carries no hashes — it cannot be covering the inline blocks"); process.exit(1); }
+  console.log(`· served policy: ${hashes} hash(es), no unsafe-*, default-src 'none' — ${served.length} bytes`);
+}
 if (!live) {
   const csp = (await readFile(join(dist, "_headers"), "utf8")).match(/Content-Security-Policy: (.+)/)?.[1]?.trim();
   if (!csp) { console.error("✗ csp-browser-gate: no policy in dist/_headers — run scripts/gen-csp.mjs"); process.exit(1); }
