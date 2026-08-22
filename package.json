@@ -5,7 +5,7 @@
   "description": "robertdelanghe.dev \u2014 software-engineering portfolio, built on @bdelanghe/brand.",
   "type": "module",
   "scripts": {
-    "build": "node build.mjs && SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json node vendor/conformance-kit/gates/seo-gate.mjs dist && node scripts/gen-api.mjs && node scripts/gen-identity.mjs && node scripts/gen-sbom.mjs && node scripts/gen-attestation.mjs && node scripts/check-sbom.mjs && node vendor/conformance-kit/generators/gen-cid.mjs && node scripts/gen-csp.mjs && node scripts/csp-gate.mjs",
+    "build": "node build.mjs && node scripts/gen-api.mjs && SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json,/mcp node vendor/conformance-kit/gates/seo-gate.mjs dist && node scripts/gen-identity.mjs && node scripts/gen-sbom.mjs && node scripts/gen-attestation.mjs && node scripts/check-sbom.mjs && node vendor/conformance-kit/generators/gen-cid.mjs && node scripts/gen-csp.mjs && node scripts/csp-gate.mjs",
     "check:linkedin": "node linkedin-check.mjs",
     "check:copy": "node copy-review.mjs",
     "check:copy-fixtures": "node copy-review-fixtures.mjs",
@@ -24,7 +24,7 @@
     "gate:copy": "node scripts/copy-gate.mjs --strict",
     "check:integrity": "node scripts/vendor-integrity.mjs --check",
     "check:shacl": "node vendor/conformance-kit/gates/shacl-runner.mjs contract/jsonld.shapes.ttl dist",
-    "check:seo": "SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json node vendor/conformance-kit/gates/seo-gate.mjs dist",
+    "check:seo": "SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json,/mcp node vendor/conformance-kit/gates/seo-gate.mjs dist",
     "check:commonmark": "node vendor/conformance-kit/gates/commonmark-runner.mjs posts.mjs contract/commonmark-fixtures.json",
     "check:readability": "node scripts/readability-gate.mjs",
     "check:reader-view": "node scripts/reader-view-gate.mjs dist --strict",

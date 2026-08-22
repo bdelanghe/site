@@ -559,6 +559,18 @@
     "type": "body",
     "value": "Machine surfaces"
   },
+  "copy.llms.machine.api.label": {
+    "type": "body",
+    "value": "OpenAPI"
+  },
+  "copy.llms.machine.mcp.label": {
+    "type": "body",
+    "value": "MCP"
+  },
+  "copy.llms.machine.verified.label": {
+    "type": "body",
+    "value": "site-mcp"
+  },
   "copy.llms.machine.api": {
     "type": "claim",
     "value": "typed JSON under /api/v1, described by this OpenAPI document"
