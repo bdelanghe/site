@@ -29,16 +29,21 @@ jobs:
       # lone comes from JSR (jsr:@bounded-systems/lone), pinned by semantic/deno.lock
       # (the consumer's lock) — no clone, no hand-managed sha. --frozen fails if the
       # lock is stale, so the gate engine is reproducible at the version the committed
-      # lock records. The runner itself is the vendored, hash-pinned conformance-kit
-      # gate; its import map (deno.json) ships with it. --allow-env: the kit gate reads
-      # $SEMANTIC_DIR / $SEMANTIC_SELECTOR (defaults match this site: dist/blog · article).
+      # lock records. The runner is still the vendored, hash-pinned conformance-kit
+      # gate, but the IMPORT MAP is now semantic/deno.json, this repo's own: WHICH lone
+      # to run is a consumer decision, and the lock that pins it already lived here.
+      # It used to be the kit's copy, inside its integrity manifest, so changing the
+      # version meant editing a vendored file — the exact drift the hash pin exists to
+      # detect — or re-vendoring the kit to change one string.
+      # --allow-env: the kit gate reads $SEMANTIC_DIR / $SEMANTIC_SELECTOR (defaults
+      # match this site: dist/blog · article).
       # TWO invocations, not one widened $SEMANTIC_DIR. The kit's gate.ts uses
       # Deno.readDir, which does NOT recurse — so pointing it at `dist` would SWAP
       # coverage rather than widen it: it would pick up the nine top-level pages and
       # silently stop blessing the two posts under dist/blog. Same shape as the bug this
       # change exists to fix, so it is worth not repeating.
       - name: lone — bless rendered posts (dist/blog)
-        run: deno run --frozen --lock=semantic/deno.lock --allow-read --allow-net --allow-env --config vendor/conformance-kit/gates/semantic/deno.json vendor/conformance-kit/gates/semantic/gate.ts
+        run: deno run --frozen --lock=semantic/deno.lock --allow-read --allow-net --allow-env --config semantic/deno.json vendor/conformance-kit/gates/semantic/gate.ts
       # The nine top-level pages, which have never been blessed. $SEMANTIC_DIR defaults
       # to "dist/blog" and was never set here, so lone's nine validators — including its
       # own reader-view one — only ever ran against the two pages that were never broken.
@@ -49,4 +54,4 @@ jobs:
       - name: lone — bless the top-level pages (dist)
         env:
           SEMANTIC_DIR: dist
-        run: deno run --frozen --lock=semantic/deno.lock --allow-read --allow-net --allow-env --config vendor/conformance-kit/gates/semantic/deno.json vendor/conformance-kit/gates/semantic/gate.ts
+        run: deno run --frozen --lock=semantic/deno.lock --allow-read --allow-net --allow-env --config semantic/deno.json vendor/conformance-kit/gates/semantic/gate.ts
