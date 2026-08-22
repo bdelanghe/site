@@ -612,6 +612,15 @@ const ghOwner = (owner, extra) => `https://github.com/search?q=${encodeURICompon
 const orgCount = (stats.byOwner || []).find((o) => o.name === "bounded-systems")?.count;
 
 // Bars scale to the leading language (langMax), so the top bar fills the track
+// Each row's link carries an aria-label naming the language AND its count. The row
+// shows both — name, bar, number — but only the name is in the link, so the
+// announcement was "Go, link" with the figure it refers to sitting outside it. lone
+// 0.8 flags exactly one of these (LONE_COGA_UNCLEAR_LINK_PURPOSE on "Go", whose
+// phrase list contains "go"), and that particular finding is a FALSE POSITIVE — it is
+// the language, beside Rust and Python, not the imperative. The underlying point is
+// real for every row though, so every row gets the label rather than Go getting a
+// special case to quiet one warning.
+//
 // and the rest read as rank. The top 6 show at rest; the remaining languages sit
 // behind a native <details> so the full spread is one click away — zero JS, no
 // :target (which the topic filter owns), and it prints expanded.
@@ -619,7 +628,9 @@ const langMax = Math.max(...stats.languages.map((l) => l.count), 1);
 const langBar = (l) =>
   `<div class="bar">${l.name === "other"
     ? `<span class="bar__k">${esc(l.name)}</span>`
-    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
+    : `<a class="bar__k" href="${ghQuery(`language:"${l.name}"`)}" aria-label="${
+      esc(`${l.name} — ${l.count} ${l.count === 1 ? "repository" : "repositories"} on GitHub`)
+    }">${esc(l.name)}</a>`}` +
   `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / langMax) * 100)}%"></span></span>` +
   `<span class="bar__n">${l.count}</span></div>`;
 const langBars = stats.languages.slice(0, 6).map(langBar).join("\n        ");
@@ -669,7 +680,25 @@ const filterFor = (chipTopics, items) => {
   return { anchors, css, chips, emptyTopics: topics.filter((t) => !has(t)) };
 };
 
-const tagLinks = (h) => (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join(" ");
+// A card wears at most TAGS_SHOWN topics at rest; the rest sit behind a native
+// <details>, the same disclosure the language bar already uses for its overflow.
+// /interests had a card carrying twenty topic chips and 173 across the page — past
+// the point where a chip row reads as a set of labels rather than a wall. This is a
+// legibility change, not a gate one: lone's CHOICE_DENSITY counts every interactive
+// descendant whether or not a <details> is closed (countOwnScope), so the warning
+// stands and should — what changes is how much a reader meets at once.
+const TAGS_SHOWN = 6;
+const tagChip = (t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`;
+const tagLinks = (h) => {
+  const topics = h.topics || [];
+  if (!topics.length) return "";
+  const shown = topics.slice(0, TAGS_SHOWN).map(tagChip).join(" ");
+  const rest = topics.slice(TAGS_SHOWN);
+  return rest.length
+    ? `${shown} <details class="tagmore"><summary class="tagmore__sum no-link-icon">${
+      rest.length} ${copy("work.tags.more")}</summary>${rest.map(tagChip).join(" ")}</details>`
+    : shown;
+};
 const dataTags = (h) => (h.topics || []).map(slug).join(" ");
 
 const chipTopics = stats.topics.slice(0, 16);
@@ -1661,7 +1690,9 @@ if (interests?.items?.length) {
   const iMax = Math.max(...interests.languages.map((l) => l.count), 1);
   const iBar = (l) => `<div class="bar">${l.name === "other"
       ? `<span class="bar__k">${esc(l.name)}</span>`
-      : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}">${esc(l.name)}</a>`}` +
+      : `<a class="bar__k" href="${ghStars(`language:"${l.name}"`)}" aria-label="${
+        esc(`${l.name} — ${l.count} starred ${l.count === 1 ? "repository" : "repositories"}`)
+      }">${esc(l.name)}</a>`}` +
     `<span class="bar__track"><span class="bar__fill" style="width:${Math.round((l.count / iMax) * 100)}%"></span></span>` +
     `<span class="bar__n">${l.count}</span></div>`;
   const iBars = interests.languages.slice(0, 6).map(iBar).join("\n        ");
