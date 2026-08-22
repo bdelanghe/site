@@ -1,0 +1,27 @@
+{
+  "$comment": [
+    "The site's own MCP server, declared so a session working in this repo has the",
+    "tools rather than shelling out to curl. bounded-systems/.github's",
+    ".claude/register-mcp.mjs promotes this to USER scope at session start —",
+    "project-scoped .mcp.json is discovered from the project directory, which never",
+    "matches in a multi-repo session.",
+    "",
+    "This is the HOSTED surface (worker/index.js, served at /mcp). It does NOT verify",
+    "the bytes it returns against the site's Sigstore-signed manifest — every result",
+    "says so in _meta.verification, with the digest and the manifest URL so a caller",
+    "can check independently. For verified reads use @bounded-systems/site-mcp, which",
+    "runs locally and checks each artifact before returning it.",
+    "",
+    "Why the hosted one is declared here rather than the verifying one: site-mcp's",
+    "published version is 0.2.0, which predates the one-verb-per-subject shape",
+    "(site-mcp#26). Until that is released, npx would install the older three-verb",
+    "surface whose get_conformance returns the whole 19.7 KB report. Swap this entry",
+    "for the stdio server once a release carries the folded verbs."
+  ],
+  "mcpServers": {
+    "robertdelanghe": {
+      "type": "http",
+      "url": "https://robertdelanghe.dev/mcp"
+    }
+  }
+}
