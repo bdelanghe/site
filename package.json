@@ -23,6 +23,7 @@
     "check:token-a11y": "node vendor/conformance-kit/gates/token-a11y.mjs node_modules/@bdelanghe/brand/tokens/token-a11y.json",
     "gate:copy": "node scripts/copy-gate.mjs --strict",
     "check:integrity": "node scripts/vendor-integrity.mjs --check",
+    "check:workflow-shell": "node scripts/check-workflow-shell.mjs",
     "check:shacl": "node vendor/conformance-kit/gates/shacl-runner.mjs contract/jsonld.shapes.ttl dist",
     "check:seo": "SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json,/mcp node vendor/conformance-kit/gates/seo-gate.mjs dist",
     "check:commonmark": "node vendor/conformance-kit/gates/commonmark-runner.mjs posts.mjs contract/commonmark-fixtures.json",
