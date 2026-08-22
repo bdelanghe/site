@@ -1003,7 +1003,19 @@ for (const p of posts) {
     // claim → evidence, same as the homepage Person.subjectOf.
     citation: (proof || []).map((pr) => ({ "@type": "CreativeWork", name: pr.label, url: pr.href })),
   };
-  const tagsHtml = (p.meta.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join(" ");
+  // A <ul>, on its own line, NOT appended to the byline behind a "·". Reader engines
+  // identify a byline and LIFT it into their own header — Safari removes the <time> and
+  // the author link from the paragraph when it does, which left the two "·" separators
+  // dangling in front of the tags: "·  ·  capability-security agent-infra contracts".
+  // Mozilla's Readability keeps them, so the local gates cannot see this; making the
+  // tags a separate element is engine-independent, and is what they are anyway — a list
+  // of terms, not a continuation of the byline sentence. role="list" because Safari
+  // drops list semantics from a list-style:none <ul>.
+  const tagsHtml = (p.meta.tags || []).length
+    ? `<ul role="list" class="post__tags">${
+      p.meta.tags.map((t) => `<li class="tag">${esc(t)}</li>`).join(" ")
+    }</ul>`
+    : "";
   const ph = `<!doctype html>
 <html lang="en">
 <head>
@@ -1016,7 +1028,8 @@ ${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, ogType: "a
       <header class="post__head">
         <p class="bs-text-label eyebrow"><a href="/blog">&larr;&nbsp;${copy("nav.writing")}</a></p>
         <h1 class="p-name">${esc(p.meta.title)}</h1>
-        <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> &nbsp;&middot;&nbsp; <a class="p-author h-card" href="${SITE}">${esc(name)}</a>${tagsHtml ? ` &nbsp;&middot;&nbsp; ${tagsHtml}` : ""}</p>
+        <p class="post__meta"><time class="dt-published" datetime="${esc(p.meta.date)}">${esc(p.meta.date)}</time> <a class="p-author h-card" href="${SITE}">${esc(name)}</a></p>
+        ${tagsHtml}
       </header>
       <div class="post__body e-content">
       ${p.html}
