@@ -67,6 +67,13 @@ jobs:
         # while seven employment records rendered as run-on lines. 173 such joins
         # sitewide when this was written.
         run: node scripts/reader-structure-gate.mjs dist
+      - name: Reader-links gate (the links inside the text survive too)
+        # The third leg, and the one a reader noticed before any gate did: /resume had
+        # 94% coverage and clean structure while seven of its fourteen links — every
+        # employer and institution — were being culled. Readability drops blocks whose
+        # link density is high for their text, and <div> is on its cull list where
+        # <section> and <p> are not.
+        run: node scripts/reader-links-gate.mjs dist
       - name: Reachability gate (every page has a path to it from /)
         # The complement of structure-audit's link checker below, which finds links
         # pointing at nothing. This finds the opposite — a page nothing points at.

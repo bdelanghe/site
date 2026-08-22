@@ -625,9 +625,9 @@ const filterAnchors = homeFilter.anchors;
 const filterCss = homeFilter.css;
 
 const card = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.pinned ? ` <span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <section class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.pinned ? ` <span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</section>
           <p class="proj__desc">${esc(h.description)}</p>
-          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</div>
+          <section class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</section>
         </li>`;
 // One empty note per corpus-only topic, its link routing to that topic's live
 // search across the whole record — the pinned set stays curated, but every topic
@@ -715,12 +715,12 @@ const rLocation = basics.location?.city
   ? [basics.location.city, basics.location.region].filter(Boolean).join(", ")
   : "";
 const rExp = work.map((w) => `
-      <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span> <span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></div>
-        <div class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</div>
+      <section class="r-job">
+        <p class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span> <span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></p>
+        <p class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</p>
         ${w.summary ? `<p class="r-job__summary">${esc(w.summary)}</p>` : ""}
         ${w.highlights?.length ? `<ul>${w.highlights.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
-      </div>`).join("");
+      </section>`).join("");
 // Projects bind into one system: render a single block per entity (the umbrella) instead
 // of repeating "Creator · Bounded Systems" on every repo. Each repo is a dated bullet.
 const projByEntity = [];
@@ -747,16 +747,16 @@ const rProjects = projByEntity.map(({ entity, items }) => {
     return `<li><strong>${linkName(p.name, p.url)}</strong>${date}${p.description ? ` — ${esc(p.description)}` : ""}</li>`;
   }).join("");
   return `
-      <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? ` <span class="r-job__when">${esc(when)}</span>` : ""}</div>
-        ${roles ? `<div class="r-job__role">${esc(roles)}</div>` : ""}
+      <section class="r-job">
+        <p class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? ` <span class="r-job__when">${esc(when)}</span>` : ""}</p>
+        ${roles ? `<p class="r-job__role">${esc(roles)}</p>` : ""}
         <ul>${bullets}</ul>
-      </div>`;
+      </section>`;
 }).join("");
 const rEdu = education.map((e) => {
   const degree = [e.studyType, e.area].filter(Boolean).join(", ");
   return `
-      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${linkName(e.institution, e.url)}</span> <span class="r-job__when">${esc(fmtRange(e.startDate, e.endDate))}</span></div>${degree ? `<div class="r-job__role">${esc(degree)}</div>` : ""}</div>`;
+      <section class="r-job"><p class="r-job__head"><span class="r-job__org">${linkName(e.institution, e.url)}</span> <span class="r-job__when">${esc(fmtRange(e.startDate, e.endDate))}</span></p>${degree ? `<p class="r-job__role">${esc(degree)}</p>` : ""}</section>`;
 }).join("");
 const rSkills = skills.map((g) =>
   g.keywords?.length
@@ -807,10 +807,10 @@ ${jsonLd}
   .r-skills { font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-skill-grp { margin: 0 0 4px; font-size: 12px; color: var(--bs-color-ink-soft); }
   .r-job { margin: 0 0 12px; break-inside: avoid; }
-  .r-job__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .r-job__head { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .r-job__org { font-weight: 600; font-size: 14px; }
   .r-job__when { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); white-space: nowrap; }
-  .r-job__role { font-size: 12px; color: var(--bs-color-accent); margin-bottom: 4px; }
+  .r-job__role { font-size: 12px; color: var(--bs-color-accent); margin: 0 0 4px; }
   .r-job__summary { margin: 0 0 4px; }
   .r-job ul { margin: 4px 0 0; padding-left: 16px; }
   .r-job li { margin: 0 0 3px; }
@@ -1588,9 +1588,9 @@ if (interests?.items?.length) {
         </div>
       </details>` : "";
   const iCard = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <section class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</section>
           ${h.description ? `<p class="proj__desc">${esc(h.description)}</p>` : ""}
-          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</div>
+          <section class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</section>
         </li>`;
   interestsStyle = `<style>${iFilter.css}</style>`;
   interestsBody = `${iFilter.anchors}
