@@ -69,11 +69,18 @@ jobs:
             node scripts/check-sbom.mjs
             # CSP LAST among the generators: gen-csp hashes the inline blocks of the FINAL
             # HTML, and gen-attestation above rewrites provenance.html. It must be listed
-            # here explicitly — this pipeline does NOT run `npm run build` (nix build's
+            # here explicitly — this pipeline does NOT run `npm run build` (the nix
             # buildPhase runs `node build.mjs` alone), so a generator wired only into the
             # npm script never runs on the deploy path. That is exactly how the policy
             # shipped as a no-op the first time. csp-gate then fails the deploy rather than
             # letting a missing or stale policy reach production.
+            #
+            # NOTE: this whole block is a single-quoted argument to bash -c. An apostrophe
+            # anywhere in it — including inside a comment — closes the quote early, and the
+            # rest of the block then runs in the OUTER shell where the nix devshell tools do
+            # not exist. Not hypothetical: one unescaped apostrophe in a comment here broke
+            # cosign with "command not found" in run 32601081163. Escape it the way line 3
+            # of this block does, or word around it.
             node scripts/gen-csp.mjs
             node scripts/csp-gate.mjs
             cosign sign-blob --yes \
