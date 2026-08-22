@@ -370,18 +370,27 @@ const linkName = (nm, url) => (url ? `<a href="${esc(url)}">${esc(nm)}</a>` : es
 // scroll what /resume, /resume.md and /resume.json already hold in full. Nothing is
 // lost: the nav links the résumé, and every word still ships there and in the JSON.
 const SUMMARIES_SHOWN = 2;
+// BLOCK elements, not spans. Reader renders the DOM with the CLASSES STRIPPED and its
+// own stylesheet applied, so every line break this layout got from CSS is gone there —
+// `.entry` being a grid, and `.entry__what { display: block }`, buy nothing once the
+// class is removed. Only an element's DEFAULT display survives, so an entry built from
+// adjacent spans collapsed into one run-on line:
+//   "Aug 2026 – presentEmpathic · Founding EngineerInfrastructure for operating…"
+// <p> and <div> render as separate lines in Reader with no CSS at all, and the grid
+// treats them exactly as it treated the spans. entry__role stays inline because it
+// genuinely belongs on the org's line, after the "·".
 const entry = (w, i) =>
-  `<li class="entry"><span class="entry__when">${esc(fmtRange(w.startDate, w.endDate))}</span><span class="entry__body">` +
-  `<span class="entry__org">${linkName(w.name, w.url)}${w.position ? ` · <span class="entry__role">${esc(w.position)}</span>` : ""}</span>` +
-  `${w.summary && i < SUMMARIES_SHOWN ? `<span class="entry__what">${esc(w.summary)}</span>` : ""}</span></li>`;
+  `<li class="entry"><p class="entry__when">${esc(fmtRange(w.startDate, w.endDate))}</p><div class="entry__body">` +
+  `<p class="entry__org">${linkName(w.name, w.url)}${w.position ? ` · <span class="entry__role">${esc(w.position)}</span>` : ""}</p>` +
+  `${w.summary && i < SUMMARIES_SHOWN ? `<p class="entry__what">${esc(w.summary)}</p>` : ""}</div></li>`;
 // Education uses JSON Resume field names (institution / studyType / area) and has no
 // summary — it can't share the work-shaped entry() mapper above (name/position/summary),
 // or those fields render as "undefined". Mirrors /resume's rEdu: institution · degree.
 const eduEntry = (e) => { // (index unused: education never carries summary prose)
   const degree = [e.studyType, e.area].filter(Boolean).join(", ");
-  return `<li class="entry"><span class="entry__when">${esc(fmtRange(e.startDate, e.endDate))}</span><span class="entry__body">` +
-    `<span class="entry__org">${linkName(e.institution, e.url)}${degree ? ` · <span class="entry__role">${esc(degree)}</span>` : ""}</span>` +
-    `</span></li>`;
+  return `<li class="entry"><p class="entry__when">${esc(fmtRange(e.startDate, e.endDate))}</p><div class="entry__body">` +
+    `<p class="entry__org">${linkName(e.institution, e.url)}${degree ? ` · <span class="entry__role">${esc(degree)}</span>` : ""}</p>` +
+    `</div></li>`;
 };
 const exp = work;
 const edu = education;
@@ -605,7 +614,7 @@ const filterFor = (chipTopics, items) => {
   return { anchors, css, chips, emptyTopics: topics.filter((t) => !has(t)) };
 };
 
-const tagLinks = (h) => (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join("");
+const tagLinks = (h) => (h.topics || []).map((t) => `<a class="tag no-link-icon" href="#f-${slug(t)}">${esc(t)}</a>`).join(" ");
 const dataTags = (h) => (h.topics || []).map(slug).join(" ");
 
 const chipTopics = stats.topics.slice(0, 16);
@@ -616,9 +625,9 @@ const filterAnchors = homeFilter.anchors;
 const filterCss = homeFilter.css;
 
 const card = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.pinned ? `<span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.pinned ? ` <span class="proj__pin">${copy("work.pinned")}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
           <p class="proj__desc">${esc(h.description)}</p>
-          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
+          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</div>
         </li>`;
 // One empty note per corpus-only topic, its link routing to that topic's live
 // search across the whole record — the pinned set stays curated, but every topic
@@ -707,7 +716,7 @@ const rLocation = basics.location?.city
   : "";
 const rExp = work.map((w) => `
       <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span><span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></div>
+        <div class="r-job__head"><span class="r-job__org">${linkName(w.name, w.url)}</span> <span class="r-job__when">${esc(fmtRange(w.startDate, w.endDate))}</span></div>
         <div class="r-job__role">${esc([w.position, w.location].filter(Boolean).join(" · "))}</div>
         ${w.summary ? `<p class="r-job__summary">${esc(w.summary)}</p>` : ""}
         ${w.highlights?.length ? `<ul>${w.highlights.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
@@ -739,7 +748,7 @@ const rProjects = projByEntity.map(({ entity, items }) => {
   }).join("");
   return `
       <div class="r-job">
-        <div class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? `<span class="r-job__when">${esc(when)}</span>` : ""}</div>
+        <div class="r-job__head"><span class="r-job__org">${linkName(entity, entityUrl)}</span>${when ? ` <span class="r-job__when">${esc(when)}</span>` : ""}</div>
         ${roles ? `<div class="r-job__role">${esc(roles)}</div>` : ""}
         <ul>${bullets}</ul>
       </div>`;
@@ -747,7 +756,7 @@ const rProjects = projByEntity.map(({ entity, items }) => {
 const rEdu = education.map((e) => {
   const degree = [e.studyType, e.area].filter(Boolean).join(", ");
   return `
-      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${linkName(e.institution, e.url)}</span><span class="r-job__when">${esc(fmtRange(e.startDate, e.endDate))}</span></div>${degree ? `<div class="r-job__role">${esc(degree)}</div>` : ""}</div>`;
+      <div class="r-job"><div class="r-job__head"><span class="r-job__org">${linkName(e.institution, e.url)}</span> <span class="r-job__when">${esc(fmtRange(e.startDate, e.endDate))}</span></div>${degree ? `<div class="r-job__role">${esc(degree)}</div>` : ""}</div>`;
 }).join("");
 const rSkills = skills.map((g) =>
   g.keywords?.length
@@ -855,7 +864,7 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
       <h2 class="bs-text-label eyebrow">${copy("prov.chain.eyebrow")}</h2>
       <p class="lead">${copy("prov.chain.lede")}</p>
       <ol class="prov-chain">
-        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code><span class="prov-dg">${m.id}</span></li>`).join("")}</ul><p class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</p></div></li>
+        <li class="prov-link"><span class="prov-link__name">${copy("prov.step.materials")}</span><div class="prov-link__body"><ul class="prov-materials">${materials.map((m) => `<li><code>${m.name}</code> <span class="prov-dg">${m.id}</span></li>`).join("")}</ul><p class="prov-materials__note">${stats.repos} repos &middot; ${stats.public} public &middot; ${stats.sources} sources &middot; ${stats.languages.length} languages — these corpus figures are computed over this corpus, not asserted; the r&eacute;sum&eacute;'s outcome metrics are asserted, each grounding-checked in CI.</p></div></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.contracts")}</span><div class="prov-link__body"><p>Contracts gate content before a byte renders: the canonical résumé <code>data/profile.json</code> (<span class="prov-dg">${dgProfile}</span>) against the JSON Resume schema <code>contract/jsonresume.schema.json</code> (<span class="prov-dg">${dgProfileSchema}</span>), the render-context <code>data/presentation.json</code> (<span class="prov-dg">${dgPresentation}</span>) against <code>contract/presentation.schema.json</code> (<span class="prov-dg">${dgPresentationSchema}</span>), and every post's frontmatter against <code>contract/posts.schema.json</code> (<span class="prov-dg">${dgPostsSchema}</span>) — a non-conforming change can't build, so invalid states are unrepresentable at the boundary. Facts then transclude from canonical tokens (<code>{{thesis}}</code>, <code>{{proof.*}}</code>, <code>{{email}}</code>); an unknown token fails the build, so no claim is unsourced.</p></div></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.gates")}</span><div class="prov-link__body"><p>Gates run on every build, each error-severity finding blocking it: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a> blesses each rendered post's DOM (semantic HTML + a11y); <code>copy-review.mjs</code> (<span class="prov-dg">${dgCopyReview}</span>) flags overclaims via Claude; <code>linkedin-check.mjs</code> (<span class="prov-dg">${dgLinkedin}</span>) verifies r&eacute;sum&eacute; claims against the saved source; <a href="https://github.com/bounded-systems/string-audit"><code>string-audit</code></a> runs the deterministic copy-hygiene suite; the structured data (<a href="https://json-ld.org" rel="noopener">JSON-LD</a> 1.1) is validated against <a href="https://www.w3.org/TR/shacl/" rel="noopener"><code>SHACL</code></a> shapes; an <strong><a href="https://spdx.dev" rel="noopener">SPDX</a> <a href="https://www.cisa.gov/sbom" rel="noopener">SBOM</a></strong> is generated and completeness-checked; and <code>@bdelanghe/brand</code> tokens are drift-checked against the committed <code>tokens.css</code>. Every gate's result is then folded — together with the SBOM and the signed <a href="https://in-toto.io" rel="noopener">in-toto</a>/<a href="https://slsa.dev" rel="noopener">SLSA</a> attestation below — into a single honest <a href="/conformance">conformance projection</a>: <a href="https://github.com/bounded-systems/lone"><code>lone</code></a>'s <code>conformance()</code> model, which emits the strong <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noopener">WCAG</a>&nbsp;2.2&nbsp;AA / OWASP&nbsp;ASVS claim <em>only</em> when every required criterion is met — manual and unsupplied criteria stay <em>not-assessed</em>, never overclaimed.</p></div></li>
         <li class="prov-link"><span class="prov-link__name">${copy("prov.step.builder")}</span><div class="prov-link__body"><p>Rendered by <code>build.mjs</code> (<span class="prov-dg">${dgBuild}</span>) under a toolchain pinned by <code>flake.lock</code> — Node&nbsp;22 + <code>@bdelanghe/brand</code>${brandRev ? ` @ ${brandRev.slice(0, 9)}` : (brandPkg.version ? ` v${brandPkg.version}` : "")}. Hermetic: no network, no GitHub at build — the same materials always produce the same subject, a reproducible function of the inputs above. See the <a href="/colophon">${copy("colophon.title").toLowerCase()}</a> for what built and validated it.</p></div></li>
@@ -994,7 +1003,7 @@ for (const p of posts) {
     // claim → evidence, same as the homepage Person.subjectOf.
     citation: (proof || []).map((pr) => ({ "@type": "CreativeWork", name: pr.label, url: pr.href })),
   };
-  const tagsHtml = (p.meta.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+  const tagsHtml = (p.meta.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join(" ");
   const ph = `<!doctype html>
 <html lang="en">
 <head>
@@ -1331,10 +1340,10 @@ const confOverview = `<div class="conf-overview">
         <span class="conf-bar__seg conf-bar__seg--na" style="width:${cPct(cSum.notAssessed)}"></span>
       </div>
       <div class="conf-stats">
-        <div class="conf-stat conf-stat--met"><span class="conf-stat__n">${cSum.met}</span><span class="conf-stat__k">${copy("conf.stat.met")}</span></div>
-        <div class="conf-stat conf-stat--unmet"><span class="conf-stat__n">${cSum.unmet}</span><span class="conf-stat__k">${copy("conf.stat.unmet")}</span></div>
-        <div class="conf-stat conf-stat--na"><span class="conf-stat__n">${cSum.notAssessed}</span><span class="conf-stat__k">${copy("conf.stat.na")}</span></div>
-        <div class="conf-stat conf-stat--total"><span class="conf-stat__n">${cSum.total}</span><span class="conf-stat__k">${copy("conf.stat.total")}</span></div>
+        <div class="conf-stat conf-stat--met"><span class="conf-stat__n">${cSum.met}</span> <span class="conf-stat__k">${copy("conf.stat.met")}</span></div>
+        <div class="conf-stat conf-stat--unmet"><span class="conf-stat__n">${cSum.unmet}</span> <span class="conf-stat__k">${copy("conf.stat.unmet")}</span></div>
+        <div class="conf-stat conf-stat--na"><span class="conf-stat__n">${cSum.notAssessed}</span> <span class="conf-stat__k">${copy("conf.stat.na")}</span></div>
+        <div class="conf-stat conf-stat--total"><span class="conf-stat__n">${cSum.total}</span> <span class="conf-stat__k">${copy("conf.stat.total")}</span></div>
       </div>
     </div>`;
 // Link each criterion's standard to the doc that DECLARES the rule. The vendored
@@ -1579,9 +1588,9 @@ if (interests?.items?.length) {
         </div>
       </details>` : "";
   const iCard = (h) => `<li class="proj" data-tags="${dataTags(h)}">
-          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? `<span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
+          <div class="proj__top"><h3 class="proj__name"><a href="${esc(h.url)}">${esc(h.name)}</a></h3>${h.stars ? `<span class="proj__stars">&#9733;&nbsp;${fmtStars(h.stars)}</span>` : ""}${h.language ? ` <span class="proj__lang">${esc(h.language)}</span>` : ""}</div>
           ${h.description ? `<p class="proj__desc">${esc(h.description)}</p>` : ""}
-          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span>${tagLinks(h)}</div>
+          <div class="proj__meta"><span class="proj__full">${esc(h.fullName)}</span> ${tagLinks(h)}</div>
         </li>`;
   interestsStyle = `<style>${iFilter.css}</style>`;
   interestsBody = `${iFilter.anchors}
