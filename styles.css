@@ -477,6 +477,13 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .prov-seal__card { border: 1px solid var(--bs-color-accent-soft); background: var(--bs-color-card); padding: 16px 18px; }
 .prov-seal__title { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-ink); margin: 0 0 6px; }
 .prov-seal__meta { font-family: var(--bs-font-mono); font-size: 14px; color: var(--bs-color-ink); margin: 0; }
+/* These two carried the declarations as a style ATTRIBUTE until the CSP work: an attribute
+   cannot be hashed, so covering one needs 'unsafe-hashes' and the policy stops meaning much.
+   #build-freshness is the note the freshness probe injects at runtime — it sets the id and
+   the class, and the styling lives here rather than in a setAttribute("style", ...) call
+   the policy would (correctly) block. See docs/csp.md. */
+.prov-seal__note { font-size: 12px; margin: 8px 0 0; color: var(--bs-color-ink); }
+#build-freshness { font-family: var(--bs-font-mono); }
 .prov-seal__meta a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-soft); }
 .prov-evidence { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .prov-evidence a { display: inline-block; font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-accent); text-decoration: none; border: 1px solid var(--bs-color-line); padding: 5px 10px; }
