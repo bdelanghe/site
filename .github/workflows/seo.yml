@@ -40,6 +40,13 @@ jobs:
         run: npm run check:integrity
       - name: Build site
         run: node build.mjs
+      - name: Build the static API (the colophon links its OpenAPI document)
+        # /colophon names the machine surfaces, so seo-gate's link checker needs the
+        # OpenAPI document to exist. gen-api.mjs writes it; plain `node build.mjs`
+        # does not. The one link that can never be a file is /mcp — a Worker route,
+        # not a build output — and that is why it is the only new entry in
+        # SEO_DEPLOY_SIDECARS.
+        run: node scripts/gen-api.mjs
       - name: CommonMark assertion — posts renderer is pinned + escapes raw HTML
         run: npm run check:commonmark
       - name: SEO gate — canonical / title / description / robots / sitemap / links

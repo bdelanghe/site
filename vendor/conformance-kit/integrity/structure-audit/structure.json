@@ -63,12 +63,14 @@
   },
   "colophon.html": {
     "h1": "Colophon",
-    "outline": "1",
+    "outline": "12",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
       "/",
+      "/api/v1/openapi.json",
       "/conformance",
+      "/mcp",
       "/provenance"
     ]
   },

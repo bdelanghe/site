@@ -253,6 +253,24 @@ const colophonListHtml = profile.colophon?.length
       </ul>`
   : "";
 
+// What this site OFFERS a machine, as opposed to what BUILT it — the colophon list
+// above is the latter, so these are a separate section rather than more entries in
+// it. llms.txt names the same three from the same atoms (one definition, two
+// surfaces); this puts them in the HTML link graph too, which is where the
+// reachability gate and any crawler that does not read llms.txt will find them.
+const MACHINE_SURFACES = [
+  ["llms.machine.api.label", "/api/v1/openapi.json", "llms.machine.api"],
+  ["llms.machine.mcp.label", "/mcp", "llms.machine.mcp"],
+  ["llms.machine.verified.label", "https://www.npmjs.com/package/@bounded-systems/site-mcp", "llms.machine.verified"],
+];
+const machineListHtml = `<ul class="colophon__list">
+        ${
+  MACHINE_SURFACES.map(([label, href, atom]) =>
+    `<li><a href="${esc(href)}"><span class="colophon__name">${esc(copy(label))}</span><span class="colophon__role">${esc(copy(atom))}</span></a></li>`
+  ).join("\n        ")
+}
+      </ul>`;
+
 // ---- complete <head> meta (SEO + social + agent), one source -------------------
 const SITE = basics.url || "https://robertdelanghe.dev";
 const OG_IMAGE = `${SITE}/brand/lockup/lockup-accent-1200.png`;
@@ -1332,9 +1350,7 @@ ${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.t
 - [${copy("colophon.title")}](${SITE}/colophon.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
 
 ## ${copy("llms.machine")}
-- [OpenAPI 3.2](${SITE}/api/v1/openapi.json): ${copy("llms.machine.api")}
-- [MCP](${SITE}/mcp): ${copy("llms.machine.mcp")}
-- [site-mcp](https://www.npmjs.com/package/@bounded-systems/site-mcp): ${copy("llms.machine.verified")}
+${MACHINE_SURFACES.map(([label, href, atom]) => `- [${copy(label)}](${href.startsWith("/") ? SITE + href : href}): ${copy(atom)}`).join("\n")}
 `;
 await writeFile(join(dist, "llms.txt"), llms);
 
@@ -1611,6 +1627,10 @@ ${head({ title: `${copy("colophon.title")} — ${name}`, description: copy("head
     <section class="colophon">
       ${colophonListHtml}
     </section>
+    <section class="colophon">
+      <h2>${copy("llms.machine")}</h2>
+      ${machineListHtml}
+    </section>
     </article>
 
     ${siteFooter()}
@@ -1625,6 +1645,10 @@ const colophonMd = `# ${copy("colophon.title")} — ${name}
 > ${copy("colophon.lede")}
 
 ${profile.colophon.map((c) => `- ${mdLink(c.name, c.href)}${c.role ? ` — ${c.role}` : ""}`).join("\n")}
+
+## ${copy("llms.machine")}
+
+${MACHINE_SURFACES.map(([label, href, atom]) => `- ${mdLink(copy(label), href.startsWith("/") ? SITE + href : href)} — ${copy(atom)}`).join("\n")}
 `;
 await writeFile(join(dist, "colophon.md"), colophonMd);
 
