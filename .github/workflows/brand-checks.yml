@@ -33,6 +33,13 @@ jobs:
           repository: bdelanghe/brand
           ref: main
           path: brand
+      - name: Workflow run blocks parse as shell
+        # A raw apostrophe in a comment inside deploy.yml's single-quoted nix-develop
+        # block closed the string, so cosign ran OUTSIDE the devShell and the deploy
+        # died on "command not found" — an error about the wrong thing, two dozen
+        # lines from its cause, on a step whose previous line escaped an apostrophe
+        # correctly. bash -n catches it in a second; nothing was running bash -n.
+        run: node scripts/check-workflow-shell.mjs
       - name: Build dist/
         run: node build.mjs
       - name: Known-vuln gate (vendored kit gate — production deps, re-proven)
