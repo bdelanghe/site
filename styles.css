@@ -403,6 +403,11 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .post__head { margin-bottom: clamp(24px, 5vw, 40px); }
 .post__head h1 { font-size: clamp(28px, 5vw, 40px); letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 0; }
 .post__meta { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin-top: 12px; }
+/* The byline separator is generated, not markup: a reading mode that lifts the date
+   and the author into its own header cannot leave a stray "\00b7" behind, because the
+   paragraph empties completely and gets dropped. Set on the <time>, not inside the
+   link, so it does not inherit the link underline. */
+.post__meta time::after { content: "\00a0\00b7\00a0"; }
 .post__meta a { color: var(--bs-color-accent); text-decoration: underline; }
 .post__body { font-family: var(--bs-font-text); font-size: 17px; line-height: 1.7; color: var(--bs-color-ink); }
 .post__body h2 { font-size: 22px; letter-spacing: -0.01em; margin: 36px 0 12px; }
@@ -414,6 +419,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .post__body ul { margin: 0 0 18px; padding-left: 20px; }
 .post__body li { margin: 0 0 6px; }
 .post__body hr { border: 0; border-top: 1px solid var(--bs-color-line); margin: 28px 0; }
+.post__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 0; padding: 0; }
 .post .tag { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
 
 /* ---- social identity + POSSE syndication ----------------------------------- */
