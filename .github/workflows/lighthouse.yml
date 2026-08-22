@@ -3,8 +3,16 @@ name: lighthouse
 # Lighthouse CI quality gate, run against the STATIC build (dist/). build.mjs is a pure
 # function of the contracts + the pinned brand submodule, so lhci serves dist/ itself
 # (staticDistDir) — no separate web server, no live network. Budgets live in
-# lighthouserc.json: accessibility is a hard error at a perfect 1.0; best-practices and
-# seo are blocking floors; performance is advisory (warn).
+# lighthouserc.json: accessibility is a hard error at a perfect 1.0; best-practices is a
+# blocking floor; performance is advisory (warn).
+#
+# SEO is asserted PER AUDIT rather than as a category floor. Lighthouse's `robots-txt`
+# audit validates against a fixed directive allowlist and rejects the Content-Signal line
+# this site serves, while RFC 9309 §2.2.4 says unrecognised fields are ignored — so the
+# category score is wrong by 0.08 for a file that is valid. Every other scored SEO audit is
+# asserted at a perfect 1.0, which is what the old 0.95 floor already required (the category
+# is 12.04 weighted points, so the lightest audit is worth 0.083). `robots-txt` is explicitly
+# `off`; `npm run check:seo` remains the real robots.txt contract. See docs/seo-gate.md.
 #
 # IMPORTANT: a perfect Lighthouse accessibility score is a REGRESSION SIGNAL over a subset
 # of automatable checks — NOT WCAG conformance. Do not claim "Meets WCAG 2.2 AA" (or
