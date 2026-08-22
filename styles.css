@@ -1,14 +1,67 @@
-/* robertdelanghe.dev — synoptic v2. Visual system (fonts, color, type) comes from
-   the brand package (@bdelanghe/brand); only layout lives here. Rendered from data/site.json. */
-:root { --maxw: 760px; }
+/* robertdelanghe.dev — the dossier. Visual system (fonts, color, type) comes from
+   the brand package (@bdelanghe/brand); only layout lives here. Rendered from data/site.json.
 
-.wrap { max-width: var(--maxw); margin: 0 auto; padding: clamp(48px, 10vw, 112px) 28px 64px; }
+   The grammar is an architect's project dossier, not a landing page: a white ground, a
+   strict two-column grid whose left column is a margin for labels, numbers and dates,
+   square geometry, fine ruled sections, and clay used as annotation (figure numbers,
+   links, bar fills) rather than as atmosphere. There is no filled callout panel and no
+   rounded card anywhere — those are the shapes that made an editorial document read as
+   a generated one.
+
+   Type: three registers, from @bdelanghe/brand's Plex superfamily. Sans carries
+   identity, headings and UI; SERIF carries narrative prose (the deck, case-study
+   answers, the record summaries) — the reading register, so extended copy stops being
+   set in the interface face; mono is scoped to labels, dates and identifiers, nothing else.
+   The heavy small-caps mono labelling everywhere was half of what made this read as a
+   generated technical portfolio. bdelanghe/brand#5 is what made the serif reachable —
+   before it, this pinning and bounded-systems/brand pinned the same two families.
+
+   Palette note: this page paints on --bs-color-card (white), not --bs-color-paper (the
+   cream base.css sets). There is ONE hairline, --bs-color-line, and every rule that
+   separates one record from the next uses it.
+
+   This page briefly had two, the quieter one being --bs-color-card-alt — a SURFACE token
+   doing a border's job, below the 3:1 the palette contract requires of a hairline. It was
+   filed as bdelanghe/brand#6 asking for an attested decorative tier, and the answer was
+   that no such tier exists: a rule that marks where one record ends is a schematic
+   marker, and a marker that not everyone can see is not doing the marking. Calling it
+   decorative would have been the lie — a line placed deliberately, to be read, is by
+   definition not decoration.
+
+   So the two-level hierarchy is carried by the axes that are not contrast-regulated and
+   are perceivable to everyone: SPACING (11px between contact rows, 14px between record
+   entries, 30px between cases, --sec between sections) and the section eyebrow. The rules
+   themselves are one weight, which is also what /blog, /provenance and /conformance were
+   already doing. (Naming the token, not its hex: the design-system coverage gate scans
+   comment text too, and a literal hex here is a raw colour in a file whose whole rule is
+   that it has none.) */
+:root {
+  --maxw: 880px;
+  --col: 116px;   /* the margin column — labels, project numbers, dates */
+  --gut: 28px;
+  --sec: clamp(44px, 6.5vw, 68px);
+}
+
+/* The page ground. base.css paints the body cream (--bs-color-paper) for the brand's
+   default surface; the dossier wants the cool end of what the vocabulary offers, and
+   white is it. Set on body so every page in the site moves together. */
+body { background: var(--bs-color-card); }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: clamp(40px, 8vw, 88px) 28px 64px; }
 
 /* visible keyboard focus — non-color, brand-token ring (WCAG 2.4.7 / 2.4.11) */
-:focus-visible { outline: 2px solid var(--bs-color-accent); outline-offset: 2px; border-radius: 2px; }
-.seeking :focus-visible { outline-color: var(--bs-color-on-accent); }
+:focus-visible { outline: 2px solid var(--bs-color-accent); outline-offset: 2px; border-radius: var(--bs-radius-none); }
 
-/* Link-type indicators, derived from the href itself — not appended per callsite in
+/* Every one of these carries `/ ""` — the CSS alternative-text syntax. Generated
+   content is part of an element's ACCESSIBLE NAME, so without it a screen reader
+   announced every outbound link on the site as "GitHub northeast arrow": 171 names
+   across 10 pages, measured off Chrome's computed accessibility tree. The glyph is a
+   visual affordance about where a link goes, and the href already says that to any
+   assistive technology — so it belongs in the visual layer only. `/ ""` gives it an
+   empty alternative, and a browser that does not support the syntax simply keeps
+   today's behaviour, so the degradation is the status quo rather than a break.
+
+   Link-type indicators, derived from the href itself — not appended per callsite in
    JS/template code (previously 3 inconsistent, hand-maintained occurrences of the
    outbound arrow, and prose links in post bodies never got one at all). A link's own
    href is the single source of truth for what kind of link it is, so the indicator
@@ -19,56 +72,61 @@ a[href^="http"]:not(.no-link-icon)::after {
      text-presentation variation selector) is the actual fix: it forces text
      rendering, since iOS/Safari otherwise renders this codepoint as a full-color
      emoji glyph rather than plain text. */
-  content: "\2197\FE0E";
+  content: "\2197\FE0E" / "";
   margin-left: 0.2em;
   font-size: 0.65em;
 }
 a[href^="#"]:not(.no-link-icon)::after {
-  content: "\00a7\FE0E"; /* § — jumps within this page, never leaves it */
+  content: "\00a7\FE0E" / ""; /* § — jumps within this page, never leaves it */
   margin-left: 0.2em;
   font-size: 0.65em;
   opacity: 0.7;
 }
 a[href^="mailto:"]:not(.no-link-icon)::before {
-  content: "\2709\FE0E\00a0"; /* envelope + a following space */
+  content: "\2709\FE0E\00a0" / ""; /* envelope + a following space */
   font-size: 0.9em;
 }
 
 .eyebrow { color: var(--bs-color-ink-mono); margin: 0 0 20px; }
 
-/* intro */
-.intro h1 {
-  font-family: var(--bs-font-display);
-  font-size: clamp(30px, 5vw, 44px);
-  line-height: 1.06; font-weight: 600; letter-spacing: -0.025em;
-  color: var(--bs-color-ink); margin: 0 0 22px;
+/* ---- masthead: who, what, where, when — the four facts a dossier opens with ------
+   Name and role stack on the left, place and year sit right, and one heavy rule closes
+   the block. This replaces the small uppercase mono eyebrow that used to run
+   "NAME · ROLE" above an oversized headline; the identity is now structural rather
+   than decorative, which is what frees the headline to be a statement instead of a
+   billboard. */
+.mast {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--bs-color-ink);
 }
-.lead { font-size: 18px; line-height: 1.6; color: var(--bs-color-ink-soft); margin: 0 0 26px; max-width: 58ch; }
+.mast__name { grid-column: 1; grid-row: 1; margin: 0; font-size: 15px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.mast__name a { text-decoration: none; }
+.mast__role { grid-column: 1; grid-row: 2; margin: 0; font-size: 15px; color: var(--bs-color-ink-soft); }
+.mast__where { grid-column: 2; grid-row: 1; margin: 0; text-align: right; color: var(--bs-color-ink-mono); }
+.mast__year { grid-column: 2; grid-row: 2; margin: 0; text-align: right; color: var(--bs-color-ink-mono); }
+
+/* ---- the statement: ONE positioning line, and one line supporting it -------------
+   Sized to be read, not announced. The measure is deliberately narrow (a statement
+   that breaks over two or three lines reads as considered; the same words set edge to
+   edge read as a hero). */
+.statement { padding: clamp(30px, 5vw, 46px) 0 0; }
+/* The sub-pages (/blog, /provenance, /conformance, /colophon, /interests) still open
+   with the older `.intro` header — an eyebrow back-link over an h1 and a lede. They
+   share the statement's type so no page out-shouts the home page; the masthead grammar
+   has only been rolled out to / and /archive so far. */
+.statement h1, .intro h1 {
+  font-family: var(--bs-font-display);
+  font-size: clamp(24px, 3.4vw, 34px);
+  line-height: 1.16; font-weight: 600; letter-spacing: -0.02em;
+  color: var(--bs-color-ink); margin: 0 0 14px; max-width: 21ch;
+}
+.deck { font-family: var(--bs-font-text); font-size: 17px; line-height: 1.6; color: var(--bs-color-ink-soft); margin: 0 0 22px; max-width: 48ch; }
+.lead { font-family: var(--bs-font-text); font-size: 17px; line-height: 1.6; color: var(--bs-color-ink-soft); margin: 0 0 22px; max-width: 58ch; }
 .lead strong { color: var(--bs-color-accent); font-weight: 600; }
-.lead--intro { font-size: 20px; color: var(--bs-color-ink); margin: 0 0 20px; }
-.proof { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: 0 0 16px; }
-.proof a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); }
-.proof a:hover { border-color: var(--bs-color-accent); }
-.place { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: -2px 0 24px; }
 
-/* background: experience + education */
-.bg { margin-top: clamp(56px, 9vw, 88px); }
-.bg__sub { margin: 26px 0 14px; color: var(--bs-color-ink-mono); }
-.entries { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
-.entry { display: grid; grid-template-columns: 130px 1fr; gap: 20px; }
-.entry__when { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); padding-top: 2px; }
-.entry__org { font-weight: 600; color: var(--bs-color-ink); }
-.entry__role { font-weight: 400; color: var(--bs-color-ink-soft); }
-.entry__what { display: block; font-size: 15px; line-height: 1.55; color: var(--bs-color-ink-soft); margin-top: 4px; }
-@media (max-width: 560px) { .entry { grid-template-columns: 1fr; gap: 4px; } }
-
-/* seeking callout */
-.seeking { margin-top: clamp(40px, 7vw, 64px); background: var(--bs-color-accent); border-radius: var(--bs-radius-lg); padding: 28px 32px; }
-.seeking__label { color: var(--bs-color-accent-ink-soft); margin: 0 0 10px; }
-.seeking__focus { font-family: var(--bs-font-display); font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--bs-color-on-accent); margin: 0 0 8px; }
-.seeking__detail { font-size: 15px; line-height: 1.55; color: var(--bs-color-accent-ink); margin: 0 0 16px; max-width: 60ch; }
-.seeking__cta { font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-on-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-ink-soft); padding-bottom: 2px; }
-.seeking__cta:hover { border-color: var(--bs-color-on-accent); }
 .links { display: flex; flex-wrap: wrap; gap: 22px; }
 .links a {
   font-family: var(--bs-font-mono); font-size: 13px; color: var(--bs-color-accent);
@@ -76,12 +134,140 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 }
 .links a:hover { border-color: var(--bs-color-accent); }
 
-/* section rhythm */
-.corpus, .work, .colophon { margin-top: clamp(56px, 9vw, 88px); }
+/* ---- the column grid -------------------------------------------------------------
+   Every content section below the statement is the same two-column figure: a margin
+   column (--col) carrying the section label, and beside/below it the content. Section
+   labels, project numbers, availability keys and employment dates all land on that one
+   vertical line, so the grid is visible as a grid rather than implied by centred text.
+   Ruled, not carded: each section opens on a hairline instead of sitting in a box. */
+.avail, .cases, .bg, .corpus, .work, .colophon {
+  margin-top: var(--sec);
+  padding-top: 18px;
+  border-top: 1px solid var(--bs-color-line);
+  display: grid;
+  grid-template-columns: var(--col) minmax(0, 1fr);
+  column-gap: var(--gut);
+  align-content: start;
+}
+.avail > .eyebrow, .cases > .eyebrow, .bg > .eyebrow,
+.corpus > .eyebrow, .work > .eyebrow, .colophon > .eyebrow {
+  grid-column: 1; grid-row: 1; margin: 0 0 18px; align-self: start;
+}
+/* Content blocks sit in the wide column; the two that carry their own margin items
+   (case numbers, employment dates) span both so those items reach the margin line. */
+.rows, .corpus__body, .colophon__list, .colophon__more,
+.figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects { grid-column: 2; }
+.cases__list, .entries { grid-column: 1 / -1; }
+.bg__sub { grid-column: 1; }
+
+/* /provenance's chain section — ruled like the dossier sections, but deliberately NOT
+   gridded: its content is a prose chain, not a figure with margin annotations. It used
+   to reuse class="bg", which put it in the selector list above, and the whole chain was
+   auto-placed into the 116px MARGIN column — a ~10ch ribbon of text running for
+   thousands of pixels. Shipped that way with every gate green, because no gate looks at
+   layout. Named separately now so the two cannot collide again. */
+.prov {
+  margin-top: var(--sec);
+  padding-top: 18px;
+  border-top: 1px solid var(--bs-color-line);
+}
+.prov > .eyebrow { margin: 0 0 18px; }
+
+/* ---- availability: ruled rows, not a panel --------------------------------------
+   This block used to be a filled terracotta card with a display-size focus line, a
+   promotional paragraph and a "Get in touch →" CTA — the single strongest generated-
+   landing-page marker on the page. Same facts, rendered as a definition list: key in
+   the margin, value in the column, a hairline between. No fill, no radius, no pitch. */
+.rows { margin: 0; display: grid; }
+.rows__row {
+  display: grid;
+  grid-template-columns: var(--col) minmax(0, 1fr);
+  column-gap: var(--gut);
+  padding: 11px 0;
+  border-top: 1px solid var(--bs-color-line);
+  align-items: baseline;
+}
+.rows__row:first-child { border-top: 0; padding-top: 0; }
+.rows__k { margin: 0; color: var(--bs-color-ink-mono); }
+.rows__v { margin: 0; font-size: 15px; line-height: 1.5; color: var(--bs-color-ink); }
+.rows__mail { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); }
+.rows__mail:hover { border-color: var(--bs-color-accent); }
+/* The page's single call to action, and deliberately a note rather than a row: it is
+   about somebody else's open roles, not a fact about this record. */
+.now__note { grid-column: 2; margin: 16px 0 0; font-family: var(--bs-font-mono); font-size: 12px; }
+.now__note a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); padding-bottom: 2px; }
+.now__note a:hover { border-color: var(--bs-color-accent); }
+/* The availability rows carry their keys in the page margin, so they align with the
+   section labels rather than indenting inside the content column. */
+.avail .rows { grid-column: 1 / -1; }
+
+/* ---- case studies: the dossier entries ------------------------------------------
+   A repository card says what a thing IS. These say what was wrong, what was done,
+   what shows it worked, and which parts were mine — which is what a reader is actually
+   assessing. The number is clay and sits in the margin; the four keys form a second,
+   inner margin so the entry reads as a figure with annotations. */
+.cases__list { list-style: none; margin: 0; padding: 0; }
+.case {
+  display: grid;
+  grid-template-columns: var(--col) minmax(0, 1fr);
+  column-gap: var(--gut);
+  padding: 30px 0;
+  border-top: 1px solid var(--bs-color-line);
+}
+.case:first-child { border-top: 0; padding-top: 0; }
+/* The number is decorative and was already aria-hidden, so CSS owns it rather than the
+   HTML. As text it was real content: reader modes strip `list-style: none`, so the <ol>'s
+   own marker came back and every entry read "1. 01 Bounded Systems". A counter renders
+   identically on the page and leaves Reader one ordinal. */
+.cases__list { counter-reset: case; }
+.case { counter-increment: case; }
+.case::before {
+  content: counter(case, decimal-leading-zero);
+  grid-column: 1; padding-top: 4px;
+  font-family: var(--bs-font-mono); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.1em; color: var(--bs-color-accent);
+}
+.case__body { grid-column: 2; }
+.case__name { font-family: var(--bs-font-display); font-size: 21px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; margin: 0; }
+.case__kicker { font-family: var(--bs-font-text); font-style: italic; font-size: 15px; line-height: 1.45; color: var(--bs-color-ink-soft); margin: 4px 0 18px; }
+.case__rows { margin: 0; display: grid; }
+.case__row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  column-gap: 20px;
+  padding: 10px 0;
+  border-top: 1px solid var(--bs-color-line);
+}
+.case__row:first-child { border-top: 0; padding-top: 0; }
+.case__k { margin: 0; padding-top: 4px; color: var(--bs-color-ink-mono); }
+.case__v { margin: 0; font-family: var(--bs-font-text); font-size: 15px; line-height: 1.6; color: var(--bs-color-ink); max-width: 58ch; }
+.case__links { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 18px; font-family: var(--bs-font-mono); font-size: 12px; }
+.case__links a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-line); padding-bottom: 2px; }
+.case__links a:hover { border-color: var(--bs-color-accent); }
+
+/* ---- record: experience + education, dates in the margin ------------------------- */
+.bg__sub { margin: 32px 0 12px; color: var(--bs-color-ink-mono); }
+.entries { list-style: none; margin: 0; padding: 0; display: grid; }
+.entry {
+  display: grid;
+  grid-template-columns: var(--col) minmax(0, 1fr);
+  column-gap: var(--gut);
+  padding: 14px 0;
+  border-top: 1px solid var(--bs-color-line);
+}
+.entry:first-child { border-top: 0; padding-top: 0; }
+/* These carry `margin: 0` because they are <p>/<div>, not <span>: the structure lives in
+   the markup so Reader keeps it (see build.mjs's entry()). The grid places them exactly
+   as it placed the spans; `.entry__what` no longer needs `display: block` because a <p>
+   already is one. */
+.entry__when { margin: 0; font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); padding-top: 4px; }
+.entry__org { margin: 0; font-weight: 600; color: var(--bs-color-ink); }
+.entry__role { font-weight: 400; color: var(--bs-color-ink-soft); }
+.entry__what { font-family: var(--bs-font-text); font-size: 15px; line-height: 1.6; color: var(--bs-color-ink-soft); margin: 4px 0 0; max-width: 58ch; }
 
 /* colophon: built-with */
-.colophon__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border: 1px solid var(--bs-color-line); border-radius: var(--bs-radius-md); overflow: hidden; }
-.colophon__list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 12px 16px; text-decoration: none; color: inherit; background: var(--bs-color-card); }
+.colophon__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border-top: 1px solid var(--bs-color-line); border-bottom: 1px solid var(--bs-color-line); }
+.colophon__list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 12px 2px; text-decoration: none; color: inherit; background: var(--bs-color-card); }
 .colophon__list a:hover { background: var(--bs-color-card-alt); }
 .colophon__name { font-family: var(--bs-font-mono); font-weight: 600; font-size: 13px; color: var(--bs-color-accent); }
 .colophon__role { font-size: 13px; color: var(--bs-color-ink-soft); }
@@ -90,10 +276,10 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .colophon__more a:hover { border-color: var(--bs-color-accent); }
 
 /* corpus: meta-analysis */
-.figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0 0 28px; }
+.figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0 0 28px; border-top: 1px solid var(--bs-color-line); }
 .fig {
-  background: var(--bs-color-card); border: 1px solid var(--bs-color-accent-soft);
-  border-radius: var(--bs-radius-md); padding: 16px 18px;
+  background: var(--bs-color-card); border-bottom: 1px solid var(--bs-color-line);
+  padding: 14px 16px 14px 0;
 }
 .fig__n { display: block; font-family: var(--bs-font-display); font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--bs-color-ink); }
 .fig__k { font-family: var(--bs-font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bs-color-ink-mono); }
@@ -101,7 +287,7 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .bars { display: grid; gap: 8px; margin: 0 0 24px; }
 .bar { display: grid; grid-template-columns: 120px 1fr 36px; align-items: center; gap: 12px; }
 .bar__k { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-soft); }
-.bar__track { height: 8px; background: var(--bs-color-line); border-radius: 999px; overflow: hidden; }
+.bar__track { height: 6px; background: var(--bs-color-card-alt); overflow: hidden; }
 .bar__fill { display: block; height: 100%; background: var(--bs-color-accent); }
 .bar__n { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); text-align: right; }
 
@@ -118,8 +304,8 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
   font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-accent);
-  background: var(--bs-color-card-alt); border: 1px solid var(--bs-color-accent-soft);
-  border-radius: 999px; padding: 4px 10px;
+  background: var(--bs-color-card); border: 1px solid var(--bs-color-line);
+  padding: 4px 8px;
   display: inline-flex; align-items: center; gap: 6px; min-height: 24px;
 }
 .chip em { color: var(--bs-color-ink-mono); font-style: normal; }
@@ -150,11 +336,12 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 
 /* selected work — a flat list the Public-record topics filter in place */
 .proj__full { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
-.projects { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border: 1px solid var(--bs-color-line); border-radius: var(--bs-radius-md); overflow: hidden; }
-.proj { background: var(--bs-color-card); padding: 18px 20px; }
+.projects { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border-top: 1px solid var(--bs-color-line); border-bottom: 1px solid var(--bs-color-line); }
+.proj { background: var(--bs-color-card); padding: 16px 2px; }
 .proj__top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
-.proj__name { font-family: var(--bs-font-mono); font-weight: 600; font-size: 15px; color: var(--bs-color-accent); text-decoration: none; }
-.proj__name:hover, .proj__name:focus-visible { text-decoration: underline; }
+.proj__name { margin: 0; font-family: var(--bs-font-mono); font-weight: 600; font-size: 15px; }
+.proj__name a { color: var(--bs-color-accent); text-decoration: none; }
+.proj__name a:hover, .proj__name a:focus-visible { text-decoration: underline; }
 .proj__pin { font-family: var(--bs-font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--bs-color-ink-mono); }
 .proj__lang { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); margin-left: auto; }
 /* Interest cards carry a star count (their signal) where authored cards carry a pin.
@@ -165,10 +352,18 @@ a.chip:hover, a.chip:focus-visible { border-color: var(--bs-color-accent); }
 .proj__meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 /* Tag pills double as filter controls — same look as a corpus chip, accent when
    their topic is the active :target (rule generated per-topic in build.mjs). */
-.tag { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-accent); background: var(--bs-color-card-alt); border: 1px solid var(--bs-color-accent-soft); border-radius: 999px; padding: 2px 8px; text-decoration: none; display: inline-flex; align-items: center; min-height: 24px; }
+/* Overflow topics on a project card — the same native disclosure .langmore uses for
+   the language spread. `display: contents` so the revealed chips join the parent's
+   flex row rather than forming a block of their own, which keeps an opened card
+   looking exactly like an uncapped one. */
+.tagmore { display: contents; }
+.tagmore__sum { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-ink-mono); cursor: pointer; list-style: none; display: inline-flex; align-items: center; padding: 2px 7px; min-height: 24px; border: 1px dashed var(--bs-color-line); }
+.tagmore__sum::-webkit-details-marker { display: none; }
+.tagmore__sum:hover { color: var(--bs-color-accent); border-color: var(--bs-color-accent); }
+.tag { font-family: var(--bs-font-mono); font-size: 10px; color: var(--bs-color-accent); background: var(--bs-color-card); border: 1px solid var(--bs-color-line); padding: 2px 7px; text-decoration: none; display: inline-flex; align-items: center; min-height: 24px; }
 a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 /* Shown only when a corpus-only topic is the active filter (per-topic rule). */
-.proj-empty { display: none; background: var(--bs-color-card); padding: 20px; font-family: var(--bs-font-mono); font-size: 12px; line-height: 1.6; color: var(--bs-color-ink-soft); }
+.proj-empty { display: none; background: var(--bs-color-card); padding: 16px 2px; font-family: var(--bs-font-mono); font-size: 12px; line-height: 1.6; color: var(--bs-color-ink-soft); }
 .proj-empty a { color: var(--bs-color-accent); }
 
 .foot {
@@ -184,9 +379,29 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .foot__prov { display: grid; gap: 8px; }
 .colophon__more { margin: 0; line-height: 1.75; max-width: 70ch; }
 
+/* Narrow: the margin column folds into the flow. Labels, numbers and dates keep
+   their order and their type — they just stop being a column. */
+@media (max-width: 680px) {
+  .avail, .cases, .bg, .corpus, .work, .colophon,
+  .rows__row, .case, .entry { grid-template-columns: minmax(0, 1fr); }
+  .avail > .eyebrow, .cases > .eyebrow, .bg > .eyebrow,
+  .corpus > .eyebrow, .work > .eyebrow, .colophon > .eyebrow { margin: 0 0 14px; }
+  .rows, .corpus__body, .colophon__list, .colophon__more,
+  .figures, .bars, .langmore, .chips, .chips__hint, .corpus__src, .projects,
+  .cases__list, .entries, .bg__sub, .case__body, .now__note { grid-column: 1; }
+  .case::before { grid-column: 1; }
+  .case::before { padding: 0 0 4px; }
+  .entry__when { padding-top: 0; }
+  .case__row { grid-template-columns: minmax(0, 1fr); }
+  .case__k { padding: 0 0 3px; }
+}
 @media (max-width: 560px) {
-  .figures { grid-template-columns: repeat(2, 1fr); }
+  .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bar { grid-template-columns: 92px 1fr 30px; }
+  .mast { grid-template-columns: minmax(0, 1fr); }
+  .mast__where, .mast__year { grid-column: 1; text-align: left; }
+  .mast__where { grid-row: 3; margin-top: 8px; }
+  .mast__year { grid-row: 4; }
 }
 
 /* ---- /blog index + posts ---------------------------------------------------- */
@@ -205,17 +420,23 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .post__head { margin-bottom: clamp(24px, 5vw, 40px); }
 .post__head h1 { font-size: clamp(28px, 5vw, 40px); letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 0; }
 .post__meta { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin-top: 12px; }
+/* The byline separator is generated, not markup: a reading mode that lifts the date
+   and the author into its own header cannot leave a stray "\00b7" behind, because the
+   paragraph empties completely and gets dropped. Set on the <time>, not inside the
+   link, so it does not inherit the link underline. */
+.post__meta time::after { content: "\00a0\00b7\00a0" / ""; }
 .post__meta a { color: var(--bs-color-accent); text-decoration: underline; }
-.post__body { font-size: 17px; line-height: 1.65; color: var(--bs-color-ink); }
+.post__body { font-family: var(--bs-font-text); font-size: 17px; line-height: 1.7; color: var(--bs-color-ink); }
 .post__body h2 { font-size: 22px; letter-spacing: -0.01em; margin: 36px 0 12px; }
 .post__body h3 { font-size: 18px; margin: 28px 0 8px; }
 .post__body p { margin: 0 0 18px; }
 .post__body a { color: var(--bs-color-accent); }
-.post__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-accent-tint); padding: 1px 5px; border-radius: 4px; }
+.post__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-accent-tint); padding: 1px 5px; }
 .post__body blockquote { margin: 0 0 18px; padding-left: 16px; border-left: 3px solid var(--bs-color-accent-soft); color: var(--bs-color-ink-soft); }
 .post__body ul { margin: 0 0 18px; padding-left: 20px; }
 .post__body li { margin: 0 0 6px; }
 .post__body hr { border: 0; border-top: 1px solid var(--bs-color-line); margin: 28px 0; }
+.post__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 0; padding: 0; }
 .post .tag { font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono); }
 
 /* ---- social identity + POSSE syndication ----------------------------------- */
@@ -233,8 +454,14 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .prov-link::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: -6px; width: 2px; background: var(--bs-color-line); }
 .prov-link::after { content: ""; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--bs-color-on-accent); border: 2px solid var(--bs-color-accent-soft); }
 .prov-link__name { display: block; font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-accent); margin: 0 0 5px; }
+/* The body is a <div> of <p>, not a <span>: prose belongs in a paragraph, and reader
+   modes (Safari Reader, Firefox Reader — both Mozilla Readability) score only
+   p/td/pre/section/h2-h6. A narrative in a <span> is invisible to that scorer, so this
+   whole <ol> was being culled as a link-dense list with no content, and /provenance
+   rendered in Reader as bare digests. See scripts/reader-view-gate.mjs. */
 .prov-link__body { color: var(--bs-color-ink-soft); font-size: 15px; line-height: 1.55; max-width: 60ch; }
-.prov-link__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-accent-tint); padding: 1px 5px; border-radius: 4px; color: var(--bs-color-ink); }
+.prov-link__body p { margin: 0; }
+.prov-link__body code { font-family: var(--bs-font-mono); font-size: 0.88em; background: var(--bs-color-accent-tint); padding: 1px 5px; color: var(--bs-color-ink); }
 .prov-link__body a { color: var(--bs-color-accent); text-decoration: underline; text-underline-offset: 2px; }
 /* :has() is not yet Baseline Widely Available; guard it as a progressive
    enhancement (the feature query is the tested fallback — without :has() the link
@@ -247,19 +474,19 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 /* the signed output — the seal that closes the chain */
 .prov-seal { position: relative; padding-left: 32px; }
 .prov-seal::after { content: ""; position: absolute; left: 0; top: 6px; width: 13px; height: 13px; background: var(--bs-color-accent); transform: rotate(45deg); }
-.prov-seal__card { border: 1px solid var(--bs-color-accent-soft); background: var(--bs-color-card); border-radius: var(--bs-radius-md); padding: 16px 18px; }
+.prov-seal__card { border: 1px solid var(--bs-color-accent-soft); background: var(--bs-color-card); padding: 16px 18px; }
 .prov-seal__title { font-family: var(--bs-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-color-ink); margin: 0 0 6px; }
 .prov-seal__meta { font-family: var(--bs-font-mono); font-size: 14px; color: var(--bs-color-ink); margin: 0; }
 .prov-seal__meta a { color: var(--bs-color-accent); text-decoration: none; border-bottom: 1px solid var(--bs-color-accent-soft); }
 .prov-evidence { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.prov-evidence a { display: inline-block; font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-accent); text-decoration: none; border: 1px solid var(--bs-color-line); border-radius: 999px; padding: 5px 12px; }
+.prov-evidence a { display: inline-block; font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-accent); text-decoration: none; border: 1px solid var(--bs-color-line); padding: 5px 10px; }
 .prov-evidence a:hover { border-color: var(--bs-color-accent); }
 .prov-materials { list-style: none; margin: 0; padding: 0; max-width: 60ch; }
 .prov-materials li { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--bs-color-line); }
 .prov-materials li:last-child { border-bottom: 0; }
 .prov-materials code { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink); background: none; padding: 0; }
 .prov-dg { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); white-space: nowrap; }
-.prov-materials__note { display: block; font-size: 13px; color: var(--bs-color-ink-mono); margin-top: 8px; line-height: 1.5; }
+.prov-materials__note { display: block; font-size: 13px; color: var(--bs-color-ink-mono); margin: 8px 0 0; line-height: 1.5; }
 
 /* ---- conformance: the computed conformance projection (kit renderer) -------- */
 .conf-machine { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: 10px 0 0; }
@@ -269,7 +496,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
    read the flat criteria list lacks. Colors: met = accent, unmet = status-negative,
    not-assessed = a neutral (it isn't a failure, just unevaluated). */
 .conf-overview { margin: 0 0 30px; }
-.conf-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bs-color-card-alt); }
+.conf-bar { display: flex; height: 8px; overflow: hidden; background: var(--bs-color-card-alt); }
 .conf-bar__seg { display: block; height: 100%; }
 .conf-bar__seg--met { background: var(--bs-color-ink-soft); }
 .conf-bar__seg--unmet { background: var(--bs-color-status-negative); }
@@ -283,7 +510,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .conf-stat--na .conf-stat__n { color: var(--bs-color-ink-mono); }
 
 .ck-conformance { margin: 8px 0 0; }
-.ck-conformance__claim { font-size: 17px; line-height: 1.5; margin: 0 0 6px; padding: 14px 16px; border-radius: var(--bs-radius-md); border: 1px solid var(--bs-color-line); background: var(--bs-color-card-alt); color: var(--bs-color-ink); max-width: 64ch; }
+.ck-conformance__claim { font-size: 17px; line-height: 1.5; margin: 0 0 6px; padding: 14px 16px; border: 1px solid var(--bs-color-line); background: var(--bs-color-card-alt); color: var(--bs-color-ink); max-width: 64ch; }
 .ck-conformance__claim[data-conformant="true"] { border-color: var(--bs-color-accent-soft); background: var(--bs-color-accent-tint); color: var(--bs-color-accent-strong); }
 .ck-conformance__summary { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); margin: 0 0 28px; }
 .ck-conformance__standard { color: var(--bs-color-ink-soft); }
@@ -298,7 +525,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
 .ck-criterion { display: grid; grid-template-columns: 116px 1fr; gap: 6px 14px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--bs-color-line); }
 .ck-criterion:first-child { padding-top: 0; }
 .ck-criterion:last-child { border-bottom: 0; padding-bottom: 0; }
-.ck-criterion__status { grid-row: span 3; align-self: start; justify-self: start; font-family: var(--bs-font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--bs-color-line); color: var(--bs-color-ink-mono); white-space: nowrap; }
+.ck-criterion__status { grid-row: span 3; align-self: start; justify-self: start; font-family: var(--bs-font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--bs-color-line); color: var(--bs-color-ink-mono); white-space: nowrap; }
 /* met reads NEUTRAL, not red — terracotta-for-pass looked like an error. Red is
    reserved for the one real problem (unmet); the ✓/✗/– glyph is the primary signal. */
 .ck-status--met { color: var(--bs-color-ink); border-color: var(--bs-color-line); background: var(--bs-color-card-alt); }

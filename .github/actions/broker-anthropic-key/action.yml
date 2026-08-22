@@ -1,0 +1,108 @@
+name: broker-anthropic-key
+description: >-
+  Get a per-run ANTHROPIC_API_KEY from the org's cf-token-broker via GitHub Actions OIDC,
+  instead of a standing repo secret. Same migration this repo already ran for the
+  Cloudflare deploy credential (#228): the job proves its identity with OIDC and exchanges
+  it at the broker for a credential bounded by that one run, so no long-lived key sits in
+  the repo's secret store where anything with `secrets: inherit` can reach it.
+
+  OPT-IN, deliberately. The broker is used only when `broker-path` is non-empty. Until the
+  registry entry exists (infra) and someone sets the repo/org variable, every caller keeps
+  behaving exactly as before, on the stored secret. That is the same posture
+  bounded-systems/.github's site-deploy.yml takes for CLOUDFLARE_API_TOKEN — "kept for
+  callers that have not migrated" — rather than a flag day across three workflows.
+
+inputs:
+  broker-url:
+    description: Broker base URL (e.g. https://broker.bounded.tools). Not a secret.
+    required: false
+    default: ""
+  broker-path:
+    description: >-
+      Route the broker pins for this credential (e.g. /anthropic/bdelanghe-site). EMPTY
+      DISABLES THE BROKER and falls through to `stored` — this is the opt-in switch.
+    required: false
+    default: ""
+  audience:
+    description: OIDC audience the broker pins for this route.
+    required: false
+    default: anthropic-key-broker
+  stored:
+    description: >-
+      The stored ANTHROPIC_API_KEY, used only when the broker is not configured. Pass
+      `secrets.ANTHROPIC_API_KEY`.
+    required: false
+    default: ""
+
+outputs:
+  key:
+    description: >-
+      The API key (masked). MAY BE EMPTY, and every caller must tolerate that: all three
+      consumers of this action skip cleanly without a key (fork PRs have no secret), so an
+      empty output means "no review this run", not "broken".
+    value: ${{ steps.mint.outputs.key }}
+  source:
+    description: '"broker", "stored", or "none" — which path produced the key.'
+    value: ${{ steps.mint.outputs.source }}
+
+runs:
+  using: composite
+  steps:
+    - id: mint
+      shell: bash
+      env:
+        BROKER_URL: ${{ inputs.broker-url }}
+        BROKER_PATH: ${{ inputs.broker-path }}
+        AUDIENCE: ${{ inputs.audience }}
+        STORED: ${{ inputs.stored }}
+      run: |
+        set -uo pipefail
+        key=""; source="none"
+        if [ -n "${BROKER_PATH:-}" ]; then
+          if [ -z "${BROKER_URL:-}" ]; then
+            echo "::error::broker-path is set but broker-url is empty — set vars.CF_BROKER_URL."
+            exit 1
+          fi
+          # No OIDC means the CALLER forgot `permissions: id-token: write`. Falling back to
+          # the stored secret here would silently keep the standing credential this action
+          # exists to remove, so it fails instead — site-deploy.yml refuses for the same
+          # reason, in the same words.
+          if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] || [ -z "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]; then
+            echo "::error::broker configured but no OIDC token available — add 'permissions: id-token: write' to the calling job."
+            exit 1
+          fi
+          jwt="$(curl -fsS -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${AUDIENCE}" | jq -r '.value // empty')"
+          [ -n "${jwt:-}" ] || { echo "::error::failed to obtain an OIDC token"; exit 1; }
+          # NOT `curl -f`: the broker puts its diagnosis IN the body ("unknown app",
+          # "unauthorized", a propagation gap of ~4 minutes on a fresh entry — infra#192),
+          # and -f discards exactly that, collapsing every refusal into "curl: (22)".
+          res_file="$(mktemp)"
+          code="$(curl -sS -o "$res_file" -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer ${jwt}" "${BROKER_URL%/}${BROKER_PATH}" || echo 000)"
+          body="$(cat "$res_file" 2>/dev/null || true)"; rm -f "$res_file"
+          key="$(jq -r '.token // .key // empty' <<<"$body" 2>/dev/null || true)"
+          if [ "$code" != "200" ] || [ -z "${key:-}" ]; then
+            echo "::error::broker returned HTTP ${code} for ${BROKER_PATH}"
+            echo "::error::  response: ${body:0:900}"
+            echo "::error::  → 404 has three indistinguishable causes: the registry lacks the entry,"
+            echo "::error::    the route is a typo, or the entry is registered and its deploy has not"
+            echo "::error::    propagated (~4 min observed — infra#192). Check the registry diff before"
+            echo "::error::    concluding it is absent. Otherwise verify job_workflow_ref is on the"
+            echo "::error::    broker allowlist for this route."
+            exit 1
+          fi
+          source="broker"
+          echo "::notice::minted a per-run Anthropic key via the broker"
+        elif [ -n "${STORED:-}" ]; then
+          key="$STORED"; source="stored"
+          echo "::warning::using the STORED ANTHROPIC_API_KEY. That is a standing capability with"
+          echo "::warning::no expiry tied to this run, readable by anything with secrets access."
+          echo "::warning::Migrate: register the route in infra, then set the broker vars (see"
+          echo "::warning::.github/actions/broker-anthropic-key/action.yml)."
+        else
+          echo "::notice::no Anthropic credential — the calling gate will skip, which is its documented behaviour on fork PRs."
+        fi
+        [ -n "$key" ] && echo "::add-mask::$key"
+        echo "key=$key" >> "$GITHUB_OUTPUT"
+        echo "source=$source" >> "$GITHUB_OUTPUT"

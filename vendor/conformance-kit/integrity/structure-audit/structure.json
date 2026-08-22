@@ -9,6 +9,18 @@
       "/resume"
     ]
   },
+  "archive.html": {
+    "h1": "Public record",
+    "outline": "122333333",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/conformance",
+      "/interests",
+      "/provenance"
+    ]
+  },
   "blog.html": {
     "h1": "Writing",
     "outline": "1",
@@ -78,18 +90,6 @@
       "/llms.txt",
       "/provenance",
       "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
-      "/provenance",
       "/provenance.json",
       "/sbom.spdx.json",
       "/site.sha256",
@@ -97,20 +97,21 @@
     ]
   },
   "index.html": {
-    "h1": "AI agents ship code. I write the contracts that keep them in check.",
-    "outline": "1222",
+    "h1": "I make software safe to run when you can't fully trust what it will do.",
+    "outline": "1223332",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
+      "/archive",
+      "/blog",
       "/conformance",
-      "/interests",
       "/provenance",
       "/resume"
     ]
   },
   "interests.html": {
     "h1": "What I follow",
-    "outline": "12",
+    "outline": "12333333333333333333333333333333",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [

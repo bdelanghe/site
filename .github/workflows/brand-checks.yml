@@ -47,6 +47,41 @@ jobs:
         run: node brand/tools/meta.mjs --check dist
       - name: Accessibility (WCAG AA contrast + headings)
         run: node brand/tools/a11y.mjs --check dist
+      - name: Reader-view gate (Safari/Firefox Reader actually gets the content)
+        # Complements the kit's structure-audit below rather than duplicating it. That
+        # check is scoped by $STRUCTURE_ARTICLE_PREFIX, which defaults to "blog/" and is
+        # never set here — so it only ever ran against the two blog posts, which were
+        # never broken. And its bar is "extracted > 200 chars", which /provenance CLEARED
+        # at 568 while rendering in Reader as a bare column of sha256 digests.
+        #
+        # This gate measures COVERAGE (extracted / visible text) across every content
+        # page, plus whether the browser will offer the Reader control at all. The
+        # /provenance regression scored 0.14; the floor is 0.55.
+        run: node scripts/reader-view-gate.mjs dist --strict
+      - name: Reader-structure gate (the extracted text is still legible)
+        # The companion to the reader-view gate above, which measures COVERAGE — how
+        # much text Readability gets. This measures STRUCTURE: whether that text keeps
+        # its line breaks once Reader strips the class attributes and applies its own
+        # stylesheet. They fail independently, and one was green through the other's
+        # outage: / 's Background entries were spans in a grid, so coverage was ~100%
+        # while seven employment records rendered as run-on lines. 173 such joins
+        # sitewide when this was written.
+        run: node scripts/reader-structure-gate.mjs dist
+      - name: Reader-links gate (the links inside the text survive too)
+        # The third leg, and the one a reader noticed before any gate did: /resume had
+        # 94% coverage and clean structure while seven of its fourteen links — every
+        # employer and institution — were being culled. Readability drops blocks whose
+        # link density is high for their text, and <div> is on its cull list where
+        # <section> and <p> are not.
+        run: node scripts/reader-links-gate.mjs dist
+      - name: Reachability gate (every page has a path to it from /)
+        # The complement of structure-audit's link checker below, which finds links
+        # pointing at nothing. This finds the opposite — a page nothing points at.
+        # /blog and both posts shipped that way after the redesign replaced the
+        # homepage link list: still built, still in the sitemap, still in llms.txt,
+        # and reachable only by typing the URL. Every gate was green, because a
+        # sitemap entry is not a link and llms.txt is not navigation.
+        run: node scripts/reachability-gate.mjs dist
       - name: Install structure-audit deps (vendored conformance-kit tenant)
         run: npm ci --prefix vendor/conformance-kit/integrity/structure-audit
       - name: Whole-page structure gate (reader survivability + outline + links)
