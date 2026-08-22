@@ -1330,6 +1330,11 @@ ${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.t
 - [${copy("conf.title")}](${SITE}/conformance.md)
 - [${copy("prov.title")}](${SITE}/provenance.md)
 - [${copy("colophon.title")}](${SITE}/colophon.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
+
+## ${copy("llms.machine")}
+- [OpenAPI 3.2](${SITE}/api/v1/openapi.json): ${copy("llms.machine.api")}
+- [MCP](${SITE}/mcp): ${copy("llms.machine.mcp")}
+- [site-mcp](https://www.npmjs.com/package/@bounded-systems/site-mcp): ${copy("llms.machine.verified")}
 `;
 await writeFile(join(dist, "llms.txt"), llms);
 

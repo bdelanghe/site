@@ -555,6 +555,22 @@
     "type": "body",
     "value": "Markdown"
   },
+  "copy.llms.machine": {
+    "type": "body",
+    "value": "Machine surfaces"
+  },
+  "copy.llms.machine.api": {
+    "type": "claim",
+    "value": "typed JSON under /api/v1, described by this OpenAPI document"
+  },
+  "copy.llms.machine.mcp": {
+    "type": "claim",
+    "value": "Streamable HTTP, POST JSON-RPC. Each result reports a sha-256 of the bytes it returned; this surface does not check them against /site.sha256."
+  },
+  "copy.llms.machine.verified": {
+    "type": "body",
+    "value": "the same tools, run on your own machine — it checks an artifact against the signed manifest before returning it."
+  },
   "copy.footer.org": {
     "type": "body",
     "value": "Bounded Systems"
