@@ -100,6 +100,13 @@ jobs:
         # memory) or to prose (twelve links in a paragraph are read, not scanned) —
         # both would be the category error the gate exists to avoid.
         run: node scripts/fold-load.mjs dist --strict
+      - name: Worker tests (the /mcp route, and that assets fall through untouched)
+        # The Worker is a pure (Request, env) -> Response, so it runs offline against
+        # the real built dist/ with a stubbed ASSETS binding. The load-bearing case is
+        # the last one: a served asset must come back byte-identical, because
+        # integrity/verify/verify.mjs re-hashes the preview URL against the signed
+        # manifest and a single rewritten byte would fail the deploy before promotion.
+        run: node --test worker/index.test.mjs
       - name: Install structure-audit deps (vendored conformance-kit tenant)
         run: npm ci --prefix vendor/conformance-kit/integrity/structure-audit
       - name: Whole-page structure gate (reader survivability + outline + links)

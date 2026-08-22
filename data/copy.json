@@ -96,5 +96,9 @@
   "llms.links": "Links",
   "llms.work": "Selected work",
   "llms.md": "Markdown",
+  "llms.machine": "Machine surfaces",
+  "llms.machine.api": "typed JSON under /api/v1, described by this OpenAPI document",
+  "llms.machine.mcp": "Streamable HTTP, POST JSON-RPC. Each result reports a sha-256 of the bytes it returned; this surface does not check them against /site.sha256.",
+  "llms.machine.verified": "the same tools, run on your own machine — it checks an artifact against the signed manifest before returning it.",
   "footer.org": "Bounded Systems"
 }

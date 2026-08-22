@@ -4,8 +4,17 @@
   "name": "site",
   "account_id": "a2ca40f474fa65ed8f751a3efdf74c01",
   "compatibility_date": "2026-06-21",
+  // The Worker routes; it does not rewrite. Everything but /mcp is handed to the
+  // ASSETS binding untouched, so a served page is byte-identical to what
+  // `nix build .#site` produced, what site.sha256 covers and what cosign signed —
+  // which is what integrity/verify/verify.mjs re-checks against the preview URL
+  // before anything is promoted.
+  "main": "./worker/index.js",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    // Named so the Worker can fall through to the same files, and read an
+    // /api/v1 artifact for /mcp without leaving the edge.
+    "binding": "ASSETS"
   }
 }
