@@ -352,13 +352,68 @@ const head = ({ title, description, path = "/", appCss = true, ogTitle, ogType =
 };
 // One source for identity: basics.profiles → sameAs (JSON-LD), rel=me (head), footer.
 const socialHtml = social.map((s) => `<a rel="me" href="${esc(s.url)}">${esc(s.network)}</a>`).join(" &middot; ");
+// The record has to be a LOSSLESS FOLD of what the page shows. It used to be a
+// stub: seven employers, every date, and the degree itself all rendered on
+// /resume and appeared nowhere in the record, so `alumniOf: [{name}]` was a
+// name and nothing else — the reason /resume read as a first-class object and
+// behaved like a placeholder. scripts/fold-load.mjs measures exactly this, by
+// checking each rendered fact is recoverable from the record.
+//
+// Dates and role names attach through the schema.org ROLE pattern: a Role node
+// carries the dates and repeats the property that points at the real value, so
+// `worksFor` still resolves to an Organization for a consumer that ignores Role.
 const jsonLd = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org", "@type": "Person",
   name, url: SITE, jobTitle: role, description: headline,
+  email: email ? `mailto:${email}` : undefined,
+  address: basics.location
+    ? {
+      "@type": "PostalAddress",
+      addressLocality: basics.location.city,
+      addressRegion: basics.location.region,
+      addressCountry: basics.location.countryCode,
+    }
+    : undefined,
   knowsAbout: knowsAbout.length ? knowsAbout : undefined,
-  alumniOf: education.map((e) => ({ "@type": "Organization", name: e.institution })),
+  worksFor: work.map((w) => ({
+    "@type": "OrganizationRole",
+    worksFor: { "@type": "Organization", name: w.name, url: w.url },
+    roleName: w.position,
+    startDate: w.startDate,
+    endDate: w.endDate,
+    // The résumé line reads "New York · Hybrid" — one string covering place and
+    // arrangement, which is what the page shows and so what the record carries.
+    location: w.location,
+  })),
+  alumniOf: education.map((e) => ({
+    "@type": "OrganizationRole",
+    alumniOf: { "@type": "CollegeOrUniversity", name: e.institution, url: e.url },
+    startDate: e.startDate,
+    endDate: e.endDate,
+  })),
+  hasCredential: education.map((e) => ({
+    "@type": "EducationalOccupationalCredential",
+    name: [e.studyType, e.area].filter(Boolean).join(", "),
+    credentialCategory: e.studyType,
+    about: e.area,
+    recognizedBy: { "@type": "CollegeOrUniversity", name: e.institution, url: e.url },
+  })),
   // claim → evidence: each hero claim points at the project repo that backs it.
-  subjectOf: projects.map((p) => ({ "@type": "CreativeWork", name: p.name, url: p.url })),
+  subjectOf: projects.map((p) => ({
+    "@type": "CreativeWork",
+    name: p.name,
+    url: p.url,
+    dateCreated: p.startDate,
+    keywords: p.keywords?.length ? p.keywords.join(", ") : undefined,
+    sourceOrganization: p.entity ? { "@type": "Organization", name: p.entity } : undefined,
+    creator: p.roles?.length
+      ? {
+        "@type": "Role",
+        creator: { "@type": "Person", name, url: SITE },
+        roleName: p.roles.join(", "),
+      }
+      : undefined,
+  })),
   sameAs: social.map((s) => s.url),
 }).replace(/</g, "\\u003c")}</script>`;
 
