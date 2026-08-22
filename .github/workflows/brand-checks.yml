@@ -40,6 +40,14 @@ jobs:
         # lines from its cause, on a step whose previous line escaped an apostrophe
         # correctly. bash -n catches it in a second; nothing was running bash -n.
         run: node scripts/check-workflow-shell.mjs
+      - name: brand pin parity (npm and Nix compose against the same brand)
+        # @bdelanghe/brand is a git dependency with no release, pinned twice: by
+        # package-lock.json for `npm ci` and by flake.lock for the hermetic build
+        # whose output is signed and served. flake.nix says "Bump both together" —
+        # this makes that a check rather than a discipline. Drift is silent by
+        # construction: both builds succeed, and every other gate stays green
+        # because the token gates read node_modules while dist/ comes from Nix.
+        run: node scripts/check-brand-pin.mjs
       - name: Build dist/
         run: node build.mjs
       - name: Known-vuln gate (vendored kit gate — production deps, re-proven)
