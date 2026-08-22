@@ -1706,12 +1706,13 @@ await writeFile(join(dist, "interests.md"), interestsMd);
 // asset matches two Cache-Control rules — Cloudflare _headers MERGES overlapping
 // rules, which would emit a malformed double Cache-Control. Plus UTF-8 on text
 // assets (Cloudflare otherwise sends text/plain with no charset → Latin-1 mojibake).
-const htmlRoutes = ["/", "/resume", "/archive", "/blog", "/provenance", "/conformance", "/colophon", ...posts.map(postUrl)];
+const htmlRoutes = ["/", "/resume", "/archive", "/blog", "/provenance", "/conformance", "/colophon", "/interests", ...posts.map(postUrl)];
 // RFC 9530 Repr-Digest per canonical doc, computed over the exact bytes written above
 // (self-contained — not the later site.sha256). Scoped to the canonical documents, not
-// fingerprinted assets. /provenance is intentionally OMITTED: gen-attestation.mjs stamps
-// @@COMMIT@@/@@DATE@@ into provenance.html AFTER this build, so a build-time digest would
-// not match the served bytes. The digest is added in the SAME rule block as Cache-Control
+// fingerprinted assets. Every canonical document carries one; /provenance is the ONE
+// deliberate omission: gen-attestation.mjs stamps @@COMMIT@@/@@DATE@@ into
+// provenance.html AFTER this build, so a build-time digest would not match the
+// served bytes. The digest is added in the SAME rule block as Cache-Control
 // (Cloudflare _headers merges overlapping rules — one block per route avoids duplication).
 const reprByRoute = {
   "/": reprDigest(html),
@@ -1719,6 +1720,8 @@ const reprByRoute = {
   "/archive": reprDigest(archiveHtml),
   "/blog": reprDigest(blogHtml),
   "/conformance": reprDigest(conformanceHtml),
+  "/colophon": reprDigest(colophonHtml),
+  "/interests": reprDigest(interestsHtml),
   ...Object.fromEntries(postReprs),
   "/feed.xml": reprDigest(atom),
   "/feed.json": reprDigest(jsonFeedStr),
