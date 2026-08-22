@@ -82,6 +82,16 @@ jobs:
         # and reachable only by typing the URL. Every gate was green, because a
         # sitemap entry is not a link and llms.txt is not navigation.
         run: node scripts/reachability-gate.mjs dist
+      - name: Fold-load gate (a fold is lossless, and a step is within budget)
+        # Two properties of the unfold model, checked where they are checkable.
+        # FIDELITY: whatever the emitted record drops that the page renders is
+        # residue — the Person record was missing seven employers and the degree
+        # while /resume showed all of them. TRACTABILITY: a sibling run of choices
+        # standing at rest is one expansion step, held to a working-memory budget.
+        # Deliberately NOT applied to the record (nobody holds a ld+json in working
+        # memory) or to prose (twelve links in a paragraph are read, not scanned) —
+        # both would be the category error the gate exists to avoid.
+        run: node scripts/fold-load.mjs dist --strict
       - name: Install structure-audit deps (vendored conformance-kit tenant)
         run: npm ci --prefix vendor/conformance-kit/integrity/structure-audit
       - name: Whole-page structure gate (reader survivability + outline + links)

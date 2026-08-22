@@ -2,7 +2,7 @@
 // fold-load — cognitive load, measured as a fold.
 //
 //   node scripts/fold-load.mjs [distDir]            # report
-//   node scripts/fold-load.mjs [distDir] --strict   # fail on a breach
+//   node scripts/fold-load.mjs [distDir] --strict   # fail on a breach (CI runs this)
 //
 // ── THE MODEL ────────────────────────────────────────────────────────────────
 //
