@@ -52,7 +52,16 @@ body { background: var(--bs-color-card); }
 /* visible keyboard focus — non-color, brand-token ring (WCAG 2.4.7 / 2.4.11) */
 :focus-visible { outline: 2px solid var(--bs-color-accent); outline-offset: 2px; border-radius: var(--bs-radius-none); }
 
-/* Link-type indicators, derived from the href itself — not appended per callsite in
+/* Every one of these carries `/ ""` — the CSS alternative-text syntax. Generated
+   content is part of an element's ACCESSIBLE NAME, so without it a screen reader
+   announced every outbound link on the site as "GitHub northeast arrow": 171 names
+   across 10 pages, measured off Chrome's computed accessibility tree. The glyph is a
+   visual affordance about where a link goes, and the href already says that to any
+   assistive technology — so it belongs in the visual layer only. `/ ""` gives it an
+   empty alternative, and a browser that does not support the syntax simply keeps
+   today's behaviour, so the degradation is the status quo rather than a break.
+
+   Link-type indicators, derived from the href itself — not appended per callsite in
    JS/template code (previously 3 inconsistent, hand-maintained occurrences of the
    outbound arrow, and prose links in post bodies never got one at all). A link's own
    href is the single source of truth for what kind of link it is, so the indicator
@@ -63,18 +72,18 @@ a[href^="http"]:not(.no-link-icon)::after {
      text-presentation variation selector) is the actual fix: it forces text
      rendering, since iOS/Safari otherwise renders this codepoint as a full-color
      emoji glyph rather than plain text. */
-  content: "\2197\FE0E";
+  content: "\2197\FE0E" / "";
   margin-left: 0.2em;
   font-size: 0.65em;
 }
 a[href^="#"]:not(.no-link-icon)::after {
-  content: "\00a7\FE0E"; /* § — jumps within this page, never leaves it */
+  content: "\00a7\FE0E" / ""; /* § — jumps within this page, never leaves it */
   margin-left: 0.2em;
   font-size: 0.65em;
   opacity: 0.7;
 }
 a[href^="mailto:"]:not(.no-link-icon)::before {
-  content: "\2709\FE0E\00a0"; /* envelope + a following space */
+  content: "\2709\FE0E\00a0" / ""; /* envelope + a following space */
   font-size: 0.9em;
 }
 
@@ -407,7 +416,7 @@ a.tag:hover, a.tag:focus-visible { border-color: var(--bs-color-accent); }
    and the author into its own header cannot leave a stray "\00b7" behind, because the
    paragraph empties completely and gets dropped. Set on the <time>, not inside the
    link, so it does not inherit the link underline. */
-.post__meta time::after { content: "\00a0\00b7\00a0"; }
+.post__meta time::after { content: "\00a0\00b7\00a0" / ""; }
 .post__meta a { color: var(--bs-color-accent); text-decoration: underline; }
 .post__body { font-family: var(--bs-font-text); font-size: 17px; line-height: 1.7; color: var(--bs-color-ink); }
 .post__body h2 { font-size: 22px; letter-spacing: -0.01em; margin: 36px 0 12px; }
