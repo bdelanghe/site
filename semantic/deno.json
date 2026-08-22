@@ -1,0 +1,19 @@
+{
+  "//": [
+    "The lone version this site blesses its pages with — SITE-OWNED, deliberately.",
+    "",
+    "It used to live in vendor/conformance-kit/gates/semantic/deno.json, which is inside",
+    "the kit's hash-pinned integrity manifest. That made the version specifier the KIT's",
+    "to choose, so moving it meant either editing a vendored copy (diverging it from",
+    "upstream, which is the exact drift the hash pin exists to detect) or re-vendoring the",
+    "whole kit to change one string. Neither is right: WHICH lone to run is a consumer",
+    "decision, and the lockfile that pins it — semantic/deno.lock — was already here.",
+    "",
+    "The kit still owns gate.ts, the runner. It just no longer owns the version."
+  ],
+  "imports": {
+    "@bounded-systems/lone": "jsr:@bounded-systems/lone@^0.8",
+    "zod": "npm:zod@3",
+    "linkedom": "npm:linkedom@0.15.3"
+  }
+}

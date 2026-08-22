@@ -1,13 +1,13 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@bounded-systems/lone@0.1": "0.1.0",
+    "jsr:@bounded-systems/lone@0.8": "0.8.0",
     "npm:linkedom@0.15.3": "0.15.3",
     "npm:zod@3": "3.25.76"
   },
   "jsr": {
-    "@bounded-systems/lone@0.1.0": {
-      "integrity": "eeb66f28a33df869058067a459d4b0c72ef7f53aa12bde7a553ac3f76bd33928",
+    "@bounded-systems/lone@0.8.0": {
+      "integrity": "d5f15bdcc93bc6764631755b8142e20d1398b83326fc0b9bfa23cd7bd71753c3",
       "dependencies": [
         "npm:zod"
       ]
@@ -98,7 +98,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@bounded-systems/lone@0.1",
+      "jsr:@bounded-systems/lone@0.8",
       "npm:linkedom@0.15.3",
       "npm:zod@3"
     ]
