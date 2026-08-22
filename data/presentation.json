@@ -1,5 +1,5 @@
 {
-  "_source": "Render-context for bdelanghe/site (homepage hero + nav). Decorates the canonical résumé doc profile.json — never redefines a canonical field. Authored + signed off here (the same string-audit bar as the résumé copy) and published to site, where build.mjs shallow-merges presentation over profile.",
+  "_source": "Render-context for bdelanghe/site (homepage dossier + nav). Decorates the canonical résumé doc profile.json — never redefines a canonical field. Authored + signed off here (the same string-audit bar as the résumé copy) and published to site, where build.mjs shallow-merges presentation over profile.",
   "banner": {
     "tagline": "Bounded authority for AI agents",
     "stack": [
@@ -9,28 +9,104 @@
       "Developer tools"
     ]
   },
-  "intro": "I'm Bobby. I build the controls that keep AI agents inside the job you gave them.",
-  "place": "Brooklyn · Aura · Recurse Center · Bennington",
-  "seeking": {
-    "label": "Open to new roles",
-    "focus": "Senior / founding engineering on agent infrastructure: agent safety and code provenance",
-    "detail": "Senior engineering on teams building agentic products. I bring direct experience shipping agent-authored systems and the controls that make them trustworthy. Brooklyn · NYC · remote.",
-    "cta": "Get in touch",
-    "href": "mailto:cv@robertdelanghe.dev"
+  "deck": "Selected work in agent infrastructure, commerce systems, and developer tooling.",
+  "now": {
+    "role": "Empathic — New York",
+    "roleHref": "https://empathic.dev"
   },
+  "caseStudies": [
+    {
+      "name": "Bounded Systems",
+      "kicker": "Capability security for coding agents",
+      "problem": "Agent-authored commits reached main without review, and afterwards nobody could say which writes the agent had been authorized to make.",
+      "intervention": "Moved privileged git effects behind capability-checked operations, and routed the work through one pipeline whose only exit is a merged pull request.",
+      "evidence": "prx drives a work unit to an attributed pull request; ocap-provenance records which capabilities each effect held, and which were denied. Both are public, and both name what is still outside the check.",
+      "role": "System model, schemas, implementation, and the operational testing.",
+      "links": [
+        {
+          "label": "prx",
+          "href": "https://github.com/bounded-systems/prx"
+        },
+        {
+          "label": "ocap-provenance",
+          "href": "https://github.com/bounded-systems/ocap-provenance"
+        }
+      ]
+    },
+    {
+      "name": "Commerce systems",
+      "kicker": "Supply planning and inbound logistics",
+      "problem": "A 9-tab spreadsheet was the supply plan of record, and three teams each read it differently.",
+      "intervention": "Replaced it with a CLI over one source of truth — 61 schema contracts, 173 test scenarios — and automated the inbound freight it had been gating.",
+      "evidence": "The three teams now plan against the same document, and freight moves without the manual coordination that used to hold shipments.",
+      "role": "Contract design, the CLI, and the cross-team consolidation."
+    },
+    {
+      "name": "Developer systems",
+      "kicker": "Quality gates for a 20-engineer team",
+      "problem": "Whole classes of defect were being found after merge, by people, one ticket at a time.",
+      "intervention": "Moved static analysis into the pull-request pipeline as a blocking gate, so those classes could not reach main in the first place.",
+      "evidence": "Critical bugs fell 20% — critical-severity tickets per quarter, the four quarters before against the four after.",
+      "role": "Gate design, the CI implementation, and the developer-experience work that kept the gate from being routed around."
+    }
+  ],
   "links": [
-    { "label": "GitHub", "href": "https://github.com/bounded-systems" },
-    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rdelanghe/" },
-    { "label": "Résumé", "href": "/resume" },
-    { "label": "cv@robertdelanghe.dev", "href": "mailto:cv@robertdelanghe.dev" }
+    {
+      "label": "GitHub",
+      "href": "https://github.com/bounded-systems"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/rdelanghe/"
+    },
+    {
+      "label": "Résumé",
+      "href": "/resume"
+    },
+    {
+      "label": "Writing",
+      "href": "/blog"
+    },
+    {
+      "label": "Public record",
+      "href": "/archive"
+    }
   ],
   "colophon": [
-    { "name": "baobab", "role": "design-system structure — no defaults", "href": "https://github.com/bounded-systems/baobab" },
-    { "name": "brand", "role": "baobab's pinning — tokens, fonts, the mark", "href": "https://github.com/bdelanghe/brand" },
-    { "name": "lone", "role": "blesses every rendered page's DOM — semantic HTML and a11y", "href": "https://github.com/bounded-systems/lone" },
-    { "name": "string-audit", "role": "grounded copy-hygiene gate", "href": "https://github.com/bounded-systems/string-audit" },
-    { "name": "synoptic-github", "role": "keeps repo topics honest — feeds the corpus", "href": "https://github.com/bdelanghe/synoptic-github" },
-    { "name": "lobby", "role": "the vault these posts are written in", "href": "https://github.com/bounded-systems/lobby" },
-    { "name": "unfold-dev", "role": "the container this site is built in", "href": "https://github.com/users/bdelanghe/packages/container/package/unfold-dev" }
+    {
+      "name": "baobab",
+      "role": "design-system structure — no defaults",
+      "href": "https://github.com/bounded-systems/baobab"
+    },
+    {
+      "name": "brand",
+      "role": "baobab's pinning — tokens, fonts, the mark",
+      "href": "https://github.com/bdelanghe/brand"
+    },
+    {
+      "name": "lone",
+      "role": "blesses every rendered page's DOM — semantic HTML and a11y",
+      "href": "https://github.com/bounded-systems/lone"
+    },
+    {
+      "name": "string-audit",
+      "role": "grounded copy-hygiene gate",
+      "href": "https://github.com/bounded-systems/string-audit"
+    },
+    {
+      "name": "synoptic-github",
+      "role": "keeps repo topics honest — feeds the corpus",
+      "href": "https://github.com/bdelanghe/synoptic-github"
+    },
+    {
+      "name": "lobby",
+      "role": "the vault these posts are written in",
+      "href": "https://github.com/bounded-systems/lobby"
+    },
+    {
+      "name": "unfold-dev",
+      "role": "the container this site is built in",
+      "href": "https://github.com/users/bdelanghe/packages/container/package/unfold-dev"
+    }
   ]
 }

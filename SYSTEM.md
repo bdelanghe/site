@@ -6,11 +6,13 @@ This file is the manual for humans and agents maintaining the system.
 ## The model
 
 ```
-data/profile.json   ← identity / copy tokens (bio, experience, skills, seeking, proof, links)
+data/profile.json   ← canonical JSON Résumé (identity, experience, education, projects)
+data/presentation.json ← render context (deck, availability, case studies, nav links)
 data/site.json      ← the GitHub corpus (stats + curated highlights)   [generated]
         │
         ▼  build.mjs  (pure: no network — safe in nix; validates both contracts)
-   dist/index.html   hero · proof · "open to roles" · background · corpus · selected work
+   dist/index.html   masthead · statement · availability · case studies · background
+   dist/archive.html the generated index — corpus figures/languages/topics + repo cards
    dist/resume.html  print-optimized résumé + "Download PDF" (window.print)
    dist/resume.json  JSON Résumé (machine-readable, schema-valid) — for parsers/ATS
    dist/blog.html    writing (placeholder)
@@ -26,13 +28,14 @@ data/site.json      ← the GitHub corpus (stats + curated highlights)   [genera
 
 | Want to… | Edit | Then |
 |---|---|---|
-| Change bio / headline / summary | `data/profile.json` | push |
+| Change the opening statement | `data/profile.json` → `basics.headline` (the ONE statement) and `data/presentation.json` → `deck` (its single supporting line). The homepage deliberately does NOT render `basics.summary` — that stays résumé copy. | push |
+| Add / edit a case study | `data/presentation.json` → `caseStudies[]` (`name`, `kicker`, `problem`, `intervention`, `evidence`, `role`, optional `links`) | push |
 | Add/edit a job (+ résumé bullets) | `data/profile.json` → `experience[]` (`bullets` show on the résumé) | push |
-| Change "Open to roles" | `data/profile.json` → `seeking` | push |
+| Change availability | `data/presentation.json` → `seeking` (`label` → STATUS, `focus` → FOCUS, `places` → LOCATION; CONTACT is `basics.email`) | push |
 | Change proof links | `data/profile.json` → `proof` | push |
 | Refresh the GitHub corpus now | `GITHUB_TOKEN=$(gh auth token) GH_USER=bdelanghe ORGS=bounded-systems node fetch.mjs` | commit `data/site.json` |
 | Change which repos are highlighted | `PINS` in `fetch.mjs` (editorial, pins-only) | re-run fetch (or hand-edit `data/site.json`) |
-| Sharpen a Selected Work description | `data/highlight-copy.json` (overrides the GitHub repo description by repo name) | push |
+| Sharpen an `/archive` repository description | `data/highlight-copy.json` (overrides the GitHub repo description by repo name) | push |
 | Attest a new metric (so a `claim` grounds) | `data/audit/grounding.json` (the fact registry) | push |
 | Attest an absolute coverage claim (so an overclaim passes) | `data/audit/attested-claims.json` | push |
 | Rebuild locally | `npm run build` (or `nix build .#site` for a hermetic build) | — |
@@ -86,8 +89,13 @@ over a bespoke or vague one; never cross metrics, e.g. a page-load "before" with
 methodology), or **cut** (real but dull / off-thesis → remove, don't reword). Re-run to
 confirm the finding clears.
 
-Selected Work follows the same bar — it's an **editorial set** (`PINS` in `fetch.mjs`,
-pins-only), not an auto-filled tag dump. Breadth lives in the corpus stats.
+Selected Work on the homepage is the **case-study set** (`caseStudies[]` in
+`presentation.json`) — three to five authored entries, each answering the same four
+questions. A repository is evidence inside an entry, never an entry on its own. The
+repository index it draws from is an **editorial set** too (`PINS` in `fetch.mjs`,
+pins-only), and lives on `/archive` with the corpus stats — off the homepage, because a
+repository count and a topic cloud measure activity, and a personal page that leads with
+activity argues scale where it means to argue judgment.
 
 ## Grounded content audit — the shared, owned auditor
 
@@ -136,8 +144,9 @@ submodule. No tribal knowledge: edit the contract, push, the site regenerates an
 
 **Run / change / review:**
 - **Build:** `npm run build` → `dist/` (pure, no network — safe in `nix build`).
-- **Change copy:** `data/profile.json` (bio, experience, seeking) or `data/highlight-copy.json`
-  (Selected Work descriptions). Push — Cloudflare builds + deploys.
+- **Change copy:** `data/profile.json` (identity, experience) or `data/presentation.json`
+  (deck, availability, case studies) or `data/highlight-copy.json` (the `/archive`
+  repository descriptions). Push — Cloudflare builds + deploys.
 - **Change the corpus / pins:** `PINS` in `fetch.mjs`, then refresh (`refresh.yml` runs it weekly).
 - **Review copy:** `npm run check:copy` locally, or it runs on every PR touching the copy
   (see §Copy review for how to triage findings).
@@ -155,7 +164,9 @@ submodule. No tribal knowledge: edit the contract, push, the site regenerates an
 - [ ] `brand-checks` green.
 - [ ] `copy-review` shows **zero blockers** (suggestions / nits triaged — fixed, confirmed-defensible, or cut).
 - [ ] `ANTHROPIC_API_KEY` is in the repo's **Actions** secret store, so copy-review runs live.
-- [ ] Selected Work is the editorial pin set; every description reads self-contained.
+- [ ] Selected Work is the authored case-study set; each entry answers all four questions
+      and every figure in one is in `data/audit/grounding.json`.
+- [ ] `/archive` is the editorial pin set; every description reads self-contained.
 
 **Secrets** live in the repo's **Actions** secret store (Settings → Secrets and variables →
 Actions): `ANTHROPIC_API_KEY` (copy review) and `CLOUDFLARE_API_TOKEN` (deploy). The

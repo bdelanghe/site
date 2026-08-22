@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write # OIDC → cf-token-broker, for the per-run Anthropic key
 
 jobs:
   resume-parse:
@@ -28,7 +29,14 @@ jobs:
       - run: npm ci --no-audit --no-fund # installs @bdelanghe/brand (build.mjs reads it from node_modules)
       - name: Build dist/
         run: node build.mjs
+      - name: Mint the Anthropic key (broker when configured, stored secret otherwise)
+        id: anthropic
+        uses: ./.github/actions/broker-anthropic-key
+        with:
+          broker-url: ${{ vars.CF_BROKER_URL }}
+          broker-path: ${{ vars.ANTHROPIC_BROKER_PATH }}
+          stored: ${{ secrets.ANTHROPIC_API_KEY }}
       - name: Parse the résumé as an ATS
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ steps.anthropic.outputs.key }}
         run: node resume-parse.mjs # report-only; add --strict to gate
