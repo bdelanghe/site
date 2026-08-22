@@ -658,6 +658,7 @@ const langMore = restLangs.length
 // printable, and it survives with JS off. `no-link-icon` keeps the in-page
 // anchors from picking up the automatic § affix.
 const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const CHIPS_SHOWN = 6;
 const accentOn = "background:var(--bs-color-accent);color:var(--bs-color-on-accent);border-color:var(--bs-color-accent)";
 // Build the shared zero-JS topic filter for a record→list pair. `chipTopics` are
 // the record's shown chips; `items` are the cards below (each with .topics). One
@@ -668,9 +669,28 @@ const accentOn = "background:var(--bs-color-accent);color:var(--bs-color-on-acce
 const filterFor = (chipTopics, items) => {
   const topics = [...new Set([...chipTopics.map((t) => t.name), ...items.flatMap((h) => h.topics || [])])];
   const has = (t) => items.some((h) => (h.topics || []).map(slug).includes(slug(t)));
+  // The filter row is a fold like any other. Sixteen ranked topics plus the All
+  // reset is seventeen choices in one step, and the row is ordered BY COUNT — so
+  // the seed writes itself: the head carries the topics most of the corpus is
+  // actually under, and the tail is one <details> away, labelled with how much is
+  // in it. Same disclosure the language bars and the project cards already use.
+  //
+  // CHIPS_SHOWN is set against the budget rather than by eye: at rest the row
+  // holds All + CHIPS_SHOWN + the seed, so six leaves a slot of headroom under
+  // scripts/fold-load.mjs's nine. It matches TAGS_SHOWN, which is the same
+  // control on a card.
+  const chipEl = (t) => `<a class="chip no-link-icon" href="#f-${slug(t.name)}">${esc(t.name)} <em>${t.count}</em></a>`;
+  const restChips = chipTopics.slice(CHIPS_SHOWN);
   const chips = chipTopics.length
-    ? `<a class="chip chip--all no-link-icon" href="#f-all">${copy("work.filter.all")}</a>\n        ` +
-      chipTopics.map((t) => `<a class="chip no-link-icon" href="#f-${slug(t.name)}">${esc(t.name)} <em>${t.count}</em></a>`).join("\n        ")
+    ? [
+      `<a class="chip chip--all no-link-icon" href="#f-all">${copy("work.filter.all")}</a>`,
+      ...chipTopics.slice(0, CHIPS_SHOWN).map(chipEl),
+      restChips.length
+        ? `<details class="chipmore"><summary class="chipmore__sum no-link-icon">${
+          restChips.length} ${copy("corpus.chips.more")}</summary>${
+          restChips.map(chipEl).join("\n        ")}</details>`
+        : "",
+    ].filter(Boolean).join("\n        ")
     : "";
   const anchors = `<span class="ftgt" id="f-all"></span>` +
     topics.map((t) => `<span class="ftgt" id="f-${slug(t)}"></span>`).join("");

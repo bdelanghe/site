@@ -309,6 +309,17 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
   display: inline-flex; align-items: center; gap: 6px; min-height: 24px;
 }
 .chip em { color: var(--bs-color-ink-mono); font-style: normal; }
+/* Overflow topics on the filter row — display:contents so the seed sits in the
+   same flex run as the chips it stands for, which is what it is. */
+.chipmore { display: contents; }
+.chipmore__sum {
+  font-family: var(--bs-font-mono); font-size: 11px; color: var(--bs-color-ink-mono);
+  border: 1px dashed var(--bs-color-line); padding: 4px 8px;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 24px;
+  cursor: pointer; list-style: none;
+}
+.chipmore__sum::-webkit-details-marker { display: none; }
+.chipmore__sum:hover, .chipmore__sum:focus-visible { color: var(--bs-color-accent); border-color: var(--bs-color-accent); }
 .chip--muted { color: var(--bs-color-ink-mono); }
 .chip--all { color: var(--bs-color-ink-soft); }
 /* Hidden :target anchors that drive the pure-CSS Selected-work filter. They stay

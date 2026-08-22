@@ -203,6 +203,10 @@
     "type": "body",
     "value": "more languages"
   },
+  "copy.corpus.chips.more": {
+    "type": "body",
+    "value": "more topics"
+  },
   "copy.corpus.chips.hint": {
     "type": "body",
     "value": "Topics — pick one to filter the work below"
