@@ -48,3 +48,14 @@ jobs:
         run: node vendor/conformance-kit/gates/axe-gate.mjs dist
         env:
           AXE_RUNNER: playwright
+      # Runs here because it needs the same thing axe does — a real browser — and the
+      # job already has Chromium installed and dist/ built.
+      #
+      # It reads what axe cannot: Chrome's COMPUTED ACCESSIBILITY TREE, the data a
+      # screen reader consumes. axe was satisfied by every outbound link on this site
+      # while all 171 of them announced "GitHub northeast arrow", because the glyph is
+      # CSS-generated content and generated content is part of the accessible name — a
+      # rules engine sees a named link and moves on, and lone parses the static DOM
+      # where that content does not exist at all.
+      - name: ax-name gate — every announced name comes from the document
+        run: node scripts/ax-name-gate.mjs dist
