@@ -45,7 +45,14 @@
 //                     content links as competing controls, which is the thing
 //                     that sent us looking for this model in the first place.
 //
-//   3. PRESENTATION FOLD  each built page's choice tree, which is where the
+//   3. API FOLD       each document the static API serves. An MCP client's
+//                     budget is its context window — bytes, measured, with no
+//                     proxy in between — so a large document with no index that
+//                     folds it hands the whole set to every caller. A document an
+//                     index names WITH ITS COUNT is exempt: that is an informed
+//                     unfold, one step of u taken on purpose.
+//
+//   4. PRESENTATION FOLD  each built page's choice tree, which is where the
 //                     budget does belong. S = every choice on the page;
 //                     seed(F) = its <summary> elements; F = the choices standing
 //                     at rest; u = opening one <details>; p = a subtree with no
@@ -64,6 +71,10 @@ const FAN_OUT_MAX = 9;   // Miller's 7±2, upper bound. A stated budget, not a f
 // A run this small is a list, not a fold problem — flagging it would bury the
 // real ones under navigation and footers.
 const RUN_MIN = 4;
+// The API budget, in bytes rather than in items, because that is the unit the
+// consumer actually pays in. Roughly four thousand tokens of an agent's context
+// for one tool call. A stated budget, like the one above, not a finding.
+const DOC_BUDGET = 16 * 1024;
 // A run is a CHOICE run only when the choices are what the container is made of.
 // Twelve links inside a paragraph of prose are read in reading order, not scanned
 // as competing options, and counting them as a twelve-wide choice is the exact
@@ -187,6 +198,18 @@ function describe(el) {
   return `<${el.tagName.toLowerCase()}${id ? "#" + id : cls ? "." + cls : ""}>`;
 }
 
+async function jsonFiles(root, sub = "") {
+  const out = [];
+  let entries;
+  try { entries = await readdir(join(root, sub), { withFileTypes: true }); } catch { return out; }
+  for (const e of entries) {
+    const rel = sub ? `${sub}/${e.name}` : e.name;
+    if (e.isDirectory()) out.push(...(await jsonFiles(root, rel)));
+    else if (e.name.endsWith(".json")) out.push(rel);
+  }
+  return out.sort();
+}
+
 async function htmlFiles(root, sub = "") {
   const out = [];
   for (const e of await readdir(join(root, sub), { withFileTypes: true })) {
@@ -252,6 +275,42 @@ for (const rel of (await htmlFiles(dir)).sort()) {
 }
 
 // 3 ────────────────────────────────────────────────────────────────────────────
+console.log(`\nAPI FOLD — what one tool call costs (budget ${(DOC_BUDGET / 1024).toFixed(0)} KB)\n`);
+
+const apiRoot = join(dir, "api", "v1");
+const apiDocs = await jsonFiles(apiRoot);
+
+// Every href an index document hands out, so a drill-down reached on purpose is
+// not counted against the caller who asked for it.
+const linked = new Set();
+for (const rel of apiDocs) {
+  if (!rel.endsWith("index.json")) continue;
+  const doc = JSON.parse(await readFile(join(apiRoot, rel), "utf8"));
+  for (const [, v] of leaves(doc)) {
+    if (v.startsWith("http")) linked.add(v.replace(/^https?:\/\/[^/]+\/api\/v1\//, ""));
+  }
+}
+
+for (const rel of apiDocs) {
+  if (rel.startsWith("schemas/")) continue;      // served so $id resolves; not a read path
+  const bytes = (await readFile(join(apiRoot, rel))).length;
+  const kb = `${(bytes / 1024).toFixed(1)} KB`.padStart(8);
+  if (bytes <= DOC_BUDGET) { console.log(`  ✓ ${rel.padEnd(44)} ${kb}`); continue; }
+  // Folded when a sibling index covers it: corpus.json → corpus/index.json.
+  const folded = apiDocs.includes(rel.replace(/\.json$/, "/index.json"));
+  if (folded) {
+    console.log(`  ✓ ${rel.padEnd(44)} ${kb}  folded by ${rel.replace(/\.json$/, "/index.json")}`);
+  } else if (linked.has(rel)) {
+    console.log(`  ✓ ${rel.padEnd(44)} ${kb}  drill-down, reached by href`);
+  } else if (rel === "openapi.json") {
+    console.log(`  ✓ ${rel.padEnd(44)} ${kb}  the API's own index`);
+  } else {
+    console.log(`  ✗ ${rel.padEnd(44)} ${kb}  over budget, no index folds it`);
+    fail.push(`api/v1/${rel}: ${(bytes / 1024).toFixed(1)} KB with no index`);
+  }
+}
+
+// 4 ────────────────────────────────────────────────────────────────────────────
 console.log(`\nPRESENTATION FOLD — choices at rest vs. fully unfolded\n`);
 
 for (const rel of (await htmlFiles(dir)).sort()) {
@@ -305,6 +364,9 @@ if (fail.length) {
   console.error(
     "\n  A fold that drops a rendered fact is not a summary of the page, it is a\n" +
     "  different claim about it — carry the fact in the record, or stop rendering it.\n" +
+    "\n  An API document over the budget with no index costs every caller the whole\n" +
+    "  set to answer one question. Give it an index that aggregates and names the\n" +
+    "  drill-downs; leave the unfolded document exactly where it is.\n" +
     "\n  A sibling run over the budget is not a fold at all: it is the raw set, handed\n" +
     "  over whole. Give it a seed and a generator rule — a <details> whose summary\n" +
     "  names what is inside — or cut the run down to what the reader came for.\n",
