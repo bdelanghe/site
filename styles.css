@@ -247,10 +247,14 @@ a[href^="mailto:"]:not(.no-link-icon)::before {
   border-top: 1px solid var(--bs-color-line);
 }
 .entry:first-child { border-top: 0; padding-top: 0; }
-.entry__when { font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); padding-top: 4px; }
-.entry__org { font-weight: 600; color: var(--bs-color-ink); }
+/* These carry `margin: 0` because they are <p>/<div>, not <span>: the structure lives in
+   the markup so Reader keeps it (see build.mjs's entry()). The grid places them exactly
+   as it placed the spans; `.entry__what` no longer needs `display: block` because a <p>
+   already is one. */
+.entry__when { margin: 0; font-family: var(--bs-font-mono); font-size: 12px; color: var(--bs-color-ink-mono); padding-top: 4px; }
+.entry__org { margin: 0; font-weight: 600; color: var(--bs-color-ink); }
 .entry__role { font-weight: 400; color: var(--bs-color-ink-soft); }
-.entry__what { display: block; font-family: var(--bs-font-text); font-size: 15px; line-height: 1.6; color: var(--bs-color-ink-soft); margin-top: 4px; max-width: 58ch; }
+.entry__what { font-family: var(--bs-font-text); font-size: 15px; line-height: 1.6; color: var(--bs-color-ink-soft); margin: 4px 0 0; max-width: 58ch; }
 
 /* colophon: built-with */
 .colophon__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--bs-color-line); border-top: 1px solid var(--bs-color-line); border-bottom: 1px solid var(--bs-color-line); }
