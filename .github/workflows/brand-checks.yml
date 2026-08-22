@@ -82,6 +82,14 @@ jobs:
         # and reachable only by typing the URL. Every gate was green, because a
         # sitemap entry is not a link and llms.txt is not navigation.
         run: node scripts/reachability-gate.mjs dist
+      - name: Build the static API (fold-load's API section assesses it)
+        # This job builds with plain `node build.mjs`, which writes
+        # api/v1/conformance.json but NOT the index that folds it — gen-api.mjs
+        # does that. Without this step the gate reported conformance.json as
+        # "over budget, no index folds it", which was true of the tree in front of
+        # it and false of the site. A gate whose verdict depends on which build
+        # step happened to run is measuring the job, not the artifact.
+        run: node scripts/gen-api.mjs
       - name: Fold-load gate (a fold is lossless, and a step is within budget)
         # Two properties of the unfold model, checked where they are checkable.
         # FIDELITY: whatever the emitted record drops that the page renders is
