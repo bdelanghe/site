@@ -1,5 +1,13 @@
-// The Worker is a pure (Request, env) → Response, so it tests offline: stub the
-// ASSETS binding with the real built dist/ and drive it with actual JSON-RPC.
+// The Worker is a pure (Request, env) → Response, so it tests offline.
+//
+// The ASSETS stub is a FIXTURE, not the built tree. An earlier version read
+// dist/api/v1/* and passed locally only because a full `npm run build` had been
+// run; brand-checks.yml runs plain `node build.mjs`, which does not invoke
+// gen-api.mjs, so four cases failed there. A test that depends on which build
+// step happened to run is testing the ambient state, not the Worker.
+//
+// The one case that must touch a real file is the byte-identical fall-through,
+// and it reads dist/index.html — which plain `node build.mjs` does produce.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -7,10 +15,27 @@ import { join } from "node:path";
 import worker from "./index.js";
 
 const DIST = new URL("../dist/", import.meta.url).pathname;
+
+// Exactly the artifacts the routes resolve to, with just enough shape for the
+// assertions below. Keyed by the path the Worker asks ASSETS for.
+const FIXTURES = {
+  "/api/v1/posts.json": '{"count":1,"items":[{"slug":"hi","title":"Hi"}]}',
+  "/api/v1/posts/hi.json": '{"slug":"hi","title":"Hi"}',
+  "/api/v1/conformance.json": '{"results":[],"summary":{"met":1}}',
+  "/api/v1/conformance/index.json": '{"summary":{"met":22},"areas":[]}',
+  "/api/v1/conformance/areas/accessibility.json": '{"area":"accessibility","results":[]}',
+  "/api/v1/corpus.json": '{"interests":{"topics":[]}}',
+  "/api/v1/corpus/index.json": '{"topics":{"count":745}}',
+  "/api/v1/corpus/topics.json": '{"count":745,"items":[]}',
+  "/api/v1/profile.json": '{"name":"Robert DeLanghe"}',
+};
+
 const env = {
   ASSETS: {
     async fetch(req) {
       const p = new URL(req.url).pathname;
+      if (p in FIXTURES) return new Response(FIXTURES[p], { status: 200 });
+      // Anything else is a real asset read — the fall-through path.
       try {
         return new Response(await readFile(join(DIST, p)), { status: 200 });
       } catch {
@@ -63,7 +88,7 @@ test("get_corpus defaults to the index and unfolds one list at a time", async ()
   const idx = await rpc({ jsonrpc: "2.0", id: 6, method: "tools/call", params: { name: "get_corpus", arguments: {} } });
   assert.equal(idx.body.result._meta.verification.path, "api/v1/corpus/index.json");
   const topics = await rpc({ jsonrpc: "2.0", id: 7, method: "tools/call", params: { name: "get_corpus", arguments: { list: "topics" } } });
-  assert.ok(JSON.parse(topics.body.result.content[0].text).count > 0);
+  assert.equal(JSON.parse(topics.body.result.content[0].text).count, 745);
 });
 
 test("every result carries verified:false and a real digest of the bytes returned", async () => {
