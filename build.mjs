@@ -129,10 +129,15 @@ const work = canonical.work ?? [];
 // see the human-readable obfuscated form.
 const [emailUser, emailHost] = (email || "").split("@");
 const emailObf = email ? `${emailUser} [at] ${emailHost.replace(/\./g, " [dot] ")}` : "";
-// label omitted → the de-obfuscated address becomes the visible text (data-show).
-const mailLink = ({ label = "", cls = "" } = {}) =>
-  email ? `<a${cls ? ` class="${cls}"` : ""} data-mail="${esc(emailObf)}"${label ? "" : " data-show"}>${label || esc(emailObf)}</a>` : "";
-const EMAIL_SCRIPT = `<script>for(const a of document.querySelectorAll('a[data-mail]')){const m=a.getAttribute('data-mail').replace(' [at] ','@').replace(/ \\[dot\\] /g,'.');a.href='mailto:'+m;if(a.hasAttribute('data-show'))a.textContent=m;}</script>`;
+// It ships as a <span>, not an <a>. With JS off there is no address to link to —
+// the obfuscated form is not a valid mailto — so an <a> there would be a link that
+// does not navigate: lone flags it (LONE_SEMANTIC_LINK_WITHOUT_HREF), and a keyboard
+// user tabs to a control that does nothing. The script replaces the span with a real
+// anchor once the address is re-formed, carrying any class across so the styling
+// (.rows__mail, .no-link-icon) is identical before and after.
+const mailLink = ({ cls = "" } = {}) =>
+  email ? `<span${cls ? ` class="${cls}"` : ""} data-mail="${esc(emailObf)}">${esc(emailObf)}</span>` : "";
+const EMAIL_SCRIPT = `<script>for(const s of document.querySelectorAll('[data-mail]')){const m=s.getAttribute('data-mail').replace(' [at] ','@').replace(/ \\[dot\\] /g,'.');const a=document.createElement('a');if(s.className)a.className=s.className;a.href='mailto:'+m;a.textContent=m;s.replaceWith(a);}</script>`;
 // On-load freshness probe for the /provenance seal: "are we the latest build?" in
 // two honest senses — your view vs the live deploy (signed baked-in commit vs a
 // fresh /provenance.json; same origin, a cache-freshness check not trust), and the
@@ -141,10 +146,13 @@ const EMAIL_SCRIPT = `<script>for(const a of document.querySelectorAll('a[data-m
 // Written with string concatenation (no backticks / ${}) so this template literal
 // doesn't interpolate it.
 const FRESHNESS_SCRIPT = `<script>(async()=>{
-  var el=document.getElementById("build-freshness"); if(!el) return;
+  var card=document.querySelector(".prov-seal__card"); if(!card) return;
+  var el=document.createElement("p");
+  el.id="build-freshness"; el.className="prov-seal__note";
+  el.setAttribute("style","font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink);");
   var short=function(s){return String(s||"").slice(0,7);};
   var ago=function(iso){var ms=Date.now()-Date.parse(iso); if(!isFinite(ms))return ""; return ms<36e5?Math.round(ms/6e4)+"m":ms<864e5?Math.round(ms/36e5)+"h":Math.round(ms/864e5)+"d";};
-  var show=function(t){el.textContent=t; el.hidden=false;};
+  var show=function(t){el.textContent=t; card.appendChild(el);};
   try{
     var prov=await (await fetch("/provenance.json",{cache:"no-store"})).json();
     var deploy=(prov&&prov.builder&&prov.builder.commit)||"";
@@ -673,7 +681,7 @@ const BRAND_ICONS = {
 const brandMark = (href, label) => {
   const d = BRAND_ICONS[linkHost(href)];
   return d
-    ? `<svg class="r-fav" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`
+    ? `<svg class="r-fav" viewBox="0 0 24 24" width="12" height="12" focusable="false"><title>${esc(label)}</title><path d="${d}"/></svg>`
     : `<img class="r-fav" src="https://${esc(linkHost(href))}/favicon.ico" alt="${esc(label)}" width="12" height="12" loading="lazy">`;
 };
 const rLinks = [...social.map((s) => ({ label: s.network, href: s.url })), rEmail].filter(Boolean).map((l) =>
@@ -796,6 +804,7 @@ ${jsonLd}
 </head>
 <body>
   <main>
+  <article class="doc">
   <header>
     <h1>${esc(name)}</h1>
     <p class="r-title">${esc(role)}${headline ? ` · ${esc(headline)}` : ""}</p>
@@ -808,6 +817,7 @@ ${jsonLd}
   <h2>${copy("resume.section.experience")}</h2>${rExp}
   ${projects.length ? `<h2>${copy("resume.section.projects")}</h2>${rProjects}` : ""}
   <h2>${copy("resume.section.education")}</h2>${rEdu}
+  </article>
   </main>
   ${EMAIL_SCRIPT}
 </body>
@@ -844,7 +854,6 @@ ${head({ title: `${copy("prov.title")} — ${name}`, description: copy("head.pro
             <p class="prov-seal__meta">commit @@COMMIT@@ &middot; @@DATE@@ &middot; <a href="https://github.com/bdelanghe/site">bdelanghe/site</a></p>
             <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);">Real <a href="https://in-toto.io" rel="noopener">in-toto</a> <code>Statement/v1</code> + <a href="https://slsa.dev" rel="noopener">SLSA</a> provenance (<a href="/attestation.intoto.json">attestation.intoto.json</a>), <strong>keyless-signed</strong> via <a href="https://sigstore.dev" rel="noopener">Sigstore</a> — a one-build <a href="https://docs.sigstore.dev/fulcio/overview/" rel="noopener">Fulcio</a> certificate minted from this workflow's GitHub <a href="https://openid.net/connect/" rel="noopener">OIDC</a> identity, logged in the public <a href="https://docs.sigstore.dev/rekor/overview/">Rekor</a> transparency log — <a href="/rekor">this build's entry</a>. No held key. The whole built site is content-addressed (<a href="/site.sha256">site.sha256</a>) and signed too, and pushed to <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry" rel="noopener">GHCR</a> as a pullable, signed <a href="https://opencontainers.org" rel="noopener">OCI</a> artifact. See <a href="/provenance.json">provenance.json</a> for digests, Rekor entries, and verify/pull recipes. This proves who built the site and that it is intact.</p>
             <p class="prov-seal__note" style="font-size:12px;margin:8px 0 0;color:var(--bs-color-ink);"><strong>Authorized.</strong> Production is not deployed straight from a build: each version is first uploaded as an un-served preview, reviewed, and <strong>promoted to production only on required human approval</strong> (the <code>site-promote</code> environment). The exact reviewed, signed version is what goes live — so the live site is not just intact, its promotion was authorized.</p>
-            <p id="build-freshness" class="prov-seal__note" style="font-size:12px;margin:8px 0 0;font-family:var(--bs-font-mono);color:var(--bs-color-ink);" hidden></p>
           </div>
         </li>
       </ol>
@@ -1305,7 +1314,7 @@ const evidenceLabelFor = (href) => {
 const cSum = confReport.summary;
 const cPct = (n) => `${((n / (cSum.total || 1)) * 100).toFixed(2)}%`;
 const confOverview = `<div class="conf-overview">
-      <div class="conf-bar" role="img" aria-label="${cSum.met} ${copy("conf.stat.met")}, ${cSum.unmet} ${copy("conf.stat.unmet")}, ${cSum.notAssessed} ${copy("conf.stat.na")} of ${cSum.total}">
+      <div class="conf-bar" aria-hidden="true">
         <span class="conf-bar__seg conf-bar__seg--met" style="width:${cPct(cSum.met)}"></span>
         <span class="conf-bar__seg conf-bar__seg--unmet" style="width:${cPct(cSum.unmet)}"></span>
         <span class="conf-bar__seg conf-bar__seg--na" style="width:${cPct(cSum.notAssessed)}"></span>
