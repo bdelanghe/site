@@ -1771,7 +1771,33 @@ await writeFile(join(dist, "_headers"),
   `/*.pub\n  Content-Type: text/plain; charset=utf-8\n` +
   mdRoutes.map((r) => `${r}\n  Content-Type: text/markdown; charset=utf-8`).join("\n") + "\n" +
   `/site.webmanifest\n  Content-Type: application/manifest+json; charset=utf-8\n`);
-await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
+// robots.txt — the crawl policy is AUTHORED HERE, in the signed build, not in a CDN
+// dashboard (#259). Cloudflare's "Managed robots.txt" prepends its own block at the
+// edge, which puts an express reservation of rights on the wire that is absent from
+// the source, invisible to review, and outside site.sha256 — so it stays OFF and this
+// file says what we mean. verify-site's `cloudflare-managed-robots` strip rule then
+// has nothing to strip, and robots.txt verifies byte-exact like every other file.
+//
+// Nothing is Disallowed on purpose: /llms.txt and the .md sibling of every page exist
+// to be read by agents, and four gates defend that surface. What the signal refuses is
+// TRAINING on this content, not reading it — blocking the readers would contradict the
+// thing the rest of the build invests in.
+const robotsTxt = `# Content Signals — how automated consumers may use this site.
+#   search:   building a search index and returning links/excerpts.
+#   ai-train: training or fine-tuning a model on this content.
+#   use:      how an AI system may consume it (immediate | reference | full).
+#
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF RIGHTS
+# UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT AND RELATED
+# RIGHTS IN THE DIGITAL SINGLE MARKET.
+
+User-agent: *
+Content-Signal: search=yes,ai-train=no,use=reference
+Allow: /
+
+Sitemap: ${SITE}/sitemap.xml
+`;
+await writeFile(join(dist, "robots.txt"), robotsTxt);
 await writeFile(join(dist, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   htmlRoutes.map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${date}</lastmod></url>`).join("\n") +
