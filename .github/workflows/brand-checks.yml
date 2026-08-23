@@ -2,12 +2,12 @@ name: brand-checks
 
 # Gate the site against the shared design + content system (@bdelanghe/brand):
 # no hardcoded colours, content tokens, complete meta + agent-readiness, a11y contrast.
-# brand's own dev tooling (tools/*.mjs) isn't published to npm — it's CI-internal
-# analysis tooling, not a distributable asset — so this job checks out brand's
-# source, purely to run those scripts; build.mjs itself still only reads the
-# installed package (node_modules/@bdelanghe/brand). bdelanghe/brand isn't
-# release-tagged (personal, actively-developed pinning) — checks out main
-# directly rather than resolving a version tag.
+# The analysis tooling is @bdelanghe/brand-tools, a published devDependency, so
+# this job no longer checks out brand's source to borrow scripts from it. That
+# checkout was the workaround for a claim that was true only vacuously — brand's
+# `files` listed tools/, and nothing had ever been published to contradict it.
+# Both packages now come from npm; build.mjs reads node_modules/@bdelanghe/brand
+# as it always did.
 on:
   push:
     branches: [main]
@@ -27,12 +27,6 @@ jobs:
       - run: npm ci # installs @bdelanghe/brand (build.mjs reads it from node_modules)
       - name: Vendored conformance-kit hash-pin is intact (this workflow calls build.mjs directly, bypassing npm's prebuild hook)
         run: npm run check:integrity
-      - name: Checkout brand's source (dev tooling only — not published to npm)
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
-        with:
-          repository: bdelanghe/brand
-          ref: main
-          path: brand
       - name: Workflow run blocks parse as shell
         # A raw apostrophe in a comment inside deploy.yml's single-quoted nix-develop
         # block closed the string, so cosign ran OUTSIDE the devShell and the deploy
@@ -67,13 +61,13 @@ jobs:
       - name: atomic-copy gate (every visible word on / + /resume is a copy atom)
         run: node scripts/copy-gate.mjs --strict
       - name: No hardcoded colours (all colours are tokens)
-        run: node brand/tools/coverage.mjs --colors --check dist
+        run: node node_modules/@bdelanghe/brand-tools/tools/coverage.mjs --colors --check dist
       - name: Content tokens (schema + Gherkin + lint)
-        run: node brand/tools/content.mjs --check dist
+        run: node node_modules/@bdelanghe/brand-tools/tools/content.mjs --check dist
       - name: Meta + agent-readiness
-        run: node brand/tools/meta.mjs --check dist
+        run: node node_modules/@bdelanghe/brand-tools/tools/meta.mjs --check dist
       - name: Accessibility (WCAG AA contrast + headings)
-        run: node brand/tools/a11y.mjs --check dist
+        run: node node_modules/@bdelanghe/brand-tools/tools/a11y.mjs --check dist
       - name: Reader-view gate (Safari/Firefox Reader actually gets the content)
         # Complements the kit's structure-audit below rather than duplicating it. That
         # check is scoped by $STRUCTURE_ARTICLE_PREFIX, which defaults to "blog/" and is

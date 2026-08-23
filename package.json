@@ -2,7 +2,7 @@
   "name": "robertdelanghe-dev",
   "version": "0.1.0",
   "private": true,
-  "description": "robertdelanghe.dev \u2014 software-engineering portfolio, built on @bdelanghe/brand.",
+  "description": "robertdelanghe.dev — software-engineering portfolio, built on @bdelanghe/brand.",
   "type": "module",
   "scripts": {
     "build": "node build.mjs && node scripts/gen-api.mjs && SEO_DEPLOY_SIDECARS=/rekor,/provenance.json,/site.sha256,/resume.pdf,/attestation.intoto.json,/sbom.spdx.json,/mcp node vendor/conformance-kit/gates/seo-gate.mjs dist && node scripts/gen-identity.mjs && node scripts/gen-sbom.mjs && node scripts/gen-attestation.mjs && node scripts/check-sbom.mjs && node vendor/conformance-kit/generators/gen-cid.mjs && node scripts/gen-csp.mjs && node scripts/csp-gate.mjs",
@@ -49,11 +49,9 @@
     "check:csp": "node scripts/csp-gate.mjs",
     "check:csp-browser": "node scripts/csp-browser-gate.mjs"
   },
-  "dependencies": {
-    "@bdelanghe/brand": "github:bdelanghe/brand#main"
-  },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",
+    "@bdelanghe/brand-tools": "^0.1.0",
     "@mozilla/readability": "^0.6.0",
     "@zazuko/env-node": "^2.1.5",
     "an-array-of-english-words": "^2.0.0",
@@ -76,5 +74,8 @@
     "fsevents@2.3.3": true,
     "vnu-jar@26.6.24": true,
     "workerd@1.20260820.1": true
+  },
+  "dependencies": {
+    "@bdelanghe/brand": "^0.1.0"
   }
 }

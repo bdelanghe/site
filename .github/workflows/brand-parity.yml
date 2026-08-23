@@ -1,0 +1,114 @@
+name: brand-parity
+
+# THE PIN THE REPOINT COULD NOT RETIRE, MADE CHECKABLE.
+#
+# @bdelanghe/brand is pinned twice, and the two feed different builds:
+#
+#   package-lock.json  registry tarball -> npm ci -> node_modules -> the gates
+#   flake.lock         a git commit     -> nix build .#site -> dist/ -> SIGNED,
+#                                          attested, and served
+#
+# #275 retired the git DEPENDENCY. It could not retire the flake INPUT, because
+# regenerating flake.lock needs nix and the session doing the work had none — so
+# check-brand-pin.mjs discloses that drift rather than checking it. Honest, but
+# disclosure is not a mechanism.
+#
+# This job is the mechanism, and it exists because a GitHub runner has the nix a
+# laptop-less session did not. Drift here is otherwise silent by construction:
+# both builds succeed, and every other gate stays green, because the token gates
+# read node_modules while dist/ comes from Nix.
+#
+# It compares CONTENT, not revisions. Two commits with identical tokens are not a
+# problem — the site is composed from tokens, not commit ids — and a gate that
+# failed on that is noise nobody keeps. Today's pins are exactly that case:
+# flake.lock's 6f547f45 predates the commit 0.1.0 was published from, and the
+# bytes are identical.
+#
+# See #274 for the two designs that retire the second pin outright, at which
+# point this workflow is deleted rather than maintained.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      update-flake:
+        description: "On drift, run `nix flake update brand` and open a PR instead of only failing."
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # the update path commits flake.lock on a new branch
+      pull-requests: write # ...and opens the PR for it
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "22"
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+
+      - name: Install the npm-pinned brand
+        run: npm ci
+
+      - name: Materialize the flake-pinned brand
+        # The same store path `nix build` copies to brand/ in its sandbox, without
+        # building the whole site to get at it.
+        run: |
+          set -euo pipefail
+          path=$(nix eval --raw --impure --expr 'builtins.toString (builtins.getFlake (toString ./.)).inputs.brand')
+          echo "flake brand: $path"
+          echo "FLAKE_BRAND=$path" >> "$GITHUB_ENV"
+
+      - name: Token parity (the bytes the site is composed from)
+        id: parity
+        env:
+          UPDATE: ${{ inputs.update-flake }}
+        run: |
+          set -euo pipefail
+          npm_brand=node_modules/@bdelanghe/brand
+          drift=0
+          for f in tokens/tokens.css tokens/tokens.json content/strings.json; do
+            if cmp -s "$FLAKE_BRAND/$f" "$npm_brand/$f"; then
+              echo "  ok  $f"
+            else
+              echo "::error::brand-parity: $f differs between the flake pin and the npm package."
+              drift=1
+            fi
+          done
+          echo "drift=$drift" >> "$GITHUB_OUTPUT"
+          if [ "$drift" = "0" ]; then
+            echo "brand-parity: both pins compose the same tokens."
+            exit 0
+          fi
+          echo "::error::The hermetic build would compose the SIGNED, SERVED site against different tokens than every gate checked. Fix: nix flake update brand, commit flake.lock. Or dispatch this workflow with update-flake to have that opened as a PR. See #274."
+          if [ "${UPDATE:-false}" != "true" ]; then
+            exit 1
+          fi
+
+      - name: Update the flake pin and open a PR
+        # Dispatch-only by construction — `update-flake` is a workflow_dispatch
+        # input — but stated as well as implied: this step writes to the repo,
+        # and a permission that broad should not rest on an input's absence.
+        if: ${{ github.event_name == 'workflow_dispatch' && steps.parity.outputs.drift == '1' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          nix flake update brand
+          version=$(node -p 'require("./package-lock.json").packages["node_modules/@bdelanghe/brand"].version')
+          branch="flake/brand-$version"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add flake.lock
+          git commit -F .github/flake-brand-bump.md
+          git push -u origin "$branch"
+          gh pr create --base "$BASE" --head "$branch" --title "flake: bump the brand pin to match the npm package" --body-file .github/flake-brand-bump.md
