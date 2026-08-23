@@ -3,10 +3,25 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # Brand pinned here (flake.lock) for the hermetic build, independent of the
-    # @bdelanghe/brand npm dependency (kept only for non-Nix dev). Bump both together.
+    # THE SAME ARTIFACT npm INSTALLS — not a second copy of it.
+    #
+    # This was `github:bdelanghe/brand`, a source tree pinned by commit, while
+    # package-lock.json pinned a registry tarball. Two pins for one dependency,
+    # feeding two builds: `npm ci` -> node_modules -> the gates, and this ->
+    # dist/ -> signed, attested, served. They could drift silently, because both
+    # builds succeed and every gate stays green (the token gates read
+    # node_modules; dist/ comes from Nix). See site#274.
+    #
+    # Pointing at the npm tarball makes that drift UNREPRESENTABLE rather than
+    # checked: one artifact, two consumers, and flake.lock pins its narHash so
+    # the bytes are fixed. It is also the artifact carrying brand's provenance
+    # attestation, which the git tree never had.
+    #
+    # The version lives here, in the source, rather than buried in a lock — so
+    # bumping brand means editing this line and running `nix flake update brand`,
+    # and the version is directly comparable to package.json's range.
     brand = {
-      url = "github:bdelanghe/brand";
+      url = "https://registry.npmjs.org/@bdelanghe/brand/-/brand-0.1.0.tgz";
       flake = false;
     };
   };
@@ -30,9 +45,19 @@
             buildPhase = ''
               runHook preBuild
               rm -rf brand
-              cp -rL ${brand} brand
+              # npm tarballs carry a single top-level `package/` directory. Nix's
+              # tarball fetcher strips a lone top-level component when it unpacks,
+              # so the store path may be either the tarball root or its contents —
+              # handle both rather than depending on which.
+              src=${brand}
+              if [ -d "$src/package" ]; then src="$src/package"; fi
+              cp -rL "$src" brand
               chmod -R u+w brand
-              node brand/tokens/build-tokens.mjs --check
+              # `node brand/tokens/build-tokens.mjs --check` used to run here. That
+              # script is not in brand's published `files`, and it should not be:
+              # it re-verified the PUBLISHER's own generation step against what is
+              # now an immutable artifact. brand's ci.yml gates it at the source,
+              # which is the only place the check means anything.
               node build.mjs
               runHook postBuild
             '';
