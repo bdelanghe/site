@@ -40,7 +40,8 @@ jobs:
           set -euo pipefail
           nix flake update brand
           echo "--- flake.lock brand node ---"
-          node -e 'const n=require("./flake.lock").nodes.brand; console.log(JSON.stringify(n,null,2))'
+          # NOT require(): node resolves a `.lock` extension as JavaScript, not JSON.
+          node -e 'const fs=require("node:fs"); const n=JSON.parse(fs.readFileSync("flake.lock","utf8")).nodes.brand; console.log(JSON.stringify(n,null,2))'
 
       - name: Does the store path carry a top-level package/ ?
         # The buildPhase guards both shapes; this records which one nix actually
