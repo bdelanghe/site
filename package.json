@@ -69,5 +69,12 @@
     "vnu-jar": "^26.6.24",
     "wrangler": "^4",
     "write-good": "^1.0.8"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.2": true,
+    "fsevents@2.3.3": true,
+    "vnu-jar@26.6.24": true,
+    "workerd@1.20260820.1": true
   }
 }

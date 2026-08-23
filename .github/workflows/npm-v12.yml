@@ -1,0 +1,57 @@
+name: npm-v12
+
+# Prove this repo still installs under npm v12 BEFORE a runner image forces it.
+#
+# v12 (2026-07-08) turned three install behaviours off by default — dependency
+# install scripts, git dependencies, and remote tarballs. Every workflow here
+# pins node-version 22 and never upgrades npm, so the repo is fine today and
+# would break in two ways at once the day that bundled npm reaches v12: the
+# @bdelanghe/brand git dependency stops resolving, and esbuild/workerd/vnu-jar
+# stop placing the binaries the build runs.
+#
+# So this lane runs the install under v12 deliberately, on the repo's committed
+# config (.npmrc + package.json's allowScripts) and nothing else. If it goes red,
+# the fix belongs in that config — not in a flag added here.
+#
+# PINNING npm HERE IS NOT THE THING site-mcp#38 REMOVED. That was an unpinned
+# `npm install -g npm@latest` sitting in the RELEASE path, which is exactly how
+# v12 arrived unannounced and killed a publish. This is a pinned version in a
+# TEST lane whose only job is to find out what v12 does. Opposite intent.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "22"
+      - name: Pin npm 12 (test lane only — see the header)
+        run: npm install -g npm@12.0.2
+      - name: npm --version is actually 12
+        run: |
+          set -euo pipefail
+          v=$(npm --version)
+          echo "npm $v"
+          case "$v" in 12.*) ;; *) echo "::error::expected npm 12, got $v"; exit 1 ;; esac
+      - name: Install under v12 defaults
+        run: npm ci --no-audit --no-fund
+      # A green `npm ci` is not the property. v12 SKIPS a blocked install script
+      # with a warning rather than failing, so the install can succeed while the
+      # binaries the build needs are simply absent — the shape of failure this
+      # whole lane exists to catch. Assert the artifacts, not the exit code.
+      - name: The install scripts actually ran
+        run: |
+          set -euo pipefail
+          test -d node_modules/@bdelanghe/brand || { echo "::error::git dependency @bdelanghe/brand did not resolve"; exit 1; }
+          ls node_modules/@esbuild/*/bin/esbuild >/dev/null || { echo "::error::esbuild binary missing — its install script was blocked"; exit 1; }
+          ls node_modules/@cloudflare/workerd-*/bin/workerd >/dev/null || { echo "::error::workerd binary missing — its install script was blocked"; exit 1; }
+          test -d node_modules/vnu-jar/build || { echo "::error::vnu-jar payload missing — its install script was blocked"; exit 1; }
+          echo "git dependency resolved; esbuild, workerd and vnu-jar all placed their payloads"

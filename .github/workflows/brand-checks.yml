@@ -48,6 +48,18 @@ jobs:
         # construction: both builds succeed, and every other gate stays green
         # because the token gates read node_modules while dist/ comes from Nix.
         run: node scripts/check-brand-pin.mjs
+      - name: install-script allowlist matches the lockfile (npm v12 readiness)
+        # npm v12 stops running dependency install scripts unless package.json
+        # names them, VERSION-PINNED — so the allowlist un-approves itself on every
+        # dependency bump, and the symptom is a build that breaks later rather than
+        # a check that fails now. esbuild, workerd, vnu-jar and fsevents all place
+        # binaries this build needs.
+        #
+        # Generated from package-lock.json, not from `npm approve-scripts`: that
+        # command reads the INSTALLED node_modules, and against a stale tree it
+        # produced two wrong entries out of four (a sharp version the lockfile does
+        # not resolve and which needs no script at all, and a superseded workerd).
+        run: node scripts/check-allow-scripts.mjs
       - name: Build dist/
         run: node build.mjs
       - name: Known-vuln gate (vendored kit gate — production deps, re-proven)
