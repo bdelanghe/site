@@ -1,39 +1,30 @@
 #!/usr/bin/env node
-// brand-source gate — what the repoint to npm did, and did NOT, remove.
+// brand-source gate — one artifact, two consumers, and that fact enforced.
 //
-// THIS FILE USED TO CHECK SOMETHING ELSE. @bdelanghe/brand had no registry
-// release, so it was a git dependency pinned TWICE — package-lock.json for
-// `npm ci`, flake.lock for the hermetic build whose output is signed and served —
-// and this gate compared the two revisions. Drift was silent by construction:
-// both builds succeed and every other gate stays green, because the token gates
-// read node_modules while dist/ comes from Nix.
+// THIS FILE HAS CHECKED THREE DIFFERENT THINGS, because the thing worth checking
+// kept changing:
 //
-// @bdelanghe/brand@0.1.0 is now on npm with provenance, so the npm half of that
-// pin pair is a registry version and there is no git revision left to compare.
-// Two things follow, and only the first is a mechanism:
+//   1. @bdelanghe/brand had no registry release, so it was a git dependency
+//      pinned TWICE — package-lock.json for `npm ci`, flake.lock for the
+//      hermetic build whose output is signed and served. This compared the two
+//      revisions. Drift was silent by construction: both builds succeed and
+//      every other gate stays green, because the token gates read node_modules
+//      while dist/ comes from Nix.
 //
-//   1. ENFORCED HERE. brand resolves from the registry, not from git, and
-//      .npmrc's allow-git stays `none`. This is the regression guard: a future
-//      `npm i github:bdelanghe/brand` would reintroduce the git dependency, and
-//      with it the setting that had to permit it.
+//   2. brand@0.1.0 reached npm (#275), so the npm half became a registry version
+//      and there was no git revision left to compare. This enforced "not from
+//      git" and DISCLOSED the surviving flake pin, because comparing a tarball
+//      to a commit needs nix and the session had none.
 //
-//   2. DISCLOSED, NOT ENFORCED. flake.nix still carries its own `brand` input,
-//      so the hermetic build composes against a git commit while `npm ci`
-//      composes against a registry tarball. Those can still drift — the same
-//      silent failure as before, one pin narrower.
+//   3. The flake input is now the npm tarball ITSELF. One artifact, two
+//      consumers, flake.lock pinning its narHash. The drift is not checked — it
+//      is unrepresentable, which is the outcome #274 asked for.
 //
-// The residual is not checkable from here and this gate says so rather than
-// implying otherwise. Making it checkable needs one of:
-//   - the Nix build consuming the npm package (buildNpmPackage + npmDepsHash),
-//     which retires flake.nix's brand input and the drift with it; or
-//   - brand cutting git tags that correspond to its npm versions, so the flake
-//     can pin `v<version>` and the correspondence is readable offline. brand has
-//     NO tags today — 0.1.0 was published by the bootstrap, from a commit, with
-//     nothing naming it.
-// Tracked in bdelanghe/site#274.
-//
-// A gate that reported this as passing would be the thing this repo treats as a
-// defect elsewhere: a green check that gates nothing.
+// So what remains is worth stating precisely: the only way the two builds can
+// diverge again is if someone EDITS one of the two references so they name
+// different artifacts. That is a text comparison, needs no nix, and is what this
+// enforces. A `brand-parity.yml` job existed to byte-compare the two sources; it
+// is deleted, because comparing an artifact to itself is theatre.
 
 import { readFile } from "node:fs/promises";
 
@@ -71,20 +62,38 @@ if (!/^allow-git=none$/m.test(npmrc)) {
   fail("brand-source: .npmrc no longer sets allow-git=none — nothing in this repo needs git resolution.");
 }
 
-// --- 2. disclosed: the flake still pins brand independently
+// --- 2. enforced: the flake consumes the SAME artifact npm does
+//
+// `flake.lock`'s locked url is what `nix build` actually fetches, so that is the
+// side compared — not flake.nix's declared url, which a stale lock could differ
+// from. If these two strings agree, the bytes agree by construction, and
+// narHash pins them on the Nix side.
 const flake = await j("flake.lock");
-const flakeNode = Object.entries(flake.nodes ?? {})
-  .find(([name, n]) => name.toLowerCase().includes("brand") || n?.locked?.repo === "brand");
-if (flakeNode) {
-  const rev = flakeNode[1]?.locked?.rev ?? "(none)";
-  console.log(`  flake.lock brand  ${String(rev).slice(0, 12)}   nix build .#site → dist/`);
-  console.log(
-    "\n  ! DISCLOSED, NOT CHECKED: the hermetic build composes against that commit while\n" +
-      "    `npm ci` composes against the registry tarball above. They can drift, silently,\n" +
-      "    exactly as the two git pins could. Not comparable from here — brand publishes no\n" +
-      "    gitHead in its tarball and has no tags. See bdelanghe/site#274.",
-  );
+const brandNode = flake.nodes?.brand;
+if (!brandNode) {
+  fail("brand-source: flake.lock has no `brand` input. If the flake stopped consuming brand, delete this half of the gate deliberately rather than leaving it unable to find its subject.");
+} else {
+  const flakeUrl = brandNode.locked?.url ?? "";
+  const npmUrl = entry?.[1]?.resolved ?? "";
+  console.log(`  flake.lock brand  ${flakeUrl || "(no url — not a tarball input?)"}`);
+  if (brandNode.locked?.type !== "tarball") {
+    fail(
+      `brand-source: flake.lock's brand input is type '${brandNode.locked?.type}', not 'tarball'.\n` +
+        "  A git input reintroduces the second artifact and with it the silent drift\n" +
+        "  between the served build and everything the gates checked (#274).",
+    );
+  } else if (flakeUrl !== npmUrl) {
+    fail(
+      "brand-source: the flake and npm name DIFFERENT artifacts.\n" +
+        `    flake.lock       ${flakeUrl}\n` +
+        `    package-lock.json ${npmUrl}\n` +
+        "  The hermetic build composes dist/ — signed, attested, served — from the first,\n" +
+        "  while every gate checked the second. Both builds succeed; nothing goes red.\n" +
+        "  Fix: point flake.nix at the version package.json ranges over, then\n" +
+        "  `nix flake update brand`.",
+    );
+  }
 }
 
 if (failed) process.exit(1);
-console.log("\n✓ brand-source: brand comes from the registry and no dependency resolves from git.");
+console.log("\n✓ brand-source: the flake and npm consume the same published artifact, and nothing resolves from git.");
