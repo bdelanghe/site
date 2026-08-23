@@ -62,11 +62,39 @@ for (const f of subjectFiles) if (await exists(join(dist, f))) subject.push({ na
 const materials = [];
 for (const f of ["data/profile.json", "data/presentation.json", "data/site.json"]) if (await exists(join(root, f))) materials.push({ uri: f, digest: { sha256: sha256(await readFile(join(root, f))) } });
 const brandPkg = (await exists(join(brand, "package.json"))) ? JSON.parse(await readFile(join(brand, "package.json"), "utf8")) : {};
-// Pin the brand to the exact commit flake.lock locks (a real sha), not just its
-// version tag. flake.lock is a build input.
-const flakeLock = (await exists(join(root, "flake.lock"))) ? JSON.parse(await readFile(join(root, "flake.lock"), "utf8")) : {};
-const brandRev = flakeLock?.nodes?.brand?.locked?.rev || "";
-if (brandPkg.version || brandRev) materials.push({ uri: "pkg:github/bdelanghe/brand", version: brandPkg.version, ...(brandRev ? { digest: { gitCommit: brandRev } } : {}) });
+// BRAND IS AN npm ARTIFACT NOW, AND THIS NAMES IT AS ONE.
+//
+// This used to emit `pkg:github/bdelanghe/brand` with a gitCommit read out of
+// flake.lock, because brand was a git dependency pinned twice — once there and
+// once in package-lock.json (#274). Both builds now consume the same registry
+// tarball (#276), so flake.lock carries a narHash and no `rev` at all, and a
+// git-shaped package-ref is simply the wrong description of the input.
+//
+// The tarball URL plus its lockfile integrity is a STRONGER claim than the
+// commit was: it names the exact bytes both builds fetched, rather than a commit
+// that a tarball was once built from. Same shape as the `git+https://…/site`
+// material below — a source named by URI and digest.
+//
+// It is deliberately not a `pkg:` purl. The vendored kit reconciles pkg-refs to
+// SPDX packages by gitCommit, which no npm-sourced ref can satisfy; filed
+// upstream as bounded-systems/conformance-kit#68. Until the kit can express an
+// npm-sourced pkg-ref, claiming one here would fail a check that is right to
+// fail. The package is in the SBOM regardless — gen-sbom reads package-lock.
+const lockJson = JSON.parse(await readFile(join(root, "package-lock.json"), "utf8"));
+const brandLock = Object.entries(lockJson.packages ?? {})
+  .find(([k]) => k.endsWith("node_modules/@bdelanghe/brand"))?.[1] ?? {};
+if (brandLock.resolved) {
+  materials.push({
+    uri: brandLock.resolved,
+    version: brandPkg.version,
+    ...(brandLock.integrity ? { digest: { sri: brandLock.integrity } } : {}),
+  });
+} else if (brandPkg.version) {
+  // No resolved URL means brand came from somewhere this script cannot name.
+  // Attesting it vaguely is worse than refusing: the statement is the record.
+  console.error("✗ attestation: @bdelanghe/brand has no resolved URL in package-lock.json — refusing to attest an unnameable input");
+  process.exit(1);
+}
 // the design system itself — tokens (visual) + content strings (verbal), by digest
 for (const f of ["tokens/tokens.json", "tokens/tokens.css", "content/strings.json", "css/base.css", "css/fonts.css"])
   if (await exists(join(brand, f))) materials.push({ uri: `brand/${f}`, digest: { sha256: sha256(await readFile(join(brand, f))) } });

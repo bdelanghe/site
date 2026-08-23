@@ -111,6 +111,23 @@ jobs:
         # it and false of the site. A gate whose verdict depends on which build
         # step happened to run is measuring the job, not the artifact.
         run: node scripts/gen-api.mjs
+      - name: SBOM + attestation + reconciliation (the deploy-only lane, run here too)
+        # THIS LANE ONLY RAN ON DEPLOY, AND THAT COST A BROKEN main.
+        #
+        # The brand repoint (#275, #276) changed how brand is sourced. Every gate
+        # in this job stayed green, because none of them build the SBOM or the
+        # in-toto statement — and check-sbom then refused the deploy, correctly:
+        # the attestation still described brand as a git package-ref with a
+        # gitCommit that a tarball input does not have.
+        #
+        # A gate that only runs after merge is not a gate on the change. These
+        # three steps are cheap and they close that gap.
+        run: |
+          set -euo pipefail
+          node scripts/gen-sbom.mjs
+          node scripts/gen-attestation.mjs
+          node vendor/conformance-kit/gates/sbom/check-sbom.mjs
+
       - name: Fold-load gate (a fold is lossless, and a step is within budget)
         # Two properties of the unfold model, checked where they are checkable.
         # FIDELITY: whatever the emitted record drops that the page renders is
