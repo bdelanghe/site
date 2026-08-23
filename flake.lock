@@ -3,17 +3,14 @@
     "brand": {
       "flake": false,
       "locked": {
-        "lastModified": 1787338212,
-        "narHash": "sha256-SAENiQ+pkqHyvJcQxvpr0yVrxZHtxGz3oilqNQJRu8M=",
-        "owner": "bdelanghe",
-        "repo": "brand",
-        "rev": "6f547f45030d239db579eb818aa681dc57069181",
-        "type": "github"
+        "lastModified": 499162500,
+        "narHash": "sha256-f0+5q/jJwsZj6RKT/EEB1MUrRosNGTLcvsyClZ+v8So=",
+        "type": "tarball",
+        "url": "https://registry.npmjs.org/@bdelanghe/brand/-/brand-0.1.0.tgz"
       },
       "original": {
-        "owner": "bdelanghe",
-        "repo": "brand",
-        "type": "github"
+        "type": "tarball",
+        "url": "https://registry.npmjs.org/@bdelanghe/brand/-/brand-0.1.0.tgz"
       }
     },
     "nixpkgs": {
