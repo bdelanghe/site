@@ -778,8 +778,9 @@ const html = `<!doctype html>
 <body>
   <main class="wrap">
     <article class="doc">
-    <header class="mast">
-      <p class="mast__name">${esc(name)}</p>
+    <header class="mast h-card">
+      <p class="mast__name p-name">${esc(name)}</p>
+      <data class="u-url" value="${esc(SITE)}/"></data>
       <p class="mast__role">${esc(role)}</p>
       ${cityLine ? `<p class="mast__where bs-text-label">${esc(cityLine)}</p>` : ""}
       <p class="mast__year bs-text-label">${date.slice(0, 4)}</p>
