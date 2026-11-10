@@ -1310,6 +1310,15 @@ const securityTxtDoc = securityTxt({
 await mkdir(join(dist, ".well-known"), { recursive: true });
 await writeFile(join(dist, ".well-known", "security.txt"), securityTxtDoc);
 
+// ---- /.well-known/ojigi (the ojigi card exchange, bdelanghe/ojigi SPEC §2) --------
+// Serving a file at this domain's apex over HTTPS is proof of controlling the domain, so
+// the exchange proves this card's URL, its name, and any address @ this domain from it.
+// Derived from the same identity source as rel=me (the `ipso` profile); no profile = no file.
+const ipsoCard = social.find((s) => s.network === "ipso")?.url;
+if (ipsoCard) {
+  await writeFile(join(dist, ".well-known", "ojigi"), JSON.stringify({ card: ipsoCard, fn: name }) + "\n");
+}
+
 // ---- Web App Manifest (from brand tokens; no service worker) ---------------------
 const webmanifest = webManifest({
   name: `${name} — ${role}`,
