@@ -145,10 +145,10 @@ try {
   const strings = await j("node_modules/@bdelanghe/brand/content/strings.json");
   for (const v of Object.values(strings)) if (v && typeof v === "object" && "$value" in v) atomStrings.push(v.$value);
 } catch { /* @bdelanghe/brand optional (not yet installed) */ }
-// post frontmatter — sourced copy (contract/posts.schema.json): title/description render
+// post and page frontmatter — sourced copy (contract/posts.schema.json, contract/pages.schema.json): title/description render
 // on /blog + the post <head>/<h1>; tags render as chips. (Body prose is region-exempt.)
-try {
-  const dir = join(root, "posts");
+for (const sub of ["posts", "pages"]) try {
+  const dir = join(root, sub);
   for (const f of (await readdir(dir)).filter((f) => f.endsWith(".md"))) {
     const fm = /^---\n([\s\S]*?)\n---/.exec(await readFile(join(dir, f), "utf8"));
     if (!fm) continue;
@@ -157,7 +157,7 @@ try {
       if (mm) atomStrings.push(mm[2]);
     }
   }
-} catch { /* no posts */ }
+} catch { /* no posts / pages */ }
 
 // Format vocabulary — deterministic, data-derived renderings, not free copy (see DEFERRED).
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];

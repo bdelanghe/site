@@ -49,6 +49,8 @@
   "colophon.conformance": "conformance",
   "colophon.title": "Colophon",
   "colophon.lede": "The upstream tools that produce and validate this site — each a real build input or gate, not a credit list. See /provenance for the full signed chain.",
+  "colophon.pages": "Pages",
+  "page.updated": "Updated",
   "footer.generated": "generated",
   "footer.thisbuild": "this build",
   "footer.commit": "commit",
