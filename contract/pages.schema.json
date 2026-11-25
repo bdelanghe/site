@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://robertdelanghe.dev/contract/pages.schema.json",
+  "title": "page / frontmatter contract",
+  "description": "The standard every standalone page is held to: pages/*.md, rendered by build.mjs at its own path (not under /blog, not in the feeds). For pages another service points at, such as an app's about page and privacy policy, which App Store Connect links to by URL.",
+  "type": "object",
+  "required": ["title", "description", "path", "updated"],
+  "additionalProperties": false,
+  "properties": {
+    "title": { "type": "string", "description": "page h1 / <title> / og:title" },
+    "description": { "type": "string", "description": "one line, kept ≤160 chars — meta description and the colophon's link text" },
+    "path": { "type": "string", "pattern": "^(/[a-z0-9][a-z0-9-]*)+$", "description": "the public, extensionless URL path; the file is written at <path>.html. Fixed once published: other services link to it." },
+    "updated": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "ISO date the content last changed in substance; shown on the page" },
+    "parent": { "type": "string", "pattern": "^(/[a-z0-9][a-z0-9-]*)+$", "description": "path of the page this one belongs under; its back link goes there instead of home. A page with a parent is reached through it, not listed on /colophon." }
+  }
+}

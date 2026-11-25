@@ -235,6 +235,29 @@ for (const p of allPosts) {
 const posts = allPosts.filter((p) => (p.meta.target ?? "dev") === "dev");
 for (const p of allPosts) if ((p.meta.target ?? "dev") !== "dev") console.log(`· skipping ${p.slug} (target=${p.meta.target})`);
 
+// Standalone pages from pages/*.md: same markdown subset and token bag as posts, but each
+// at its own fixed path (contract/pages.schema.json), outside /blog and the feeds. For
+// pages another service links to by URL, e.g. an app's about page and privacy policy.
+const pageSchema = await loadJson(join(root, "contract", "pages.schema.json"));
+const pages = (await loadPosts(join(root, "pages"), tokens)).sort((a, b) => (a.meta.path < b.meta.path ? -1 : 1));
+for (const p of pages) {
+  const errs = validateSchema(pageSchema, p.meta);
+  if (errs.length) {
+    console.error(`✗ pages/${p.slug}.md frontmatter violates contract/pages.schema.json:`);
+    for (const e of errs) console.error(`    ${e}`);
+    process.exit(1);
+  }
+}
+const pagePaths = new Set(pages.map((p) => p.meta.path));
+for (const p of pages) {
+  if (p.meta.parent && !pagePaths.has(p.meta.parent)) {
+    console.error(`✗ pages/${p.slug}.md: parent ${p.meta.parent} is not a page`);
+    process.exit(1);
+  }
+}
+if (pagePaths.size !== pages.length) { console.error("✗ pages/: two pages share a path"); process.exit(1); }
+const pageByPath = Object.fromEntries(pages.map((p) => [p.meta.path, p]));
+
 const linksHtml = profile.links
   .map((l) => l.href.startsWith("mailto:")
     ? mailLink({})
@@ -1359,7 +1382,7 @@ ${posts.length ? `\n## ${copy("nav.writing")}\n${posts.map((p) => `- [${p.meta.t
 - [${copy("nav.writing")}](${SITE}/blog.md)
 - [${copy("conf.title")}](${SITE}/conformance.md)
 - [${copy("prov.title")}](${SITE}/provenance.md)
-- [${copy("colophon.title")}](${SITE}/colophon.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}
+- [${copy("colophon.title")}](${SITE}/colophon.md)${posts.length ? "\n" + posts.map((p) => `- [${p.meta.title}](${SITE}/blog/${p.slug}.md)`).join("\n") : ""}${pages.length ? "\n" + pages.map((p) => `- [${p.meta.title}](${SITE}${p.meta.path}.md)`).join("\n") : ""}
 
 ## ${copy("llms.machine")}
 ${MACHINE_SURFACES.map(([label, href, atom]) => `- [${copy(label)}](${href.startsWith("/") ? SITE + href : href}): ${copy(atom)}`).join("\n")}
@@ -1620,6 +1643,13 @@ ${confAreas.map((area) => `## ${area}\n${confReport.results.filter((r) => r.area
 `;
 await writeFile(join(dist, "conformance.md"), conformanceMd);
 
+// Standalone pages without a parent are listed on /colophon (their children are reached
+// through them), so every page is a click from "/" (scripts/reachability-gate.mjs).
+const topPages = pages.filter((p) => !p.meta.parent);
+const pageListHtml = `<ul class="colophon__list">
+        ${topPages.map((p) => `<li><a href="${esc(p.meta.path)}"><span class="colophon__name">${esc(p.meta.title)}</span><span class="colophon__role">${esc(p.meta.description)}</span></a></li>`).join("\n        ")}
+      </ul>`;
+
 // ---- /colophon — "built with": the credits list moved off the homepage -----------
 // Was a homepage-only section; every page's shared footer now links here instead of
 // requiring a scroll to the bottom of "/" to find it.
@@ -1643,6 +1673,10 @@ ${head({ title: `${copy("colophon.title")} — ${name}`, description: copy("head
       <h2>${copy("llms.machine")}</h2>
       ${machineListHtml}
     </section>
+    ${topPages.length ? `<section class="colophon">
+      <h2>${copy("colophon.pages")}</h2>
+      ${pageListHtml}
+    </section>` : ""}
     </article>
 
     ${siteFooter()}
@@ -1661,8 +1695,56 @@ ${profile.colophon.map((c) => `- ${mdLink(c.name, c.href)}${c.role ? ` — ${c.r
 ## ${copy("llms.machine")}
 
 ${MACHINE_SURFACES.map(([label, href, atom]) => `- ${mdLink(copy(label), href.startsWith("/") ? SITE + href : href)} — ${copy(atom)}`).join("\n")}
-`;
+${topPages.length ? `\n## ${copy("colophon.pages")}\n\n${topPages.map((p) => `- ${mdLink(p.meta.title, SITE + p.meta.path)} — ${p.meta.description}`).join("\n")}\n` : ""}`;
 await writeFile(join(dist, "colophon.md"), colophonMd);
+
+// ---- standalone pages (pages/*.md) at their own paths ------------------------------
+const pageReprs = []; // [route, Repr-Digest]
+for (const p of pages) {
+  const up = p.meta.parent ? pageByPath[p.meta.parent] : null;
+  const back = up
+    ? `<a href="${esc(up.meta.path)}">&larr;&nbsp;${esc(up.meta.title)}</a>`
+    : `<a href="/">&larr;&nbsp;${copy("nav.home")}</a>`;
+  const ph = `<!doctype html>
+<html lang="en">
+<head>
+${head({ title: `${p.meta.title} — ${name}`, ogTitle: p.meta.title, description: p.meta.description, path: p.meta.path, mdAlt: `${p.meta.path}.md` })}
+</head>
+<body>
+  <main class="wrap">
+    <article class="doc">
+    <header class="intro">
+      <p class="bs-text-label eyebrow">${back}</p>
+      <h1>${esc(p.meta.title)}</h1>
+      <p class="lead">${esc(p.meta.description)}</p>
+      <p class="post__meta">${copy("page.updated")} <time datetime="${esc(p.meta.updated)}">${esc(p.meta.updated)}</time></p>
+    </header>
+    <div class="post__body">
+      ${p.html}
+    </div>
+    </article>
+
+    ${siteFooter()}
+  </main>
+</body>
+</html>
+`;
+  await mkdir(dirname(join(dist, `${p.meta.path}.html`)), { recursive: true });
+  await writeHtml(`${p.meta.path.slice(1)}.html`, ph);
+  pageReprs.push([p.meta.path, reprDigest(ph)]);
+  const pageMd = `# ${p.meta.title}
+
+> ${p.meta.description}
+
+${copy("page.updated")} ${p.meta.updated}
+
+${p.text}
+
+---
+${up ? mdLink(`← ${up.meta.title}`, `${SITE}${up.meta.path}.md`) : mdLink(`← ${copy("nav.home")}`, `${SITE}/index.md`)}
+`;
+  await writeFile(join(dist, `${p.meta.path}.md`), pageMd);
+}
 
 // ---- /archive — the generated index: every public repository, its languages and
 // topics, and the pinned set the topic filter narrows. This all used to sit on the
@@ -1865,7 +1947,7 @@ await writeFile(join(dist, "interests.md"), interestsMd);
 // asset matches two Cache-Control rules — Cloudflare _headers MERGES overlapping
 // rules, which would emit a malformed double Cache-Control. Plus UTF-8 on text
 // assets (Cloudflare otherwise sends text/plain with no charset → Latin-1 mojibake).
-const htmlRoutes = ["/", "/resume", "/archive", "/blog", "/provenance", "/conformance", "/colophon", "/interests", ...posts.map(postUrl)];
+const htmlRoutes = ["/", "/resume", "/archive", "/blog", "/provenance", "/conformance", "/colophon", "/interests", ...posts.map(postUrl), ...pages.map((p) => p.meta.path)];
 // RFC 9530 Repr-Digest per canonical doc, computed over the exact bytes written above
 // (self-contained — not the later site.sha256). Scoped to the canonical documents, not
 // fingerprinted assets. Every canonical document carries one; /provenance is the ONE
@@ -1882,6 +1964,7 @@ const reprByRoute = {
   "/colophon": reprDigest(colophonHtml),
   "/interests": reprDigest(interestsHtml),
   ...Object.fromEntries(postReprs),
+  ...Object.fromEntries(pageReprs),
   "/feed.xml": reprDigest(atom),
   "/feed.json": reprDigest(jsonFeedStr),
 };
@@ -1893,7 +1976,7 @@ const reprLine = (r) => (reprByRoute[r] ? `\n  Repr-Digest: ${reprByRoute[r]}` :
 // the 404 page, but Cloudflare still applies the wildcard's "Content-Type:
 // text/markdown" to that response, mislabeling real HTML content. An explicit route
 // list only ever matches the .md siblings that are genuinely written below.
-const mdRoutes = ["/.md", "/index.md", "/resume.md", "/archive.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`)];
+const mdRoutes = ["/.md", "/index.md", "/resume.md", "/archive.md", "/blog.md", "/provenance.md", "/conformance.md", "/colophon.md", "/interests.md", ...posts.map((p) => `${postUrl(p)}.md`), ...pages.map((p) => `${p.meta.path}.md`)];
 // Security headers, sitewide. A separate /* block carrying ONLY these: Cloudflare
 // merges overlapping _headers rules, which is why the cache/content-type rules below are
 // per-route — but merging is harmless when the blocks set disjoint header names, and it

@@ -20,7 +20,8 @@ const target = process.argv[2];
 const live = /^https?:\/\//.test(target || "");
 const dist = resolve(process.cwd(), process.env.DIST || "dist");
 const ROUTES = ["/", "/resume", "/archive", "/blog", "/provenance", "/conformance", "/colophon", "/interests",
-  "/blog/agent-authored-code-drift", "/blog/resume-pipeline-google-docs-incident"];
+  "/blog/agent-authored-code-drift", "/blog/resume-pipeline-google-docs-incident",
+  "/tatami", "/tatami/privacy"];
 const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".json": "application/json",
   ".woff2": "font/woff2", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon",
   ".webmanifest": "application/manifest+json", ".xml": "application/xml", ".txt": "text/plain",
