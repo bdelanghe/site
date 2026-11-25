@@ -5,15 +5,15 @@ path: /tatami/privacy
 parent: /tatami
 updated: 2026-11-25
 ---
-Tatami Place shows you your own travel plans. It has no advertising, no analytics and no tracking, and nothing it collects is sold or shared. This page says exactly what does leave your phone, and what stays on it.
+Tatami Place shows you your own travel plans. It has no advertising, no third-party analytics and no tracking across other apps or websites, and nothing it collects is sold or shared. This page says exactly what does leave your phone, and what stays on it.
 
 ## Your plans
 
-After you sign in, the app reads your plans from the developer's server and keeps a copy on the phone so it works offline. When you tick off, add or remove a to-do, or write notes for a day, the app sends that change, including the text you wrote, to the server, which saves it with your plans.
+After you sign in, the app reads your plans from the developer's server and keeps a copy on the phone so it works offline. When you tick off, add or remove a to-do, or write notes for a day, the app sends that change, including the text you wrote, to the server, which saves it with your plans. Your plans, to-dos and notes are kept until you ask for them to be deleted.
 
 ## Sign-in
 
-Sign-in uses a passkey. The sign-in service keeps the passkey's public key, an identifier for the passkey, which account it belongs to and a counter the passkey reports each time it is used. Your face, fingerprint and device passcode never leave the phone. The app keeps its sign-in tokens in the phone's keychain.
+Sign-in uses a passkey. The sign-in service keeps the passkey's public key, an identifier for the passkey, which account it belongs to and a counter the passkey reports each time it is used. Your face, fingerprint and device passcode never leave the phone. The passkey record is kept until you ask for it to be deleted. The app keeps its sign-in tokens in the phone's keychain; each lets the app stay signed in for at most 30 days without being used.
 
 ## Location
 
@@ -28,15 +28,15 @@ Arrival notes and Reminders are notifications the phone creates for itself. The 
 
 ## What you open and tap
 
-To put what you use most first, the app records when you open an item, follow its map or phone link, tick off a to-do, keep an item on screen, or tap Near me. Each record is the item's identifier, the kind of action and the time. It never includes your location, text you typed or details about your device. The server keeps these records for 30 days and adds a daily summary per item to your trip plans.
+To put what you use most first, the app records when you open an item, follow its map or phone link, tick off a to-do, keep an item on screen, or tap Near me. Each record is the item's identifier, the kind of action and the time. It never includes your location, text you typed or details about your device. The server deletes these records after 30 days. Before then it adds a daily summary per item to your trip plans, which is kept with your plans.
 
 ## Server logs
 
-The server runs on Cloudflare, which processes your IP address to deliver each request. The service keeps short-lived operational logs of requests, which can include your IP address, the address requested and the time.
+The server runs on Cloudflare, which processes your IP address to deliver each request. The service keeps operational logs of requests, which can include your IP address, the address requested and the time. These logs are held by Cloudflare for at most 7 days and then deleted.
 
 ## Who else sees it
 
-Nobody. Cloudflare hosts the server on the developer's behalf. TestFlight is run by Apple, which collects crash reports and usage information from beta apps under Apple's own privacy policy.
+Only the two companies named here. Cloudflare hosts the server on the developer's behalf. TestFlight is run by Apple, which collects crash reports and usage information from beta apps under Apple's own privacy policy.
 
 ## Deleting your data
 
