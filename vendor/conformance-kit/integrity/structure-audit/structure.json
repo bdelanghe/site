@@ -63,7 +63,7 @@
   },
   "colophon.html": {
     "h1": "Colophon",
-    "outline": "12",
+    "outline": "122",
     "mains": 1,
     "readerOk": null,
     "internalLinks": [
@@ -71,7 +71,8 @@
       "/api/v1/openapi.json",
       "/conformance",
       "/mcp",
-      "/provenance"
+      "/provenance",
+      "/tatami"
     ]
   },
   "conformance.html": {
@@ -146,6 +147,29 @@
     "readerOk": null,
     "internalLinks": [
       "/resume.pdf"
+    ]
+  },
+  "tatami.html": {
+    "h1": "Tatami Place",
+    "outline": "1222",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/",
+      "/conformance",
+      "/provenance",
+      "/tatami/privacy"
+    ]
+  },
+  "tatami/privacy.html": {
+    "h1": "Tatami Place privacy policy",
+    "outline": "122222222222",
+    "mains": 1,
+    "readerOk": null,
+    "internalLinks": [
+      "/conformance",
+      "/provenance",
+      "/tatami"
     ]
   }
 }
